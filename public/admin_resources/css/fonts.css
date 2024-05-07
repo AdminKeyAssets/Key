@@ -1,0 +1,71 @@
+@font-face {
+    font-family: 'bpg-nino-medium-condenced';
+    src: url('../fonts/bpg-nino-medium-condenced-webfont.eot'); /* IE9 Compat Modes */
+    src: url('../fonts/bpg-nino-medium-condenced-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('../fonts/bpg-nino-medium-condenced-webfont.woff2') format('woff2'), /* Super Modern Browsers */
+         url('../fonts/bpg-nino-medium-condenced-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+         url('../fonts/bpg-nino-medium-condenced-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('../fonts/bpg-nino-medium-condenced-webfont.svg#bpg_nino_medium_condencedregular') format('svg'); /* Legacy iOS */
+}
+@font-face {
+    font-family: 'HelveticaNeueLTStd-LtCn';
+    src: url('../fonts/HelveticaNeueLTStd-LtCn.woff2') format('woff2'), /* Super Modern Browsers */
+         url('../fonts/HelveticaNeueLTStd-LtCn.woff') format('woff'); /* Pretty Modern Browsers */
+}
+@font-face {
+    font-family: GLKirovi-Bold;
+    src: url(../fonts/GLKirovi-Bold.ttf);
+}
+@font-face {
+    font-family: Gordeziani-Bold;
+    src: url(../fonts/Gordeziani-Bold.otf);
+}
+@font-face {
+    font-family: GLGordeziani-Medium;
+    src: url(../fonts/GLGordeziani-Medium.ttf);
+}
+@font-face {
+    font-family: GLGordeziani-Regular;
+    src: url(../fonts/GLGordeziani-Regular.ttf);
+}
+@font-face {
+    font-family: GLGordeziani-UltraLight;
+    src: url(../fonts/GLGordeziani-UltraLight.ttf);
+}
+.helvetica-LtCn {
+  font-family: 'HelveticaNeueLTStd-LtCn';
+}
+body, .page-title h1, input, article h6,
+.filter-content-wrapper h2,
+.map-information h2,
+.map-information a,
+#institutionType  {
+  font-family: "bpg-nino-medium-condenced", sans-serif;
+}
+.map-information h1 {
+  font-family: GLGordeziani-Medium;
+}
+.bold {
+  font-family: "BPG Nino Mkhedruli Bold", sans-serif;
+}
+.page-title h6 {
+font-family: BPG Nino Medium Condenced, sans-serif;
+}
+h1, h2, h3, h4, h5, h6, .page-navigation, .filter-content .filter-title,
+.alphabet li.active, button   {
+  font-family: GLGordeziani-Regular;
+}
+.alphabet, .filter-title {
+  font-family: GLGordeziani-UltraLight;
+}
+.filter-content .filter-title {
+    font-size: 40px;
+    margin: 20px 0;
+    display: block;
+}
+.count {
+  font-family: GLKirovi-Bold;
+}
+.gray {
+    color: #999;
+}

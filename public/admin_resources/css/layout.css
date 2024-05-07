@@ -1,0 +1,124 @@
+.relative {
+    position: relative;
+}
+/* colors */
+body, a {
+  color: #151815;
+}
+.main-fill {
+  fill: #856e2b;
+}
+.main-fill.active {
+  fill: #fff;
+}
+.main-background {
+  background-color: #bb9e48;
+}
+.typeahead__container .typeahead__field input.main-background {
+  background-color: #856e2b;
+}
+.main-border {
+  border-color: #bb9e48;
+}
+.main-color, span.active  {
+  color: #856e2b;
+}
+.home-navigation li.active a {
+  color: #3b515b;
+}
+.page-navigation li.active a {
+   color: #bb9e48;
+}
+.page-navigation li a {
+  color: #fff;
+}
+.filter-content a {
+    color: #3b515b;
+}
+/* hover */
+a {
+  transition: opacity .3s, color .3s;
+}
+.page-navigation li:not(.active) a:hover {
+  color: #856e2b;
+}
+.home-navigation li:not(.active) a:hover {
+  color: #3b515b;
+}
+/* position */
+.fixed-top {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+}
+.fixed-bottom {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+}
+/* hrefs */
+
+
+/* navigation */
+.category-navigation {
+    width: 120px;
+    background: #151815;
+    height: 100%;
+    top: 0px;
+    color: #ededed;
+}
+.category-navigation a{
+   display: block;
+   transition: opacity .3s;
+}
+.category-navigation a:hover{
+    opacity: 0.6;
+}
+.home-navigation {
+  color: #ededed;
+  width: 100%;
+}
+.page-navigation {
+  background: #151815;
+  padding-right: 30px;
+}
+.category-navigation li {
+  height: 25vh;
+  padding-top: 50px;
+  padding-left: 30px;
+}
+.category-navigation nav li {
+  margin: 0 auto;
+}
+.category-icon {
+    display: block;
+    width: 60px;
+}
+.category-count {
+    display: block;
+    font-size: 34px;
+    color: #fff;
+    letter-spacing: 2px;
+    font-family: GLKirovi-Bold;
+
+}
+.category-title {
+    display: block;
+    font-family: GLGordeziani-Regular;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: #ededed;
+}
+/*forms*/
+.action {
+    border: none;
+    background: transparent;
+}
+/* read more */
+.source-article a, .filter-content-article  a.read-more {
+    color: #999;
+    text-decoration: underline;
+}
+main {
+     min-height: calc(100vh - 100px);
+}
