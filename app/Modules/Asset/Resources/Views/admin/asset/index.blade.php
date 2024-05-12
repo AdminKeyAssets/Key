@@ -30,6 +30,9 @@
                         <thead>
                         <tr>
                             <th> ID</th>
+                            <th> Icon</th>
+                            <th> Name</th>
+                            <th> Cadastral Number</th>
                             <th width="10%" class="text-center">@lang('admin.action')</th>
                         </tr>
                         </thead>
@@ -37,21 +40,18 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{!! $item->id !!}</td>
-                                <td>
-                                    <status-component
-                                        :active="'{{ $item->status ? true : false }}'"
-                                        :route="'{{ route($baseRouteName . 'update_status') }}'"
-                                        :id="{{ $item->id }}">
-                                    </status-component>
-                                </td>
+                                <td>{!! $item->icon !!}</td>
+                                <td>{!! $item->name !!}</td>
+                                <td>{!! $item->cadastral_number !!}</td>
+
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.edit',['route' => route($baseRouteName . 'edit', [ $item->id ])])
+                                        @include('admin::includes.actions.edit',['route' => route($moduleKey . '.edit', [ $item->id ])])
                                     @endcan
                                     @if(!$item->slugable)
                                         @can(getPermissionKey($moduleKey, 'delete', true))
                                             <delete-component
-                                                :url="'{{ route($baseRouteName . 'delete') }}'"
+                                                :url="'{{ route($moduleKey . '.delete') }}'"
                                                 :id="{{ $item->id }}"
                                             ></delete-component>
                                         @endcan

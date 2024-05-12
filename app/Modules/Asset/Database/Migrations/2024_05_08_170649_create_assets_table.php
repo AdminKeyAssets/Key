@@ -15,10 +15,10 @@ class CreateAssetsTable extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
-            $table->string('icon');
+            $table->string('icon')->nullable();
             $table->string('name');
             $table->text('address');
-            $table->string('cadastral_number');
+            $table->string('cadastral_number')->nullable();
             $table->string('document')->nullable();
             $table->timestamps();
         });

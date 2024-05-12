@@ -41,6 +41,8 @@ Vue.component('per-page-component', require('./base/components/admin/perPage').d
 Vue.component('status-component', require('./base/components/admin/Status').default);
 Vue.component('save-config', require('./base/components/admin/SaveConfig').default);
 
+//Asset
+Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').default);
 
 
 /**

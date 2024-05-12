@@ -24,6 +24,8 @@ class AssetController extends BaseController
      * @var string
      */
     public $viewFolderName = 'asset';
+    public $baseName = 'asset.';
+
 
     /**
      * SlugController constructor.
@@ -47,7 +49,7 @@ class AssetController extends BaseController
     {
         $this->baseData['allData'] = Asset::orderByDesc('id')->paginate(25);
 
-        return view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName.'.index', $this->baseData);
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
     /**
@@ -55,39 +57,56 @@ class AssetController extends BaseController
      */
     public function create()
     {
-        try {
-            $this->baseData['routes']['create_form_data'] = SlugHelper::getRoutes()['create_data'];
-        } catch (\Exception $ex) {
-            return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.create', ServiceResponse::error($ex->getMessage()));
-        }
 
-        return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.create', ServiceResponse::success($this->baseData));
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
     }
 
     /**
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
-     * @throws GetCreateDataException
      */
     public function createData(Request $request)
     {
         try {
-            $this->baseData['routes'] = SlugHelper::getRoutes();
+            $this->baseData['routes'] = [
+                'create' => route($this->baseName . 'create'),
+                'create_data' => route($this->baseName . 'create_data'),
+                'save' => route($this->baseName . 'store'),
+                'edit' => route($this->baseName . 'edit', []),
+            ];
             if ($request->get('id')) {
-                $this->baseData['item'] = (new CreateSlugResource(Slug::findOrFail($request->get('id'))->load(['slugable'])))->toArray($request);
+                $asset = Asset::findOrFail($request->get('id'));
+
+                $this->baseData['item'] = $asset;
+                $this->baseData['item']['extraDetails'] = $asset->informations;
+
             }
         } catch (\Exception $ex) {
-            throw new GetCreateDataException($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), $ex->getCode());
         }
 
-        return ServiceResponse::jsonNotification('', 200,  $this->baseData);
+        return ServiceResponse::jsonNotification('', 200, $this->baseData);
     }
 
-    public function store()
+    public function store(Request $request)
     {
 
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['save_successfully'], 200,  $this->baseData );
+        $asset = Asset::updateOrCreate(['id' => $request->id], [
+            'name' => $request->name,
+            'address' => $request->address,
+            'cadastral_number' => $request->cadastral_number
+        ]);
+        $asset->informations()->delete();
+
+        foreach ($request->extraDetails as $info) {
+            $asset->informations()->create([
+                'key' => $info["key"],
+                'value' => $info["value"],
+            ]);
+        }
+
+        return ServiceResponse::jsonNotification('Asset Added successfully', 200, $this->baseData);
     }
 
     /**
@@ -98,15 +117,15 @@ class AssetController extends BaseController
     public function edit($id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('admincreate_data');
+            $this->baseData['routes']['create_form_data'] = route('asset.create_data');
 
             $this->baseData['id'] = $id;
 
         } catch (\Exception $ex) {
-            return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
         }
 
-        return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
     }
 
     /**
@@ -119,29 +138,14 @@ class AssetController extends BaseController
     {
         try {
             $slug = Asset::findOrFail($request->get('id'));
-            if(!$slug->slugable) {
+            if (!$slug->slugable) {
                 $slug->delete();
             }
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
 
-        return ServiceResponse::jsonNotification('Deleted successfully', 200,  $this->baseData );
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function updateStatus(Request $request)
-    {
-        try {
-            Slug::findOrFail($request->get('id'))->update(['status' => $request->get('status')]);
-        } catch (\Exception $ex) {
-            return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
-        }
-
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['update_status_successfully'], 200,  $this->baseData );
+        return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 
 }
