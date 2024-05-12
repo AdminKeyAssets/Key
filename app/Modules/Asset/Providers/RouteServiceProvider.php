@@ -39,6 +39,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapApiRoutes();
 
+        $this->mapAssetRoutes();
+
         //
     }
 
@@ -74,6 +76,23 @@ class RouteServiceProvider extends ServiceProvider
             'prefix'     => 'api',
         ], function ($router) {
             require module_path('asset', 'Routes/api.php', 'app');
+        });
+    }
+
+    /**
+     * Define the "web" routes for the module.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     *
+     * @return void
+     */
+    protected function mapAssetRoutes()
+    {
+        Route::group([
+            'middleware' => 'web',
+            'namespace'  => $this->namespace,
+        ], function ($router) {
+            require module_path('asset', 'Routes/asset.php', 'app');
         });
     }
 }

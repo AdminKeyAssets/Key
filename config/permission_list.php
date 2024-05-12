@@ -36,4 +36,7 @@ return [
         'default'   => $default_permissions
     ],
 
+    'asset'     => [
+        'default'   => $default_permissions
+    ],
 ];

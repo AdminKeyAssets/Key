@@ -11,8 +11,3 @@
 |
 */
 
-Route::group(['prefix' => 'asset'], function () {
-    Route::get('/', function () {
-        dd('This is the Asset module index page. Build something great!');
-    });
-});
