@@ -95,15 +95,12 @@ class AssetController extends BaseController
 
     public function store(Request $request)
     {
-//dd($request->investor);
-        $userData = [
+        $asset = Asset::updateOrCreate(['id' => $request->id], [
             'name' => $request->name,
             'address' => $request->address,
             'cadastral_number' => $request->cadastral_number,
             'investor_id' => $request->investor
-        ];
-//        dd($userData);
-        $asset = Asset::updateOrCreate(['id' => $request->id], $userData);
+        ]);
         $asset->informations()->delete();
 
         if (!empty($request->extraDetails)) {
@@ -134,6 +131,20 @@ class AssetController extends BaseController
         }
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
+    }
+
+    public function view($id = '')
+    {
+        try {
+            $this->baseData['routes']['create_form_data'] = route('asset.create_data');
+
+            $this->baseData['id'] = $id;
+
+        } catch (\Exception $ex) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::success($this->baseData));
     }
 
     /**

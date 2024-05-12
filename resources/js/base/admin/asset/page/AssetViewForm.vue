@@ -1,0 +1,143 @@
+<template>
+    <div>
+        <div class="col-xs-12">
+            <div class="registration-btn project-title-buttons">
+                <div>
+                    <div class="block">
+                        <el-form v-loading="loading"
+                                 element-loading-text="Loading..."
+                                 element-loading-spinner="el-icon-loading"
+                                 element-loading-background="rgba(0, 0, 0, 0.0)"
+                                 ref="form" :model="form" class="form-horizontal form-bordered">
+
+                            <el-row>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Name:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{form.name}}
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Address:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{form.address}}
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Cadastral Number:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{form.cadastral_number}}
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Investor:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select" disabled>
+                                            <el-option
+                                                v-for="item in investors"
+                                                :key="item.id"
+                                                :label="item.name"
+                                                :value="item.id">
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Extra Details:</label>
+                                    <div class="col-md-10 uppercase-medium">
+
+                                        <el-form-item
+                                            v-for="(extraDetail) in form.extraDetails"
+                                            :key="extraDetail.id">
+                                            <div class="col-md-3 uppercase-medium">
+                                                {{extraDetail.key}}:
+                                            </div>
+                                            <div class="col-md-5 uppercase-medium">
+                                                {{extraDetail.value}}
+                                            </div>
+                                        </el-form-item>
+                                    </div>
+                                </div>
+
+                            </el-row>
+                        </el-form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+
+import {responseParse} from '../../../mixins/responseParse'
+import {getData} from '../../../mixins/getData'
+import AssetMain from "../partials/AssetMain.vue";
+
+export default {
+    components: {AssetMain},
+    props: [
+        'getSaveDataRoute',
+        'id'
+    ],
+    data() {
+        return {
+            item: {},
+            data: {},
+            loading: false,
+            routes: {},
+            options: {},
+            /** Form data*/
+            form: {
+                id: this.id
+            },
+            investors: {}
+
+        }
+    },
+    created() {
+        this.getSaveData();
+    },
+    methods: {
+        /**
+         *
+         * Get save data.
+         *
+         * @returns {Promise<void>}
+         */
+        async getSaveData() {
+            this.loading = true;
+
+            await getData({
+                method: 'POST',
+                url: this.getSaveDataRoute,
+                data: this.form
+            }).then(response => {
+                // Parse response notification.
+                responseParse(response, false);
+
+                if (response.status == 200) {
+                    // Response data.
+                    let data = response.data.data;
+
+                    this.routes = data.routes;
+                    this.options = data.options;
+                    this.investors = data.investors;
+                    if (data.item) {
+                        this.form = data.item;
+                    }
+                    this.form.id = this.id;
+                }
+                this.loading = false
+            })
+        },
+
+    }
+}
+
+</script>

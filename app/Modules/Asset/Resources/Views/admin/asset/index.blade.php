@@ -45,6 +45,9 @@
                                 <td>{!! $item->cadastral_number !!}</td>
 
                                 <td class="text-center">
+                                    @can(getPermissionKey($moduleKey, 'view', true))
+                                        @include('admin::includes.actions.view',['route' => route($moduleKey . '.view', [ $item->id ])])
+                                    @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['route' => route($moduleKey . '.edit', [ $item->id ])])
                                     @endcan
