@@ -31,6 +31,20 @@
                     </div>
 
                     <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Select Investor:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select">
+                                <el-option
+                                    v-for="item in investors"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
                         <label class="col-md-1 control-label">Extra Details:</label>
                         <div class="col-md-10 uppercase-medium">
 
@@ -66,7 +80,8 @@ export default {
     props: [
         'routes',
         'updateData',
-        'item'
+        'item',
+        'investors'
     ],
     data() {
         return {
@@ -79,7 +94,7 @@ export default {
             },
             loading: false,
             editor: ClassicEditor,
-            addDetailIsBtnDisabled: true
+            addDetailIsBtnDisabled: true,
         }
     },
     updated() {

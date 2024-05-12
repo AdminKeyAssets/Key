@@ -18,6 +18,7 @@
                 <AssetMain
                     :routes="routes"
                     :updateData="updateData"
+                    :investors="investors"
                     :item="this.form && this.form ? this.form : undefined"
                 ></AssetMain>
             </div>
@@ -48,7 +49,8 @@ export default {
             form: {
                 id: this.id
             },
-            tabValue: 'main'
+            investors: {}
+
         }
     },
     created() {
@@ -78,6 +80,7 @@ export default {
 
                     this.routes = data.routes;
                     this.options = data.options;
+                    this.investors = data.investors;
                     if (data.item) {
                         this.form = data.item;
                     }

@@ -3,6 +3,7 @@
 namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Asset\Models\Asset;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -82,6 +83,9 @@ class AssetController extends BaseController
                 $this->baseData['item']['extraDetails'] = $asset->informations;
 
             }
+
+            $this->baseData['investors'] = Admin::role(['Investor'])->get(['name', 'id']);
+
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
@@ -91,21 +95,25 @@ class AssetController extends BaseController
 
     public function store(Request $request)
     {
-
-        $asset = Asset::updateOrCreate(['id' => $request->id], [
+//dd($request->investor);
+        $userData = [
             'name' => $request->name,
             'address' => $request->address,
-            'cadastral_number' => $request->cadastral_number
-        ]);
+            'cadastral_number' => $request->cadastral_number,
+            'investor_id' => $request->investor
+        ];
+//        dd($userData);
+        $asset = Asset::updateOrCreate(['id' => $request->id], $userData);
         $asset->informations()->delete();
 
-        foreach ($request->extraDetails as $info) {
-            $asset->informations()->create([
-                'key' => $info["key"],
-                'value' => $info["value"],
-            ]);
+        if (!empty($request->extraDetails)) {
+            foreach ($request->extraDetails as $info) {
+                $asset->informations()->create([
+                    'key' => $info["key"],
+                    'value' => $info["value"],
+                ]);
+            }
         }
-
         return ServiceResponse::jsonNotification('Asset Added successfully', 200, $this->baseData);
     }
 

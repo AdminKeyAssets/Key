@@ -15,6 +15,7 @@ class CreateAssetsTable extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('investor_id')->nullable();
             $table->string('icon')->nullable();
             $table->string('name');
             $table->text('address');

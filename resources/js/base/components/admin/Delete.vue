@@ -20,9 +20,9 @@
              */
             deleteElement(){
 
-                this.$confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?', 'ყურადღება!', {
-                    confirmButtonText: 'დიახ',
-                    cancelButtonText: 'არა',
+                this.$confirm('Are you sure?', 'You are deleting an item', {
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
                     type: 'warning'
                 }).then(async () => {
 
