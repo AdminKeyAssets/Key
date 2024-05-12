@@ -27,9 +27,18 @@
 
     @can ( getPermissionKey('asset', 'index', true))
         <li
-            {!! strpos(request()->route()->getName(), 'asset.') !== false ? ' class="active"' : '' !!}>
+            {!! strpos(request()->route()->getName(), 'asset.list') !== false ? ' class="active"' : '' !!}>
             <a href="{{route('asset.index')}}"><i class="el-icon-house sidebar-nav-icon"></i>
                 <span class="sidebar-nav-mini-hide">Assets</span></a>
+        </li>
+
+    @endif
+
+    @can ( getPermissionKey('asset', 'view', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'asset.myasset') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('asset.myassets')}}"><i class="el-icon-house sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">My Assets</span></a>
         </li>
 
     @endif
