@@ -17,9 +17,41 @@
                     </div>
 
                     <div class="form-group dashed">
+                        <label class="col-md-1 control-label">City:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <input class="form-control" :disabled="loading" v-model="form.city"></input>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
                         <label class="col-md-1 control-label">Address:</label>
                         <div class="col-md-10 uppercase-medium">
                             <input class="form-control" :disabled="loading" v-model="form.address"></input>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Delivery Date:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <el-date-picker
+                                v-model="form.delivery_date"
+                                type="date"
+                                placeholder="Pick a day">
+                            </el-date-picker>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Area (m2):</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <input class="form-control" :disabled="loading" v-model="form.area"></input>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Price:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
                         </div>
                     </div>
 

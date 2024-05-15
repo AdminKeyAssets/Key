@@ -4,6 +4,7 @@ namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
+use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -101,13 +102,18 @@ class AssetController extends BaseController
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
     }
 
-    public function store(Request $request)
+    public function store(AssetRequest $request)
     {
         $asset = Asset::updateOrCreate(['id' => $request->id], [
             'name' => $request->name,
             'address' => $request->address,
             'cadastral_number' => $request->cadastral_number,
-            'investor_id' => $request->investor
+            'investor_id' => $request->investor_id,
+            'city' => $request->city,
+            'delivery_date' => $request->delivery_date,
+            'area' => $request->area,
+            'total_price' => $request->total_price,
+
         ]);
         $asset->informations()->delete();
 
