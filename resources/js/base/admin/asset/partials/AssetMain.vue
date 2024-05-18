@@ -36,7 +36,7 @@
                             <el-date-picker
                                 v-model="form.delivery_date"
                                 type="date"
-                                placeholder="Pick a day">
+                                placeholder="Pick a delivery date">
                             </el-date-picker>
                         </div>
                     </div>

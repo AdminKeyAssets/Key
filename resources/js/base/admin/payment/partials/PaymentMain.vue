@@ -19,7 +19,11 @@
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Date:</label>
                         <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.payment_date"></input>
+                            <el-date-picker
+                                v-model="form.payment_date"
+                                type="date"
+                                placeholder="Pick a payment day">
+                            </el-date-picker>
                         </div>
                     </div>
 
