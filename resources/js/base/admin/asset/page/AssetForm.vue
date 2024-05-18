@@ -13,6 +13,14 @@
                                :disabled="loading"
                                style="margin: 21px 1rem">Save
                     </el-button>
+
+                    <el-link
+                        type="primary"
+                        size="medium"
+                        icon="el-icon-money"
+                        v-if="this.form.id"
+                        :href="'/assets/' + this.form.id + '/payments'"
+                    ></el-link>
                 </div>
 
                 <AssetMain
@@ -90,7 +98,7 @@ export default {
             })
         },
 
-        async save(){
+        async save() {
             this.loading = true;
 
             await getData({
@@ -106,7 +114,7 @@ export default {
                     let data = response.data.data;
                     setTimeout(() => {
                         window.location.reload();
-                    },1000);
+                    }, 1000);
                 }
                 this.loading = false
             })

@@ -43,4 +43,7 @@ return [
     'asset'     => [
         'default'   => $default_permissions
     ],
+    'payment'     => [
+        'default'   => $default_permissions
+    ],
 ];

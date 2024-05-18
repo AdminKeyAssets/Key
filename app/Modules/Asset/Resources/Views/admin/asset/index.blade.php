@@ -4,14 +4,15 @@
     <!-- Page content -->
     <div id="page-content">
         <!-- Statistics Widgets Header -->
-    @include('admin::includes.header-section', ['name'   => 'Assets' ])
-    <!-- END Statistics Widgets Header -->
+        @include('admin::includes.header-section', ['name'   => 'Assets' ])
+        <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
         <div class="row">
             @can(getPermissionKey($moduleKey, 'create', true))
                 <div class="col-md-6">
-                    <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i class="el-icon-plus"></i> Create</a>
+                    <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i class="el-icon-plus"></i>
+                        Create</a>
                 </div>
             @endcan
 
@@ -19,9 +20,9 @@
         <br>
         <div class="block">
 
-        @include('admin::includes.success')
+            @include('admin::includes.success')
 
-        <!-- Responsive Full Content -->
+            <!-- Responsive Full Content -->
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('admin.result_not_found')</h3><br>
             @else
@@ -51,14 +52,12 @@
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['route' => route($moduleKey . '.edit', [ $item->id ])])
                                     @endcan
-                                    @if(!$item->slugable)
-                                        @can(getPermissionKey($moduleKey, 'delete', true))
-                                            <delete-component
-                                                :url="'{{ route($moduleKey . '.delete') }}'"
-                                                :id="{{ $item->id }}"
-                                            ></delete-component>
-                                        @endcan
-                                    @endif
+                                    @can(getPermissionKey($moduleKey, 'delete', true))
+                                        <delete-component
+                                            :url="'{{ route($moduleKey . '.delete') }}'"
+                                            :id="{{ $item->id }}"
+                                        ></delete-component>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

@@ -15,8 +15,9 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->integer('month_count');
+            $table->integer('month');
             $table->string('payment_date');
+            $table->double('amount');
             $table->boolean('status')->default(false);
             $table->foreignId('asset_id')->constrained()->onDelete('cascade');
             $table->timestamps();

@@ -23,4 +23,9 @@ class Asset extends Model
     {
         return $this->hasMany(AssetInformation::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

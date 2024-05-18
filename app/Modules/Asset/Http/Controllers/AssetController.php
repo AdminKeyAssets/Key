@@ -35,9 +35,6 @@ class AssetController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->successCreateText = $this->moduleTitle . $this->successCreateText;
-        $this->successUpdateText = $this->moduleTitle . $this->successUpdateText;
-        $this->successDeleteText = $this->moduleTitle . $this->successDeleteText;
         $this->baseData['moduleKey'] = 'asset';
         $this->baseData['baseRouteName'] = $this->baseData['baseRouteName'] . '.' . $this->baseData['moduleKey'] . '.';
     }
@@ -90,6 +87,7 @@ class AssetController extends BaseController
 
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
+                $this->baseData['item']['payments'] = $asset->payments;
 
             }
 
@@ -165,15 +163,12 @@ class AssetController extends BaseController
      * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
-     * @throws DeleteStaticPageException
      */
     public function destroy(Request $request)
     {
         try {
-            $slug = Asset::findOrFail($request->get('id'));
-            if (!$slug->slugable) {
-                $slug->delete();
-            }
+            Asset::findOrFail($request->get('id'))->delete();
+
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }

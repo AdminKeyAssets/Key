@@ -45,6 +45,10 @@ Vue.component('save-config', require('./base/components/admin/SaveConfig').defau
 Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').default);
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
 
+//Payment
+Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
+Vue.component('payment-view-page-form', require('./base/admin/payment/page/PaymentViewForm').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
