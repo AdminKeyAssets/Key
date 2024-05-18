@@ -13,54 +13,44 @@
                             <el-row>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Name:</label>
+                                    <label class="col-md-1 control-label">Month:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.name}}
+                                        {{form.month}}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Address:</label>
+                                    <label class="col-md-1 control-label">Payment Date:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.address}}
+                                        {{form.payment_date}}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Cadastral Number:</label>
+                                    <label class="col-md-1 control-label">Amount:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.cadastral_number}}
+                                        {{form.amount}}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Investor:</label>
+                                    <label class="col-md-1 control-label">Status:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select" disabled>
-                                            <el-option
-                                                v-for="item in investors"
-                                                :key="item.id"
-                                                :label="item.name"
-                                                :value="item.id">
-                                            </el-option>
-                                        </el-select>
+                                        <el-switch
+                                            disabled
+                                            v-model="form.status"
+                                            active-color="#13ce66"
+                                            inactive-color="#ff4949">
+                                        </el-switch>
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Extra Details:</label>
+                                    <label class="col-md-1 control-label">File:</label>
                                     <div class="col-md-10 uppercase-medium">
-
-                                        <el-form-item
-                                            v-for="(extraDetail) in form.extraDetails"
-                                            :key="extraDetail.id">
-                                            <div class="col-md-3 uppercase-medium">
-                                                {{extraDetail.key}}:
-                                            </div>
-                                            <div class="col-md-5 uppercase-medium">
-                                                {{extraDetail.value}}
-                                            </div>
-                                        </el-form-item>
+                                        <p v-if="form.attachment"><a :href="form.attachment" target="_blank">View
+                                            Attachment</a>
+                                        </p>
                                     </div>
                                 </div>
 
@@ -96,7 +86,6 @@ export default {
             form: {
                 id: this.id
             },
-            investors: {}
 
         }
     },
@@ -127,10 +116,11 @@ export default {
 
                     this.routes = data.routes;
                     this.options = data.options;
-                    this.investors = data.investors;
+
                     if (data.item) {
                         this.form = data.item;
                     }
+                    this.form.status = data.item.status ? true : false
                     this.form.id = this.id;
                 }
                 this.loading = false

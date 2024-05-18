@@ -16,10 +16,10 @@
                     <i class="el-icon-back"></i>
                 </a>
 
-                <asset-view-page-form
+                <payment-view-page-form
                     :id="{{ $data['id'] }}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
-                </asset-view-page-form>
+                </payment-view-page-form>
 
             </div>
         </div>

@@ -22,7 +22,7 @@
                             <el-date-picker
                                 v-model="form.payment_date"
                                 type="date"
-                                placeholder="Pick a payment day">
+                                placeholder="Pick a payment date">
                             </el-date-picker>
                         </div>
                     </div>
@@ -49,7 +49,13 @@
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Status:</label>
                         <div class="col-md-10 uppercase-medium">
-<!--                            <input @change="handleFileUpload" style="display: block !important;" type="file"/>-->
+                            <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
+                                Attachment</a>
+                                <el-button type="danger" icon="el-icon-delete" size="small"
+                                           @click="removeFile"
+                                ></el-button>
+                            </p>
+                            <input v-else type="file" class="form-control" @change="onFileChange">
                         </div>
                     </div>
 
@@ -70,13 +76,10 @@ export default {
         'routes',
         'updateData',
         'item',
-        'investors'
     ],
     data() {
         return {
-            form: {
-                status: false
-            },
+            form: {},
             loading: false,
             editor: ClassicEditor,
             addDetailIsBtnDisabled: true,
@@ -89,11 +92,19 @@ export default {
         'item'() {
             if (this.item) {
                 this.form = this.item;
+                if(this.item.status){
+                    this.form.status = true;
+                }
             }
         }
     },
     methods: {
-
+        onFileChange(e) {
+            this.form.attachment = e.target.files[0];
+        },
+        removeFile() {
+            this.form.attachment = null;
+        },
     }
 }
 

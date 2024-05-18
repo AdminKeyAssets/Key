@@ -2,6 +2,19 @@
     <div>
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
+                <div class="project-title">
+
+                </div>
+                <div class="project-buttons">
+                    <el-link
+                        type="success"
+                        size="medium"
+                        style="border: 1px solid; padding: 7px 15px; border-radius: 5px"
+                        icon="el-icon-money"
+                        v-if="this.form.id"
+                        :href="'/assets/' + this.form.id + '/payments'"
+                    >Payments</el-link>
+                </div>
                 <div>
                     <div class="block">
                         <el-form v-loading="loading"

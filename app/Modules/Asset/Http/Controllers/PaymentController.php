@@ -9,6 +9,7 @@ use App\Modules\Asset\Models\Payment;
 use App\Utilities\ServiceResponse;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Mockery\Exception;
 
 class PaymentController extends BaseController
@@ -76,7 +77,7 @@ class PaymentController extends BaseController
                 $payment = Payment::findOrFail($request->get('id'));
 
                 $this->baseData['item'] = $payment;
-
+                $this->baseData['item']['attachment'] = $payment->attachment ? Storage::url($payment->attachment) : null;
             }
 
 
@@ -89,14 +90,43 @@ class PaymentController extends BaseController
 
     public function store(PaymentRequest $request, $assetId)
     {
-        $asset = Payment::updateOrCreate(['id' => $request->id], [
+        $path = null;
+
+        if (isset($request->id)) {
+            $payment = Payment::where('id', $request->id)->first();
+            if ($request->hasFile('attachment')) {
+                if ($payment->attachment && Storage::disk('public')->exists($payment->attachment)) {
+                    Storage::disk('public')->delete($payment->attachment);
+                }
+
+                $file = $request->file('attachment');
+                $path = $file->store('uploads', 'public');
+
+            } else if ($request->input('attachment') === null) {
+                if ($payment->attachment && Storage::disk('public')->exists($payment->attachment)) {
+                    Storage::disk('public')->delete($payment->attachment);
+                }
+                $path = null;
+            }
+
+        } else {
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $path = $file->store('uploads', 'public');
+
+            }
+        }
+
+        $updatedPayment = Payment::updateOrCreate(['id' => $request->id], [
             'asset_id' => $assetId,
             'month' => $request->month,
             'payment_date' => $request->payment_date,
             'amount' => $request->amount,
-            'status' => $request->status,
+            'status' => $request->status ? 1 : 0,
+            'attachment' => $path
         ]);
 
+        $this->baseData['item'] = $updatedPayment;
 
         return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
     }
@@ -128,7 +158,6 @@ class PaymentController extends BaseController
 
             $this->baseData['assetId'] = $assetId;
             $this->baseData['id'] = $id;
-            dd($this->baseData);
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
         }

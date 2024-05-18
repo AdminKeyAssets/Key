@@ -19,7 +19,6 @@
                 <PaymentMain
                     :routes="routes"
                     :updateData="updateData"
-                    :investors="investors"
                     :item="this.form && this.form ? this.form : undefined"
                 ></PaymentMain>
             </div>
@@ -50,7 +49,6 @@ export default {
             form: {
                 id: this.id
             },
-            investors: {}
 
         }
     },
@@ -66,9 +64,11 @@ export default {
          */
         async getSaveData() {
             this.loading = true;
-
             await getData({
                 method: 'POST',
+                config: {
+                    headers: { 'content-type': 'multipart/form-data' }
+                },
                 url: this.getSaveDataRoute,
                 data: this.form
             }).then(response => {
@@ -81,7 +81,7 @@ export default {
 
                     this.routes = data.routes;
                     this.options = data.options;
-                    this.investors = data.investors;
+
                     if (data.item) {
                         this.form = data.item;
                     }
@@ -94,23 +94,29 @@ export default {
         async save() {
             this.loading = true;
 
-            await getData({
-                method: 'POST',
-                url: this.routes.save,
-                data: this.form
-            }).then(response => {
-                // Parse response notification.
-                responseParse(response);
+            let formData = new FormData();
+            for (let key in this.form) {
+                formData.append(key, this.form[key]);
+            }
 
-                if (response.status == 200) {
-                    // Response data.
-                    let data = response.data.data;
+            axios.post(this.routes.save, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    responseParse(response);
+
+                    this.loading = false;
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
-                }
-                this.loading = false
-            })
+                })
+                .catch(error => {
+                    this.loading = false;
+                    // Handle error
+                    console.error(error);
+                });
         },
 
         /**

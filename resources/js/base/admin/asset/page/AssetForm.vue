@@ -15,12 +15,13 @@
                     </el-button>
 
                     <el-link
-                        type="primary"
+                        type="success"
                         size="medium"
+                        style="border: 1px solid; padding: 7px 15px; border-radius: 5px"
                         icon="el-icon-money"
                         v-if="this.form.id"
                         :href="'/assets/' + this.form.id + '/payments'"
-                    ></el-link>
+                    >Payments</el-link>
                 </div>
 
                 <AssetMain

@@ -20,6 +20,7 @@ class CreatePaymentsTable extends Migration
             $table->double('amount');
             $table->boolean('status')->default(false);
             $table->foreignId('asset_id')->constrained()->onDelete('cascade');
+            $table->string('attachment')->nullable();
             $table->timestamps();
         });
     }

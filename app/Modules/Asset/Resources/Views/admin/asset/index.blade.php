@@ -46,6 +46,9 @@
                                 <td>{!! $item->cadastral_number !!}</td>
 
                                 <td class="text-center">
+                                    @can(getPermissionKey('payment', 'index', true))
+                                        @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
+                                    @endcan
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.view', [ $item->id ])])
                                     @endcan
