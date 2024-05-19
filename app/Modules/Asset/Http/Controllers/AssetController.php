@@ -6,6 +6,7 @@ use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\AssetAttachment;
 use App\Utilities\ServiceResponse;
 use DB;
 use Illuminate\Http\Request;
@@ -87,6 +88,7 @@ class AssetController extends BaseController
 
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
+                $this->baseData['item']['attachments'] = $asset->attachments;
                 $this->baseData['item']['payments'] = $asset->payments;
 
             }
@@ -113,13 +115,26 @@ class AssetController extends BaseController
             'total_price' => $request->total_price,
 
         ]);
-        $asset->informations()->delete();
 
+        $asset->attachments()->delete();
+//        dd($request->file('attachments'));
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('uploads', 'public');
+                AssetAttachment::create([
+                    'asset_id' => $asset->id,
+                    'path' => $path,
+                    'name' => $file->getClientOriginalName()
+                ]);
+            }
+        }
+
+        $asset->informations()->delete();
         if (!empty($request->extraDetails)) {
-            foreach ($request->extraDetails as $info) {
+            foreach (json_decode($request->extraDetails) as $info) {
                 $asset->informations()->create([
-                    'key' => $info["key"],
-                    'value' => $info["value"],
+                    'key' => $info->key,
+                    'value' => $info->value,
                 ]);
             }
         }

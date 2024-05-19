@@ -77,6 +77,23 @@
                     </div>
 
                     <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Attachments:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <input type="file" @change="onFileChange" multiple>
+                            <div v-if="form.attachments">
+                                <ul>
+                                    <li v-for="(file, index) in form.attachments" :key="index">
+                                        <img v-if="file.preview" :src="file.preview" alt="preview" style="max-width: 100px;"/>
+                                        <a v-else :href="file.url" target="_blank">{{ file.name }}</a>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click="removeAttachment(index)"></el-button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
                         <label class="col-md-1 control-label">Extra Details:</label>
                         <div class="col-md-10 uppercase-medium">
 
@@ -118,19 +135,16 @@ export default {
     data() {
         return {
             form: {
-                extraDetails: [{
-                    id: 1,
-                    key: '',
-                    value: ''
-                }]
+                extraDetails: [],
+                attachments: []
             },
             loading: false,
             editor: ClassicEditor,
             addDetailIsBtnDisabled: true,
+            fileList: [],
         }
     },
     updated() {
-        // this.addDetailIsDisabled();
         this.updateData(this.form);
     },
     watch: {
@@ -143,7 +157,6 @@ export default {
     methods: {
         removeDetail(item) {
             var index = this.form.extraDetails.indexOf(item);
-            console.log(index)
             if (index !== 0 && index !== -1) {
                 this.form.extraDetails.splice(index, 1);
             }
@@ -154,6 +167,25 @@ export default {
                     key: '',
                     value: ''
                 });
+        },
+
+        onFileChange(e) {
+            const files = e.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.attachments.push({
+                        file: file,
+                        preview: file.type.startsWith('image/') ? e.target.result : null,
+                        name: file.name,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeAttachment(index) {
+            this.form.attachments.splice(index, 1);
         },
     }
 }
