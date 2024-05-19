@@ -50,6 +50,7 @@
                                 v-model="form.delivery_date"
                                 format="yyyy/MM/dd"
                                 type="date"
+                                value-format="yyyy/MM/dd"
                                 placeholder="Pick a delivery date">
                             </el-date-picker>
                         </div>

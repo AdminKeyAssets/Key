@@ -22,6 +22,7 @@
                             <el-date-picker
                                 v-model="form.payment_date"
                                 format="yyyy/MM/dd"
+                                value-format="yyyy/MM/dd"
                                 type="date"
                                 placeholder="Pick a payment date">
                             </el-date-picker>
