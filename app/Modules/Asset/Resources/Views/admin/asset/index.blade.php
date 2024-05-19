@@ -30,24 +30,22 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th> ID</th>
-                            <th> Icon</th>
                             <th> Name</th>
-                            <th> Cadastral Number</th>
+                            <th> City</th>
+                            <th> Delivery Date</th>
+                            <th> Area (m2)</th>
+                            <th> Price</th>
                             <th width="10%" class="text-center">@lang('admin.action')</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->id !!}</td>
-                                <td>
-                                    @if($item->icon)
-                                    <img src="{!! Storage::url($item->icon) !!}" width="70px">
-                                    @endif
-                                </td>
                                 <td>{!! $item->name !!}</td>
-                                <td>{!! $item->cadastral_number !!}</td>
+                                <td>{!! $item->city !!}</td>
+                                <td>{!! $item->delivery_date !!}</td>
+                                <td>{!! $item->area !!}</td>
+                                <td>{!! $item->total_price !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey('payment', 'index', true))

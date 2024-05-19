@@ -13,7 +13,8 @@
                         icon="el-icon-money"
                         v-if="this.form.id"
                         :href="'/assets/' + this.form.id + '/payments'"
-                    >Payments</el-link>
+                    >Payments
+                    </el-link>
                 </div>
                 <div>
                     <div class="block">
@@ -28,35 +29,70 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Icon:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                       <img :src="form.icon" width="100px">
+                                        <img :src="form.icon" width="100px">
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.name}}
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">City:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ form.city }}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Address:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.address}}
+                                        {{ form.address }}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Delivery Date:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <el-date-picker
+                                            v-model="form.delivery_date"
+                                            format="yyyy/MM/dd"
+                                            type="date"
+                                            disabled>
+                                        </el-date-picker>
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Area:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ form.area }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Price:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ form.price }}
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Cadastral Number:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.cadastral_number}}
+                                        {{ form.cadastral_number }}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Investor:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select" disabled>
+                                        <el-select v-model="form.investor_id" :value="form.investor_id" filterable
+                                                   placeholder="Select" disabled>
                                             <el-option
                                                 v-for="item in investors"
                                                 :key="item.id"
@@ -70,9 +106,12 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Attached Media:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        <li style="display: inline-block; margin-right: 10px" v-for="(file, index) in form.attachments" :key="index">
-                                            <img v-if="file.preview" :src="file.preview" alt="preview" style="max-width: 200px;"/>
-                                            <img v-else-if="file.type === 'image'" :src="file.path" alt="preview" style="max-width: 200px;"/>
+                                        <li style="display: inline-block; margin-right: 10px"
+                                            v-for="(file, index) in form.attachments" :key="index">
+                                            <img v-if="file.preview" :src="file.preview" alt="preview"
+                                                 style="max-width: 200px;"/>
+                                            <img v-else-if="file.type === 'image'" :src="file.path" alt="preview"
+                                                 style="max-width: 200px;"/>
                                             <a v-else :href="file.path" target="_blank">{{ file.name }}</a>
                                         </li>
                                     </div>
@@ -86,10 +125,10 @@
                                             v-for="(extraDetail) in form.extraDetails"
                                             :key="extraDetail.id">
                                             <div class="col-md-3 uppercase-medium">
-                                                {{extraDetail.key}}:
+                                                {{ extraDetail.key }}:
                                             </div>
                                             <div class="col-md-5 uppercase-medium">
-                                                {{extraDetail.value}}
+                                                {{ extraDetail.value }}
                                             </div>
                                         </el-form-item>
                                     </div>
@@ -161,7 +200,7 @@ export default {
                     this.investors = data.investors;
                     if (data.item) {
                         this.form = data.item;
-                        if(data.item.files){
+                        if (data.item.files) {
                             this.form.attachments = data.item.files;
                         }
                     }
