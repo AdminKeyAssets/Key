@@ -10,6 +10,19 @@
                 <el-row>
 
                     <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Upload Icon:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <input type="file" @change="onIconChange" accept="image/*">
+                            <div v-if="form.icon">
+                                <img v-if="form.iconPreview" :src="form.iconPreview" alt="Icon Preview" style="max-width: 100px;"/>
+                                <img v-else :src="form.icon" alt="Icon Preview" style="max-width: 100px;"/>
+                                <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                           @click="removeIcon"></el-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
                         <label class="col-md-1 control-label">Name:</label>
                         <div class="col-md-10 uppercase-medium">
                             <input class="form-control" :disabled="loading" v-model="form.name"></input>
@@ -82,9 +95,10 @@
                             <input type="file" @change="onFileChange" multiple>
                             <div v-if="form.attachments">
                                 <ul>
-                                    <li v-for="(file, index) in form.attachments" :key="index">
+                                    <li v-for="(file, index) in form.attachments" :key="index" style="display: inline-block; margin-right: 10px">
                                         <img v-if="file.preview" :src="file.preview" alt="preview" style="max-width: 100px;"/>
-                                        <a v-else :href="file.url" target="_blank">{{ file.name }}</a>
+                                        <img v-else-if="file.type === 'image'" :src="file.path" alt="preview" style="max-width: 100px;"/>
+                                        <a v-else :href="file.path" target="_blank">{{ file.name }}</a>
                                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                    @click="removeAttachment(index)"></el-button>
                                     </li>
@@ -136,7 +150,11 @@ export default {
         return {
             form: {
                 extraDetails: [],
-                attachments: []
+                attachments: [],
+                existingAttachments: [],
+                attachmentsToRemove: [],
+                icon: null,
+                iconPreview: null
             },
             loading: false,
             editor: ClassicEditor,
@@ -151,6 +169,7 @@ export default {
         'item'() {
             if (this.item) {
                 this.form = this.item;
+                this.form.existingAttachments = this.item.existingAttachments || [];
             }
         }
     },
@@ -186,6 +205,30 @@ export default {
         },
         removeAttachment(index) {
             this.form.attachments.splice(index, 1);
+            if(this.form.existingAttachments.length){
+                this.fileList.push(this.form.existingAttachments[index].id);
+                this.form.attachmentsToRemove = this.fileList;
+                this.form.existingAttachments.splice(index, 1);
+            }
+        },
+
+        onIconChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.icon = file;
+                    this.form.iconPreview = e.target.result;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeIcon() {
+            this.form.icon = null;
+            this.form.iconPreview = null;
         },
     }
 }

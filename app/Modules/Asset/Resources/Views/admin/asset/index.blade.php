@@ -41,7 +41,11 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{!! $item->id !!}</td>
-                                <td>{!! $item->icon !!}</td>
+                                <td>
+                                    @if($item->icon)
+                                    <img src="{!! Storage::url($item->icon) !!}" width="70px">
+                                    @endif
+                                </td>
                                 <td>{!! $item->name !!}</td>
                                 <td>{!! $item->cadastral_number !!}</td>
 

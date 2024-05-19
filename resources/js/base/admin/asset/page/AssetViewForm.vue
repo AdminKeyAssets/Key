@@ -26,6 +26,13 @@
                             <el-row>
 
                                 <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Icon:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                       <img :src="form.icon" width="100px">
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{form.name}}
@@ -57,6 +64,17 @@
                                                 :value="item.id">
                                             </el-option>
                                         </el-select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Attached Media:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <li style="display: inline-block; margin-right: 10px" v-for="(file, index) in form.attachments" :key="index">
+                                            <img v-if="file.preview" :src="file.preview" alt="preview" style="max-width: 200px;"/>
+                                            <img v-else-if="file.type === 'image'" :src="file.path" alt="preview" style="max-width: 200px;"/>
+                                            <a v-else :href="file.path" target="_blank">{{ file.name }}</a>
+                                        </li>
                                     </div>
                                 </div>
 
@@ -143,7 +161,11 @@ export default {
                     this.investors = data.investors;
                     if (data.item) {
                         this.form = data.item;
+                        if(data.item.files){
+                            this.form.attachments = data.item.files;
+                        }
                     }
+
                     this.form.id = this.id;
                 }
                 this.loading = false

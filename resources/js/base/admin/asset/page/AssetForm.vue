@@ -96,6 +96,11 @@ export default {
 
                     if (data.item) {
                         this.form = data.item;
+                        if(data.item.files){
+                            const attachments = data.item.attachments;
+                            this.form.attachments = data.item.files;
+                            this.form.existingAttachments = attachments || [];
+                        }
                     }
                     this.form.id = this.id;
                 }
@@ -113,7 +118,14 @@ export default {
                     this.form.attachments.forEach(fileObj => {
                         formData.append('attachments[]', fileObj.file);
                     });
-                }else if (key === 'extraDetails') {
+                }
+                else if (key === 'attachmentsToRemove') {
+                    formData.append(key, JSON.stringify(this.form.attachmentsToRemove));
+                }
+                else if (key === 'icon' && this.form[key]) {
+                    formData.append(key, this.form[key]);
+                }
+                else if (key === 'extraDetails') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else {
                     formData.append(key, this.form[key]);

@@ -17,6 +17,7 @@ class CreateAssetAttachmentsTable extends Migration
             $table->id();
             $table->string('path')->nullable();
             $table->string('name')->nullable();
+            $table->string('type')->nullable();
             $table->foreignId('asset_id')->constrained()->onDelete('cascade');
             $table->boolean('is_main')->default(false);
             $table->timestamps();

@@ -10,6 +10,7 @@ class AssetAttachment extends Model
         'path',
         'asset_id',
         'name',
+        'type',
         'is_main'
     ];
 }

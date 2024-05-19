@@ -11,6 +11,7 @@ use App\Utilities\ServiceResponse;
 use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Mockery\Exception;
 
 class AssetController extends BaseController
@@ -88,9 +89,21 @@ class AssetController extends BaseController
 
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
-                $this->baseData['item']['attachments'] = $asset->attachments;
                 $this->baseData['item']['payments'] = $asset->payments;
-
+                $files = [];
+                if ($asset->attachments) {
+                    foreach ($asset->attachments as $item) {
+                        $files[] = [
+                            'name' => $item->name,
+                            'path' => Storage::url($item->path),
+                            'type' => substr($item->type, 0, 5) == 'image' ? 'image' : null
+                        ];
+                    }
+                }
+                $this->baseData['item']['files'] = $files;
+                if($asset->icon){
+                    $this->baseData['item']['icon'] = Storage::url($asset->icon);
+                }
             }
 
             $this->baseData['investors'] = Admin::role(['Investor'])->get(['name', 'id']);
@@ -104,6 +117,32 @@ class AssetController extends BaseController
 
     public function store(AssetRequest $request)
     {
+        $path = null;
+        if (isset($request->id)) {
+            $asset = Asset::where('id', $request->id)->first();
+            if ($request->hasFile('icon')) {
+                if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
+                    Storage::disk('public')->delete($asset->icon);
+                }
+
+                $file = $request->file('icon');
+                $path = $file->store('uploads', 'public');
+
+            } else if ($request->input('icon') === null) {
+                if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
+                    Storage::disk('public')->delete($asset->icon);
+                }
+                $path = null;
+            }
+
+        } else {
+            if ($request->hasFile('icon')) {
+                $file = $request->file('icon');
+                $path = $file->store('uploads', 'public');
+
+            }
+        }
+
         $asset = Asset::updateOrCreate(['id' => $request->id], [
             'name' => $request->name,
             'address' => $request->address,
@@ -113,18 +152,29 @@ class AssetController extends BaseController
             'delivery_date' => $request->delivery_date,
             'area' => $request->area,
             'total_price' => $request->total_price,
-
+            'icon' => $path
         ]);
 
-        $asset->attachments()->delete();
-//        dd($request->file('attachments'));
+
+        if ($request->has('attachmentsToRemove')) {
+            $attachmentsToRemove = json_decode($request->attachmentsToRemove, true);
+            foreach ($attachmentsToRemove as $attachmentId) {
+                $attachment = AssetAttachment::find($attachmentId);
+                if ($attachment) {
+                    Storage::disk('public')->delete($attachment->path);
+                    $attachment->delete();
+                }
+            }
+        }
+
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $path = $file->store('uploads', 'public');
                 AssetAttachment::create([
                     'asset_id' => $asset->id,
                     'path' => $path,
-                    'name' => $file->getClientOriginalName()
+                    'name' => $file->getClientOriginalName(),
+                    'type' => $file->getMimeType()
                 ]);
             }
         }
