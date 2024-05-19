@@ -61,7 +61,7 @@
                                             v-model="form.delivery_date"
                                             format="yyyy/MM/dd"
                                             type="date"
-                                            disabled>
+                                            readonly>
                                         </el-date-picker>
                                     </div>
                                 </div>
