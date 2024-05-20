@@ -3,8 +3,8 @@
 $default_permissions = [
 
     'index'       => [
-        'key' => '{module_name}_index',
-        'label' => '{module_name} index'
+        'key' => '{module_name}_list',
+        'label' => '{module_name} list'
     ],
     'create'       => [
         'key' => '{module_name}_create',
@@ -17,6 +17,10 @@ $default_permissions = [
     'delete'       => [
         'key' => '{module_name}_delete',
         'label' => '{module_name} delete'
+    ],
+    'view'       => [
+        'key' => '{module_name}_view',
+        'label' => '{module_name} view'
     ]
 
 ];
@@ -36,4 +40,10 @@ return [
         'default'   => $default_permissions
     ],
 
+    'asset'     => [
+        'default'   => $default_permissions
+    ],
+    'payment'     => [
+        'default'   => $default_permissions
+    ],
 ];
