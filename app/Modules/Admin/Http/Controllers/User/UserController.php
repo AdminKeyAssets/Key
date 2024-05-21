@@ -6,6 +6,7 @@ use App\Modules\Admin\Helper\TextHelper;
 use App\Modules\Admin\Helper\UserHelper;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\User\SaveUserRequest;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Repositories\Contracts\IAdminRepository;
 use App\Modules\Admin\Repositories\Contracts\IPermissionRepository;
 use App\Modules\Admin\Repositories\Contracts\IRoleRepository;
@@ -13,6 +14,7 @@ use App\Utilities\ServiceResponse;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class UserController extends BaseController
@@ -99,7 +101,6 @@ class UserController extends BaseController
      */
     public function getCreateData(Request $request)
     {
-
         try {
 
             $this->baseData['options']['roles'] = $this->roleRepository->all();
@@ -119,10 +120,10 @@ class UserController extends BaseController
      */
     public function save(SaveUserRequest $request)
     {
+//        dd(Auth::user()->getAuthIdentifier());
         try {
 
-            // Save role.
-            $this->adminRepository->saveData($request);
+            $user = $this->adminRepository->saveData($request);
 
         } catch (\Exception $ex) {
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);

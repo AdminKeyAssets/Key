@@ -9,6 +9,7 @@ use App\Repositories\Eloquent\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Auth;
 
 class AdminRepository extends BaseRepository implements IAdminRepository
 {
@@ -51,7 +52,7 @@ class AdminRepository extends BaseRepository implements IAdminRepository
              */
             $this->request = $request;
 
-            $data = $request->only(['name', 'email']);
+            $data = $request->only(['name', 'email', 'phone']);
 
             if ($this->request->get('password')) {
                 $data['password'] = bcrypt($this->request->get('password'));
@@ -82,12 +83,15 @@ class AdminRepository extends BaseRepository implements IAdminRepository
              */
             $this->request = $request;
 
-            $data = $request->only(['name', 'email']);
+            $data = $request->only(['name', 'email', 'phone']);
 
             if ($this->request->get('password')) {
                 $data['password'] = bcrypt($this->request->get('password'));
             }
 
+            if(Auth::user()->getAuthIdentifier()){
+                $data['parent_id'] = Auth::user()->getAuthIdentifier();
+            }
             if ( !empty($request->get('id')) ) {
 
                 $this->admin = $this->find($request->get('id'));

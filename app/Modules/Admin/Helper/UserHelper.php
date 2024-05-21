@@ -50,6 +50,7 @@ class UserHelper
             //Inputs
             'name'                              => __('Name'),
             'email'                             => __('Email'),
+            'phone'                             => __('Phone'),
             'password'                          => __('Password'),
             'generate_password'                 => __('Generate Password'),
             'select_role_placeholder'           => __('Select Role'),

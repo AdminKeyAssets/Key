@@ -87,6 +87,14 @@ class AssetController extends BaseController
             if ($request->get('id')) {
                 $asset = Asset::findOrFail($request->get('id'));
 
+                $salesManager = null;
+                if ($asset->investor_id) {
+                    $investor = Admin::where('id', $asset->investor_id)->first();
+                    if($investor->parent_id){
+                        $salesManager = Admin::where('id', $investor->parent_id)->first();
+                    }
+                }
+
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
                 $this->baseData['item']['payments'] = $asset->payments;
@@ -101,12 +109,13 @@ class AssetController extends BaseController
                     }
                 }
                 $this->baseData['item']['files'] = $files;
-                if($asset->icon){
+                if ($asset->icon) {
                     $this->baseData['item']['icon'] = Storage::url($asset->icon);
                 }
             }
 
             $this->baseData['investors'] = Admin::role(['Investor'])->get(['name', 'id']);
+            $this->baseData['salesManager'] = $salesManager;
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
