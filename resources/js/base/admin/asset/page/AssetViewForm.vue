@@ -17,12 +17,12 @@
                     </el-link>
                 </div>
                 <div>
-                    <div class="block">
+                    <div class="block col-md-9">
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
                                  element-loading-background="rgba(0, 0, 0, 0.0)"
-                                 ref="form" :model="form" class="form-horizontal form-bordered">
+                                 class="form-horizontal form-bordered">
 
                             <el-row>
 
@@ -137,6 +137,30 @@
                             </el-row>
                         </el-form>
                     </div>
+                    <div class="block col-md-3">
+                        <el-form v-loading="loading"
+                                 element-loading-text="Loading..."
+                                 element-loading-spinner="el-icon-loading"
+                                 element-loading-background="rgba(0, 0, 0, 0.0)"
+                                 class="form-horizontal form-bordered">
+                            <el-card class="box-card">
+                                <div slot="header" class="clearfix">
+                                    <span>Sales Manager</span>
+                                </div>
+                                <div class="text item" v-if="salesManager">
+                                    <p v-if="salesManager.name">
+                                        Name: {{this.salesManager.name}}
+                                    </p>
+                                    <p v-if="salesManager.phone">
+                                        Phone: {{this.salesManager.phone}}
+                                    </p>
+                                    <p v-if="salesManager.email">
+                                        Email: {{this.salesManager.email}}
+                                    </p>
+                                </div>
+                            </el-card>
+                        </el-form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -166,7 +190,8 @@ export default {
             form: {
                 id: this.id
             },
-            investors: {}
+            investors: {},
+            salesManager: {}
 
         }
     },
@@ -198,6 +223,7 @@ export default {
                     this.routes = data.routes;
                     this.options = data.options;
                     this.investors = data.investors;
+                    this.salesManager = data.salesManager;
                     if (data.item) {
                         this.form = data.item;
                         if (data.item.files) {

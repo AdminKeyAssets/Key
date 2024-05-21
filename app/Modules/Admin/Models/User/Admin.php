@@ -31,9 +31,7 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
     protected $hidden = [
         'password', 'remember_token',
     ];
-    protected $attributes = [
-        'phone' => true
-    ];
+
     /**
      * @var array
      */
