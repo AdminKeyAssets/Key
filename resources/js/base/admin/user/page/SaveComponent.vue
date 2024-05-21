@@ -30,6 +30,16 @@
 
                 <div class="form-group">
 
+                    <label class="col-md-2 control-label">{{ lang.phone }}:</label>
+                    <div class="col-md-6">
+                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                  v-model="form.phone"></el-input>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
                     <label class="col-md-2 control-label">{{ lang.password }} <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit
@@ -123,6 +133,7 @@
                     id: this.user? this.user.id : '',
                     name: this.user ? this.user.name : '',
                     email: this.user ? this.user.email : '',
+                    phone: this.user ? this.user.phone : '',
                     roles: this.user ? this.user.rolesId : [],
                     password: ''
                 }
