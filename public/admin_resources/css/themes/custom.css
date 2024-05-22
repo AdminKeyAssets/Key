@@ -762,3 +762,6 @@ padding: 60px;
 .login-title .logo {
     display: flex;
 }
+#sidebar.sidebar-show{
+    width: 50% !important;
+}
