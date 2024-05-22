@@ -48,7 +48,7 @@
                     <ul class="nav navbar-nav-custom">
                         <!-- Main Sidebar Toggle Button -->
                         <li>
-                            <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');this.blur();">
+                            <a href="javascript:void(0)" onclick="toggleClass();this.blur();">
                                 <i class="fa fa-bars fa-fw"></i>
                             </a>
                         </li>
@@ -109,3 +109,10 @@
     <a href="#" id="to-top"><i class="fa fa-angle-double-up"></i></a>
     <!-- END User Settings -->
 @endsection
+
+<script>
+    function toggleClass() {
+        var element = document.getElementById("sidebar");
+        element.classList.toggle("sidebar-show");
+    }
+</script>
