@@ -84,10 +84,11 @@ class AssetController extends BaseController
                 'save' => route($this->baseName . 'store'),
                 'edit' => route($this->baseName . 'edit', []),
             ];
+            $salesManager = null;
+
             if ($request->get('id')) {
                 $asset = Asset::findOrFail($request->get('id'));
 
-                $salesManager = null;
                 if ($asset->investor_id) {
                     $investor = Admin::where('id', $asset->investor_id)->first();
                     if($investor->parent_id){
