@@ -12,4 +12,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Asset::class);
     }
+
+    public function scopeIdDescending($query)
+    {
+        return $query->orderBy('id','DESC');
+    }
 }

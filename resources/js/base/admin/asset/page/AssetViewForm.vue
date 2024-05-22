@@ -76,7 +76,7 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Price:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{ form.price }}
+                                        {{ form.total_price }}
                                     </div>
                                 </div>
 
@@ -138,28 +138,45 @@
                         </el-form>
                     </div>
                     <div class="block col-md-3">
-                        <el-form v-loading="loading"
-                                 element-loading-text="Loading..."
-                                 element-loading-spinner="el-icon-loading"
-                                 element-loading-background="rgba(0, 0, 0, 0.0)"
-                                 class="form-horizontal form-bordered">
-                            <el-card class="box-card">
-                                <div slot="header" class="clearfix">
+                        <div v-loading="loading"
+                             class="form-horizontal form-bordered">
+                            <el-card class="box-card" v-if="salesManager">
+                                <div slot="header" class="clearfix box-card-header">
                                     <span>Sales Manager</span>
                                 </div>
-                                <div class="text item" v-if="salesManager">
+                                <div class="text item">
                                     <p v-if="salesManager.name">
-                                        Name: {{this.salesManager.name}}
+                                        Name: {{ this.salesManager.name }}
                                     </p>
                                     <p v-if="salesManager.phone">
-                                        Phone: {{this.salesManager.phone}}
+                                        Phone: {{ this.salesManager.phone }}
                                     </p>
                                     <p v-if="salesManager.email">
-                                        Email: {{this.salesManager.email}}
+                                        Email: {{ this.salesManager.email }}
                                     </p>
                                 </div>
                             </el-card>
-                        </el-form>
+
+                            <el-card class="box-card" v-if="nextPayment" style="margin-top: 20px">
+                                <div slot="header" class="clearfix box-card-header">
+                                    <span>Next Payment</span> <i
+                                    v-if="Date.now() < new Date(this.nextPayment.payment_date)"
+                                    class="el-icon-warning"
+                                    style="color: red"></i>
+                                </div>
+                                <div class="text item">
+                                    <p v-if="nextPayment.payment_date">
+                                        Date: {{ this.nextPayment.payment_date }}
+                                    </p>
+                                    <p v-if="nextPayment.amount">
+                                        Amount: {{ this.nextPayment.amount }}
+                                    </p>
+                                    <p v-if="nextPayment.month">
+                                        Month: {{ this.nextPayment.month }}
+                                    </p>
+                                </div>
+                            </el-card>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -191,7 +208,8 @@ export default {
                 id: this.id
             },
             investors: {},
-            salesManager: {}
+            salesManager: {},
+            nextPayment: {}
 
         }
     },
@@ -224,6 +242,7 @@ export default {
                     this.options = data.options;
                     this.investors = data.investors;
                     this.salesManager = data.salesManager;
+                    this.nextPayment = data.nextPayment;
                     if (data.item) {
                         this.form = data.item;
                         if (data.item.files) {
@@ -241,3 +260,26 @@ export default {
 }
 
 </script>
+
+<style>
+.box-card-header{
+    font-weight: bold;
+}
+.text {
+    font-size: 14px;
+}
+
+.item {
+    margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both
+}
+
+</style>
