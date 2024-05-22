@@ -41,7 +41,7 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
         /**
          * Delete user.
          */
-        Route::delete('delete', $userController . '@delete')
+        Route::post('delete', $userController . '@delete')
             ->name('delete')
             ->middleware(['permission:'.getPermissionKey($moduleName, 'delete', true)]);
 
