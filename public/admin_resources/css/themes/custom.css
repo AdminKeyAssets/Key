@@ -762,6 +762,10 @@ padding: 60px;
 .login-title .logo {
     display: flex;
 }
-#sidebar.sidebar-show{
-    width: 50% !important;
+@media screen and (max-width: 992px){
+    #sidebar.sidebar-show{
+        width: 50% !important;
+        max-width: 200px;
+    }
 }
+
