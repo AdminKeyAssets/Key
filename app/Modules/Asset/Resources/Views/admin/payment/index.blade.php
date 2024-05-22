@@ -43,7 +43,13 @@
                                 <td>{!! $item->month !!}</td>
                                 <td>{!! $item->payment_date !!}</td>
                                 <td>{!! $item->amount !!}</td>
-                                <td>{!! $item->status !!}</td>
+                                <td>
+                                    @if($item->status)
+                                        <i class="el-icon-check" style="color: green"></i>
+                                    @else
+                                        <i class="el-icon-close" style="color: red"></i>
+                                    @endif
+                                </td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
