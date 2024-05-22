@@ -766,6 +766,9 @@ padding: 60px;
     #sidebar.sidebar-show{
         width: 50% !important;
         max-width: 200px;
+        z-index: 998;
+    }
+    .navbar.navbar-inverse{
         z-index: 999;
     }
 }
