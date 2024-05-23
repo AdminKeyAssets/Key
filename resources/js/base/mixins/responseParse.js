@@ -16,7 +16,17 @@ export const responseParse = (response, showSuccessMessage = true) => {
         type = 'error';
         message = errorTexts.join(',');
 
-    } else if (response.status == 403) {
+    }else if(response.status == 422 || response.status == 429) {
+        var errorTexts = [];
+        for (var element in response.data.errors) {
+            errorTexts.push(response.data.errors[element][0]);
+        }
+
+        type = 'error';
+        message = errorTexts.join(',');
+
+    }
+    else if (response.status == 403) {
         type = 'error';
         message = response.data.message;
     }

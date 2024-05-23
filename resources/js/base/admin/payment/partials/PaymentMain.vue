@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Status:</label>
+                        <label class="col-md-1 control-label">Attachment:</label>
                         <div class="col-md-10 uppercase-medium">
                             <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
                                 Attachment</a>
