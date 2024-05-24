@@ -105,9 +105,9 @@ export default {
                 }
             })
                 .then(response => {
+                    this.loading = false;
                     responseParse(response);
 
-                    this.loading = false;
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
@@ -115,6 +115,7 @@ export default {
                 .catch(error => {
                     this.loading = false;
                     // Handle error
+                    responseParse(error.response);
                     console.error(error);
                 });
         },

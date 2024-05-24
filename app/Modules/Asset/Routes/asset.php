@@ -37,6 +37,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $commentModuleName = 'comment';
 
     Route::get('/{asset}/comments', $commentController . '@index')->name('comments.list')->middleware(['permission:' . getPermissionKey($commentModuleName, 'index', true)]);
+    Route::get('/comments/unread', $commentController . '@unread')->name('comments.list.unread')->middleware(['permission:' . getPermissionKey($commentModuleName, 'index', true)]);
+    Route::get('/comments/{id}', $commentController . '@read')->name('comments.view')->middleware(['permission:' . getPermissionKey($commentModuleName, 'view', true)]);
     //Save
     Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);
     // Delete

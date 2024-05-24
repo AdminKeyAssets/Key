@@ -1,44 +1,27 @@
 <template>
-    <div>
-        <div class="block">
-
-            <div class="comments-section">
-                <h3>Comments</h3>
-                <ul>
-                    <li v-for="comment in comments" :key="comment.id">
-                        <p>{{ comment.comment }} - {{ comment.admin.name }} ({{ comment.created_at }})</p>
-                        <a v-if="comment.attachment" :href="`/storage/${comment.attachment}`" target="_blank">View Attachment</a>
-                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                                   @click="deleteComment(comment.id)"></el-button>
-                    </li>
-                </ul>
-            </div>
-
-            <el-form ref="form" class="form-horizontal form-bordered"
-                     @submit.prevent="submitComment">
-
-                <el-row>
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Comment:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <textarea class="form-control"  v-model="newComment"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Attach file:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input type="file" @change="onFileChange">
-                            <div v-if="attachment">
-                                <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                                           @click="removeFile"></el-button>
-                            </div>
-                        </div>
-                    </div>
-                    <el-button type="primary" @click="submitComment">Add Comment</el-button>
-                </el-row>
-            </el-form>
-        </div>
+    <div class="comments-section">
+        <h3>Comments</h3>
+        <ul class="comments-list">
+            <li v-for="comment in comments" :key="comment.id" class="comment-item">
+                <div class="comment-header">
+                    <span class="comment-user">{{ comment.admin.name }}</span>
+                    <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+                </div>
+                <p class="comment-text">{{ comment.comment }}</p>
+                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank" class="comment-attachment">View
+                    Attachment</a>
+                <div class="comment-actions">
+                <span class="comment-delete" @click="deleteComment(comment.id)">
+                    Delete
+                </span>
+                </div>
+            </li>
+        </ul>
+        <el-form @submit.prevent="submitComment" class="comment-form">
+            <el-input v-model="newComment" placeholder="Add a comment" class="comment-input"></el-input>
+            <input type="file" @change="onFileChange" class="comment-file-input">
+            <el-button type="primary" @click="submitComment" class="comment-submit-button">Submit</el-button>
+        </el-form>
     </div>
 </template>
 
@@ -70,44 +53,132 @@ export default {
             this.attachment = e.target.files[0];
         },
 
-        removeFile(){
+        removeFile() {
             this.attachment = null;
         },
 
-       async fetchComments() {
-           await axios.get(`/assets/${this.id}/comments`).then(response => {
+        async fetchComments() {
+            await axios.get(`/assets/${this.id}/comments`).then(response => {
                 this.comments = response.data.data;
             });
         },
 
-       async deleteComment(commentId) {
+        async deleteComment(commentId) {
 
-               this.$confirm('Are you sure?', 'You are deleting a comment', {
-                   confirmButtonText: 'Yes',
-                   cancelButtonText: 'No',
-                   type: 'warning'
-               }).then(async () => {
-                   await axios.post(`/assets/${this.id}/comments/delete/${commentId}`).then(response => {
-                       this.comments = response.data.data;
-                   });
-               });
+            this.$confirm('Are you sure?', 'You are deleting a comment', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                type: 'warning'
+            }).then(async () => {
+                await axios.post(`/assets/${this.id}/comments/delete/${commentId}`).then(response => {
+                    this.comments = response.data.data;
+                });
+            });
         },
 
-      async submitComment() {
+        async submitComment() {
             const formData = new FormData();
             formData.append('comment', this.newComment);
             if (this.attachment) {
                 formData.append('attachment', this.attachment);
             }
 
-           await axios.post(`/assets/${this.id}/comments`, formData)
+            await axios.post(`/assets/${this.id}/comments`, formData)
                 .then(response => {
                     this.comments = response.data.data;
                     this.newComment = '';
                     this.attachment = null;
                 });
+        },
+
+        formatDate(isoString) {
+            const date = new Date(isoString);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
     }
 }
 
 </script>
+
+<style scoped>
+.comments-section {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.comments-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.comment-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.comment-user {
+    color: #333;
+}
+
+.comment-date {
+    color: #888;
+    font-size: 0.9em;
+}
+
+.comment-text {
+    margin: 5px 0;
+}
+
+.comment-attachment {
+    display: block;
+    margin-top: 5px;
+    color: #1e90ff;
+    text-decoration: underline;
+}
+
+.comment-form {
+    margin-top: 20px;
+}
+
+.comment-input {
+    width: calc(100% - 120px);
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.comment-file-input {
+    margin-top: 10px;
+}
+
+.comment-submit-button {
+    display: inline-block;
+    margin-top: 10px;
+}
+.comment-actions{
+    display: flex;
+    justify-content: right;
+}
+.comment-delete{
+    text-decoration: underline;
+    cursor: pointer;
+}
+</style>

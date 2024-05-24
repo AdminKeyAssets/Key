@@ -49,6 +49,8 @@ Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetView
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
 Vue.component('payment-view-page-form', require('./base/admin/payment/page/PaymentViewForm').default);
 
+//Comment
+Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

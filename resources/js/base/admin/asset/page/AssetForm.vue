@@ -132,20 +132,20 @@ export default {
                 }
             }
 
-            axios.post(this.routes.save, formData, {
+           await axios.post(this.routes.save, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
-            })
-                .then(response => {
-                    this.loading = false;
+            }).then(response => {
+               this.loading = false;
+               responseParse(response);
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
                 })
                 .catch(error => {
                     this.loading = false;
-                    console.error(error);
+                    responseParse(error.response);
                 });
         },
 
