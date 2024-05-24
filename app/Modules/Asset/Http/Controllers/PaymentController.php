@@ -8,8 +8,12 @@ use App\Modules\Asset\Http\Requests\PaymentRequest;
 use App\Modules\Asset\Models\Payment;
 use App\Utilities\ServiceResponse;
 use DB;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Mockery\Exception;
 
 class PaymentController extends BaseController
@@ -26,9 +30,6 @@ class PaymentController extends BaseController
 
     public $baseName = 'payments.';
 
-    /**
-     * SlugController constructor.
-     */
     public function __construct()
     {
         parent::__construct();
@@ -36,10 +37,11 @@ class PaymentController extends BaseController
         $this->baseData['baseRouteName'] = $this->baseData['baseRouteName'] . '.' . $this->baseData['moduleKey'] . '.';
     }
 
+
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param $assetId
+     * @return Application|Factory|View
      */
     public function index(Request $request, $assetId)
     {
@@ -48,21 +50,20 @@ class PaymentController extends BaseController
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
-
     /**
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param $assetId
+     * @return Application|Factory|View
      */
     public function create($assetId)
     {
         $this->baseData['assetId'] = $assetId;
-//        dd($this->baseData);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
     }
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $assetId
+     * @return JsonResponse
      */
     public function createData(Request $request, $assetId)
     {
@@ -88,6 +89,11 @@ class PaymentController extends BaseController
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
     }
 
+    /**
+     * @param PaymentRequest $request
+     * @param $assetId
+     * @return JsonResponse
+     */
     public function store(PaymentRequest $request, $assetId)
     {
         $path = null;
@@ -132,9 +138,9 @@ class PaymentController extends BaseController
     }
 
     /**
-     * @param string $id
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param $assetId
+     * @param $id
+     * @return Application|Factory|View
      */
     public function edit($assetId, $id = '')
     {
@@ -151,6 +157,11 @@ class PaymentController extends BaseController
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
     }
 
+    /**
+     * @param $assetId
+     * @param $id
+     * @return Application|Factory|View
+     */
     public function view($assetId, $id = '')
     {
         try {
@@ -167,8 +178,8 @@ class PaymentController extends BaseController
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $assetId
+     * @return JsonResponse
      */
     public function destroy(Request $request, $assetId)
     {

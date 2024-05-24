@@ -52,6 +52,11 @@ Vue.component('payment-view-page-form', require('./base/admin/payment/page/Payme
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 
+//Lease
+Vue.component('lease-page-form', require('./base/admin/lease/page/LeaseForm').default);
+Vue.component('lease-view-page-form', require('./base/admin/lease/page/LeaseViewForm').default);
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
