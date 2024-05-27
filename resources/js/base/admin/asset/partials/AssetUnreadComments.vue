@@ -1,14 +1,15 @@
 <template>
     <div class="header">
         <div class="comments-container">
-            <div class="comments-button" @click="toggleUnreadCommentsList">
-                <i class="el-icon-bell" style="color:white"></i>
-                <span class="badge">{{ unreadCommentsCount }}</span>
-            </div>
+            <el-badge :value="unreadCommentsCount" class="item" style="cursor: pointer">
+                <i class="el-icon-bell" @click="toggleUnreadCommentsList"  style="color:white"></i>
+            </el-badge>
             <el-drawer
                 title="Notifications"
+                class="notifications-sidebar"
+                :modal="false"
+                :size="'50%'"
                 :visible.sync="showUnreadComments">
-
                 <el-card class="box-card" v-for="comment in unreadComments" :key="comment.id">
                     <div slot="header" class="clearfix">
                         <span>{{ comment.admin.name }}</span>
