@@ -2,7 +2,7 @@
     <div class="header">
         <div class="comments-container">
             <el-badge :value="unreadCommentsCount" class="item" style="cursor: pointer">
-                <i class="el-icon-bell" @click="toggleUnreadCommentsList"  style="color:white"></i>
+                <i class="el-icon-bell" @click="toggleUnreadCommentsList" style="color:white"></i>
             </el-badge>
             <el-drawer
                 title="Notifications"
@@ -89,7 +89,7 @@ export default {
 
 
 <style scoped>
-.comment-body p{
+.comment-body p {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

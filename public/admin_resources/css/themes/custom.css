@@ -785,3 +785,12 @@ padding: 60px;
     margin-right: 10px;
     padding-right: 10px;
 }
+.notifications-sidebar .el-drawer.rtl {
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;
+}
+.notifications-sidebar .el-drawer.rtl::-webkit-scrollbar {
+    display: none;
+}
+
