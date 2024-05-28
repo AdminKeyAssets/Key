@@ -38,7 +38,7 @@
 
 
                     <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Status:</label>
+                        <label class="col-md-1 control-label">Paid:</label>
                         <div class="col-md-10 uppercase-medium">
                             <el-switch
                                 v-model="form.status"

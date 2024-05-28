@@ -12,7 +12,7 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route('asset.payments.view', $data['assetId']) }}" size="medium" class="btn btn-secondary">
+                <a href="{{ route($moduleKey . '.payments.list', [$assetId]) }}" size="medium" class="btn btn-secondary">
                     <i class="el-icon-back"></i>
                 </a>
 

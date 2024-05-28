@@ -33,7 +33,7 @@
                             <th> Month</th>
                             <th> Payment Date</th>
                             <th> Amount</th>
-                            <th> Status</th>
+                            <th> Paid</th>
                             <th width="10%" class="text-center">@lang('admin.action')</th>
                         </tr>
                         </thead>
