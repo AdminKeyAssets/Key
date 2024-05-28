@@ -7,6 +7,12 @@
 
                 </div>
 
+                <LeaseMain
+                    :routes="routes"
+                    :updateData="updateData"
+                    :item="this.form && this.form ? this.form : undefined"
+                ></LeaseMain>
+
                 <div class="project-buttons">
                     <el-button type="primary" size="medium" icon="el-icon-check"
                                @click="save"
@@ -15,12 +21,6 @@
                     </el-button>
 
                 </div>
-
-                <LeaseMain
-                    :routes="routes"
-                    :updateData="updateData"
-                    :item="this.form && this.form ? this.form : undefined"
-                ></LeaseMain>
             </div>
         </div>
     </div>

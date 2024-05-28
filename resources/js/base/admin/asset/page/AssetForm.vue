@@ -8,12 +8,6 @@
                 </div>
 
                 <div class="project-buttons">
-                    <el-button type="primary" size="medium" icon="el-icon-check"
-                               @click="save"
-                               :disabled="loading"
-                               style="margin: 21px 1rem">Save
-                    </el-button>
-
                     <el-link
                         type="success"
                         size="medium"
@@ -22,6 +16,16 @@
                         v-if="this.form.id"
                         :href="'/assets/' + this.form.id + '/payments'"
                     >Payments</el-link>
+
+                    <el-link
+                        type="success"
+                        size="medium"
+                        style="border: 1px solid; padding: 7px 15px; border-radius: 5px"
+                        icon="el-icon-home"
+                        v-if="this.form.id"
+                        :href="'/assets/' + this.form.id + '/lease'"
+                    >Leases
+                    </el-link>
                 </div>
 
                 <AssetMain
@@ -30,6 +34,14 @@
                     :investors="investors"
                     :item="this.form && this.form ? this.form : undefined"
                 ></AssetMain>
+
+                <div class="project-buttons">
+                    <el-button type="primary" size="medium" icon="el-icon-check"
+                               @click="save"
+                               :disabled="loading"
+                               style="margin: 21px 1rem">Save
+                    </el-button>
+                </div>
             </div>
         </div>
     </div>
