@@ -1,3 +1,3 @@
-<a href="{{ $route }}" title="@lang('admin.edit')"
+<a href="{{ $route }}"
    class="btn btn-primary"><i
         class="fa fa-pencil"></i></a>

@@ -429,9 +429,14 @@ fieldset[disabled] .btn-default.active {
 .text-center .btn-primary {
   padding: 2px 6px!Important;
 }
-.text-center .btn-success.btn-money {
+.text-center .btn-success.btn-money, .text-center .btn-info.btn-money {
     padding: 2px 6px!Important;
 }
+.text-center .btn-info.btn-money{
+    background-color: gray !important;
+    border-color: gray!important;
+}
+
 .btn-primary.btn-alt {
   color: #0020d9;
 }

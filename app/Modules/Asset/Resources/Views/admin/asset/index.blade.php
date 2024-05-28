@@ -49,7 +49,11 @@
 
                                 <td class="text-center">
                                     @can(getPermissionKey('payment', 'index', true))
-                                        @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
+                                        @if(count($item->payments))
+                                            @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
+                                        @else
+                                            @include('admin::includes.actions.payment-disabled',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
+                                        @endif
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.view', [ $item->id ])])
