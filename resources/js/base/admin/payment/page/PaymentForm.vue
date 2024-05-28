@@ -67,7 +67,7 @@ export default {
             await getData({
                 method: 'POST',
                 config: {
-                    headers: { 'content-type': 'multipart/form-data' }
+                    headers: {'content-type': 'multipart/form-data'}
                 },
                 url: this.getSaveDataRoute,
                 data: this.form
@@ -107,9 +107,11 @@ export default {
                 .then(response => {
                     this.loading = false;
                     responseParse(response);
-
+                    const data = response.data.data;
                     setTimeout(() => {
-                        window.location.reload();
+
+                        window.location.href = `assets/${data.item.asset_id}/payments`;
+                        // window.location.reload();
                     }, 1000);
                 })
                 .catch(error => {

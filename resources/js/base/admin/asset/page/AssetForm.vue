@@ -140,7 +140,7 @@ export default {
                this.loading = false;
                responseParse(response);
                     setTimeout(() => {
-                        window.location.reload();
+                        window.location.href ='/assets/list';
                     }, 1000);
                 })
                 .catch(error => {
