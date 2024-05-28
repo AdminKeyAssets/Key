@@ -119,8 +119,7 @@ class CommentController extends BaseController
         $comments = Comment::query()
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
-            }])
-            ->where('read', 0)->get();
+            }])->get();
 
         return ServiceResponse::jsonNotification('', 200, $comments);;
     }

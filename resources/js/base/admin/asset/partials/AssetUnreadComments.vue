@@ -10,27 +10,30 @@
                 :modal="false"
                 :size="'50%'"
                 :visible.sync="showUnreadComments">
-                <el-card class="box-card" v-for="comment in unreadComments" :key="comment.id">
-                    <div slot="header" class="clearfix">
-                        <span>{{ comment.admin.name }}</span>
-                    </div>
-                    <div class="text item">
-                        <div class="comment-body">
-                            <p>
-                                {{ comment.comment }}
-                            </p>
-                            <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
-                               class="comment-attachment">View Attachment</a>
+                <div class="comment-wrapper" v-for="comment in unreadComments" :key="comment.id">
+                    <el-card class="box-card" v-bind:class = "(comment.read)?'read-comment':'unread-comment'">
+                        <div slot="header" class="clearfix">
+                            <span>{{ comment.admin.name }}</span>
+                        </div>
+                        <div class="text item">
+                            <div class="comment-body">
+                                <p>
+                                    {{ comment.comment }}
+                                </p>
+                                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
+                                   class="comment-attachment">View Attachment</a>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; ">
+                                <span>{{ formatDate(comment.created_at) }}</span>
+                                <a :href="`/assets/comments/${comment.id}`" class="view-asset-link">
+                                    read
+                                </a>
+                            </div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; ">
-                            <span>{{ formatDate(comment.created_at) }}</span>
-                            <a :href="`/assets/comments/${comment.id}`" class="view-asset-link">
-                                read
-                            </a>
-                        </div>
-                    </div>
-                </el-card>
+                    </el-card>
+                </div>
             </el-drawer>
 
         </div>
@@ -59,7 +62,13 @@ export default {
         async fetchUnreadComments() {
             await axios.get('/assets/comments/unread').then(response => {
                 this.unreadComments = response.data.data;
-                this.unreadCommentsCount = this.unreadComments.length;
+
+                this.unreadComments.forEach((comment, index) => {
+                    if (!comment.read) {
+                        this.unreadCommentsCount += 1;
+                    }
+                });
+
             });
         },
 
@@ -93,5 +102,11 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+.box-card.read-comment{
+    border-left: 5px solid gray;
+}
+.box-card.unread-comment{
+    border-left: 5px solid red;
 }
 </style>
