@@ -42,7 +42,7 @@
                             <tr>
                                 <td>{!! $item->month !!}</td>
                                 <td>{!! $item->payment_date !!}</td>
-                                <td>{!! $item->amount !!}</td>
+                                <td>{!! number_format($item->amount,2,".",",") !!}</td>
                                 <td>
                                     @if($item->status)
                                         <i class="el-icon-check" style="color: green"></i>

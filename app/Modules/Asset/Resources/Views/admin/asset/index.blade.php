@@ -45,7 +45,7 @@
                                 <td>{!! $item->city !!}</td>
                                 <td>{!! $item->delivery_date !!}</td>
                                 <td>{!! $item->area !!}</td>
-                                <td>{!! $item->total_price !!}</td>
+                                <td>{!! number_format($item->total_price,2,".",",") !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey('payment', 'index', true))

@@ -75,9 +75,10 @@ class PaymentController extends BaseController
                 'edit' => route('asset.payments.edit', $assetId, []),
             ];
             if ($request->get('id')) {
-                $payment = Payment::findOrFail($request->get('id'))->where('asset_id', $assetId);
+                $payment = Payment::find($request->get('id'))->where('asset_id', $assetId)->first();
 
                 $this->baseData['item'] = $payment;
+
                 $this->baseData['item']['attachment'] = $payment->attachment ? Storage::url($payment->attachment) : null;
             }
 

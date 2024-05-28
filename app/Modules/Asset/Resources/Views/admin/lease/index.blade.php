@@ -39,7 +39,7 @@
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->price !!}</td>
+                                <td>{!! number_format($item->price,2,".",",") !!}</td>
                                 <td>{!! $item->date_from !!}</td>
                                 <td>{!! $item->date_to !!}</td>
 
