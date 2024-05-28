@@ -152,7 +152,7 @@
                              class="form-horizontal form-bordered">
                             <el-card class="box-card" v-if="salesManager">
                                 <div slot="header" class="clearfix box-card-header">
-                                    <span>Sales Manager</span>
+                                    <span>Asset Manager</span>
                                 </div>
                                 <div class="text item">
                                     <p v-if="salesManager.name">

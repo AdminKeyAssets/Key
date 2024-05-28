@@ -45,7 +45,7 @@ class PaymentController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = Payment::orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = Payment::where('asset_id', $assetId)->paginate(25);
         $this->baseData['assetId'] = $assetId;
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -75,7 +75,7 @@ class PaymentController extends BaseController
                 'edit' => route('asset.payments.edit', $assetId, []),
             ];
             if ($request->get('id')) {
-                $payment = Payment::findOrFail($request->get('id'));
+                $payment = Payment::findOrFail($request->get('id'))->where('asset_id', $assetId);
 
                 $this->baseData['item'] = $payment;
                 $this->baseData['item']['attachment'] = $payment->attachment ? Storage::url($payment->attachment) : null;
