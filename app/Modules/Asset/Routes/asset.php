@@ -44,5 +44,20 @@ Route::prefix('assets')->name('asset.')->group(function () {
     // Delete
     Route::post('/{asset}/comments/delete/{id?}', $commentController . '@destroy')->name('comments.delete')->middleware(['permission:' . getPermissionKey($commentModuleName, 'delete', true)]);
 
+
+    $leaseController = 'LeaseController';
+    $leaseModuleName = 'lease';
+
+    Route::get('/{asset}/lease', $leaseController . '@index')->name('lease.list')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'index', true)]);
+    //Create/Update view.
+    Route::get('/{asset}/lease/create', $leaseController . '@create')->name('lease.create')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'create', true)]);
+    Route::post('/{asset}/lease/create-data', $leaseController . '@createData')->name('lease.create_data')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'view', true)]);
+    Route::get('/{asset}/lease/edit/{id?}', $leaseController . '@edit')->name('lease.edit')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'update', true)]);
+    Route::get('/{asset}/lease/view/{id?}', $leaseController . '@view')->name('lease.view')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'view', true)]);
+    //Save
+    Route::post('/{asset}/lease/store', $leaseController . '@store')->name('lease.store')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'create', true)]);
+    // Delete
+    Route::post('/{asset}/lease/delete', $leaseController . '@destroy')->name('lease.delete')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'delete', true)]);
+
 });
 

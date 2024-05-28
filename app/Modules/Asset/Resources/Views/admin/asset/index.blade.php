@@ -24,7 +24,7 @@
 
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
-                <br><h3 class="text-center">@lang('admin.result_not_found')</h3><br>
+                <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
             @else
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">

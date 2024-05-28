@@ -9,9 +9,13 @@ use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
 use App\Utilities\ServiceResponse;
 use DB;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Mockery\Exception;
 
 class AssetController extends BaseController
@@ -30,10 +34,6 @@ class AssetController extends BaseController
     public $viewFolderName = 'asset';
     public $baseName = 'asset.';
 
-
-    /**
-     * SlugController constructor.
-     */
     public function __construct()
     {
         parent::__construct();
@@ -43,8 +43,7 @@ class AssetController extends BaseController
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function index(Request $request)
     {
@@ -53,6 +52,10 @@ class AssetController extends BaseController
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
+    /**
+     * @param Request $request
+     * @return Application|Factory|View
+     */
     public function myassets(Request $request)
     {
         $userId = auth()->user()->getAuthIdentifier();
@@ -62,18 +65,16 @@ class AssetController extends BaseController
     }
 
     /**
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function create()
     {
-
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
     }
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function createData(Request $request)
     {
@@ -136,6 +137,10 @@ class AssetController extends BaseController
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
     }
 
+    /**
+     * @param AssetRequest $request
+     * @return JsonResponse
+     */
     public function store(AssetRequest $request)
     {
         $path = null;
@@ -213,9 +218,8 @@ class AssetController extends BaseController
     }
 
     /**
-     * @param string $id
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param $id
+     * @return Application|Factory|View
      */
     public function edit($id = '')
     {
@@ -231,6 +235,10 @@ class AssetController extends BaseController
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
     }
 
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
     public function view($id = '')
     {
         try {
@@ -247,8 +255,7 @@ class AssetController extends BaseController
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(Request $request)
     {

@@ -30,6 +30,9 @@ class PaymentRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function messages()
     {
         return [

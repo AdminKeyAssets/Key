@@ -8,16 +8,17 @@ use App\Modules\Asset\Http\Requests\PaymentRequest;
 use App\Modules\Asset\Models\Comment;
 use App\Utilities\ServiceResponse;
 use DB;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Exception;
 
 class CommentController extends BaseController
 {
-    /**
-     * SlugController constructor.
-     */
     public function __construct()
     {
         parent::__construct();
@@ -25,8 +26,8 @@ class CommentController extends BaseController
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $assetId
+     * @return JsonResponse
      */
     public function index(Request $request, $assetId)
     {
@@ -39,6 +40,11 @@ class CommentController extends BaseController
         return ServiceResponse::jsonNotification('', 200, $comments);;
     }
 
+    /**
+     * @param Request $request
+     * @param $assetId
+     * @return JsonResponse
+     */
     public function store(Request $request, $assetId)
     {
         $path = null;
@@ -47,8 +53,6 @@ class CommentController extends BaseController
             $path = $file->store('uploads', 'public');
         }
 
-//        dd($path);
-//        dd(Storage::url($path));
         Comment::create([
             'comment' => $request->comment,
             'asset_id' => $assetId,
@@ -67,8 +71,9 @@ class CommentController extends BaseController
 
     /**
      * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $assetId
+     * @param $commentId
+     * @return JsonResponse
      */
     public function destroy(Request $request, $assetId, $commentId)
     {
@@ -88,6 +93,10 @@ class CommentController extends BaseController
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $comments);
     }
 
+    /**
+     * @param $commentId
+     * @return Application|RedirectResponse|Redirector
+     */
     public function read($commentId)
     {
         $comment = Comment::where('id',$commentId)->first();
@@ -100,6 +109,11 @@ class CommentController extends BaseController
 
         return redirect(route('asset.view', [$assetId]));
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function unread(Request $request)
     {
         $comments = Comment::query()

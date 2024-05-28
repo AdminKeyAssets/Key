@@ -773,3 +773,24 @@ padding: 60px;
     }
 }
 
+@media screen and (min-width: 993px){
+    .notifications-sidebar .el-drawer.rtl{
+        max-width: 30%;
+    }
+}
+
+.comments-container .el-badge.item{
+    margin-bottom: 0 !important;
+    margin-top: 18px;
+    margin-right: 10px;
+    padding-right: 10px;
+}
+.notifications-sidebar .el-drawer.rtl {
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;
+}
+.notifications-sidebar .el-drawer.rtl::-webkit-scrollbar {
+    display: none;
+}
+
