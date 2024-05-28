@@ -178,6 +178,11 @@
                             </el-card>
                         </div>
                     </div>
+                    <div class="block col-md-9">
+                        <AssetComments
+                            :id="this.form.id"
+                        ></AssetComments>
+                    </div>
                 </div>
             </div>
         </div>
@@ -188,10 +193,10 @@
 
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
-import AssetMain from "../partials/AssetMain.vue";
+import AssetComments from "../partials/AssetComments.vue";
 
 export default {
-    components: {AssetMain},
+    components: {AssetComments},
     props: [
         'getSaveDataRoute',
         'id'

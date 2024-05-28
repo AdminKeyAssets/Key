@@ -32,5 +32,17 @@ Route::prefix('assets')->name('asset.')->group(function () {
     // Delete
     Route::post('/{asset}/payments/delete', $paymentController . '@destroy')->name('payments.delete')->middleware(['permission:' . getPermissionKey($paymentModuleName, 'delete', true)]);
 
+
+    $commentController = 'CommentController';
+    $commentModuleName = 'comment';
+
+    Route::get('/{asset}/comments', $commentController . '@index')->name('comments.list')->middleware(['permission:' . getPermissionKey($commentModuleName, 'index', true)]);
+    Route::get('/comments/unread', $commentController . '@unread')->name('comments.list.unread')->middleware(['permission:' . getPermissionKey($commentModuleName, 'index', true)]);
+    Route::get('/comments/{id}', $commentController . '@read')->name('comments.view')->middleware(['permission:' . getPermissionKey($commentModuleName, 'view', true)]);
+    //Save
+    Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);
+    // Delete
+    Route::post('/{asset}/comments/delete/{id?}', $commentController . '@destroy')->name('comments.delete')->middleware(['permission:' . getPermissionKey($commentModuleName, 'delete', true)]);
+
 });
 

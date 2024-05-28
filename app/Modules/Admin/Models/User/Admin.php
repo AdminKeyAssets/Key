@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Models\User;
 
+use App\Modules\Asset\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -55,5 +56,11 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
     {
         return $this->roles ? implode(',',$this->roles->pluck('name')->toArray()) : '';
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 
 }

@@ -46,4 +46,7 @@ return [
     'payment'     => [
         'default'   => $default_permissions
     ],
+    'comment'     => [
+        'default'   => $default_permissions
+    ],
 ];
