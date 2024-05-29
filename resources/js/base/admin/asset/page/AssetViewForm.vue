@@ -86,7 +86,7 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Price:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{ form.total_price }} {{form.currency}}
+                                        {{ this.formatPrice(form.total_price) }} {{form.currency}}
                                     </div>
                                 </div>
 
@@ -270,7 +270,19 @@ export default {
                 this.loading = false
             })
         },
-
+        formatPrice(amount) {
+            if (amount !== undefined && amount !== '') {
+                // const value = parseFloat(amount.replace(/,/g, ''));
+                if (!isNaN(amount)) {
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'decimal',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }).format(amount);
+                }
+            }
+            return '0.00';
+        }
     }
 }
 
