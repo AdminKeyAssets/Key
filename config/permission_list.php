@@ -49,7 +49,7 @@ return [
     'comment'     => [
         'default'   => $default_permissions
     ],
-    'lease'     => [
+    'rental'     => [
         'default'   => $default_permissions
     ],
 ];

@@ -6,7 +6,7 @@
     <div id="page-content">
 
         <!-- Statistics Widgets Header -->
-    @include('admin::includes.header-section', ['name'   => 'View Lease' ])
+    @include('admin::includes.header-section', ['name'   => 'View Rental' ])
     <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->

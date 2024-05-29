@@ -7,11 +7,11 @@
 
                 </div>
 
-                <LeaseMain
+                <RentalMain
                     :routes="routes"
                     :updateData="updateData"
                     :item="this.form && this.form ? this.form : undefined"
-                ></LeaseMain>
+                ></RentalMain>
 
                 <div class="project-buttons">
                     <el-button type="primary" size="medium" icon="el-icon-check"
@@ -30,10 +30,10 @@
 
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
-import LeaseMain from "../partials/LeaseMain.vue";
+import RentalMain from "../partials/RentalMain.vue";
 
 export default {
-    components: {LeaseMain},
+    components: {RentalMain},
     props: [
         'getSaveDataRoute',
         'id'
@@ -109,7 +109,7 @@ export default {
                     responseParse(response);
                     const data = response.data.data;
                     setTimeout(() => {
-                        window.location.href = `assets/${data.item.asset_id}/lease`;
+                        window.location.href = `assets/${data.item.asset_id}/rental`;
                         // window.location.reload();
                     }, 1000);
                 })

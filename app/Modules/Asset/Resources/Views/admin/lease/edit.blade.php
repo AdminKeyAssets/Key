@@ -6,7 +6,7 @@
     <div id="page-content">
 
         <!-- Statistics Widgets Header -->
-    @include('admin::includes.header-section', ['name'   => 'Edit Lease' ])
+    @include('admin::includes.header-section', ['name'   => 'Edit Rental' ])
     <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
@@ -18,7 +18,7 @@
                 <lease-page-form
                     :id="{{ $data['id'] }}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
-                </lea-page-form>
+                </lease-page-form>
 
             </div>
         </div>

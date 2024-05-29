@@ -34,7 +34,7 @@
                                 format="yyyy/MM/dd"
                                 value-format="yyyy/MM/dd"
                                 type="date"
-                                placeholder="Pick a lease date from">
+                                placeholder="Pick a rental date from">
                             </el-date-picker>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                                 format="yyyy/MM/dd"
                                 value-format="yyyy/MM/dd"
                                 type="date"
-                                placeholder="Pick a lease date to">
+                                placeholder="Pick a rental date to">
                             </el-date-picker>
                         </div>
                     </div>

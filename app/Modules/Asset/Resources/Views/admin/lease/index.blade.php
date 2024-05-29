@@ -4,7 +4,7 @@
     <!-- Page content -->
     <div id="page-content">
         <!-- Statistics Widgets Header -->
-        @include('admin::includes.header-section', ['name'   => 'Lease' ])
+        @include('admin::includes.header-section', ['name'   => 'Rental' ])
         <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
@@ -12,7 +12,7 @@
             @can(getPermissionKey($moduleKey, 'create', true))
                 <div class="col-md-6">
                     <a href="{{ route($moduleKey . '.lease.create', [$assetId]) }}" class="btn btn-primary"><i
-                            class="el-icon-plus"></i> Add Lease</a>
+                            class="el-icon-plus"></i> Add Rental</a>
                 </div>
             @endcan
 
@@ -24,7 +24,7 @@
 
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
-                <br><h3 class="text-center">@lang('Lease Not Found')</h3><br>
+                <br><h3 class="text-center">@lang('Rental Not Found')</h3><br>
             @else
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">

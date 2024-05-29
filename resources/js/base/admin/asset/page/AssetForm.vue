@@ -23,8 +23,8 @@
                         style="border: 1px solid; padding: 7px 15px; border-radius: 5px"
                         icon="el-icon-home"
                         v-if="this.form.id"
-                        :href="'/assets/' + this.form.id + '/lease'"
-                    >Leases
+                        :href="'/assets/' + this.form.id + '/rental'"
+                    >Rentals
                     </el-link>
                 </div>
 

@@ -52,9 +52,9 @@ Vue.component('payment-view-page-form', require('./base/admin/payment/page/Payme
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 
-//Lease
-Vue.component('lease-page-form', require('./base/admin/lease/page/LeaseForm').default);
-Vue.component('lease-view-page-form', require('./base/admin/lease/page/LeaseViewForm').default);
+//
+Vue.component('lease-page-form', require('./base/admin/rental/page/RentalForm').default);
+Vue.component('lease-view-page-form', require('./base/admin/rental/page/RentalViewForm').default);
 
 
 /**
