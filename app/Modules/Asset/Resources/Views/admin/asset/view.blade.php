@@ -12,10 +12,15 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route('asset.index') }}" size="medium" class="btn btn-secondary">
+                @if(in_array(auth()->user()->getRolesNameAttribute(), ['Asset Manager', 'AssetManager', 'Sales Manager', 'SalesManager', 'Investor']))
+                <a href="{{ route('asset.myassets') }}" size="medium" class="btn btn-secondary">
                     <i class="el-icon-back"></i>
                 </a>
-
+                @else
+                    <a href="{{ route('asset.index') }}" size="medium" class="btn btn-secondary">
+                        <i class="el-icon-back"></i>
+                    </a>
+                @endif
                 <asset-view-page-form
                     :id="{{ $data['id'] }}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">

@@ -118,7 +118,6 @@ class AssetController extends BaseController
                 $this->baseData['salesManager'] = $salesManager;
                 $this->baseData['nextPayment'] = $nextPayment;
 
-
                 $files = [];
                 if ($asset->attachments) {
                     foreach ($asset->attachments as $item) {
@@ -133,8 +132,6 @@ class AssetController extends BaseController
                 if ($asset->icon) {
                     $this->baseData['item']['icon'] = Storage::url($asset->icon);
                 }
-
-
             }
 
             $this->baseData['investors'] = Admin::role(['Investor'])->get(['name', 'id']);
