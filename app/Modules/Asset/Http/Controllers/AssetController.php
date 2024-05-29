@@ -188,7 +188,8 @@ class AssetController extends BaseController
             'area' => $request->area,
             'total_price' => $request->total_price,
             'icon' => $path,
-            'admin_id' => Auth::user()->getAuthIdentifier()
+            'admin_id' => Auth::user()->getAuthIdentifier(),
+            'currency' => $request->currency
         ]);
 
 

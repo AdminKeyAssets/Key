@@ -31,6 +31,7 @@ class AssetRequest extends FormRequest
             'investor_id' => 'required',
             'city' => 'required',
             'delivery_date' => 'required',
+            'currency' => 'required',
             'area' => ['required', 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/'],
             'total_price' => ['required', 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/']
         ];
@@ -46,6 +47,7 @@ class AssetRequest extends FormRequest
             'city.required' => 'City can not be empty.',
             'delivery_date.required' => 'Delivery Date can not be empty.',
             'area.required' => 'Area can not be empty.',
+            'currency.required' => 'Currency can not be empty.',
             'area.regex' => 'Area should be double.',
             'total_price.regex' => 'Price should be double.',
             'total_price.required' => 'Price can not be empty.',

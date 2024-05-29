@@ -17,7 +17,8 @@ class Asset extends Model
         'delivery_date',
         'area',
         'total_price',
-        'admin_id'
+        'admin_id',
+        'currency'
     ];
 
     public function informations()

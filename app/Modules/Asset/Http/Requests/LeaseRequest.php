@@ -26,6 +26,7 @@ class LeaseRequest extends FormRequest
         return [
             'date_from' => 'required',
             'date_to' => 'required',
+            'currency' => 'required',
             'price' => ['required', 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/'],
         ];
     }
@@ -39,6 +40,7 @@ class LeaseRequest extends FormRequest
             'date_from.required' => 'Date From can not be empty.',
             'date_to.required' => 'Date To can not be empty.',
             'price.required' => 'Price can not be empty.',
+            'currency.required' => 'Currency can not be empty.',
             'price.regex' => 'Price should be double.',
         ];
     }

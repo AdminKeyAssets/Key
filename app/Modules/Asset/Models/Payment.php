@@ -6,7 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    protected $fillable = ['month', 'payment_date', 'status', 'amount', 'asset_id', 'attachment'];
+    protected $fillable = [
+        'month',
+        'payment_date',
+        'status',
+        'amount',
+        'asset_id',
+        'attachment',
+        'currency'
+    ];
 
     public function asset()
     {

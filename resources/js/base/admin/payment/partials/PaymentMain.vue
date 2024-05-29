@@ -31,8 +31,18 @@
 
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Amount:</label>
-                        <div class="col-md-10 uppercase-medium">
+                        <div class="col-md-7 uppercase-medium">
                             <input class="form-control" :disabled="loading" v-model="form.amount"></input>
+                        </div>
+                        <div class="col-md-3 uppercase-medium">
+                            <el-select v-model="form.currency" :value="form.currency" filterable placeholder="Select">
+                                <el-option
+                                    v-for="(currency, index) in currencies"
+                                    :key="index"
+                                    :label="currency"
+                                    :value="index">
+                                </el-option>
+                            </el-select>
                         </div>
                     </div>
 
@@ -85,6 +95,10 @@ export default {
             loading: false,
             editor: ClassicEditor,
             addDetailIsBtnDisabled: true,
+            currencies: {
+                "GEL": "GEL",
+                "USD": "USD",
+            },
         }
     },
     updated() {

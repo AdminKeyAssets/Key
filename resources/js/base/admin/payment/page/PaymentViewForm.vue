@@ -29,7 +29,7 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Amount:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.amount}}
+                                        {{form.amount}} {{form.currency}}
                                     </div>
                                 </div>
 

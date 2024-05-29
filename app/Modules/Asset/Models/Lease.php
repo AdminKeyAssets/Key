@@ -10,7 +10,8 @@ class Lease extends Model
         'price',
         'date_from',
         'date_to',
-        'asset_id'
+        'asset_id',
+        'currency'
     ];
 
     public function asset()
