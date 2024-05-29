@@ -14,6 +14,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Mockery\Exception;
@@ -58,8 +59,16 @@ class AssetController extends BaseController
      */
     public function myassets(Request $request)
     {
-        $userId = auth()->user()->getAuthIdentifier();
-        $this->baseData['allData'] = Asset::where('investor_id', $userId)->orderByDesc('id')->paginate(25);
+        $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'SalesManager'];
+        $user = auth()->user();
+        $userId = $user->getAuthIdentifier();
+
+        if(in_array($user->getRolesNameAttribute(), $managers)){
+            $this->baseData['allData'] = Asset::where('admin_id', $userId)->orderByDesc('id')->paginate(25);
+        }else{
+            $this->baseData['allData'] = Asset::where('investor_id', $userId)->orderByDesc('id')->paginate(25);
+        }
+
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -178,7 +187,8 @@ class AssetController extends BaseController
             'delivery_date' => $request->delivery_date,
             'area' => $request->area,
             'total_price' => $request->total_price,
-            'icon' => $path
+            'icon' => $path,
+            'admin_id' => Auth::user()->getAuthIdentifier()
         ]);
 
 

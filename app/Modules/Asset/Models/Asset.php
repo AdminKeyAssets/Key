@@ -16,7 +16,8 @@ class Asset extends Model
         'city',
         'delivery_date',
         'area',
-        'total_price'
+        'total_price',
+        'admin_id'
     ];
 
     public function informations()
