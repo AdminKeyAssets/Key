@@ -120,11 +120,8 @@ class UserController extends BaseController
      */
     public function save(SaveUserRequest $request)
     {
-//        dd(Auth::user()->getAuthIdentifier());
         try {
-
             $user = $this->adminRepository->saveData($request);
-
         } catch (\Exception $ex) {
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
@@ -143,7 +140,7 @@ class UserController extends BaseController
         try {
 
             if (auth()->user()->id == $request->get('id')) {
-                throw new \Exception('თქვენ ვერ წაშლით იმ მომხმარებელს, რომლითაც გაქვთ ავტორიზაცია გავლილი!');
+                throw new \Exception('You are not allowed to delete this user!');
             }
 
             $admin = $this->adminRepository->find($request->get('id'));

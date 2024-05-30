@@ -5,6 +5,7 @@ namespace App\Modules\Asset\Http\Controllers;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Asset\Http\Requests\PaymentRequest;
+use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Comment;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -35,7 +36,7 @@ class CommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->where('asset_id', $assetId)->get();
+            ->where('asset_id', $assetId);
 
         return ServiceResponse::jsonNotification('', 200, $comments);;
     }
@@ -116,10 +117,29 @@ class CommentController extends BaseController
      */
     public function unread(Request $request)
     {
+        $user = auth()->user();
+        $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'SalesManager'];
+        $assets = null;
+
+        if (in_array($user->getRolesNameAttribute(), $managers)) {
+            $assets = Asset::where('admin_id', $user->getAuthIdentifier())->get();
+        } else if ($user->getRolesNameAttribute() === 'Investor') {
+            $assets = Asset::where('investor_id', $user->getAuthIdentifier())->get();
+        }else if ($user->getRolesNameAttribute() === 'administrator') {
+            $assets = Asset::all();
+        }
+
+        $assetIds = [];
+        foreach ($assets as $asset) {
+            $assetIds[] = $asset->id;
+        }
+
         $comments = Comment::query()
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
-            }])->get();
+            }])
+            ->whereIn('asset_id', $assetIds)
+            ->where('admin_id', '!=', $user->getAuthIdentifier())->get();
 
         return ServiceResponse::jsonNotification('', 200, $comments);;
     }
