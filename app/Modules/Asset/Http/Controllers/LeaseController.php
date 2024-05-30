@@ -7,6 +7,7 @@ use App\Modules\Asset\Http\Requests\LeaseRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Lease;
 use App\Utilities\ServiceResponse;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -68,7 +69,7 @@ class LeaseController extends BaseController
         }
 
         $assetIds = [];
-        foreach ($assets as $asset){
+        foreach ($assets as $asset) {
             $assetIds[] = $asset->id;
         }
 
@@ -158,6 +159,9 @@ class LeaseController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('asset.lease.create_data');
 
             $this->baseData['id'] = $id;
+            $rental = Lease::find($id);
+            $this->baseData['income'] = $this->calculateRentalCost($rental->price, $rental->date_from, $rental->date_to);
+
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
         }
@@ -180,4 +184,13 @@ class LeaseController extends BaseController
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 
+    public function calculateRentalCost($price, $dateFrom, $dateTo)
+    {
+        $dateFrom = Carbon::parse($dateFrom);
+        $dateTo = Carbon::parse($dateTo);
+        $days = $dateTo->diffInDays($dateFrom);
+        $costPerDay = $price / 30;
+
+        return $days * $costPerDay;
+    }
 }

@@ -32,6 +32,12 @@
                                         {{form.date_to}}
                                     </div>
                                 </div>
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Possible Income:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{formatPrice(income)}} {{form.currency}}
+                                    </div>
+                                </div>
                             </el-row>
                         </el-form>
                     </div>
@@ -49,7 +55,8 @@ import {getData} from '../../../mixins/getData'
 export default {
     props: [
         'getSaveDataRoute',
-        'id'
+        'id',
+        'income'
     ],
     data() {
         return {
@@ -96,12 +103,12 @@ export default {
                     if (data.item) {
                         this.form = data.item;
                     }
-                    this.form.status = data.item.status ? true : false
                     this.form.id = this.id;
                 }
                 this.loading = false
             })
         },
+
         formatPrice(amount) {
             if (amount !== undefined && amount !== '') {
                 // const value = parseFloat(amount.replace(/,/g, ''));

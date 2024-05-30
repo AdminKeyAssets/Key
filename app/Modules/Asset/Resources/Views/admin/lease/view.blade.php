@@ -12,12 +12,13 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route('asset.lease.view') }}" size="medium" class="btn btn-secondary">
+                <a href="{{ route('asset.index') }}" size="medium" class="btn btn-secondary">
                     <i class="el-icon-back"></i>
                 </a>
 
                 <lease-view-page-form
                     :id="{{ $data['id'] }}"
+                    :income="{{ $data['income'] }}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                 </lease-view-page-form>
 
