@@ -11,7 +11,7 @@
         <div class="row">
             @can(getPermissionKey($moduleKey, 'create', true))
                 <div class="col-md-6">
-                    <a href="{{ route($moduleKey . '.lease.create', [$assetId]) }}" class="btn btn-primary"><i
+                    <a href="{{ route($moduleKey . '.lease.create') }}" class="btn btn-primary"><i
                             class="el-icon-plus"></i> Add Rental</a>
                 </div>
             @endcan
@@ -33,7 +33,7 @@
                             <th> Price</th>
                             <th> Date From</th>
                             <th> Date To</th>
-                            <th width="10%" class="text-center">@lang('admin.action')</th>
+                            <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -45,14 +45,14 @@
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
-                                        @include('admin::includes.actions.view',['route' => route($moduleKey . '.lease.view', [$assetId, $item->id, ])])
+                                        @include('admin::includes.actions.view',['route' => route($moduleKey . '.lease.view', [$item->id, ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.edit',['route' => route($moduleKey . '.lease.edit', [$assetId, $item->id ])])
+                                        @include('admin::includes.actions.edit',['route' => route($moduleKey . '.lease.edit', [$item->id ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                            :url="'{{ route($moduleKey . '.lease.delete', $assetId) }}'"
+                                            :url="'{{ route($moduleKey . '.lease.delete') }}'"
                                             :id="{{ $item->id }}"
                                         ></delete-component>
                                     @endcan

@@ -10,6 +10,7 @@
                 <RentalMain
                     :routes="routes"
                     :updateData="updateData"
+                    :assets="assets"
                     :item="this.form && this.form ? this.form : undefined"
                 ></RentalMain>
 
@@ -49,6 +50,7 @@ export default {
             form: {
                 id: this.id
             },
+            assets: {}
 
         }
     },
@@ -81,6 +83,7 @@ export default {
 
                     this.routes = data.routes;
                     this.options = data.options;
+                    this.assets = data.assets;
 
                     if (data.item) {
                         this.form = data.item;

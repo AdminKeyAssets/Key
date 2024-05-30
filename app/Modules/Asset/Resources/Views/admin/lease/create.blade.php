@@ -11,12 +11,11 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route($moduleKey . '.lease.list', [$assetId]) }}" size="medium" class="btn btn-secondary">
+                <a href="{{ route($moduleKey . '.index') }}" size="medium" class="btn btn-secondary">
                     <i class="el-icon-back"></i>
                 </a>
                 <lease-page-form
-                :asset-id="{{$assetId}}"
-                :get-save-data-route="'{{ route($moduleKey . '.lease.create_data', $assetId) }}'">
+                :get-save-data-route="'{{ route($moduleKey . '.lease.create_data') }}'">
                 </lease-page-form>
 
             </div>

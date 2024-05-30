@@ -35,7 +35,7 @@
                             <th> Delivery Date</th>
                             <th> Area (m2)</th>
                             <th> Price</th>
-                            <th width="10%" class="text-center">@lang('admin.action')</th>
+                            <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
                         <tbody>

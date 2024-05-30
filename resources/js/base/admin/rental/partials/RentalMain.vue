@@ -52,6 +52,19 @@
                         </div>
                     </div>
                 </el-row>
+                <div class="form-group dashed">
+                    <label class="col-md-1 control-label">Select Asset:</label>
+                    <div class="col-md-10 uppercase-medium">
+                        <el-select v-model="form.asset_id" :value="form.asset_id" filterable placeholder="Select">
+                            <el-option
+                                v-for="item in assets"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                </div>
             </el-form>
         </div>
     </div>
@@ -68,6 +81,7 @@ export default {
         'routes',
         'updateData',
         'item',
+        'assets'
     ],
     data() {
         return {
