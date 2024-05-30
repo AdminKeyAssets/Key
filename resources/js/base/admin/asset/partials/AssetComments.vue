@@ -111,8 +111,6 @@ export default {
     padding: 20px;
     background: #f9f9f9;
     border-radius: 10px;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 .comments-list {
@@ -160,7 +158,6 @@ export default {
 }
 
 .comment-input {
-    width: calc(100% - 120px);
     display: inline-block;
     margin-right: 10px;
 }
