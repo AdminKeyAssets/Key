@@ -175,14 +175,14 @@
                                     style="color: red"></i>
                                 </div>
                                 <div class="text item">
+                                    <p v-if="nextPayment.month">
+                                        Payment #: {{ this.nextPayment.month }}
+                                    </p>
                                     <p v-if="nextPayment.payment_date">
                                         Date: {{ this.nextPayment.payment_date }}
                                     </p>
                                     <p v-if="nextPayment.amount">
                                         Amount: {{ this.nextPayment.amount }}
-                                    </p>
-                                    <p v-if="nextPayment.month">
-                                        Month: {{ this.nextPayment.month }}
                                     </p>
                                 </div>
                             </el-card>

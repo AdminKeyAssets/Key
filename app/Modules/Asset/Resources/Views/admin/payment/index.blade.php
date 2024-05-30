@@ -30,7 +30,7 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th> Month</th>
+                            <th> Payment #</th>
                             <th> Payment Date</th>
                             <th> Amount</th>
                             <th> Paid</th>

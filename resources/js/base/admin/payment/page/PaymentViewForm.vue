@@ -13,7 +13,7 @@
                             <el-row>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Month:</label>
+                                    <label class="col-md-1 control-label">Payment #:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{form.month}}
                                     </div>
