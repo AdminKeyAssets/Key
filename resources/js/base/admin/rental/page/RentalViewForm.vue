@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Possible Income:</label>
+                                    <label class="col-md-1 control-label">Expected Revenue:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{formatPrice(income)}} {{form.currency}}
                                     </div>
