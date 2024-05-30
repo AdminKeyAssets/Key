@@ -64,7 +64,10 @@ class LeaseController extends BaseController
             $assets = Asset::where('admin_id', $user->getAuthIdentifier())->get();
         } else if ($user->getRolesNameAttribute() === 'Investor') {
             $assets = Asset::where('investor_id', $user->getAuthIdentifier())->get();
-        } else {
+        }else if ($user->getRolesNameAttribute() === 'administrator') {
+            $assets = Asset::all();
+        }
+        else {
             return redirect(route('asset.index'));
         }
 
@@ -72,8 +75,7 @@ class LeaseController extends BaseController
         foreach ($assets as $asset) {
             $assetIds[] = $asset->id;
         }
-
-        $this->baseData['allData'] = Lease::whereIn('id', $assetIds)->orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = Lease::whereIn('asset_id', $assetIds)->orderByDesc('id')->paginate(25);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }

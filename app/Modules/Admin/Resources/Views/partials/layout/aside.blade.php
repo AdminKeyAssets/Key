@@ -32,13 +32,11 @@
     @endif
 
     @can ( getPermissionKey('rental', 'index', true))
-        @if(in_array(auth()->user()->getRolesNameAttribute(), ['Asset Manager', 'AssetManager', 'Sales Manager', 'SalesManager', 'Investor']))
-            <li
-                {!! strpos(request()->route()->getName(), 'rental.list') !== false ? ' class="active"' : '' !!}>
-                <a href="{{route('asset.lease.list')}}"><i class="el-icon-house sidebar-nav-icon"></i>
-                    <span class="sidebar-nav-mini-hide">Rentals</span></a>
-            </li>
-        @endif
+        <li
+            {!! strpos(request()->route()->getName(), 'rental.list') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('asset.lease.list')}}"><i class="el-icon-house sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Rentals</span></a>
+        </li>
     @endif
 
 </ul>
