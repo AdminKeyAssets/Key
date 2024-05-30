@@ -48,6 +48,9 @@
                                 <td>{!! number_format($item->total_price,2,".",",") !!}</td>
 
                                 <td class="text-center">
+                                    @can(getPermissionKey($moduleKey, 'update', true))
+                                        @include('admin::includes.actions.change',['route' => route($moduleKey . '.change', [ $item->id ])])
+                                    @endcan
                                     @can(getPermissionKey('payment', 'index', true))
                                         @if(count($item->payments))
                                             @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])

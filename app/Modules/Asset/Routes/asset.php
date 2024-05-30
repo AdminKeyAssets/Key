@@ -17,6 +17,9 @@ Route::prefix('assets')->name('asset.')->group(function () {
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
+    Route::get('/change-manager/{id?}', $controller . '@change')->name('change')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('/store-manager', $controller . '@storeManager')->name('store_manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
 
     $paymentController = 'PaymentController';
     $paymentModuleName = 'payment';

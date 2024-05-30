@@ -43,6 +43,7 @@ Vue.component('save-config', require('./base/components/admin/SaveConfig').defau
 
 //Asset
 Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').default);
+Vue.component('manager-page-form', require('./base/admin/asset/page/ManagerForm').default);
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
 
 //Payment
