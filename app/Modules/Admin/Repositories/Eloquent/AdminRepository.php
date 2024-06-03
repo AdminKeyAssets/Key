@@ -6,6 +6,7 @@ namespace App\Modules\Admin\Repositories\Eloquent;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Repositories\Contracts\IAdminRepository;
 use App\Repositories\Eloquent\BaseRepository;
+use App\Services\MailService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use DB;
@@ -23,6 +24,7 @@ class AdminRepository extends BaseRepository implements IAdminRepository
      * @var Request
      */
     protected $request;
+    public $mailService;
 
     /**
      * AdminRepository constructor.
@@ -30,10 +32,12 @@ class AdminRepository extends BaseRepository implements IAdminRepository
      */
     public function __construct
     (
-        Admin $model
+        Admin       $model,
+        MailService $mailService
     )
     {
         parent::__construct($model);
+        $this->mailService = $mailService;
     }
 
     /**
@@ -89,19 +93,26 @@ class AdminRepository extends BaseRepository implements IAdminRepository
                 $data['password'] = bcrypt($this->request->get('password'));
             }
 
-            if(Auth::user()->getAuthIdentifier()){
+            if (Auth::user()->getAuthIdentifier()) {
                 $data['parent_id'] = Auth::user()->getAuthIdentifier();
             }
-            if ( !empty($request->get('id')) ) {
+            if (!empty($request->get('id'))) {
 
                 $this->admin = $this->find($request->get('id'));
                 $this->admin->update($data);
 
             } else {
                 $this->admin = $this->create($data);
+
+                $this->mailService->sendEmail(
+                    $data['email'],
+                    'KeyAsset Credentials',
+                    'Your email is: ' . $data['email'] .
+                    'Your password is: ' . $this->request->get('password')
+                );
             }
 
-            if ( !empty($request->get('roles') ) ) {
+            if (!empty($request->get('roles'))) {
                 $this->admin->roles()->sync($request->get('roles'));
             } else {
                 $this->admin->roles()->detach();
@@ -139,7 +150,7 @@ class AdminRepository extends BaseRepository implements IAdminRepository
      * @param $sort
      * @return Builder
      */
-    public function sortData($data,$sort)
+    public function sortData($data, $sort)
     {
         return Admin::sort($data, $sort);
     }
@@ -152,13 +163,13 @@ class AdminRepository extends BaseRepository implements IAdminRepository
         $permissions = $this->admin->permissions;
         $roles = $this->admin->roles;
 
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
 
             if (!$role->permissions->count()) {
                 continue;
             }
 
-            foreach($role->permissions as $perms) {
+            foreach ($role->permissions as $perms) {
                 $permissions->push($perms);
             }
         }

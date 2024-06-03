@@ -33,6 +33,7 @@
                             <th> Price</th>
                             <th> Date From</th>
                             <th> Date To</th>
+                            <th> Currency</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -42,6 +43,8 @@
                                 <td>{!! number_format($item->price,2,".",",") !!}</td>
                                 <td>{!! $item->date_from !!}</td>
                                 <td>{!! $item->date_to !!}</td>
+                                <td>{!! $item->currency !!}</td>
+                                <td>{!! number_format(calculateRentalCost($item->price, $item->date_from, $item->date_to), 2) !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))

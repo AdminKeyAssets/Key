@@ -126,6 +126,7 @@ class LeaseController extends BaseController
             'price' => $request->price,
             'date_from' => $request->date_from,
             'date_to' => $request->date_to,
+            'currency' => $request->currency
         ]);
 
         $this->baseData['item'] = $updatedPayment;
@@ -186,13 +187,26 @@ class LeaseController extends BaseController
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 
-    public function calculateRentalCost($price, $dateFrom, $dateTo)
+    public function calculateRentalCost($price, $fromDate, $toDate)
     {
-        $dateFrom = Carbon::parse($dateFrom);
-        $dateTo = Carbon::parse($dateTo);
-        $days = $dateTo->diffInDays($dateFrom);
-        $costPerDay = $price / 30;
+        $from = Carbon::parse($fromDate);
+        $to = Carbon::parse($toDate);
 
-        return $days * $costPerDay;
+        $totalMonths = ($to->year - $from->year) * 12 + ($to->month - $from->month);
+
+        $dayDifference = $to->day - $from->day;
+
+        $daysInFromMonth = $from->daysInMonth;
+
+        if ($dayDifference < 0) {
+            $totalMonths -= 1;
+            $fractionOfMonth = ($dayDifference + $daysInFromMonth) / $daysInFromMonth;
+        } else {
+            $fractionOfMonth = $dayDifference / $to->daysInMonth;
+        }
+
+        $exactMonthDifference = $totalMonths + $fractionOfMonth;
+
+        return $price * $exactMonthDifference;
     }
 }
