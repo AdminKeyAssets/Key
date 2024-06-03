@@ -58,7 +58,7 @@ class CommentController extends BaseController
             'comment' => $request->comment,
             'asset_id' => $assetId,
             'admin_id' => Auth::user()->getAuthIdentifier(),
-            'attachment' => Storage::url($path)
+            'attachment' => $path ? Storage::url($path) : null
         ]);
 
         $comments = Comment::query()
