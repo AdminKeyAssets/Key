@@ -36,7 +36,7 @@ class CommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->where('asset_id', $assetId);
+            ->where('asset_id', $assetId)->get();
 
         return ServiceResponse::jsonNotification('', 200, $comments);;
     }

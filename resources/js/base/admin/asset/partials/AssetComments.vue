@@ -42,8 +42,6 @@ export default {
             attachment: null,
         }
     },
-
-
     mounted() {
         this.fetchComments();
     },
@@ -71,6 +69,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 await axios.post(`/assets/${this.id}/comments/delete/${commentId}`).then(response => {
+                    responseParse(response);
                     this.comments = response.data.data;
                 });
             });
@@ -85,6 +84,7 @@ export default {
 
             await axios.post(`/assets/${this.id}/comments`, formData)
                 .then(response => {
+                    responseParse(response);
                     this.comments = response.data.data;
                     this.newComment = '';
                     this.attachment = null;
