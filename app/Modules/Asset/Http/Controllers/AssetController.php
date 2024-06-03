@@ -63,9 +63,9 @@ class AssetController extends BaseController
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
 
-        if(in_array($user->getRolesNameAttribute(), $managers)){
+        if (in_array($user->getRolesNameAttribute(), $managers)) {
             $this->baseData['allData'] = Asset::where('admin_id', $userId)->orderByDesc('id')->paginate(25);
-        }else{
+        } else {
             $this->baseData['allData'] = Asset::where('investor_id', $userId)->orderByDesc('id')->paginate(25);
         }
 
@@ -102,13 +102,10 @@ class AssetController extends BaseController
                 $nextPayment = null;
 
                 if ($asset->investor_id) {
-                    $investor = Admin::where('id', $asset->investor_id)->first();
-                    if($investor->parent_id){
-                        $salesManager = Admin::where('id', $investor->parent_id)->first();
-                    }
+                    $salesManager = Admin::where('id', $asset->admin_id)->first();
                 }
 
-                if($asset->payments){
+                if ($asset->payments) {
                     $nextPayment = $asset->payments->where('status', 0)->first();
                 }
 
@@ -279,7 +276,7 @@ class AssetController extends BaseController
 
     public function change($assetId)
     {
-        $asset = Asset::where('id',$assetId)->first();
+        $asset = Asset::where('id', $assetId)->first();
 
         $this->baseData['salesManagers'] = Admin::role(['Asset Manager'])->get(['name', 'id']);
         $this->baseData['managerId'] = $asset->admin_id;
