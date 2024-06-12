@@ -46,6 +46,11 @@ return [
             'provider' => 'admins',
         ],
 
+        'investor' => [
+            'driver' => 'session',
+            'provider' => 'investors',
+        ],
+
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -80,6 +85,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => \App\Modules\Admin\Models\User\Admin::class,
+        ],
+
+        'investors' => [
+            'driver' => 'eloquent',
+            'model' => \App\Modules\Admin\Models\User\Investor::class,
         ],
 
         // 'users' => [

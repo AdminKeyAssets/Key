@@ -16,6 +16,22 @@ Route::group(['prefix' => 'admin', 'middleware' => ['guest:admin'], 'namespace' 
 
 });
 
+Route::group(['prefix' => 'login', 'middleware' => ['guest:investor'], 'namespace' => 'Auth'], function () {
+
+    /**
+     * Admin show login form.
+     */
+    Route::get('', 'InvestorLoginController@showLoginForm')
+        ->name('admin.investor_login_form');
+
+    /**
+     * Login method.
+     */
+    Route::post('', 'InvestorLoginController@login')
+        ->name('admin.investor_login');
+
+});
+
 Route::group(['prefix' => 'admin', 'middleware' => ['guest:admin'], 'namespace' => 'Auth'], function () {
 
     /**

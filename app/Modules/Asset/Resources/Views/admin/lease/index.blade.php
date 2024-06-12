@@ -33,6 +33,7 @@
                             <th> Price</th>
                             <th> Date From</th>
                             <th> Date To</th>
+                            <th> Rental Cost</th>
                             <th> Currency</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
