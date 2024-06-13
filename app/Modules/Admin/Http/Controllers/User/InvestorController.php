@@ -70,7 +70,7 @@ class InvestorController extends BaseController
             $query->where('phone', 'like', '%' . $request->input('email') . '%');
         }
 
-        $this->baseData['allData'] = $query::paginate();
+        $this->baseData['allData'] = $query->paginate();
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }

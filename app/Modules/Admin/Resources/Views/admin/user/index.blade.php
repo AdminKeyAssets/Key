@@ -15,7 +15,7 @@
             <div class="row">
                 @can(getPermissionKey($moduleKey, 'create', true))
                     <div class="col-md-6">
-                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>{{ $trans_text['create'] }}</a>
+                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>Create User</a>
                     </div>
                 @endcan
 

@@ -12,7 +12,7 @@
             @can(getPermissionKey($moduleKey, 'create', true))
                 <div class="col-md-6">
                     <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i class="el-icon-plus"></i>
-                        Create</a>
+                        Create Asset</a>
                 </div>
             @endcan
 
