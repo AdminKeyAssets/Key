@@ -21,7 +21,7 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'phone', 'parent_id', 'password'
+        'name', 'email', 'phone', 'password'
     ];
 
     /**

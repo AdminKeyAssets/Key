@@ -15,6 +15,14 @@
         </li>
     @endif
 
+    @can ( getPermissionKey('investor', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'admin.investor.') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('admin.investor.index')}}"><i class="el-icon-user sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Investors</span></a>
+        </li>
+    @endif
+
     @can ( getPermissionKey('asset', 'index', true))
         <li
             {!! strpos(request()->route()->getName(), 'asset.list') !== false ? ' class="active"' : '' !!}>

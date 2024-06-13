@@ -93,9 +93,6 @@ class AdminRepository extends BaseRepository implements IAdminRepository
                 $data['password'] = bcrypt($this->request->get('password'));
             }
 
-            if (Auth::user()->getAuthIdentifier()) {
-                $data['parent_id'] = Auth::user()->getAuthIdentifier();
-            }
             if (!empty($request->get('id'))) {
 
                 $this->admin = $this->find($request->get('id'));

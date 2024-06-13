@@ -15,7 +15,6 @@ class AddPhoneAndOwnerToAdminsTable extends Migration
     {
         Schema::table('admins', function (Blueprint $table) {
             $table->string('phone')->nullable();
-            $table->integer('parent_id')->nullable();
         });
     }
 
@@ -28,7 +27,6 @@ class AddPhoneAndOwnerToAdminsTable extends Migration
     {
         Schema::table('admins', function (Blueprint $table) {
             $table->dropColumn('phone');
-            $table->dropColumn('parent_id');
         });
     }
 }

@@ -26,6 +26,7 @@ class CreateInvestorsTable extends Migration
             $table->string('password');
             $table->string('profile_picture')->nullable();
             $table->string('passport')->nullable();
+            $table->foreignId('admin_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

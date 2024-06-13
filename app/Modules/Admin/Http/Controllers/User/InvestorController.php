@@ -13,6 +13,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -185,6 +186,7 @@ class InvestorController extends BaseController
                 }
             }
 
+
             Investor::updateOrCreate(
                 ['id' => $request->id],
                 [
@@ -198,7 +200,8 @@ class InvestorController extends BaseController
                     'address' => $request->address,
                     'password' => $request->password,
                     'passport' => !is_null($passport) ? Storage::url($passport) : null,
-                    'profile_picture' => !is_null($profilePicture) ? Storage::url($profilePicture) : null
+                    'profile_picture' => !is_null($profilePicture) ? Storage::url($profilePicture) : null,
+                    'admin_id' => Auth::user()->getAuthIdentifier()
                 ]
             );
         } catch (\Exception $ex) {
