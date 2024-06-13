@@ -20,7 +20,7 @@ class LoginController extends \App\Http\Controllers\Auth\LoginController
     {
         parent::__construct();
 //        dd(route('asset.index'));
-        $this->redirectTo = route('asset.index');
+        $this->redirectTo = route('admin.user.index');
     }
 
     /**

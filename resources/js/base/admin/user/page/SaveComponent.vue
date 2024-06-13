@@ -45,7 +45,11 @@
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit
                                   v-model="form.password"></el-input>
                     </div>
-
+                    <div class="col-md-3">
+                        <el-button type="warning" @click="generatePassword" :disabled="loading " style="margin: 0 1rem">
+                            Generate Password
+                        </el-button>
+                    </div>
                 </div>
 
             </el-row>
@@ -200,9 +204,27 @@
                 });
             },
 
-            resetFields(){
+            generatePassword() {
+                let charactersArray = 'a-z,A-Z,0-9,#'.split(',');
+                let CharacterSet = '';
+                let password = '';
 
-            }
+                if (charactersArray.indexOf('a-z') >= 0) {
+                    CharacterSet += 'abcdefghijklmnopqrstuvwxyz';
+                }
+                if (charactersArray.indexOf('A-Z') >= 0) {
+                    CharacterSet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                }
+                if (charactersArray.indexOf('0-9') >= 0) {
+                    CharacterSet += '0123456789';
+                }
+
+                for (let i = 0; i < 10; i++) {
+                    password += CharacterSet.charAt(Math.floor(Math.random() * CharacterSet.length));
+                }
+
+                this.form.password = password;
+            },
 
         }
 
