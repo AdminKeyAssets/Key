@@ -4,7 +4,7 @@
     <!-- Page content -->
     <div id="page-content">
         <!-- Statistics Widgets Header -->
-        @include('admin::includes.header-section', ['name'   => $trans_text['index'] ])
+        @include('admin::includes.header-section', ['name'   => 'Create Investor' ])
         <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
@@ -15,7 +15,7 @@
             <div class="row">
                 @can(getPermissionKey($moduleKey, 'create', true))
                     <div class="col-md-6">
-                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>{{ $trans_text['create'] }}</a>
+                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>Create Investor</a>
                     </div>
                 @endcan
 
@@ -30,11 +30,10 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th> {{ $trans_text['name'] }}</th>
-                            <th>{{ $trans_text['email'] }}</th>
-                            <th>{{ $trans_text['roles_name'] }}</th>
-                            <th>{{ $trans_text['created_at'] }}</th>
-                            <th width="10%" class="text-center">{{ $trans_text['actions'] }}</th>
+                            <th> Name</th>
+                            <th> Email</th>
+                            <th> Created At</th>
+                            <th width="10%" class="text-center">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -42,12 +41,11 @@
                             <tr>
                                 <td>{!! $item->name !!}</td>
                                 <td>{!! $item->email !!}</td>
-                                <td>{!! $item->rolesName !!}</td>
                                 <td>{!! $item->created_at->toDateTimeString() !!}</td>
                                 <td class="text-center">
 
                                     @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.edit',['route' => route($baseRouteName . 'create_form', [ $item->id ])])
+                                        @include('admin::includes.actions.edit',['route' => route($baseRouteName . 'edit', [ $item->id ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component

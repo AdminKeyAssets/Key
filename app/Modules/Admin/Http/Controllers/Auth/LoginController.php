@@ -19,7 +19,8 @@ class LoginController extends \App\Http\Controllers\Auth\LoginController
     public function __construct()
     {
         parent::__construct();
-        $this->redirectTo = route('admin.dashboard');
+//        dd(route('asset.index'));
+        $this->redirectTo = route('asset.index');
     }
 
     /**

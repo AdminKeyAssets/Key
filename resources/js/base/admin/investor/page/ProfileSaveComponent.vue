@@ -10,7 +10,7 @@
 
                 <div class="form-group">
 
-                    <label class="col-md-2 control-label">{{ lang.name }} <span class="text-danger">*</span>:</label>
+                    <label class="col-md-2 control-label">Name <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
                                   v-model="form.name"></el-input>
@@ -20,7 +20,7 @@
 
                 <div class="form-group">
 
-                    <label class="col-md-2 control-label">{{ lang.email }} <span class="text-danger">*</span>:</label>
+                    <label class="col-md-2 control-label">Email <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
                                   v-model="form.email"></el-input>
@@ -30,7 +30,7 @@
 
                 <div class="form-group">
 
-                    <label class="col-md-2 control-label">{{ lang.password }} <span class="text-danger">*</span>:</label>
+                    <label class="col-md-2 control-label">Password <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit
                                   v-model="form.password"></el-input>
@@ -42,7 +42,7 @@
 
 
             <div class="el-form-item registration-btn">
-                <el-button type="primary" @click="save" :disabled="loading || !form.name || !form.email" style="margin: 0 1rem">{{ lang.save_text }}</el-button>
+                <el-button type="primary" @click="save" :disabled="loading || !form.name || !form.email" style="margin: 0 1rem">Save</el-button>
             </div>
         </el-form>
     </div>
@@ -69,7 +69,6 @@ export default {
         return {
             data: [],
             loading: false,
-            lang: {},
             routes: {},
 
             /**
@@ -115,7 +114,6 @@ export default {
                     // Response data.
                     let data = response.data.data;
 
-                    this.lang = data.trans_text;
                     this.routes = data.routes;
 
                     // Modify create data.

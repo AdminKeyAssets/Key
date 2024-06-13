@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
          $this->call(\App\Modules\Admin\Database\Seeds\AdminSeeder::class);
         $this->call(\App\Modules\Admin\Database\Seeds\PermissionSeeder::class);
         $this->call(\App\Modules\Admin\Database\Seeds\RoleSeeder::class);
+        $this->call(\App\Modules\Admin\Database\Seeds\CountrySeeder::class);
     }
 }

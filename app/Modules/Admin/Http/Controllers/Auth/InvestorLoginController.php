@@ -19,7 +19,7 @@ class InvestorLoginController extends \App\Http\Controllers\Auth\LoginController
     public function __construct()
     {
         parent::__construct();
-        $this->redirectTo = route('asset.index');
+        $this->redirectTo = route('asset.myassets');
     }
 
     /**

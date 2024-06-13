@@ -6,7 +6,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $moduleName = 'asset';
 
     Route::get('/list', $controller . '@index')->name('index')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
-    Route::get('/my-assets', $controller . '@myassets')->name('myassets')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
+    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor']);
     //Create/Update view.
     Route::get('/create', $controller . '@create')->name('create')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/create-data', $controller . '@createData')->name('create_data')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);

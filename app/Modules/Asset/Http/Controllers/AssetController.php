@@ -63,11 +63,7 @@ class AssetController extends BaseController
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
 
-        if (in_array($user->getRolesNameAttribute(), $managers)) {
-            $this->baseData['allData'] = Asset::where('admin_id', $userId)->orderByDesc('id')->paginate(25);
-        } else {
-            $this->baseData['allData'] = Asset::where('investor_id', $userId)->orderByDesc('id')->paginate(25);
-        }
+        $this->baseData['allData'] = Asset::where('investor_id', $userId)->orderByDesc('id')->paginate(25);
 
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -131,7 +127,7 @@ class AssetController extends BaseController
                 }
             }
 
-            $this->baseData['investors'] = Admin::role(['Investor'])->get(['name', 'id']);
+            $this->baseData['investors'] = Asset::all()->get(['name', 'surname', 'id']);
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());

@@ -53,9 +53,13 @@ Vue.component('payment-view-page-form', require('./base/admin/payment/page/Payme
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 
-//
+//Rental
 Vue.component('lease-page-form', require('./base/admin/rental/page/RentalForm').default);
 Vue.component('lease-view-page-form', require('./base/admin/rental/page/RentalViewForm').default);
+
+// Investor
+Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
+Vue.component('admin-investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
 
 
 /**

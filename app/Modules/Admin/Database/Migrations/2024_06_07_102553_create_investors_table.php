@@ -17,10 +17,11 @@ class CreateInvestorsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('surname');
-            $table->string('pid');
+            $table->string('pid')->unique();
             $table->string('citizenship');
             $table->string('address');
             $table->string('email')->unique();
+            $table->string('prefix');
             $table->string('phone');
             $table->string('password');
             $table->string('profile_picture')->nullable();
