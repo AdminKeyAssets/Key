@@ -10,12 +10,13 @@
         <!-- Responsive Full Block -->
         <div class="block">
 
-        @include('admin::includes.success')
+            @include('admin::includes.success')
 
             <div class="row">
                 @can(getPermissionKey($moduleKey, 'create', true))
                     <div class="col-md-6">
-                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>Create Investor</a>
+                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i
+                                    class="fa fa-plus"></i>Create Investor</a>
                     </div>
                 @endcan
 
@@ -31,7 +32,11 @@
                         <thead>
                         <tr>
                             <th> Name</th>
+                            <th> Profile Picture</th>
+                            <th> Citizenship</th>
                             <th> Email</th>
+                            <th> Phone</th>
+                            <th> Assets</th>
                             <th> Created At</th>
                             <th width="10%" class="text-center">Actions</th>
                         </tr>
@@ -39,8 +44,16 @@
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->name !!}</td>
+                                <td>{!! $item->name !!} {!! $item->surname !!}</td>
+                                <td>
+                                    @if($item->profile_picture)
+                                        <img width="100" src="{!! $item->profile_picture !!}">
+                                    @endif
+                                </td>
+                                <td>{!! $item->citizenship !!}</td>
                                 <td>{!! $item->email !!}</td>
+                                <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
+                                <td>{!! count($item->assets) !!}</td>
                                 <td>{!! $item->created_at->toDateTimeString() !!}</td>
                                 <td class="text-center">
 
@@ -49,8 +62,8 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                            :url="'{{ route($baseRouteName . 'delete') }}'"
-                                            :id="{{ $item->id }}"
+                                                :url="'{{ route($baseRouteName . 'delete') }}'"
+                                                :id="{{ $item->id }}"
                                         ></delete-component>
                                     @endcan
 

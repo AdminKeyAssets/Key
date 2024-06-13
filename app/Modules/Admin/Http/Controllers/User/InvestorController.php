@@ -57,17 +57,26 @@ class InvestorController extends BaseController
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return Application|Factory|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $this->baseData['allData'] = Investor::paginate();
+        $query = Investor::query();
+        if ($request->has('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+        if ($request->has('phone')) {
+            $query->where('phone', 'like', '%' . $request->input('email') . '%');
+        }
+
+        $this->baseData['allData'] = $query::paginate();
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function create()
     {
