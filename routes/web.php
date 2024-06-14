@@ -12,5 +12,5 @@
 */
 
 Route::get('/', function () {
-//    return redirect()->route('admin.user.index');
+    return redirect()->route('admin.investor_login_form');
 });

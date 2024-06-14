@@ -19,7 +19,7 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check() && request()->route()->getName() != 'admin.logout') {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.user.index');
         }
 
 
