@@ -56,21 +56,19 @@
 
             <div class="form-group">
 
-                <label class="col-md-2 control-label">{{ lang.roles }} <span class="text-danger">*</span>:</label>
+                <label class="col-md-2 control-label">Select Role:</label>
 
-                <div class="col-md-9">
+                <div class="col-md-6">
 
-                    <el-transfer
-                            :filter-placeholder="lang.select_role_placeholder"
-                            style="text-align: left; display: inline-block"
-                            v-model="form.roles"
-                            filterable
-                            :titles="[lang.select_roles, lang.selected_roles]"
-                            :button-texts="[lang.role_remove, lang.role_add]"
-                            :format="{ noChecked: '${total}', hasChecked: '${checked}/${total}'}"
-                            :data="data">
-                    </el-transfer>
-
+                    <el-select style="width:100%;" v-model="form.roles" filterable
+                               placeholder="Select Role">
+                        <el-option
+                            v-for="role in this.data"
+                            :key="role.key"
+                            :label="role.label"
+                            :value="role.key"
+                        ></el-option>
+                    </el-select>
                 </div>
 
             </div>
@@ -132,16 +130,15 @@
                        label: item.name
                    });
                 });
-
+                console.log(this.data);
                 this.form = {
                     id: this.user? this.user.id : '',
                     name: this.user ? this.user.name : '',
                     email: this.user ? this.user.email : '',
                     phone: this.user ? this.user.phone : '',
-                    roles: this.user ? this.user.rolesId : [],
+                    roles: this.user && this.user.rolesId ? this.user.rolesId[0] : null,
                     password: ''
                 }
-
             },
 
             /**

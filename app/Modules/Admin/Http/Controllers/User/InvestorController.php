@@ -151,8 +151,9 @@ class InvestorController extends BaseController
     public function save(SaveUserRequest $request)
     {
         try {
+            $passport = null;
+            $profilePicture = null;
             if (isset($request->id)) {
-                dd(3);
                 $investor = Investor::where('id', $request->id)->first();
                 if ($request->hasFile('profile_picture')) {
                     if ($investor->profile_picture && Storage::disk('public')->exists($investor->profile_picture)) {
