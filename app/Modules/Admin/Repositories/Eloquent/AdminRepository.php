@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminRepository extends BaseRepository implements IAdminRepository
 {
@@ -87,20 +88,40 @@ class AdminRepository extends BaseRepository implements IAdminRepository
              */
             $this->request = $request;
 
-            $data = $request->only(['name', 'email', 'phone']);
+            $data = $request->only(['name', 'surname', 'email', 'prefix', 'phone', 'pid']);
 
             if ($this->request->get('password')) {
                 $data['password'] = bcrypt($this->request->get('password'));
             }
 
+            $profilePicture = null;
             if (!empty($request->get('id'))) {
-
                 $this->admin = $this->find($request->get('id'));
+
+                if ($request->hasFile('profile_picture')) {
+                    if ($this->admin->profile_picture && Storage::disk('public')->exists($this->admin->profile_picture)) {
+                        Storage::disk('public')->delete($this->admin->profile_picture);
+                    }
+
+                    $profilePictureFile = $request->file('profile_picture');
+                    $profilePicture = $profilePictureFile->store('uploads', 'public');
+
+                } else if ($request->input('profile_picture') === null) {
+                    if ($this->admin->profile_picture && Storage::disk('public')->exists($this->admin->profile_picture)) {
+                        Storage::disk('public')->delete($this->admin->profile_picture);
+                    }
+                }
+
+                $data['profile_picture'] = Storage::url($profilePicture);
                 $this->admin->update($data);
 
             } else {
+                if ($request->hasFile('profile_picture')) {
+                    $profilePictureFile = $request->file('profile_picture');
+                    $profilePicture = $profilePictureFile->store('uploads', 'public');
+                }
+                $data['profile_picture'] = Storage::url($profilePicture);
                 $this->admin = $this->create($data);
-
                 $this->mailService->sendEmail(
                     $data['email'],
                     'KeyAsset Credentials',

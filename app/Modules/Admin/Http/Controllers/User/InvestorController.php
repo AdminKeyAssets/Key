@@ -153,6 +153,7 @@ class InvestorController extends BaseController
         try {
             $passport = null;
             $profilePicture = null;
+
             if (isset($request->id)) {
                 $investor = Investor::where('id', $request->id)->first();
                 if ($request->hasFile('profile_picture')) {
@@ -167,7 +168,6 @@ class InvestorController extends BaseController
                     if ($investor->profile_picture && Storage::disk('public')->exists($investor->profile_picture)) {
                         Storage::disk('public')->delete($investor->profile_picture);
                     }
-                    $profilePicture = null;
                 }
 
                 if ($request->hasFile('passport')) {
@@ -182,7 +182,6 @@ class InvestorController extends BaseController
                     if ($investor->passport && Storage::disk('public')->exists($investor->passport)) {
                         Storage::disk('public')->delete($investor->passport);
                     }
-                    $passport = null;
                 }
 
             } else {

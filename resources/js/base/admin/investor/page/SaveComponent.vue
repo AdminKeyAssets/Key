@@ -69,7 +69,6 @@
                 </div>
 
                 <div class="form-group phone">
-
                     <label class="col-md-2 control-label">Phone: </label>
                     <div class="col-md-6">
                         <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
@@ -84,7 +83,6 @@
                             </el-select>
                         </el-input>
                     </div>
-
                 </div>
 
                 <div class="form-group">
@@ -255,6 +253,7 @@ export default {
                     responseParse(error.response);
                 });
         },
+
         generatePassword() {
             let charactersArray = 'a-z,A-Z,0-9,#'.split(',');
             let CharacterSet = '';

@@ -9,13 +9,28 @@
             <el-row>
 
                 <div class="form-group">
-
-                    <label class="col-md-2 control-label">{{ lang.name }} <span class="text-danger">*</span>:</label>
+                    <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
                                       v-model="form.name"></el-input>
                     </div>
+                </div>
 
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Surname: <span class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                  v-model="form.surname"></el-input>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">ID/Passport Number: <span
+                        class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                  v-model="form.pid"></el-input>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -28,18 +43,24 @@
 
                 </div>
 
-                <div class="form-group">
-
-                    <label class="col-md-2 control-label">{{ lang.phone }}:</label>
+                <div class="form-group phone">
+                    <label class="col-md-2 control-label">Phone: </label>
                     <div class="col-md-6">
-                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                  v-model="form.phone"></el-input>
+                        <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
+                            <el-select v-model="form.prefix" slot="prepend" filterable
+                                       placeholder="Prefix">
+                                <el-option
+                                    v-for="prefix in this.prefixes"
+                                    :key="prefix.prefix"
+                                    :label="prefix.prefix"
+                                    :value="prefix.prefix"
+                                ></el-option>
+                            </el-select>
+                        </el-input>
                     </div>
-
                 </div>
 
                 <div class="form-group">
-
                     <label class="col-md-2 control-label">{{ lang.password }} <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit
@@ -51,15 +72,11 @@
                         </el-button>
                     </div>
                 </div>
-
             </el-row>
 
             <div class="form-group">
-
                 <label class="col-md-2 control-label">Select Role:</label>
-
                 <div class="col-md-6">
-
                     <el-select style="width:100%;" v-model="form.roles" filterable
                                placeholder="Select Role">
                         <el-option
@@ -70,9 +87,20 @@
                         ></el-option>
                     </el-select>
                 </div>
-
             </div>
 
+            <div class="form-group dashed">
+                <label class="col-md-1 control-label">Profile Picture:</label>
+                <div class="col-md-10 uppercase-medium">
+                    <input type="file" @change="onProfilePictureChange" accept="image/*">
+                    <div v-if="form.profile_picture">
+                        <img v-if="form.profilePicturePreview" :src="form.profilePicturePreview" alt="Icon Preview" style="max-width: 100px;"/>
+                        <img v-else :src="form.profile_picture" alt="Icon Preview" style="max-width: 100px;"/>
+                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                   @click="removeProfilePicture"></el-button>
+                    </div>
+                </div>
+            </div>
 
             <div class="el-form-item registration-btn">
                 <el-button type="primary" @click="save" :disabled="loading || !form.name || !form.email" style="margin: 0 1rem">{{ lang.save_text }}</el-button>
@@ -105,6 +133,8 @@
                 lang: {},
                 routes: {},
                 options: {},
+                countries: [],
+                prefixes: [],
 
                 /**
                  * Form data
@@ -134,8 +164,12 @@
                 this.form = {
                     id: this.user? this.user.id : '',
                     name: this.user ? this.user.name : '',
+                    surname: this.user ? this.user.surname : '',
                     email: this.user ? this.user.email : '',
+                    prefix: this.user ? this.user.prefix : '',
                     phone: this.user ? this.user.phone : '',
+                    pid: this.user ? this.user.pid : '',
+                    profile_picture: this.user ? this.user.profile_picture : '',
                     roles: this.user && this.user.rolesId ? this.user.rolesId[0] : null,
                     password: ''
                 }
@@ -165,6 +199,9 @@
                         this.routes = data.routes;
                         this.options = data.options;
 
+                        if(data.prefixes){
+                            this.prefixes = data.prefixes;
+                        }
                         // Modify create data.
                         this.modifyCreateData();
                     }
@@ -172,33 +209,33 @@
                 })
             },
 
-            async save(){
-
+            async save() {
                 this.loading = true;
 
-                this.$confirm(this.lang.confirm_save, {
-                    confirmButtonText: this.lang.confirm_save_yes,
-                    cancelButtonText: this.lang.confirm_save_no,
-                    type: 'warning'
-                })
-                    .then(async () => {
+                let formData = new FormData();
+                for (let key in this.form) {
+                    if (key === 'profile_picture' && this.form[key]) {
+                        formData.append(key, this.form[key]);
+                    } else {
+                        formData.append(key, this.form[key]);
+                    }
+                }
 
-                        await getData({
-                            method: 'POST',
-                            url: this.routes.save,
-                            data: this.form
-                        }).then(response => {
-                            // Parse response notification.
-                            responseParse(response);
-                            if (response.status == 200) {
-                                window.location.reload();
-                            }
-                            this.loading = false
-                        })
-
-                }).catch(() => {
+                await axios.post(this.routes.save, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(response => {
                     this.loading = false;
-                });
+                    responseParse(response);
+                    setTimeout(() => {
+                        // window.location.href ='/assets/list';
+                    }, 1000);
+                })
+                    .catch(error => {
+                        this.loading = false;
+                        responseParse(error.response);
+                    });
             },
 
             generatePassword() {
@@ -223,6 +260,24 @@
                 this.form.password = password;
             },
 
+            onProfilePictureChange(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.form.profile_picture = file;
+                        this.form.profilePicturePreview = e.target.result;
+                    };
+                    reader.onerror = (error) => {
+                        console.error('Error loading file:', error);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+            removeProfilePicture() {
+                this.form.profile_picture = null;
+                this.form.profilePicturePreview = null;
+            },
         }
 
     }

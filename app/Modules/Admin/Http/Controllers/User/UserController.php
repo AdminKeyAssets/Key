@@ -6,6 +6,7 @@ use App\Modules\Admin\Helper\TextHelper;
 use App\Modules\Admin\Helper\UserHelper;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\User\SaveUserRequest;
+use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Repositories\Contracts\IAdminRepository;
 use App\Modules\Admin\Repositories\Contracts\IPermissionRepository;
@@ -105,6 +106,7 @@ class UserController extends BaseController
 
             $this->baseData['options']['roles'] = $this->roleRepository->all();
             $this->baseData['routes'] = UserHelper::getRoutes();
+            $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
 
         } catch (\Exception $ex) {
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
