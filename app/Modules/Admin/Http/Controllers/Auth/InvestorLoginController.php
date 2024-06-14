@@ -54,4 +54,19 @@ class InvestorLoginController extends \App\Http\Controllers\Auth\LoginController
             'password' => 'required|string',
         ]);
     }
+
+    /**
+     * Log the user out of the application.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request)
+    {
+        Auth::guard('investor')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
+    }
 }

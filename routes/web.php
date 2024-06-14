@@ -12,5 +12,5 @@
 */
 
 Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
+//    return redirect()->route('admin.user.index');
 });
