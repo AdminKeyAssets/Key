@@ -47,6 +47,9 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
         Route::post('export', $userController . '@export')
             ->name('export')
             ->middleware(['permission:'.getPermissionKey($moduleName, 'export', false)]);
+
+        Route::get('filter-options', $userController . '@filterOptions')
+            ->name('filters');
     });
 
     /**

@@ -74,7 +74,7 @@ export default {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.assets = urlParams.get('assets') || '';
-            this.form.create_date = urlParams.get('create_date') || '';
+            this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.citizenship = urlParams.get('citizenship') || '';
             this.form.manager = urlParams.get('manager') || '';
         },
@@ -97,8 +97,6 @@ export default {
                         if (data.managers) {
                             this.managers = data.managers;
                         }
-
-                        console.log(this.form);
                     }
                 })
                 .catch(error => {
@@ -109,6 +107,3 @@ export default {
 };
 </script>
 
-<style>
-
-</style>

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Http\Controllers\User;
 
+use App\Models\Role;
 use App\Modules\Admin\Exports\AdminsExport;
 use App\Modules\Admin\Helper\TextHelper;
 use App\Modules\Admin\Helper\UserHelper;
@@ -69,9 +70,28 @@ class UserController extends BaseController
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $this->baseData['allData'] = $this->adminRepository->paginate();
+        $query = Admin::query();
+
+        if ($request->create_date) {
+            $createdDates = explode(',', $request->create_date);
+            if(isset($createdDates[0])){
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if(isset($createdDates[1])){
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        if ($request->role) {
+            $role = $request->role;
+            $query->whereHas('roles', function ($roleQuery) use ($role) {
+                $roleQuery->where('name', '=', $role);
+            });
+        }
+
+        $this->baseData['allData'] = $query->paginate();
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -154,6 +174,13 @@ class UserController extends BaseController
     {
         $filters = $request->only(['email', 'phone']);
         return Excel::download(new AdminsExport($filters), 'users.xlsx');
+    }
+
+    public function filterOptions()
+    {
+        $this->baseData['roles'] = Role::get('name');
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
 
 }

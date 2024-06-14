@@ -30,6 +30,7 @@ window.Vue = require('vue');
 Vue.component('admin-user-save-component', require('./base/admin/user/page/SaveComponent').default);
 Vue.component('admin-profile-save-component', require('./base/admin/user/page/ProfileSaveComponent').default);
 Vue.component('admin-user-component', require('./base/admin/user/partials/User').default);
+Vue.component('admin-user-filter-component', require('./base/admin/user/partials/UserFilters').default);
 
 
 // User role

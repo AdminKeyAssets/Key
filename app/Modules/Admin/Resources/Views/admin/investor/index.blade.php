@@ -26,11 +26,13 @@
                 @endcan
             </div>
             <br>
+
             <div class="row">
                 <admin-investor-filter-component>
                 </admin-investor-filter-component>
             </div>
             <br>
+
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('User Not Found')</h3><br>

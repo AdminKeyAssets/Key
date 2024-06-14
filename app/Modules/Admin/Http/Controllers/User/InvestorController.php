@@ -79,8 +79,12 @@ class InvestorController extends BaseController
 
         if($request->create_date){
             $createdDates = explode(',', $request->create_date);
-            $query->where('created_at', '>=', $createdDates[0]);
-            $query->where('created_at', '<=', $createdDates[1]);
+            if(isset($createdDates[0])){
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if(isset($createdDates[1])){
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
         }
 
         if($request->manager){
