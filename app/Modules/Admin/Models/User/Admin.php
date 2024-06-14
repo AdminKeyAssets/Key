@@ -62,5 +62,9 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
         return $this->hasMany(Comment::class);
     }
 
+    public function investors()
+    {
+        return $this->hasMany(Investor::class);
+    }
 
 }

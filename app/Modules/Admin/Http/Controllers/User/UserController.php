@@ -145,6 +145,11 @@ class UserController extends BaseController
                 throw new \Exception('You are not allowed to delete this user!');
             }
 
+            $admin = Admin::find($request->get('id'));
+            if($admin->investors){
+                throw new \Exception('You are not allowed to delete user, while having investors attached on it!!');
+            }
+
             $admin = $this->adminRepository->find($request->get('id'));
             $admin->delete();
 
