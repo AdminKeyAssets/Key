@@ -25,12 +25,20 @@ $default_permissions = [
 
 ];
 
+$custom_permissions = [
+    'export' => [
+        'key' => '{module_name}_export',
+        'label' => '{module_name} export'
+    ]
+];
+
 return [
     /**
      * User module permissions.
      */
     'user' => [
-        'default' => $default_permissions
+        'default' => $default_permissions,
+        'custom' => $custom_permissions
     ],
 
     /**
@@ -53,6 +61,7 @@ return [
         'default' => $default_permissions
     ],
     'investor' => [
-        'default' => $default_permissions
+        'default' => $default_permissions,
+        'custom' => $custom_permissions
     ],
 ];

@@ -21,7 +21,8 @@ class Investor  extends Authenticatable
         'citizenship',
         'address',
         'profile_picture',
-        'passport'
+        'passport',
+        'admin_id'
     ];
 
     protected $hidden = [

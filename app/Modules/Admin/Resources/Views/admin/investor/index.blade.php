@@ -16,10 +16,14 @@
                 @can(getPermissionKey($moduleKey, 'create', true))
                     <div class="col-md-6">
                         <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i
-                                    class="fa fa-plus"></i>Create Investor</a>
+                                class="fa fa-plus"></i>Create Investor</a>
                     </div>
                 @endcan
 
+                @can(getPermissionKey($moduleKey, 'export', false))
+                    <admin-investor-component>
+                    </admin-investor-component>
+                @endcan
             </div>
             <br>
 
@@ -62,8 +66,8 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                                :url="'{{ route($baseRouteName . 'delete') }}'"
-                                                :id="{{ $item->id }}"
+                                            :url="'{{ route($baseRouteName . 'delete') }}'"
+                                            :id="{{ $item->id }}"
                                         ></delete-component>
                                     @endcan
 

@@ -29,6 +29,8 @@ window.Vue = require('vue');
 // User
 Vue.component('admin-user-save-component', require('./base/admin/user/page/SaveComponent').default);
 Vue.component('admin-profile-save-component', require('./base/admin/user/page/ProfileSaveComponent').default);
+Vue.component('admin-user-component', require('./base/admin/user/partials/User').default);
+
 
 // User role
 Vue.component('admin-role-save-component', require('./base/admin/role/page/SaveComponent').default);
@@ -60,6 +62,7 @@ Vue.component('lease-view-page-form', require('./base/admin/rental/page/RentalVi
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
 Vue.component('admin-investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
+Vue.component('admin-investor-component', require('./base/admin/investor/partials/Investor').default);
 
 
 /**

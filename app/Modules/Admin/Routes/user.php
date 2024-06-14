@@ -1,9 +1,5 @@
 <?php
-
-
 Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function () {
-
-
     Route::name('admin.user.')->prefix('users')->group(function(){
 
         $userController = 'User\UserController';
@@ -45,6 +41,12 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
             ->name('delete')
             ->middleware(['permission:'.getPermissionKey($moduleName, 'delete', true)]);
 
+        /**
+         * Export users.
+         */
+        Route::post('export', $userController . '@export')
+            ->name('export')
+            ->middleware(['permission:'.getPermissionKey($moduleName, 'export', false)]);
     });
 
     /**
@@ -69,8 +71,5 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
          */
         Route::post('save', 'User\ProfileController@save')
             ->name('save');
-
     });
-
-
 });

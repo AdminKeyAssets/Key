@@ -16,18 +16,13 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-
         $permissionList = config('permission_list');
 
         foreach($permissionList as $moduleKey => $permissions) {
-
             foreach($permissions as $key => $permission) {
-
                 // If default permission, add this.
-                if ($key == 'default') {
-
+                if ($key == 'default' || $key == 'custom') {
                     foreach($permission as $somePermission) {
-
                         Permission::updateOrCreate([
                             'name'          =>  str_replace('{module_name}', $moduleKey, $somePermission['key']),
                             'guard_name'    => 'admin',
@@ -35,11 +30,8 @@ class PermissionSeeder extends Seeder
                         [
                             'label'     => str_replace('{module_name}', ucfirst($moduleKey), $somePermission['label'])
                         ]);
-
                     }
-
                     continue;
-
                 }
 
                 Permission::updateOrCreate([
@@ -51,9 +43,6 @@ class PermissionSeeder extends Seeder
                 ]);
 
             }
-
         }
-
     }
-
 }

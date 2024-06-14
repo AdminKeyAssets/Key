@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Http\Controllers\User;
 
+use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\User\SaveUserRequest;
 use App\Modules\Admin\Models\Country;
@@ -12,7 +13,7 @@ use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
-
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -245,6 +246,12 @@ class InvestorController extends BaseController
 
         return ServiceResponse::jsonNotification($this->baseData['trans_text']['delete_successfully'], 200, $this->baseData);
 
+    }
+
+    public function export(Request $request)
+    {
+        $filters = $request->only(['email', 'phone']);
+        return Excel::download(new InvestorsExport($filters), 'investors.xlsx');
     }
 
 }

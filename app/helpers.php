@@ -15,7 +15,7 @@ function getPermissionKey($module, $type ,$default = true){
         return str_replace('{module_name}', $module, config('permission_list.' .$module. '.default.'.$type.'.key'));
     }
 
-    return config('permission_list.' .$module. '.'.$type.'.key');
+    return str_replace('{module_name}', $module, config('permission_list.' .$module. '.custom.'.$type.'.key'));
 }
 
 /**

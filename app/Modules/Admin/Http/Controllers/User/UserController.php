@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Http\Controllers\User;
 
+use App\Modules\Admin\Exports\AdminsExport;
 use App\Modules\Admin\Helper\TextHelper;
 use App\Modules\Admin\Helper\UserHelper;
 use App\Modules\Admin\Http\Controllers\BaseController;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends BaseController
 {
@@ -50,9 +52,9 @@ class UserController extends BaseController
      */
     public function __construct
     (
-        IRoleRepository $roleRepository,
+        IRoleRepository       $roleRepository,
         IPermissionRepository $permissionRepository,
-        IAdminRepository $adminRepository
+        IAdminRepository      $adminRepository
     )
     {
         parent::__construct();
@@ -71,7 +73,7 @@ class UserController extends BaseController
     {
         $this->baseData['allData'] = $this->adminRepository->paginate();
 
-        return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
     /**
@@ -80,20 +82,14 @@ class UserController extends BaseController
      */
     public function create($id = '')
     {
-
         try {
-
             $user = $this->adminRepository->find($id);
-
             $this->baseData['user'] = !$user ? $user : $user->load('roles');
-
             $this->baseData['routes']['create_form_data'] = UserHelper::getRoutes()['create_form_data'];
-
         } catch (\Exception $ex) {
-            return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.create', ServiceResponse::error($ex->getMessage()));
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', ServiceResponse::error($ex->getMessage()));
         }
-
-        return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.create', ServiceResponse::success($this->baseData));
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', ServiceResponse::success($this->baseData));
     }
 
     /**
@@ -103,17 +99,14 @@ class UserController extends BaseController
     public function getCreateData(Request $request)
     {
         try {
-
             $this->baseData['options']['roles'] = $this->roleRepository->all();
             $this->baseData['routes'] = UserHelper::getRoutes();
             $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
-
         } catch (\Exception $ex) {
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
-
-        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200,  $this->baseData );
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
 
     /**
@@ -128,8 +121,7 @@ class UserController extends BaseController
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
-
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['save_successfully'], 200,  $this->baseData );
+        return ServiceResponse::jsonNotification($this->baseData['trans_text']['save_successfully'], 200, $this->baseData);
     }
 
     /**
@@ -138,15 +130,13 @@ class UserController extends BaseController
      */
     public function delete(Request $request)
     {
-
         try {
-
             if (auth()->user()->id == $request->get('id')) {
                 throw new \Exception('You are not allowed to delete this user!');
             }
 
             $admin = Admin::find($request->get('id'));
-            if($admin->investors){
+            if ($admin->investors) {
                 throw new \Exception('You are not allowed to delete user, while having investors attached on it!!');
             }
 
@@ -157,9 +147,13 @@ class UserController extends BaseController
             Log::error('Error during delete user', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
+        return ServiceResponse::jsonNotification($this->baseData['trans_text']['delete_successfully'], 200, $this->baseData);
+    }
 
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['delete_successfully'], 200,  $this->baseData );
-
+    public function export(Request $request)
+    {
+        $filters = $request->only(['email', 'phone']);
+        return Excel::download(new AdminsExport($filters), 'users.xlsx');
     }
 
 }

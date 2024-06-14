@@ -18,7 +18,10 @@
                         <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>Create User</a>
                     </div>
                 @endcan
-
+                    @can(getPermissionKey($moduleKey, 'export', false))
+                        <admin-user-component>
+                        </admin-user-component>
+                    @endcan
             </div>
             <br>
 
@@ -26,6 +29,7 @@
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('User Not Found')</h3><br>
             @else
+
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">
                         <thead>
