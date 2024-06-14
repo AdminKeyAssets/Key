@@ -39,8 +39,5 @@ export default {
             }
         }
     },
-    mounted() {
-        this.fetchInvestors(); // Fetch all investors on component mount
-    }
 };
 </script>

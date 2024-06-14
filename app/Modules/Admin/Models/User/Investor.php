@@ -43,4 +43,9 @@ class Investor  extends Authenticatable
     {
         return $this->hasMany(Asset::class);
     }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 }

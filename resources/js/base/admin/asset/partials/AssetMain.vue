@@ -8,7 +8,6 @@
                      ref="form" :model="form" class="form-horizontal form-bordered">
 
                 <el-row>
-
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Upload Icon:</label>
                         <div class="col-md-10 uppercase-medium">
@@ -69,7 +68,10 @@
                             <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
                         </div>
                         <div class="col-md-3 uppercase-medium">
-                            <el-select v-model="form.currency" :value="form.currency" filterable placeholder="Select">
+                            <el-select v-model="form.currency"
+                                       :value="form.currency"
+                                       filterable
+                                       placeholder="Select">
                                 <el-option
                                     v-for="(currency, index) in currencies"
                                     :key="index"
@@ -173,8 +175,8 @@ export default {
             addDetailIsBtnDisabled: true,
             fileList: [],
             currencies: {
-                "GEL": "GEL",
                 "USD": "USD",
+                "GEL": "GEL",
             },
         }
     },

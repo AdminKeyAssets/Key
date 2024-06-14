@@ -4,6 +4,7 @@ namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
+use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
@@ -126,9 +127,7 @@ class AssetController extends BaseController
                     $this->baseData['item']['icon'] = Storage::url($asset->icon);
                 }
             }
-
-            $this->baseData['investors'] = Asset::all()->get(['name', 'surname', 'id']);
-
+            $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }

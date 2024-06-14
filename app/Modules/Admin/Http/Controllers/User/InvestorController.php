@@ -6,6 +6,7 @@ use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\User\SaveUserRequest;
 use App\Modules\Admin\Models\Country;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Admin\Repositories\Contracts\IPermissionRepository;
 use App\Modules\Admin\Repositories\Contracts\IRoleRepository;
@@ -64,11 +65,31 @@ class InvestorController extends BaseController
     public function index(Request $request)
     {
         $query = Investor::query();
-        if ($request->has('email')) {
-            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        if ($request->citizenship) {
+            $query->where('citizenship', '=', $request->input('citizenship'));
         }
-        if ($request->has('phone')) {
-            $query->where('phone', 'like', '%' . $request->input('email') . '%');
+        if ($request->assets) {
+            $assetsCount = $request->assets;
+            $query->whereHas('assets', function ($query) use ($assetsCount) {
+                if ($assetsCount > 0) {
+                    $query->havingRaw('COUNT(*) = ?', [$assetsCount]);
+                }
+            });
+        }
+
+        if($request->create_date){
+            $createdDates = explode(',', $request->create_date);
+            $query->where('created_at', '>=', $createdDates[0]);
+            $query->where('created_at', '<=', $createdDates[1]);
+        }
+
+        if($request->manager){
+            $managerName = $request->manager;
+            $query->whereHas('admin', function ($query) use ($managerName){
+                $query->whereHas('roles', function ($roleQuery) use ($managerName){
+                    $roleQuery->where('name', '=', $managerName);
+                });
+            });
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -254,4 +275,13 @@ class InvestorController extends BaseController
         return Excel::download(new InvestorsExport($filters), 'investors.xlsx');
     }
 
+    public function filterOptions()
+    {
+        $this->baseData['countries'] = Country::get('country');
+        $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+            $query->where('name', 'like', '%manager%');
+        })->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
 }

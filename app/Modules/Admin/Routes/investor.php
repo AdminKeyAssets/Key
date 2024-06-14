@@ -50,6 +50,9 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
         Route::get('export', $investorController . '@export')
             ->name('export')
             ->middleware(['permission:'.getPermissionKey($moduleName, 'export', false)]);
+
+        Route::get('filter-options', $investorController . '@filterOptions')
+            ->name('filters');
     });
 
     /**

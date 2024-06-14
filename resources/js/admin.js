@@ -63,6 +63,7 @@ Vue.component('lease-view-page-form', require('./base/admin/rental/page/RentalVi
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
 Vue.component('admin-investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
 Vue.component('admin-investor-component', require('./base/admin/investor/partials/Investor').default);
+Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 
 
 /**
