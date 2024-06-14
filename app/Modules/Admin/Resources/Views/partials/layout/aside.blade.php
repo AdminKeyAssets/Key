@@ -30,4 +30,12 @@
                 <span class="sidebar-nav-mini-hide">Assets</span></a>
         </li>
     @endif
+
+    @if(Auth::guard('investor')->check())
+        <li
+            {!! strpos(request()->route()->getName(), 'asset.myassets') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('asset.myassets')}}"><i class="el-icon-house sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Assets</span></a>
+        </li>
+    @endif
 </ul>
