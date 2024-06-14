@@ -30,19 +30,27 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th> {{ $trans_text['name'] }}</th>
-                            <th>{{ $trans_text['email'] }}</th>
-                            <th>{{ $trans_text['roles_name'] }}</th>
-                            <th>{{ $trans_text['created_at'] }}</th>
-                            <th width="10%" class="text-center">{{ $trans_text['actions'] }}</th>
+                            <th> Name</th>
+                            <th> Profile Picture</th>
+                            <th> Role</th>
+                            <th> Email</th>
+                            <th> Phone</th>
+                            <th> Created At</th>
+                            <th width="10%" class="text-center">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->name !!}</td>
-                                <td>{!! $item->email !!}</td>
+                                <td>{!! $item->name !!} {!! $item->surname !!}</td>
+                                <td>
+                                    @if($item->profile_picture)
+                                        <img width="100" src="{!! $item->profile_picture !!}">
+                                    @endif
+                                </td>
                                 <td>{!! $item->rolesName !!}</td>
+                                <td>{!! $item->email !!}</td>
+                                <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
                                 <td>{!! $item->created_at->toDateTimeString() !!}</td>
                                 <td class="text-center">
 
