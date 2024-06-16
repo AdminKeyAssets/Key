@@ -15,7 +15,8 @@
                                 <div class="col-md-10 uppercase-medium">
                                     <input type="file" @change="onIconChange" accept="image/*">
                                     <div v-if="form.icon">
-                                        <img v-if="form.iconPreview" :src="form.iconPreview" alt="Icon Preview" style="max-width: 100px;"/>
+                                        <img v-if="form.iconPreview" :src="form.iconPreview" alt="Icon Preview"
+                                             style="max-width: 100px;"/>
                                         <img v-else :src="form.icon" alt="Icon Preview" style="max-width: 100px;"/>
                                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                    @click="removeIcon"></el-button>
@@ -69,7 +70,8 @@
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Select Investor:</label>
                                 <div class="col-md-10 uppercase-medium">
-                                    <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select">
+                                    <el-select v-model="form.investor_id" :value="form.investor_id" filterable
+                                               placeholder="Select">
                                         <el-option
                                             v-for="item in investors"
                                             :key="item.id"
@@ -103,52 +105,60 @@
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Cadastral Number:</label>
                                 <div class="col-md-10 uppercase-medium">
-                                    <input class="form-control" :disabled="loading" v-model="form.cadastral_number"></input>
+                                    <input class="form-control" :disabled="loading"
+                                           v-model="form.cadastral_number"></input>
                                 </div>
                             </div>
 
                         </el-collapse-item>
-
-                    </el-collapse>
-
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Attachments:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input type="file" @change="onFileChange" multiple>
-                            <div v-if="form.attachments">
-                                <ul>
-                                    <li v-for="(file, index) in form.attachments" :key="index" style="display: inline-block; margin-right: 10px">
-                                        <img v-if="file.preview" :src="file.preview" alt="preview" style="max-width: 100px;"/>
-                                        <img v-else-if="file.type === 'image'" :src="file.path" alt="preview" style="max-width: 100px;"/>
-                                        <a v-else :href="file.path" target="_blank">{{ file.name }}</a>
-                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                                                   @click="removeAttachment(index)"></el-button>
-                                    </li>
-                                </ul>
+                        <el-collapse-item title="Extra" name="3">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Attachments:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input type="file" @change="onFileChange" multiple>
+                                    <div v-if="form.attachments">
+                                        <ul>
+                                            <li v-for="(file, index) in form.attachments" :key="index"
+                                                style="display: inline-block; margin-right: 10px">
+                                                <img v-if="file.preview" :src="file.preview" alt="preview"
+                                                     style="max-width: 100px;"/>
+                                                <img v-else-if="file.type === 'image'" :src="file.path" alt="preview"
+                                                     style="max-width: 100px;"/>
+                                                <a v-else :href="file.path" target="_blank">{{ file.name }}</a>
+                                                <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                           @click="removeAttachment(index)"></el-button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Extra Details:</label>
-                        <div class="col-md-10 uppercase-medium">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Extra Details:</label>
+                                <div class="col-md-10 uppercase-medium">
 
-                            <el-form-item
-                                v-for="(extraDetail) in form.extraDetails"
-                                :key="extraDetail.id">
-                                <div class="col-md-5 uppercase-medium">
-                                    <el-input class="col-md-5" v-model="extraDetail.key" placeholder="Name for extra detail"></el-input>
+                                    <el-form-item
+                                        v-for="(extraDetail) in form.extraDetails"
+                                        :key="extraDetail.id">
+                                        <div class="col-md-5 uppercase-medium">
+                                            <el-input class="col-md-5" v-model="extraDetail.key"
+                                                      placeholder="Name for extra detail"></el-input>
+                                        </div>
+                                        <div class="col-md-5 uppercase-medium">
+                                            <el-input class="col-md-5" v-model="extraDetail.value"
+                                                      placeholder="Value for extra detail"></el-input>
+                                        </div>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click.prevent="removeDetail(extraDetail)"></el-button>
+                                    </el-form-item>
+                                    <el-button type="primary" size="medium" icon="el-icon-plus" @click="addDetail">Add
+                                        Extra
+                                        Details
+                                    </el-button>
                                 </div>
-                                <div class="col-md-5 uppercase-medium">
-                                    <el-input class="col-md-5" v-model="extraDetail.value" placeholder="Value for extra detail"></el-input>
-                                </div>
-                                <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                                           @click.prevent="removeDetail(extraDetail)"></el-button>
-                            </el-form-item>
-                            <el-button type="primary" size="medium" icon="el-icon-plus" @click="addDetail">Add Extra Details</el-button>
-                        </div>
-                    </div>
-
+                            </div>
+                        </el-collapse-item>
+                    </el-collapse>
                 </el-row>
             </el-form>
         </div>
@@ -232,7 +242,7 @@ export default {
         },
         removeAttachment(index) {
             this.form.attachments.splice(index, 1);
-            if(this.form.existingAttachments.length){
+            if (this.form.existingAttachments.length) {
                 this.fileList.push(this.form.existingAttachments[index].id);
                 this.form.attachmentsToRemove = this.fileList;
                 this.form.existingAttachments.splice(index, 1);
