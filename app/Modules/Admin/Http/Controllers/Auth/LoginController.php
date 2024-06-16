@@ -81,4 +81,17 @@ class LoginController extends \App\Http\Controllers\Auth\LoginController
         return redirect('/admin');
     }
 
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+
+        $user = Auth::guard('admin')->user();
+
+        if ($user->hasRole('administrator')) {
+            return redirect()->route('admin.user.index');
+        } else {
+            return redirect()->route('admin.investor.index');
+        }
+    }
+
 }

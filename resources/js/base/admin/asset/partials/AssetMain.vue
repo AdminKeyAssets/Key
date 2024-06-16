@@ -7,101 +7,109 @@
                      element-loading-background="rgba(0, 0, 0, 0.0)"
                      ref="form" :model="form" class="form-horizontal form-bordered">
 
-                <el-row>
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Upload Icon:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input type="file" @change="onIconChange" accept="image/*">
-                            <div v-if="form.icon">
-                                <img v-if="form.iconPreview" :src="form.iconPreview" alt="Icon Preview" style="max-width: 100px;"/>
-                                <img v-else :src="form.icon" alt="Icon Preview" style="max-width: 100px;"/>
-                                <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                                           @click="removeIcon"></el-button>
+                <el-row style="margin-left: 15px">
+                    <el-collapse v-model="activeNames">
+                        <el-collapse-item title="Project Details" name="1">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Upload Icon:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input type="file" @change="onIconChange" accept="image/*">
+                                    <div v-if="form.icon">
+                                        <img v-if="form.iconPreview" :src="form.iconPreview" alt="Icon Preview" style="max-width: 100px;"/>
+                                        <img v-else :src="form.icon" alt="Icon Preview" style="max-width: 100px;"/>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click="removeIcon"></el-button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Name:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.name"></input>
-                        </div>
-                    </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">City:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.city"></input>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Name:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.name"></input>
+                                </div>
+                            </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Address:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.address"></input>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">City:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.city"></input>
+                                </div>
+                            </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Delivery Date:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <el-date-picker
-                                v-model="form.delivery_date"
-                                format="yyyy/MM/dd"
-                                type="date"
-                                value-format="yyyy/MM/dd"
-                                placeholder="Pick a delivery date">
-                            </el-date-picker>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Address:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.address"></input>
+                                </div>
+                            </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Area (m2):</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.area"></input>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Delivery Date:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <el-date-picker
+                                        v-model="form.delivery_date"
+                                        format="yyyy/MM/dd"
+                                        type="date"
+                                        value-format="yyyy/MM/dd"
+                                        placeholder="Pick a delivery date">
+                                    </el-date-picker>
+                                </div>
+                            </div>
+                        </el-collapse-item>
+                        <el-collapse-item title="Asset Details" name="2">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Area (m2):</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.area"></input>
+                                </div>
+                            </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Price:</label>
-                        <div class="col-md-7 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
-                        </div>
-                        <div class="col-md-3 uppercase-medium">
-                            <el-select v-model="form.currency"
-                                       :value="form.currency"
-                                       filterable
-                                       placeholder="Select">
-                                <el-option
-                                    v-for="(currency, index) in currencies"
-                                    :key="index"
-                                    :label="currency"
-                                    :value="index">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Select Investor:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select">
+                                        <el-option
+                                            v-for="item in investors"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.id">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Cadastral Number:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.cadastral_number"></input>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Price:</label>
+                                <div class="col-md-7 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
+                                </div>
+                                <div class="col-md-3 uppercase-medium">
+                                    <el-select v-model="form.currency"
+                                               :value="form.currency"
+                                               filterable
+                                               placeholder="Select">
+                                        <el-option
+                                            v-for="(currency, index) in currencies"
+                                            :key="index"
+                                            :label="currency"
+                                            :value="index">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Select Investor:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <el-select v-model="form.investor_id" :value="form.investor_id" filterable placeholder="Select">
-                                <el-option
-                                    v-for="item in investors"
-                                    :key="item.id"
-                                    :label="item.name"
-                                    :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Cadastral Number:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.cadastral_number"></input>
+                                </div>
+                            </div>
+
+                        </el-collapse-item>
+
+                    </el-collapse>
 
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Attachments:</label>
@@ -178,6 +186,7 @@ export default {
                 "USD": "USD",
                 "GEL": "GEL",
             },
+            activeNames: ['1'],
         }
     },
     updated() {
@@ -199,11 +208,11 @@ export default {
             }
         },
         addDetail() {
-                this.form.extraDetails.push({
-                    id: Date.now(),
-                    key: '',
-                    value: ''
-                });
+            this.form.extraDetails.push({
+                id: Date.now(),
+                key: '',
+                value: ''
+            });
         },
 
         onFileChange(e) {

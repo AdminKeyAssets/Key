@@ -35,13 +35,15 @@
                             <th> Delivery Date</th>
                             <th> Area (m2)</th>
                             <th> Price</th>
-                            <th width="10%" class="text-center">@lang('Action')</th>
+                            @if(!Auth::guard('investor')->check())
+                                <th width="10%" class="text-center">@lang('Action')</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->name !!}</td>
+                                <td><a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->name !!}</a></td>
                                 <td>{!! $item->city !!}</td>
                                 <td>{!! $item->delivery_date !!}</td>
                                 <td>{!! $item->area !!}</td>
@@ -57,9 +59,6 @@
                                         @else
                                             @include('admin::includes.actions.payment-disabled',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
                                         @endif
-                                    @endcan
-                                    @can(getPermissionKey($moduleKey, 'view', true))
-                                        @include('admin::includes.actions.view',['route' => route($moduleKey . '.view', [ $item->id ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['route' => route($moduleKey . '.edit', [ $item->id ])])

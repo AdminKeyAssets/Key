@@ -19,6 +19,13 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check() && request()->route()->getName() != 'admin.logout') {
+            if(auth()->user()){
+                if(auth()->user()->getRolesNameAttribute() == 'administrator'){
+                    return redirect()->route('admin.user.index');
+                }else{
+                    return redirect()->route('admin.investor.index');
+                }
+            }
             return redirect()->route('admin.user.index');
         }
 
