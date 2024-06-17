@@ -36,11 +36,11 @@ class InvestorsExport implements FromCollection, WithHeadings
         $investors->transform(function ($investor) {
             return [
                 'name' => $investor->name . ' ' . $investor->surname,
-                'pid' => $investor->pid,
+                'id' => '"' . $investor->pid . '"',
                 'citizenship' => $investor->citizenship,
                 'address' => $investor->address,
                 'email' => $investor->email,
-                'phone' => $investor->prefix . $investor->phone,
+                'phone' => '"' . $investor->prefix . $investor->phone . '"',
                 'created_at' => $investor->created_at,
             ];
         });
@@ -53,7 +53,7 @@ class InvestorsExport implements FromCollection, WithHeadings
     {
         return [
             'Name',
-            'Pid',
+            'ID',
             'Citizenship',
             'Address',
             'Email',

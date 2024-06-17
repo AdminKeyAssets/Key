@@ -6,6 +6,7 @@ use App\Modules\Admin\Models\User\Admin;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 
 class AdminsExport implements FromCollection, WithHeadings
@@ -37,9 +38,9 @@ class AdminsExport implements FromCollection, WithHeadings
         $investors->transform(function ($investor) {
             return [
                 'name' => $investor->name . ' ' . $investor->surname,
-                'pid' => $investor->pid,
+                'id' => '"' . $investor->pid . '"',
                 'email' => $investor->email,
-                'full_phone' => $investor->prefix . $investor->phone,
+                'full_phone' => '"' . $investor->prefix . $investor->phone . '"',
                 'created_at' => $investor->created_at,
             ];
         });
@@ -52,10 +53,21 @@ class AdminsExport implements FromCollection, WithHeadings
     {
         return [
             'Name',
-            'Pid',
+            'ID',
             'Email',
             'Phone',
             'Created At',
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'A' => NumberFormat::FORMAT_TEXT,
+            'B' => NumberFormat::FORMAT_TEXT,
+            'C' => NumberFormat::FORMAT_TEXT,
+            'D' => NumberFormat::FORMAT_TEXT,
+            'E' => NumberFormat::FORMAT_TEXT,
         ];
     }
 }
