@@ -8,6 +8,15 @@
                      ref="form" :model="form" class="form-horizontal form-bordered">
 
                 <el-row style="margin-left: 15px">
+
+                    <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Name:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <input class="form-control" :disabled="loading" v-model="form.name"></input>
+                        </div>
+                    </div>
+
+
                     <el-collapse v-model="activeNames">
                         <el-collapse-item title="Project Details" name="1">
                             <div class="form-group dashed">
@@ -26,9 +35,29 @@
 
 
                             <div class="form-group dashed">
-                                <label class="col-md-1 control-label">Name:</label>
+                                <label class="col-md-1 control-label">Project Name:</label>
                                 <div class="col-md-10 uppercase-medium">
-                                    <input class="form-control" :disabled="loading" v-model="form.name"></input>
+                                    <input class="form-control" :disabled="loading" v-model="form.project_name"></input>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Project Description:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <el-input
+                                        type="textarea"
+                                        autosize
+                                        placeholder="Project Description"
+                                        :disabled="loading"
+                                        v-model="form.description">
+                                    </el-input>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Project Link:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.project_link"></input>
                                 </div>
                             </div>
 
@@ -59,7 +88,40 @@
                                 </div>
                             </div>
                         </el-collapse-item>
+
                         <el-collapse-item title="Asset Details" name="2">
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Type:</label>
+                                <div class="col-md-3 uppercase-medium">
+                                    <el-select v-model="form.type"
+                                               :value="form.type"
+                                               filterable
+                                               placeholder="Select Type">
+                                        <el-option
+                                            v-for="type in types"
+                                            :key="type"
+                                            :label="type"
+                                            :value="type">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Floor:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.floor"></input>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Flat number:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.flat_number"></input>
+                                </div>
+                            </div>
+
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Area (m2):</label>
                                 <div class="col-md-10 uppercase-medium">
@@ -68,24 +130,9 @@
                             </div>
 
                             <div class="form-group dashed">
-                                <label class="col-md-1 control-label">Select Investor:</label>
-                                <div class="col-md-10 uppercase-medium">
-                                    <el-select v-model="form.investor_id" :value="form.investor_id" filterable
-                                               placeholder="Select">
-                                        <el-option
-                                            v-for="item in investors"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
-                                        </el-option>
-                                    </el-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Price:</label>
                                 <div class="col-md-7 uppercase-medium">
-                                    <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
+                                    <input class="form-control" :disabled="loading" v-model="form.price"></input>
                                 </div>
                                 <div class="col-md-3 uppercase-medium">
                                     <el-select v-model="form.currency"
@@ -103,10 +150,49 @@
                             </div>
 
                             <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Total Price:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Delivery Condition:</label>
+                                <div class="col-md-3 uppercase-medium">
+                                    <el-select v-model="form.condition"
+                                               :value="form.condition"
+                                               filterable
+                                               placeholder="Delivery Condition">
+                                        <el-option
+                                            v-for="condition in conditions"
+                                            :key="condition"
+                                            :label="condition"
+                                            :value="condition">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Cadastral Number:</label>
                                 <div class="col-md-10 uppercase-medium">
                                     <input class="form-control" :disabled="loading"
                                            v-model="form.cadastral_number"></input>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Select Investor:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <el-select v-model="form.investor_id" :value="form.investor_id" filterable
+                                               placeholder="Select">
+                                        <el-option
+                                            v-for="item in investors"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.id">
+                                        </el-option>
+                                    </el-select>
                                 </div>
                             </div>
 
@@ -158,6 +244,8 @@
                                 </div>
                             </div>
                         </el-collapse-item>
+                        <el-collapse-item title="Payments" name="4">
+                        </el-collapse-item>
                     </el-collapse>
                 </el-row>
             </el-form>
@@ -195,6 +283,23 @@ export default {
             currencies: {
                 "USD": "USD",
                 "GEL": "GEL",
+            },
+            types: {
+                "Flat": "Flat",
+                "Land": "Land",
+                "Office": "Office",
+                "Commercial Space": "Commercial Space",
+                "Villa": "Villa"
+            },
+            conditions: {
+                "Black Frame": "Black Frame",
+                "White Frame": "White Frame",
+                "Green Frame": "Green Frame",
+                "Renovated": "Renovated"
+            },
+            agreementStatuses: {
+                "Complete": "Complete",
+                "Installments": "Installments"
             },
             activeNames: ['1'],
         }

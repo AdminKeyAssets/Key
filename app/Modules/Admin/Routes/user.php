@@ -44,7 +44,7 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
         /**
          * Export users.
          */
-        Route::post('export', $userController . '@export')
+        Route::get('export', $userController . '@export')
             ->name('export')
             ->middleware(['permission:'.getPermissionKey($moduleName, 'export', false)]);
 
