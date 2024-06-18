@@ -19,7 +19,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 
 Vue.use(VueGoogleMaps, {
     load: {
-        key: 'AIzaSyDp5t3FS7cUFytD2TP6ghgMka8zhB4LxXg',
+        key: 'googleMapsAPIKey',
         libraries: 'places'
     }
 })
@@ -51,14 +51,9 @@ Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetView
 
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
-Vue.component('payment-view-page-form', require('./base/admin/payment/page/PaymentViewForm').default);
 
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
-
-//Rental
-Vue.component('lease-page-form', require('./base/admin/rental/page/RentalForm').default);
-Vue.component('lease-view-page-form', require('./base/admin/rental/page/RentalViewForm').default);
 
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);

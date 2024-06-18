@@ -8,7 +8,9 @@ use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
+use App\Modules\Asset\Models\Payment;
 use App\Utilities\ServiceResponse;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -126,6 +128,18 @@ class AssetController extends BaseController
                 if ($asset->icon) {
                     $this->baseData['item']['icon'] = Storage::url($asset->icon);
                 }
+                if ($asset->agreement) {
+                    $this->baseData['item']['agreement'] = Storage::url($asset->agreement);
+                }
+                if ($asset->floor_plan) {
+                    $this->baseData['item']['floor_plan'] = Storage::url($asset->floor_plan);
+                }
+                if ($asset->flat_plan) {
+                    $this->baseData['item']['flat_plan'] = Storage::url($asset->flat_plan);
+                }
+                if ($asset->ownership_certificate) {
+                    $this->baseData['item']['ownership_certificate'] = Storage::url($asset->ownership_certificate);
+                }
             }
             $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
         } catch (\Exception $ex) {
@@ -141,7 +155,7 @@ class AssetController extends BaseController
      */
     public function store(AssetRequest $request)
     {
-        $path = null;
+        $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
@@ -151,7 +165,6 @@ class AssetController extends BaseController
 
                 $file = $request->file('icon');
                 $path = $file->store('uploads', 'public');
-
             } else if ($request->input('icon') === null) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
                     Storage::disk('public')->delete($asset->icon);
@@ -163,11 +176,26 @@ class AssetController extends BaseController
             if ($request->hasFile('icon')) {
                 $file = $request->file('icon');
                 $path = $file->store('uploads', 'public');
-
+            }
+            if ($request->hasFile('floor_plan')) {
+                $floorPlanFile = $request->file('floor_plan');
+                $floorPlanPath = $floorPlanFile->store('uploads', 'public');
+            }
+            if ($request->hasFile('flat_plan')) {
+                $flatPlanFile = $request->file('flat_plan');
+                $flatPlanPath = $flatPlanFile->store('uploads', 'public');
+            }
+            if ($request->hasFile('agreement')) {
+                $agreementFile = $request->file('agreement');
+                $agreementPath = $agreementFile->store('uploads', 'public');
+            }
+            if ($request->hasFile('ownership_certificate')) {
+                $ownershipCertificateFile = $request->file('ownership_certificate');
+                $ownershipCertificatePath = $ownershipCertificateFile->store('uploads', 'public');
             }
         }
 
-        $asset = Asset::updateOrCreate(['id' => $request->id], [
+        $assetData = [
             'name' => $request->name,
             'address' => $request->address,
             'cadastral_number' => $request->cadastral_number,
@@ -177,10 +205,71 @@ class AssetController extends BaseController
             'area' => $request->area,
             'total_price' => $request->total_price,
             'icon' => $path,
+            'floor_plan' => $floorPlanPath,
+            'flat_plan' => $flatPlanPath,
+            'agreement' => $agreementPath,
+            'ownership_certificate' => $ownershipCertificatePath,
             'admin_id' => Auth::user()->getAuthIdentifier(),
-            'currency' => $request->currency
-        ]);
+            'currency' => $request->currency,
+            'project_name' => $request->project_name,
+            'project_description' => $request->project_description,
+            'project_link' => $request->project_link,
+            'location' => $request->location,
+            'type' => $request->type,
+            'floor' => $request->floor,
+            'flat_number' => $request->flat_number,
+            'price' => $request->price,
+            'condition' => $request->condition,
+            'agreement_status' => $request->agreement_status,
+            'agreement_date' => $request->agreement_date,
+            'first_payment_date' => $request->first_payment_date ?? null,
+            'period' => $request->period ?? null,
+            'total_agreement_price' => $request->total_agreement_price ?? null,
+        ];
+//        dd(1);
 
+        $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
+
+        if ($request->agreement_status === 'Installments') {
+            if($asset->payments){
+                $asset->payments()->delete();
+            }
+            if ($request->payments) {
+                foreach (json_decode($request->payments) as $payment) {
+                    Payment::create([
+                        'number' => $payment->number,
+                        'payment_date' => $payment->payment_date,
+                        'amount' => $payment->amount,
+                        'asset_id' => $asset->id
+                    ]);
+                }
+            }else{
+                $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
+                $period = $request->input('period');
+                $totalAmount = $request->input('total_agreement_price');
+
+                $payments = [];
+                $amountPerPeriod = round($totalAmount / $period, 2);
+
+                for ($i = 0; $i < $period; $i++) {
+                    $paymentDate = $firstPaymentDate->copy()->addMonths($i);
+                    $payments[] = [
+                        'number' => $i + 1,
+                        'date' => $paymentDate->toDateString(),
+                        'amount' => $amountPerPeriod
+                    ];
+                }
+                $payments[$period - 1]['amount'] = round($totalAmount - ($amountPerPeriod * ($period - 1)), 2);
+
+                foreach ($payments as $payment) {
+                    Payment::create([
+                        'month' => $payment->number,
+                        'payment_date' => $payment->date,
+                        'amount' => $payment->amount
+                    ]);
+                }
+            }
+        }
 
         if ($request->has('attachmentsToRemove')) {
             $attachmentsToRemove = json_decode($request->attachmentsToRemove, true);

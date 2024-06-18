@@ -137,7 +137,19 @@ export default {
                 else if (key === 'icon' && this.form[key]) {
                     formData.append(key, this.form[key]);
                 }
+                else if (key === 'floor_plan' && this.form[key]) {
+                    formData.append(key, this.form[key]);
+                }
+                else if (key === 'agreement' && this.form[key]) {
+                    formData.append(key, this.form[key]);
+                }
+                else if (key === 'ownership_certificate' && this.form[key]) {
+                    formData.append(key, this.form[key]);
+                }
                 else if (key === 'extraDetails') {
+                    formData.append(key, JSON.stringify(this.form[key]));
+                }
+                else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else {
                     formData.append(key, this.form[key]);

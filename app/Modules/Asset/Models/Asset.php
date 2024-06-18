@@ -18,7 +18,25 @@ class Asset extends Model
         'area',
         'total_price',
         'admin_id',
-        'currency'
+        'currency',
+        'project_name',
+        'project_description',
+        'project_link',
+        'location',
+        'type',
+        'floor',
+        'flat_number',
+        'price',
+        'condition',
+        'agreement_status',
+        'agreement_date',
+        'first_payment_date',
+        'period',
+        'total_agreement_price',
+        'floor_plan',
+        'flat_plan',
+        'agreement',
+        'ownership_certificate'
     ];
 
     public function informations()

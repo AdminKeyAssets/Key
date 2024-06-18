@@ -17,8 +17,8 @@
                     </div>
 
 
-                    <el-collapse v-model="activeNames">
-                        <el-collapse-item title="Project Details" name="1">
+                    <el-tabs v-model="activeNames">
+                        <el-tab-pane label="Project Details" name="1">
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Upload Icon:</label>
                                 <div class="col-md-10 uppercase-medium">
@@ -49,7 +49,7 @@
                                         autosize
                                         placeholder="Project Description"
                                         :disabled="loading"
-                                        v-model="form.description">
+                                        v-model="form.project_description">
                                     </el-input>
                                 </div>
                             </div>
@@ -74,7 +74,12 @@
                                     <input class="form-control" :disabled="loading" v-model="form.address"></input>
                                 </div>
                             </div>
-
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Location:</label>
+                                <MapMarker :update-data="this.updateData"
+                                           :item="this.item"
+                                ></MapMarker>
+                            </div>
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Delivery Date:</label>
                                 <div class="col-md-10 uppercase-medium">
@@ -87,10 +92,8 @@
                                     </el-date-picker>
                                 </div>
                             </div>
-                        </el-collapse-item>
-
-                        <el-collapse-item title="Asset Details" name="2">
-
+                        </el-tab-pane>
+                        <el-tab-pane label="Asset Details" name="2">
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Type:</label>
                                 <div class="col-md-3 uppercase-medium">
@@ -196,8 +199,39 @@
                                 </div>
                             </div>
 
-                        </el-collapse-item>
-                        <el-collapse-item title="Extra" name="3">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Upload Floor Plan:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input type="file" @change="onFloorPlanChange" accept="image/*">
+                                    <div v-if="form.floor_plan">
+                                        <img v-if="form.iconPreview" :src="form.floorPlanPreview"
+                                             alt="Floor Plan Preview"
+                                             style="max-width: 100px;"/>
+                                        <img v-else :src="form.floor_plan" alt="Floor Plan Preview"
+                                             style="max-width: 100px;"/>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click="removeFloorPlan"></el-button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Upload Flat Plan:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input type="file" @change="onFlatPlanChange" accept="image/*">
+                                    <div v-if="form.flat_plan">
+                                        <img v-if="form.flatPlanPreview" :src="form.flatPlanPreview"
+                                             alt="Flat Plan Preview"
+                                             style="max-width: 100px;"/>
+                                        <img v-else :src="form.flat_plan" alt="Flat Plan Preview"
+                                             style="max-width: 100px;"/>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click="removeFlatPlan"></el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="Extra" name="3">
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Attachments:</label>
                                 <div class="col-md-10 uppercase-medium">
@@ -243,10 +277,139 @@
                                     </el-button>
                                 </div>
                             </div>
-                        </el-collapse-item>
-                        <el-collapse-item title="Payments" name="4">
-                        </el-collapse-item>
-                    </el-collapse>
+                        </el-tab-pane>
+                        <el-tab-pane label="Agreement Details" name="4">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Agreement Date:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <el-date-picker
+                                        v-model="form.agreement_date"
+                                        format="yyyy/MM/dd"
+                                        type="date"
+                                        value-format="yyyy/MM/dd"
+                                        placeholder="Pick a agreement date">
+                                    </el-date-picker>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Agreement Upload:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input type="file" @change="onAgreementChange" accept="image/*">
+                                    <div v-if="form.agreement">
+                                        <img v-if="form.agreementPreview" :src="form.agreementPreview"
+                                             alt="Agreement Preview"
+                                             style="max-width: 100px;"/>
+                                        <img v-else :src="form.agreement" alt="Agreement Preview"
+                                             style="max-width: 100px;"/>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click="removeAgreement"></el-button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Agreement Status:</label>
+                                <div class="col-md-3 uppercase-medium">
+                                    <el-select v-model="form.agreement_status"
+                                               :value="form.agreement_status"
+                                               filterable
+                                               placeholder="Agreement Status">
+                                        <el-option
+                                            v-for="status in agreementStatuses"
+                                            :key="status"
+                                            :label="status"
+                                            :value="status">
+                                        </el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+                            <template v-if="this.form.agreement_status === 'Complete'">
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Ownership Certificate:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <input type="file" @change="onOwnershipCertificateChange" accept="image/*">
+                                        <div v-if="form.ownership_certificate">
+                                            <img v-if="form.ownershipCertificatePreview" :src="form.ownershipCertificatePreview"
+                                                 alt="Ownership Certificate"
+                                                 style="max-width: 100px;"/>
+                                            <img v-else :src="form.ownership_certificate" alt="Ownership Certificate"
+                                                 style="max-width: 100px;"/>
+                                            <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                       @click="removeOwnershipCertificate"></el-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-if="this.form.agreement_status === 'Installments'">
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Total Amount:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <input class="form-control" :disabled="loading"
+                                               v-model="form.total_agreement_price"></input>
+                                    </div>
+                                </div>
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">First Payment Date:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <el-date-picker
+                                            v-model="form.first_payment_date"
+                                            format="yyyy/MM/dd"
+                                            type="date"
+                                            value-format="yyyy/MM/dd"
+                                            placeholder="Pick a First payment date">
+                                        </el-date-picker>
+                                    </div>
+                                </div>
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">Period:</label>
+                                    <div class="col-md-3 uppercase-medium">
+                                        <el-select v-model="form.period"
+                                                   :value="form.period"
+                                                   filterable
+                                                   placeholder="Period">
+                                            <el-option
+                                                v-for="number in numbers"
+                                                :key="number"
+                                                :label="number"
+                                                :value="number">
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                </div>
+                                <el-button type="primary" size="medium" icon="el-icon-check"
+                                           @click="generatePayments"
+                                           :disabled="loading"
+                                           style="margin: 21px 1rem">Load Payments
+                                </el-button>
+                                <div v-if="form.payments.length">
+                                    <el-table :data="form.payments" style="width: 100%">
+                                        <el-table-column prop="number" label="Payment Number" width="150"/>
+                                        <el-table-column prop="date" label="Payment Date" width="180">
+                                            <template slot-scope="scope">
+                                                <el-date-picker
+                                                    v-model="scope.row.payment_date"
+                                                    type="date"
+                                                    disabled
+                                                    format="yyyy/MM/dd"
+                                                    value-format="yyyy/MM/dd"
+                                                ></el-date-picker>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="amount" label="Amount" width="180">
+                                            <template slot-scope="scope">
+                                                <el-input
+                                                    type="number"
+                                                    v-model="scope.row.amount"
+                                                    @input="updatePaymentAmount(scope.$index)"
+                                                ></el-input>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </template>
+                        </el-tab-pane>
+                    </el-tabs>
                 </el-row>
             </el-form>
         </div>
@@ -258,8 +421,10 @@
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import MapMarker from "../../../components/admin/MapMarker.vue";
 
 export default {
+    components: {MapMarker},
     props: [
         'routes',
         'updateData',
@@ -274,7 +439,9 @@ export default {
                 existingAttachments: [],
                 attachmentsToRemove: [],
                 icon: null,
-                iconPreview: null
+                iconPreview: null,
+                payments: [],
+                currency: 'USD'
             },
             loading: false,
             editor: ClassicEditor,
@@ -301,7 +468,8 @@ export default {
                 "Complete": "Complete",
                 "Installments": "Installments"
             },
-            activeNames: ['1'],
+            activeNames: '1',
+            numbers: this.getNumbersInRange(2, 50),
         }
     },
     updated() {
@@ -316,6 +484,14 @@ export default {
         }
     },
     methods: {
+        getNumbersInRange(start, end) {
+            let numbers = [];
+            for (let i = start; i <= end; i++) {
+                numbers.push(i);
+            }
+            return numbers;
+        },
+
         removeDetail(item) {
             var index = this.form.extraDetails.indexOf(item);
             if (index !== 0 && index !== -1) {
@@ -371,6 +547,137 @@ export default {
         removeIcon() {
             this.form.icon = null;
             this.form.iconPreview = null;
+        },
+
+        onFloorPlanChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.floor_plan = file;
+                    this.form.floorPlanPreview = e.target.result;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeFloorPlan() {
+            this.form.floor_plan = null;
+            this.form.floorPlanPreview = null;
+        },
+
+        onFlatPlanChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.flat_plan = file;
+                    this.form.flatPlanPreview = e.target.result;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeFlatPlan() {
+            this.form.flat_plan = null;
+            this.form.flatPlanPreview = null;
+        },
+
+        onAgreementChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.agreement = file;
+                    this.form.agreementPreview = e.target.result;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeAgreement() {
+            this.form.agreement = null;
+            this.form.agreementPreview = null;
+        },
+
+        onOwnershipCertificateChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.ownership_certificate = file;
+                    this.form.ownershipCertificatePreview = e.target.result;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeOwnershipCertificate() {
+            this.form.ownership_certificate = null;
+            this.form.ownershipCertificatePreview = null;
+        },
+
+        generatePayments() {
+            this.form.payments = [];
+            const totalAmount = parseFloat(this.form.total_agreement_price);
+            const period = parseInt(this.form.period);
+            const firstPaymentDate = new Date(this.form.first_payment_date);
+
+            if (!totalAmount || !period || isNaN(firstPaymentDate)) {
+                return;
+            }
+
+            const amountPerPeriod = (totalAmount / period).toFixed(2);
+            for (let i = 0; i < period; i++) {
+                let paymentDate = new Date(firstPaymentDate);
+                paymentDate.setMonth(paymentDate.getMonth() + i);
+
+                this.form.payments.push({
+                    number: i + 1,
+                    date: paymentDate.toISOString().substring(0, 10),
+                    amount: amountPerPeriod
+                });
+            }
+
+            this.updateFinalPaymentAmount();
+        },
+
+
+        updatePaymentAmount(index) {
+            const totalAmount = parseFloat(this.form.total_agreement_price);
+            let amountSum = this.form.payments.reduce((sum, payment, idx) => {
+                return idx !== index ? sum + parseFloat(payment.amount) : sum;
+            }, 0);
+            const finalAmount = totalAmount - amountSum;
+
+            this.$set(this.form.payments, index, {
+                ...this.form.payments[index],
+                amount: parseFloat(this.form.payments[index].amount)
+            });
+
+            this.updateFinalPaymentAmount();
+        },
+
+        updateFinalPaymentAmount() {
+            const totalAmount = parseFloat(this.form.total_agreement_price);
+            let amountSum = this.form.payments.slice(0, -1).reduce((sum, payment) => {
+                return sum + parseFloat(payment.amount);
+            }, 0);
+
+            const finalAmount = totalAmount - amountSum;
+
+            this.$set(this.form.payments, this.form.payments.length - 1, {
+                ...this.form.payments[this.form.payments.length - 1],
+                amount: finalAmount.toFixed(2)
+            });
         },
     }
 }
