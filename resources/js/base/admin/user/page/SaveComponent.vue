@@ -8,7 +8,7 @@
 
             <el-row>
 
-                <div class="form-group">
+                <div class="form-group" v-if="!form.id">
                     <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
@@ -16,7 +16,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="!form.id">
                     <label class="col-md-2 control-label">Surname: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="!form.id">
                     <label class="col-md-2 control-label">ID/Passport Number: <span
                         class="text-danger">*</span>:</label>
                     <div class="col-md-6">
@@ -160,7 +160,7 @@
                        label: item.name
                    });
                 });
-                console.log(this.data);
+
                 this.form = {
                     id: this.user? this.user.id : '',
                     name: this.user ? this.user.name : '',

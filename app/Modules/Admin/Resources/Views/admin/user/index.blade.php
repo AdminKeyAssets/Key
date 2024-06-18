@@ -55,7 +55,7 @@
                                 <td>{!! $item->name !!} {!! $item->surname !!}</td>
                                 <td>
                                     @if($item->profile_picture)
-                                        <img width="100" src="{!! $item->profile_picture !!}">
+                                        <img style="border-radius: 50%" width="50" height="50" src="{!! $item->profile_picture !!}">
                                     @endif
                                 </td>
                                 <td>{!! $item->rolesName !!}</td>

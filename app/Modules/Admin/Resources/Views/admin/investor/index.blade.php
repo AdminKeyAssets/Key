@@ -47,6 +47,7 @@
                             <th> Email</th>
                             <th> Phone</th>
                             <th> Assets</th>
+                            <th> Asset Manager</th>
                             <th> Created At</th>
                             <th width="10%" class="text-center">Actions</th>
                         </tr>
@@ -57,14 +58,15 @@
                                 <td>{!! $item->name !!} {!! $item->surname !!}</td>
                                 <td>
                                     @if($item->profile_picture)
-                                        <img width="100" src="{!! $item->profile_picture !!}">
+                                        <img style="border-radius: 50%" width="50" height="50" src="{!! $item->profile_picture !!}">
                                     @endif
                                 </td>
                                 <td>{!! $item->citizenship !!}</td>
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
                                 <td>{!! count($item->assets) !!}</td>
-                                <td>{!! $item->created_at->toDateTimeString() !!}</td>
+                                <td>{!! $item->admin->name !!} {!! $item->admin->surname !!}</td>
+                                <td>{!! $item->created_at->toDateString() !!}</td>
                                 <td class="text-center">
 
                                     @can(getPermissionKey($moduleKey, 'update', true))
