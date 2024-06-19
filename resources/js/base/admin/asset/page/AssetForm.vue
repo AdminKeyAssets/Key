@@ -7,27 +7,6 @@
 
                 </div>
 
-                <div class="project-buttons">
-                    <el-link
-                        type="success"
-                        size="medium"
-                        style="border: 1px solid; padding: 7px 15px; border-radius: 5px"
-                        icon="el-icon-money"
-                        v-if="this.form.id"
-                        :href="'/assets/' + this.form.id + '/payments'"
-                    >Payments</el-link>
-
-                    <el-link
-                        type="success"
-                        size="medium"
-                        style="border: 1px solid; padding: 7px 15px; border-radius: 5px"
-                        icon="el-icon-home"
-                        v-if="this.form.id"
-                        :href="'/assets/' + this.form.id + '/rental'"
-                    >Rentals
-                    </el-link>
-                </div>
-
                 <AssetMain
                     :routes="routes"
                     :updateData="updateData"
@@ -105,7 +84,7 @@ export default {
                     this.routes = data.routes;
                     this.options = data.options;
                     this.investors = data.investors;
-
+                    console.log(data)
                     if (data.item) {
                         this.form = data.item;
                         if(data.item.files){

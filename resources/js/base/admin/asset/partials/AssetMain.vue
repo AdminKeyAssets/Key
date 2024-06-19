@@ -24,9 +24,12 @@
                                 <div class="col-md-10 uppercase-medium">
                                     <input type="file" @change="onIconChange" accept="image/*">
                                     <div v-if="form.icon">
-                                        <img v-if="form.iconPreview" :src="form.iconPreview" alt="Icon Preview"
-                                             style="max-width: 100px;"/>
-                                        <img v-else :src="form.icon" alt="Icon Preview" style="max-width: 100px;"/>
+                                        <ImageModal v-if="form.iconPreview"
+                                                    :image-path="form.iconPreview"
+                                                    :thumbnail="form.iconPreview"></ImageModal>
+                                        <ImageModal v-else
+                                                    :image-path="form.icon"
+                                                    :thumbnail="form.icon"></ImageModal>
                                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                    @click="removeIcon"></el-button>
                                     </div>
@@ -204,11 +207,12 @@
                                 <div class="col-md-10 uppercase-medium">
                                     <input type="file" @change="onFloorPlanChange" accept="image/*">
                                     <div v-if="form.floor_plan">
-                                        <img v-if="form.iconPreview" :src="form.floorPlanPreview"
-                                             alt="Floor Plan Preview"
-                                             style="max-width: 100px;"/>
-                                        <img v-else :src="form.floor_plan" alt="Floor Plan Preview"
-                                             style="max-width: 100px;"/>
+                                        <ImageModal v-if="form.floorPlanPreview"
+                                                    :image-path="form.floorPlanPreview"
+                                                    :thumbnail="form.floorPlanPreview"></ImageModal>
+                                        <ImageModal v-else
+                                                    :image-path="form.floor_plan"
+                                                    :thumbnail="form.floor_plan"></ImageModal>
                                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                    @click="removeFloorPlan"></el-button>
                                     </div>
@@ -220,11 +224,12 @@
                                 <div class="col-md-10 uppercase-medium">
                                     <input type="file" @change="onFlatPlanChange" accept="image/*">
                                     <div v-if="form.flat_plan">
-                                        <img v-if="form.flatPlanPreview" :src="form.flatPlanPreview"
-                                             alt="Flat Plan Preview"
-                                             style="max-width: 100px;"/>
-                                        <img v-else :src="form.flat_plan" alt="Flat Plan Preview"
-                                             style="max-width: 100px;"/>
+                                        <ImageModal v-if="form.flatPlanPreview"
+                                                    :image-path="form.flatPlanPreview"
+                                                    :thumbnail="form.flatPlanPreview"></ImageModal>
+                                        <ImageModal v-else
+                                                    :image-path="form.flat_plan"
+                                                    :thumbnail="form.flat_plan"></ImageModal>
                                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                    @click="removeFlatPlan"></el-button>
                                     </div>
@@ -297,11 +302,9 @@
                                 <div class="col-md-10 uppercase-medium">
                                     <input type="file" @change="onAgreementChange" accept="image/*">
                                     <div v-if="form.agreement">
-                                        <img v-if="form.agreementPreview" :src="form.agreementPreview"
-                                             alt="Agreement Preview"
-                                             style="max-width: 100px;"/>
-                                        <img v-else :src="form.agreement" alt="Agreement Preview"
-                                             style="max-width: 100px;"/>
+                                        <p v-if="form.agreement">File: <a :href="form.agreement" target="_blank">View
+                                            Attachment</a>
+                                        </p>
                                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                    @click="removeAgreement"></el-button>
                                     </div>
@@ -328,17 +331,16 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Ownership Certificate:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        <input type="file" @change="onOwnershipCertificateChange" accept="image/*">
+                                        <input type="file" @change="onOwnershipCertificateChange">
                                         <div v-if="form.ownership_certificate">
-                                            <img v-if="form.ownershipCertificatePreview" :src="form.ownershipCertificatePreview"
-                                                 alt="Ownership Certificate"
-                                                 style="max-width: 100px;"/>
-                                            <img v-else :src="form.ownership_certificate" alt="Ownership Certificate"
-                                                 style="max-width: 100px;"/>
+                                            <p v-if="form.ownership_certificate">File: <a :href="form.ownership_certificate" target="_blank">View
+                                            Attachment</a>
+                                            </p>
                                             <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                        @click="removeOwnershipCertificate"></el-button>
                                         </div>
                                     </div>
+
                                 </div>
                             </template>
                             <template v-if="this.form.agreement_status === 'Installments'">
@@ -385,14 +387,14 @@
                                 <div v-if="form.payments.length">
                                     <el-table :data="form.payments" style="width: 100%">
                                         <el-table-column prop="number" label="Payment Number" width="150"/>
-                                        <el-table-column prop="date" label="Payment Date" width="180">
+                                        <el-table-column prop="payment_date" label="Payment Date" width="180">
                                             <template slot-scope="scope">
                                                 <el-date-picker
                                                     v-model="scope.row.payment_date"
                                                     type="date"
-                                                    disabled
                                                     format="yyyy/MM/dd"
                                                     value-format="yyyy/MM/dd"
+                                                    @change="updatePaymentDate(scope.$index, scope.row.payment_date)"
                                                 ></el-date-picker>
                                             </template>
                                         </el-table-column>
@@ -409,6 +411,32 @@
                                 </div>
                             </template>
                         </el-tab-pane>
+                        <el-tab-pane label="Current Value" name="5">
+                            <div class="form-group dashed">
+                                <label class="col-md-1 control-label">Current Value:</label>
+                                <div class="col-md-10 uppercase-medium">
+                                    <input class="form-control" :disabled="loading"
+                                           v-model="form.current_value"></input>
+                                </div>
+                                <div v-if="form.currentValues">
+                                    <el-table :data="form.currentValues" style="width: 100%">
+                                        <el-table-column prop="value" label="Value" width="150"/>
+
+                                        <el-table-column prop="date" label="Date" width="180">
+                                            <template slot-scope="scope">
+                                                <el-date-picker
+                                                    v-model="scope.row.date"
+                                                    type="date"
+                                                    format="yyyy/MM/dd"
+                                                    disabled
+                                                    value-format="yyyy/MM/dd"
+                                                ></el-date-picker>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+                            </div>
+                        </el-tab-pane>
                     </el-tabs>
                 </el-row>
             </el-form>
@@ -422,9 +450,10 @@ import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import MapMarker from "../../../components/admin/MapMarker.vue";
+import ImageModal from "../../../components/admin/ImageModal.vue";
 
 export default {
-    components: {MapMarker},
+    components: {ImageModal, MapMarker},
     props: [
         'routes',
         'updateData',
@@ -642,7 +671,7 @@ export default {
 
                 this.form.payments.push({
                     number: i + 1,
-                    date: paymentDate.toISOString().substring(0, 10),
+                    payment_date: paymentDate.toISOString().substring(0, 10),
                     amount: amountPerPeriod
                 });
             }
@@ -650,6 +679,12 @@ export default {
             this.updateFinalPaymentAmount();
         },
 
+        updatePaymentDate(index, date) {
+            this.$set(this.form.payments, index, {
+                ...this.form.payments[index],
+                date
+            });
+        },
 
         updatePaymentAmount(index) {
             const totalAmount = parseFloat(this.form.total_agreement_price);

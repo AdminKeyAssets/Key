@@ -8,6 +8,7 @@ use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
+use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
@@ -111,6 +112,7 @@ class AssetController extends BaseController
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
                 $this->baseData['item']['payments'] = $asset->payments;
+                $this->baseData['item']['currentValues'] = $asset->currentValues;
                 $this->baseData['salesManager'] = $salesManager;
                 $this->baseData['nextPayment'] = $nextPayment;
 
@@ -125,21 +127,6 @@ class AssetController extends BaseController
                     }
                 }
                 $this->baseData['item']['files'] = $files;
-                if ($asset->icon) {
-                    $this->baseData['item']['icon'] = Storage::url($asset->icon);
-                }
-                if ($asset->agreement) {
-                    $this->baseData['item']['agreement'] = Storage::url($asset->agreement);
-                }
-                if ($asset->floor_plan) {
-                    $this->baseData['item']['floor_plan'] = Storage::url($asset->floor_plan);
-                }
-                if ($asset->flat_plan) {
-                    $this->baseData['item']['flat_plan'] = Storage::url($asset->flat_plan);
-                }
-                if ($asset->ownership_certificate) {
-                    $this->baseData['item']['ownership_certificate'] = Storage::url($asset->ownership_certificate);
-                }
             }
             $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
         } catch (\Exception $ex) {
@@ -156,6 +143,7 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
+//        dd($request->all());
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
@@ -165,33 +153,109 @@ class AssetController extends BaseController
 
                 $file = $request->file('icon');
                 $path = $file->store('uploads', 'public');
+                $path = Storage::url($path);
             } else if ($request->input('icon') === null) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
                     Storage::disk('public')->delete($asset->icon);
                 }
                 $path = null;
+            } else {
+                $path = $request->icon;
+            }
+
+            if ($request->hasFile('floor_plan')) {
+                if ($asset->floor_plan && Storage::disk('public')->exists($asset->floor_plan)) {
+                    Storage::disk('public')->delete($asset->floor_plan);
+                }
+
+                $floorPlanFile = $request->file('floor_plan');
+                $floorPlanPath = $floorPlanFile->store('uploads', 'public');
+                $floorPlanPath = Storage::url($floorPlanPath);
+            } else if ($request->input('flat_plan') === null) {
+                if ($asset->flat_plan && Storage::disk('public')->exists($asset->flat_plan)) {
+                    Storage::disk('public')->delete($asset->flat_plan);
+                }
+                $floorPlanPath = null;
+            } else {
+                $floorPlanPath = $request->floor_plan;
+            }
+
+            if ($request->hasFile('flat_plan')) {
+                if ($asset->flat_plan && Storage::disk('public')->exists($asset->flat_plan)) {
+                    Storage::disk('public')->delete($asset->flat_plan);
+                }
+
+                $flatPlanFile = $request->file('flat_plan');
+                $flatPlanPath = $flatPlanFile->store('uploads', 'public');
+                $flatPlanPath = Storage::url($flatPlanPath);
+            } else if ($request->input('flat_plan') === null) {
+                if ($asset->flat_plan && Storage::disk('public')->exists($asset->flat_plan)) {
+                    Storage::disk('public')->delete($asset->flat_plan);
+                }
+                $flatPlanPath = null;
+            } else {
+                $flatPlanPath = $request->flat_plan;
+            }
+
+            if ($request->hasFile('agreement')) {
+                if ($asset->agreement && Storage::disk('public')->exists($asset->agreement)) {
+                    Storage::disk('public')->delete($asset->agreement);
+                }
+
+                $agreementFile = $request->file('agreement');
+                $agreementPath = $agreementFile->store('uploads', 'public');
+                $agreementPath = Storage::url($agreementPath);
+            } else if ($request->input('agreement') === null) {
+                if ($asset->agreement && Storage::disk('public')->exists($asset->agreement)) {
+                    Storage::disk('public')->delete($asset->agreement);
+                }
+                $agreementPath = null;
+            } else {
+                $agreementPath = $request->agreement;
+            }
+
+            if ($request->hasFile('ownership_certificate')) {
+                if ($asset->ownership_certificate && Storage::disk('public')->exists($asset->ownership_certificate)) {
+                    Storage::disk('public')->delete($asset->ownership_certificate);
+                }
+                $ownershipCertificateFile = $request->file('ownership_certificate');
+                $ownershipCertificatePath = $ownershipCertificateFile->store('uploads', 'public');
+                $ownershipCertificatePath = Storage::url($ownershipCertificatePath);
+
+            } else if ($request->input('ownership_certificate') === null) {
+                if ($asset->ownership_certificate && Storage::disk('public')->exists($asset->ownership_certificate)) {
+                    Storage::disk('public')->delete($asset->ownership_certificate);
+                }
+                $ownershipCertificatePath = null;
+            } else {
+                $ownershipCertificatePath = $request->ownership_certificate;
             }
 
         } else {
             if ($request->hasFile('icon')) {
                 $file = $request->file('icon');
                 $path = $file->store('uploads', 'public');
+                $path = Storage::url($path);
             }
             if ($request->hasFile('floor_plan')) {
                 $floorPlanFile = $request->file('floor_plan');
                 $floorPlanPath = $floorPlanFile->store('uploads', 'public');
+                $floorPlanPath = Storage::url($floorPlanPath);
             }
             if ($request->hasFile('flat_plan')) {
                 $flatPlanFile = $request->file('flat_plan');
                 $flatPlanPath = $flatPlanFile->store('uploads', 'public');
+                $flatPlanPath = Storage::url($flatPlanPath);
             }
             if ($request->hasFile('agreement')) {
                 $agreementFile = $request->file('agreement');
                 $agreementPath = $agreementFile->store('uploads', 'public');
+                $agreementPath = Storage::url($agreementPath);
             }
             if ($request->hasFile('ownership_certificate')) {
                 $ownershipCertificateFile = $request->file('ownership_certificate');
                 $ownershipCertificatePath = $ownershipCertificateFile->store('uploads', 'public');
+                $ownershipCertificatePath = Storage::url($ownershipCertificatePath);
             }
         }
 
@@ -226,16 +290,17 @@ class AssetController extends BaseController
             'period' => $request->period ?? null,
             'total_agreement_price' => $request->total_agreement_price ?? null,
         ];
-//        dd(1);
+
 
         $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
 
         if ($request->agreement_status === 'Installments') {
-            if($asset->payments){
+            if ($asset->payments) {
                 $asset->payments()->delete();
             }
             if ($request->payments) {
                 foreach (json_decode($request->payments) as $payment) {
+
                     Payment::create([
                         'number' => $payment->number,
                         'payment_date' => $payment->payment_date,
@@ -243,7 +308,7 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id
                     ]);
                 }
-            }else{
+            } else {
                 $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
                 $period = $request->input('period');
                 $totalAmount = $request->input('total_agreement_price');
@@ -268,6 +333,18 @@ class AssetController extends BaseController
                         'amount' => $payment->amount
                     ]);
                 }
+            }
+        }
+
+        if ($request->current_value) {
+            if ($asset->current_value != $request->current_value) {
+                $asset->update($request->all());
+
+                CurrentValue::create([
+                    'asset_id' => $asset->id,
+                    'value' => $request->current_value,
+                    'date' => now(),
+                ]);
             }
         }
 

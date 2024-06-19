@@ -36,7 +36,8 @@ class Asset extends Model
         'floor_plan',
         'flat_plan',
         'agreement',
-        'ownership_certificate'
+        'ownership_certificate',
+        'current_value'
     ];
 
     public function informations()
@@ -57,5 +58,10 @@ class Asset extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function currentValues()
+    {
+        return $this->hasMany(CurrentValue::class)->orderByDesc('id');
     }
 }
