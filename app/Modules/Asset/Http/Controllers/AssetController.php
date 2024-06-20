@@ -143,7 +143,7 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
-        dd($request->all());
+
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
@@ -289,6 +289,7 @@ class AssetController extends BaseController
             'first_payment_date' => $request->first_payment_date ?? null,
             'period' => $request->period ?? null,
             'total_agreement_price' => $request->total_agreement_price ?? null,
+            'current_value' => $request->current_value ?? 0
         ];
 
 

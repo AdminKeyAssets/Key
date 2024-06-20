@@ -79,8 +79,10 @@
                             </div>
                             <div class="form-group dashed">
                                 <label class="col-md-1 control-label">Location:</label>
-                                <MapMarker :update-data="this.updateData"
-                                           :item="this.item"
+                                <MapMarker
+                                    v-if="this.item.location"
+                                    :update-data="this.updateData"
+                                    :item="this.item"
                                 ></MapMarker>
                             </div>
                             <div class="form-group dashed">
@@ -333,8 +335,9 @@
                                     <div class="col-md-10 uppercase-medium">
                                         <input type="file" @change="onOwnershipCertificateChange">
                                         <div v-if="form.ownership_certificate">
-                                            <p v-if="form.ownership_certificate">File: <a :href="form.ownership_certificate" target="_blank">View
-                                            Attachment</a>
+                                            <p v-if="form.ownership_certificate">File: <a
+                                                :href="form.ownership_certificate" target="_blank">View
+                                                Attachment</a>
                                             </p>
                                             <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                                        @click="removeOwnershipCertificate"></el-button>

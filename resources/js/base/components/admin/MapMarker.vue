@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { gmapApi } from 'vue2-google-maps'
+import {gmapApi} from 'vue2-google-maps'
 
 export default {
     props: [
@@ -25,23 +25,30 @@ export default {
         'fieldKey',
         'item',
     ],
-    data () {
+    data() {
         return {
             marker: {lat: 41.706706000000025, lng: 44.78735399999999},
             form: {}
         }
     },
     created() {
-        if (this.item && this.item.location && this.item.location.lat && this.item.location.lng) {
-            this.marker = {
-                lat: parseFloat(this.item.location.lat),
-                lng: parseFloat(this.item.location.lng),
+        console.log(this.item.location);
+        if (this.item && this.item.location) {
+            const location = JSON.parse(this.item.location);
+
+            if (location.lat && location.lng) {
+                this.marker = {
+                    lat: parseFloat(location.lat),
+                    lng: parseFloat(location.lng),
+                }
+                console.log(this.marker)
             }
+
         }
         this.form = this.item;
     },
     methods: {
-        setPlace (place) {
+        setPlace(place) {
             this.marker = {
                 lat: place.latLng.lat(),
                 lng: place.latLng.lng()
@@ -49,13 +56,13 @@ export default {
             this.form.location = this.marker;
             this.updateData(this.form.location, 'location');
         },
-        updateCoordinates (location) {
+        updateCoordinates(location) {
             this.marker = {
                 lat: location.latLng.lat(),
                 lng: location.latLng.lng()
             }
             this.form.location = this.marker;
-            this.updateData(this.form,'location');
+            this.updateData(this.form, 'location');
         },
     }
 }

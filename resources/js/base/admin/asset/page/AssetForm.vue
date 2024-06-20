@@ -77,7 +77,7 @@ export default {
                 // Parse response notification.
                 responseParse(response, false);
 
-                if (response.status == 200) {
+                if (response.status === 200) {
                     // Response data.
                     let data = response.data.data;
 
@@ -123,6 +123,8 @@ export default {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
+                } else if (key === 'location') {
+                    formData.append(key, JSON.stringify(this.form[key]));
                 } else {
                     formData.append(key, this.form[key]);
                 }
@@ -152,9 +154,7 @@ export default {
          */
         updateData(data, key = null) {
             if (key) {
-                console.log(data);
                 this.$set(this.form, key, data);
-                console.log(this.form)
             } else {
                 this.form = data;
             }
