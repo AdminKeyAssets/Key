@@ -69,7 +69,7 @@ export default {
             await getData({
                 method: 'POST',
                 config: {
-                    headers: { 'content-type': 'multipart/form-data' }
+                    headers: {'content-type': 'multipart/form-data'}
                 },
                 url: this.getSaveDataRoute,
                 data: this.form
@@ -87,7 +87,7 @@ export default {
                     console.log(data)
                     if (data.item) {
                         this.form = data.item;
-                        if(data.item.files){
+                        if (data.item.files) {
                             const attachments = data.item.attachments;
                             this.form.attachments = data.item.files;
                             this.form.existingAttachments = attachments || [];
@@ -109,43 +109,36 @@ export default {
                     this.form.attachments.forEach(fileObj => {
                         formData.append('attachments[]', fileObj.file);
                     });
-                }
-                else if (key === 'attachmentsToRemove') {
+                } else if (key === 'attachmentsToRemove') {
                     formData.append(key, JSON.stringify(this.form.attachmentsToRemove));
-                }
-                else if (key === 'icon' && this.form[key]) {
+                } else if (key === 'icon' && this.form[key]) {
                     formData.append(key, this.form[key]);
-                }
-                else if (key === 'floor_plan' && this.form[key]) {
+                } else if (key === 'floor_plan' && this.form[key]) {
                     formData.append(key, this.form[key]);
-                }
-                else if (key === 'agreement' && this.form[key]) {
+                } else if (key === 'agreement' && this.form[key]) {
                     formData.append(key, this.form[key]);
-                }
-                else if (key === 'ownership_certificate' && this.form[key]) {
+                } else if (key === 'ownership_certificate' && this.form[key]) {
                     formData.append(key, this.form[key]);
-                }
-                else if (key === 'extraDetails') {
+                } else if (key === 'extraDetails') {
                     formData.append(key, JSON.stringify(this.form[key]));
-                }
-                else if (key === 'payments') {
+                } else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else {
                     formData.append(key, this.form[key]);
                 }
             }
 
-           await axios.post(this.routes.save, formData, {
+            await axios.post(this.routes.save, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
-               this.loading = false;
-               responseParse(response);
-                    setTimeout(() => {
-                        window.location.href ='/assets/list';
-                    }, 1000);
-                })
+                this.loading = false;
+                responseParse(response);
+                setTimeout(() => {
+                    window.location.href = '/assets/list';
+                }, 1000);
+            })
                 .catch(error => {
                     this.loading = false;
                     responseParse(error.response);
@@ -155,9 +148,16 @@ export default {
         /**
          *
          * @param data
+         * @param key
          */
-        updateData(data) {
-            this.form = data;
+        updateData(data, key = null) {
+            if (key) {
+                console.log(data);
+                this.$set(this.form, key, data);
+                console.log(this.form)
+            } else {
+                this.form = data;
+            }
         },
     }
 }

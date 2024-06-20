@@ -143,7 +143,7 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
-//        dd($request->all());
+        dd($request->all());
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {

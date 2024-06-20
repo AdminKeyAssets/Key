@@ -23,7 +23,7 @@ export default {
         'updateData',
         'moduleName',
         'fieldKey',
-        'item'
+        'item',
     ],
     data () {
         return {
@@ -32,10 +32,10 @@ export default {
         }
     },
     created() {
-        if (this.item && this.item.coordinates && this.item.coordinates.lat && this.item.coordinates.lng) {
+        if (this.item && this.item.location && this.item.location.lat && this.item.location.lng) {
             this.marker = {
-                lat: parseFloat(this.item.coordinates.lat),
-                lng: parseFloat(this.item.coordinates.lng),
+                lat: parseFloat(this.item.location.lat),
+                lng: parseFloat(this.item.location.lng),
             }
         }
         this.form = this.item;
@@ -46,16 +46,16 @@ export default {
                 lat: place.latLng.lat(),
                 lng: place.latLng.lng()
             }
-            this.form.coordinates = this.marker;
-            this.updateData(this.moduleName, this.fieldKey,this.form);
+            this.form.location = this.marker;
+            this.updateData(this.form.location, 'location');
         },
         updateCoordinates (location) {
             this.marker = {
                 lat: location.latLng.lat(),
                 lng: location.latLng.lng()
             }
-            this.form.coordinates = this.marker;
-            this.updateData(this.moduleName, this.fieldKey,this.form);
+            this.form.location = this.marker;
+            this.updateData(this.form,'location');
         },
     }
 }
