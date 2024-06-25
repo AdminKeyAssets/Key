@@ -33,8 +33,13 @@
                             <th> Name</th>
                             <th> City</th>
                             <th> Delivery Date</th>
-                            <th> Area (m2)</th>
-                            <th> Price</th>
+                            <th> Asset Type</th>
+                            <th> Size (m2)</th>
+                            <th> Total Price</th>
+                            <th> Asset Status</th>
+                            <th> Agreement Status</th>
+                            <th> Next Payment Date</th>
+                            <th> Next Payment</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
@@ -46,8 +51,13 @@
                                 <td><a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->name !!}</a></td>
                                 <td>{!! $item->city !!}</td>
                                 <td>{!! $item->delivery_date !!}</td>
+                                <td>{!! $item->type !!}</td>
                                 <td>{!! $item->area !!}</td>
                                 <td>{!! number_format($item->total_price,2,".",",") !!}</td>
+                                <td>{!! $item->asset_status !!}</td>
+                                <td>{!! $item->agreement_status !!}</td>
+                                <td>{!! $item->payments->where('status', 0)->first()->payment_date !!}</td>
+                                <td>{!! $item->payments->where('status', 0)->first()->amount !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'update', true))

@@ -1,103 +1,32 @@
 @extends('admin::layouts.layout')
 
 @section('content')
-{{--    <img src="{{ asset(config('admin.login_background_image')) }}" alt="Login Background" class="full-bg">--}}
-
-    <div class="dk-container" style="background-color: lightgray">
-        <!-- Login Container -->
-        <div id="login-container">
-            <!-- Login Title -->
-
-            <div class="login-title text-center">
-                <div  class="logo">
-                    @foreach(config('admin.login_logo') as $logo)
-                        <img src="{{ $logo['src'] }}" alt="" style="{{ $logo['style'] }}">
-                    @endforeach
-                </div>
-
-                <div>
-                    @if(count(config('admin.login_web_modules')))
-                    <h1><strong class="title-bold">@lang('WEB')</strong></h1>
-                        <ul class="page-list regular">
-                            @foreach(config('admin.login_web_modules') as $webModule)
-                                <li><a href="{{ $webModule['url'] }}" target="_blank">{{ $webModule['name'] }}</a></li>
-                            @endforeach
-                        </ul>
+    <div class="login-container">
+        <div id="login-box">
+            <div class="login-logo">
+                @foreach(config('admin.login_logo') as $logo)
+                    <img src="{{ $logo['src'] }}" alt="Logo" >
+                @endforeach
+            </div>
+            <form class="login-form" id="form-login" method="POST" action="{{ route('admin.login') }}">
+                {{ csrf_field() }}
+                <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                    <input type="text" id="login-email" name="email" value="{{ old('email') }}" class="form-control" placeholder="Email">
+                    @if ($errors->has('email'))
+                        <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
                     @endif
-
                 </div>
-                <h1><strong class="title-black">{{ config('admin.project_name') }} {{ config('admin.version') }}</strong></h1>
-            </div>
-
-            <!-- END Login Title -->
-
-            <!-- Login Block -->
-            <div class="block push-bit">
-                <div>
-                    <h1 class="title-black cms"><strong>CMS <br/>login</strong></h1>
-                    <!-- Login Form -->
-                    <form class="form-horizontal form-bordered form-control-borderless" id="form-login" method="POST"
-                          action="{{ route('admin.investor_login') }}">
-                        {{ csrf_field() }}
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <div class="col-xs-12">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="gi gi-envelope"></i></span>
-                                    <input type="text" id="login-email" name="email" value="{{ old('email') }}" class="form-control" placeholder="mail">
-                                </div>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block"><strong>{{ $errors->first('email') }}</strong></span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <div class="col-xs-12">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="gi gi-asterisk"></i></span>
-                                    <input type="password" id="login-password" name="password" class="form-control"
-                                           placeholder="password">
-                                </div>
-                                @if ($errors->has('password'))
-                                    <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group form-actions">
-                            <div class="col-xs-4">
-                                <label class="switch switch-primary" data-toggle="tooltip" title="დამიმახსოვრე">
-                                    <input type="checkbox" id="login-remember-me" name="remember"{{ old('remember') ? ' checked' : '' }}>
-                                    <span></span>
-                                    <small style="font-size: 10px;font-weight: normal;">Remember Me</small>
-                                </label>
-                            </div>
-                            <div class="col-xs-8 text-right">
-                                <button type="submit"
-                                        @if(config('admin.recaptcha.modules.login.status'))
-                                        data-callback='onSubmit'
-                                        data-sitekey="{{ config('admin.recaptcha.public_key') }}"
-                                        @endif
-                                        class="btn btn-sm btn-primary @if(config('admin.recaptcha.modules.login.status')) g-recaptcha @endif">
-                                    <i class="fa fa-angle-right"></i>
-                                    Login to dashboard
-                                </button>
-                            </div>
-                        </div>
-
-                    </form>
+                <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                    <input type="password" id="login-password" name="password" class="form-control" placeholder="Password">
+                    @if ($errors->has('password'))
+                        <span class="help-block"><strong>{{ $errors->first('password') }}</strong></span>
+                    @endif
                 </div>
-                <!-- END Login Form -->
-            </div>
-            <!-- END Login Block -->
-
-            <!-- Footer -->
-        <!-- <footer class="text-muted text-center">
-            <small><span id="year-copy"></span> &copy; <a href="{{ config('admin.handcrafted_by_url') }}" target="_blank">Handcrafted by {{ config('admin.handcrafted_by') }}</a>
-            </small>
-        </footer> -->
-            <!-- END Footer -->
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                </div>
+            </form>
         </div>
-        <!-- END Login Container -->
     </div>
 @endsection
 
@@ -109,3 +38,62 @@
         }
     </script>
 @endsection
+
+<style>
+    body {
+        background-color: #888888;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .login-container {
+        background-color: #333333;
+        padding: 30px; /* Increased padding */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        transform: scale(1.5); /* Scaling the container to make it 1.5x bigger */
+    }
+
+    #login-box {
+        background-color: #4a4a4a;
+        padding: 60px; /* Increased padding */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-logo img {
+        display: block;
+        margin: 0 auto 30px; /* Increased margin */
+    }
+
+    .login-form .form-control {
+        background-color: #5a5a5a;
+        color: #ffffff;
+        border: 1px solid #666666;
+        margin-bottom: 15px; /* Increased margin */
+        padding: 15px; /* Increased padding */
+        border-radius: 4px;
+        font-size: 1.25em; /* Increased font size */
+    }
+
+    .login-form .form-control::placeholder {
+        color: #cccccc;
+    }
+
+    .btn-primary {
+        background-color: #1a8cff;
+        border: none;
+        padding: 15px; /* Increased padding */
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 1.25em; /* Increased font size */
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #0073e6;
+    }
+</style>

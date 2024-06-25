@@ -245,7 +245,7 @@ export default {
                 this.loading = false;
                 responseParse(response);
                 setTimeout(() => {
-                    // window.location.href ='/assets/list';
+                    window.location.href ='/admin/investors';
                 }, 1000);
             })
                 .catch(error => {
