@@ -5,7 +5,7 @@ namespace App\Modules\Asset\Http\Controllers;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Asset\Http\Requests\LeaseRequest;
 use App\Modules\Asset\Models\Asset;
-use App\Modules\Asset\Models\Lease;
+use App\Modules\Asset\Models\Rental;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
 use DB;
@@ -46,7 +46,7 @@ class LeaseController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = Lease::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = Rental::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -75,7 +75,7 @@ class LeaseController extends BaseController
         foreach ($assets as $asset) {
             $assetIds[] = $asset->id;
         }
-        $this->baseData['allData'] = Lease::whereIn('asset_id', $assetIds)->orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = Rental::whereIn('asset_id', $assetIds)->orderByDesc('id')->paginate(25);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -104,7 +104,7 @@ class LeaseController extends BaseController
             ];
             $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->get();
             if ($request->get('id')) {
-                $lease = Lease::findOrFail($request->get('id'));
+                $lease = Rental::findOrFail($request->get('id'));
 
                 $this->baseData['item'] = $lease;
             }
@@ -121,7 +121,7 @@ class LeaseController extends BaseController
      */
     public function store(LeaseRequest $request)
     {
-        $updatedPayment = Lease::updateOrCreate(['id' => $request->id], [
+        $updatedPayment = Rental::updateOrCreate(['id' => $request->id], [
             'asset_id' => $request->asset_id,
             'price' => $request->price,
             'date_from' => $request->date_from,
@@ -162,7 +162,7 @@ class LeaseController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('asset.lease.create_data');
 
             $this->baseData['id'] = $id;
-            $rental = Lease::find($id);
+            $rental = Rental::find($id);
             $this->baseData['income'] = $this->calculateRentalCost($rental->price, $rental->date_from, $rental->date_to);
 
         } catch (\Exception $ex) {
@@ -179,7 +179,7 @@ class LeaseController extends BaseController
     public function destroy(Request $request)
     {
         try {
-            Lease::findOrFail($request->get('id'))->delete();
+            Rental::findOrFail($request->get('id'))->delete();
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }

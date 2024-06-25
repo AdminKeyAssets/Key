@@ -37,6 +37,7 @@ class CreateAssetsTable extends Migration
             $table->integer('period')->nullable();
             $table->double('total_price')->nullable();
             $table->double('current_value')->nullable();
+            $table->double('current_value')->nullable();
             $table->double('total_agreement_price')->nullable();
             $table->string('cadastral_number')->nullable();
             $table->string('document')->nullable();

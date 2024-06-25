@@ -32,16 +32,13 @@ export default {
         }
     },
     created() {
-        console.log(this.item.location);
         if (this.item && this.item.location) {
             const location = JSON.parse(this.item.location);
-
             if (location.lat && location.lng) {
                 this.marker = {
                     lat: parseFloat(location.lat),
                     lng: parseFloat(location.lng),
                 }
-                console.log(this.marker)
             }
 
         }

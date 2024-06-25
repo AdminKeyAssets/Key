@@ -11,7 +11,7 @@
                     :routes="routes"
                     :updateData="updateData"
                     :investors="investors"
-                    :item="this.form && this.form ? this.form : undefined"
+                    :item="this.form && this.form ? this.form : null"
                 ></AssetMain>
 
                 <div class="project-buttons">
@@ -47,7 +47,7 @@ export default {
             options: {},
             /** Form data*/
             form: {
-                id: this.id
+                id: this.id ?? null
             },
             investors: {}
 
@@ -84,13 +84,19 @@ export default {
                     this.routes = data.routes;
                     this.options = data.options;
                     this.investors = data.investors;
-                    console.log(data)
+
                     if (data.item) {
                         this.form = data.item;
                         if (data.item.files) {
                             const attachments = data.item.attachments;
                             this.form.attachments = data.item.files;
                             this.form.existingAttachments = attachments || [];
+                        }
+                        if(data.item.tenant){
+                            this.form.tenant = data.item.tenant;
+                        }
+                        if(data.item.rentals){
+                            this.form.rentals = data.item.rentals;
                         }
                     }
                     this.form.id = this.id;
@@ -122,6 +128,10 @@ export default {
                 } else if (key === 'extraDetails') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'payments') {
+                    formData.append(key, JSON.stringify(this.form[key]));
+                } else if (key === 'rentals') {
+                    formData.append(key, JSON.stringify(this.form[key]));
+                } else if (key === 'tenant') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'location') {
                     formData.append(key, JSON.stringify(this.form[key]));

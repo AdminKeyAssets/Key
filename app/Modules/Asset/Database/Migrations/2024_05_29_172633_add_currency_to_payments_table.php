@@ -14,7 +14,7 @@ class AddCurrencyToPaymentsTable extends Migration
     public function up()
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->string('currency')->default('GEL');
+            $table->string('currency')->default('USD');
         });
     }
 

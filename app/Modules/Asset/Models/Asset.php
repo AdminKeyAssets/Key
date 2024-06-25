@@ -29,6 +29,7 @@ class Asset extends Model
         'price',
         'condition',
         'agreement_status',
+        'asset_status',
         'agreement_date',
         'first_payment_date',
         'period',
@@ -50,6 +51,10 @@ class Asset extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
     public function attachments()
     {
         return $this->hasMany(AssetAttachment::class);
@@ -63,5 +68,10 @@ class Asset extends Model
     public function currentValues()
     {
         return $this->hasMany(CurrentValue::class)->orderByDesc('id');
+    }
+
+    public function tenant()
+    {
+        return $this->hasOne(Tenant::class);
     }
 }

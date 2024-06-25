@@ -3,6 +3,7 @@
 namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Http\Requests\AssetRequest;
@@ -10,6 +11,8 @@ use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
 use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
+use App\Modules\Asset\Models\Rental;
+use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
 use DB;
@@ -112,6 +115,7 @@ class AssetController extends BaseController
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
                 $this->baseData['item']['payments'] = $asset->payments;
+                $this->baseData['item']['rentals'] = $asset->rentals;
                 $this->baseData['item']['currentValues'] = $asset->currentValues;
                 $this->baseData['salesManager'] = $salesManager;
                 $this->baseData['nextPayment'] = $nextPayment;
@@ -127,7 +131,10 @@ class AssetController extends BaseController
                     }
                 }
                 $this->baseData['item']['files'] = $files;
+                $this->baseData['item']['tenant'] = $asset->tenant->first();
             }
+            $this->baseData['item']['countries'] = Country::get('country');
+            $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
             $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
@@ -143,8 +150,8 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
-
-        if (isset($request->id)) {
+//        dd($request->id );
+        if (isset($request->id) ) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
@@ -286,6 +293,7 @@ class AssetController extends BaseController
             'condition' => $request->condition,
             'agreement_status' => $request->agreement_status,
             'agreement_date' => $request->agreement_date,
+            'asset_status' => $request->asset_status,
             'first_payment_date' => $request->first_payment_date ?? null,
             'period' => $request->period ?? null,
             'total_agreement_price' => $request->total_agreement_price ?? null,
@@ -301,7 +309,6 @@ class AssetController extends BaseController
             }
             if ($request->payments) {
                 foreach (json_decode($request->payments) as $payment) {
-
                     Payment::create([
                         'number' => $payment->number,
                         'payment_date' => $payment->payment_date,
@@ -313,25 +320,67 @@ class AssetController extends BaseController
                 $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
                 $period = $request->input('period');
                 $totalAmount = $request->input('total_agreement_price');
-
-                $payments = [];
-                $amountPerPeriod = round($totalAmount / $period, 2);
-
-                for ($i = 0; $i < $period; $i++) {
-                    $paymentDate = $firstPaymentDate->copy()->addMonths($i);
-                    $payments[] = [
-                        'number' => $i + 1,
-                        'date' => $paymentDate->toDateString(),
-                        'amount' => $amountPerPeriod
-                    ];
-                }
-                $payments[$period - 1]['amount'] = round($totalAmount - ($amountPerPeriod * ($period - 1)), 2);
+                $payments = $this->generatePaymentsList($firstPaymentDate, $period, $totalAmount);
 
                 foreach ($payments as $payment) {
                     Payment::create([
-                        'month' => $payment->number,
-                        'payment_date' => $payment->date,
-                        'amount' => $payment->amount
+                        'month' => $payment['number'],
+                        'payment_date' => $payment['date'],
+                        'amount' => $payment['amount'],
+                        'asset_id' => $asset->id
+                    ]);
+                }
+            }
+        }
+
+        if ($request->asset_status === 'Rented') {
+            if($request->tenant){
+                $tenantData = json_decode($request->tenant);
+//                dd($tenantData);
+                Tenant::updateOrCreate([
+                    'email' => $tenantData->email,
+                    'phone' => $tenantData->phone,
+                ],
+                [
+                    'name' => $tenantData->name,
+                    'surname' => $tenantData->surname,
+                    'id_number' => $tenantData->id_number,
+                    'citizenship' => $tenantData->citizenship,
+                    'agreement_date' => $tenantData->agreement_date,
+//                    'agreement_date' => now(),
+                    'agreement_term' => $tenantData->agreement_term,
+                    'monthly_rent' => $tenantData->monthly_rent,
+                    'currency' => $tenantData->currency,
+                    'prefix' => $tenantData->prefix,
+                    'asset_id' => $asset->id,
+                ]);
+            }
+            if ($asset->rentals) {
+                $asset->rentals()->delete();
+            }
+            if ($request->rentals) {
+
+                foreach (json_decode($request->rentals) as $rental) {
+                    Rental::create([
+                        'number' => $rental->number,
+                        'payment_date' => $rental->date,
+                        'amount' => $rental->amount,
+                        'asset_id' => $asset->id
+                    ]);
+                }
+            } else {
+                $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
+                $period = $request->input('period');
+                $totalAmount = $request->input('total_agreement_price');
+
+                $payments = $this->generatePaymentsList($firstPaymentDate, $period, $totalAmount);
+
+                foreach ($payments as $payment) {
+                    Rental::create([
+                        'month' => $payment['number'],
+                        'payment_date' => $payment['date'],
+                        'amount' => $payment['amount'],
+                        'asset_id' => $asset->id
                     ]);
                 }
             }
@@ -451,5 +500,23 @@ class AssetController extends BaseController
         $asset = Asset::where(['id' => $request->id])->update(['admin_id' => $request->admin_id]);
 
         return ServiceResponse::jsonNotification('Asset Added successfully', 200, $this->baseData);
+    }
+
+    public function generatePaymentsList($firstPaymentDate, $period, $totalAmount)
+    {
+        $payments = [];
+        $amountPerPeriod = round($totalAmount / $period, 2);
+
+        for ($i = 0; $i < $period; $i++) {
+            $paymentDate = $firstPaymentDate->copy()->addMonths($i);
+            $payments[] = [
+                'number' => $i + 1,
+                'date' => $paymentDate->toDateString(),
+                'amount' => $amountPerPeriod
+            ];
+        }
+        $payments[$period - 1]['amount'] = round($totalAmount - ($amountPerPeriod * ($period - 1)), 2);
+
+        return $payments;
     }
 }
