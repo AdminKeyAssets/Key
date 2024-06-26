@@ -56,8 +56,8 @@
                                 <td>{!! number_format($item->total_price,2,".",",") !!}</td>
                                 <td>{!! $item->asset_status !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
-                                <td>{!! $item->payments->where('status', 0)->first()->payment_date !!}</td>
-                                <td>{!! $item->payments->where('status', 0)->first()->amount !!}</td>
+                                <td>{!! count($item->payments) ? $item->payments->where('status', 0)->first()->payment_date : '' !!}</td>
+                                <td>{!! count($item->payments) ? $item->payments->where('status', 0)->first()->amount : '' !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'update', true))

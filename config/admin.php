@@ -30,16 +30,11 @@ return [
     'project_avatar'        => 'admin_resources/img/placeholders/avatars/avatar2.jpg',
 
     /**
-     * Login background image url
-     */
-    'login_background_image'    => 'admin_resources/img/placeholders/headers/login_header.jpg',
-
-    /**
      * Login page logo.
      */
     'login_logo'                => [
         [
-            'src'       => '',
+            'src'       => 'admin_resources/img/placeholders/avatars/avatar2.jpg',
             'style'     => 'width: 100px'
         ]
     ],

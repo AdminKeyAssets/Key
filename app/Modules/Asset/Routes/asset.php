@@ -6,12 +6,15 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $moduleName = 'asset';
 
     Route::get('/list', $controller . '@index')->name('index')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
-    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor']);
     //Create/Update view.
     Route::get('/create', $controller . '@create')->name('create')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
-    Route::post('/create-data', $controller . '@createData')->name('create_data')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
+    Route::post('/create-data', $controller . '@createData')->name('create_data');
     Route::get('/edit/{id?}', $controller . '@edit')->name('edit')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/view/{id?}', $controller . '@view')->name('view')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
+
+    //For investor
+    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor']);
+    Route::get('/details/{id?}', $controller . '@investorView')->name('view')->middleware(['auth:investor']);
     //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     // Delete
@@ -39,8 +42,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $commentController = 'CommentController';
     $commentModuleName = 'comment';
 
-    Route::get('/{asset}/comments', $commentController . '@index')->name('comments.list')->middleware(['permission:' . getPermissionKey($commentModuleName, 'index', true)]);
-    Route::get('/comments/unread', $commentController . '@unread')->name('comments.list.unread')->middleware(['permission:' . getPermissionKey($commentModuleName, 'index', true)]);
+    Route::get('/{asset}/comments', $commentController . '@index')->name('comments.list');
+    Route::get('/comments/unread', $commentController . '@unread')->name('comments.list.unread');
     Route::get('/comments/{id}', $commentController . '@read')->name('comments.view')->middleware(['permission:' . getPermissionKey($commentModuleName, 'view', true)]);
     //Save
     Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);

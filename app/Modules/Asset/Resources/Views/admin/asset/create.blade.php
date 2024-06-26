@@ -12,9 +12,6 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route($moduleKey . '.index') }}" size="medium" class="btn btn-secondary">
-                    <i class="el-icon-back"></i>
-                </a>
                 <asset-page-form
                     :get-save-data-route="'{{ route($moduleKey . '.create_data') }}'">
                 </asset-page-form>

@@ -8,7 +8,7 @@
                     <img src="{{ $logo['src'] }}" alt="Logo" >
                 @endforeach
             </div>
-            <form class="login-form" id="form-login" method="POST" action="{{ route('admin.login') }}">
+            <form class="login-form" id="form-login" method="POST" action="{{ route('admin.investor_login') }}">
                 {{ csrf_field() }}
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     <input type="text" id="login-email" name="email" value="{{ old('email') }}" class="form-control" placeholder="Email">

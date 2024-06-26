@@ -131,7 +131,7 @@ class AssetController extends BaseController
                     }
                 }
                 $this->baseData['item']['files'] = $files;
-                $this->baseData['item']['tenant'] = $asset->tenant->first();
+                $this->baseData['item']['tenant'] = isset($asset->tenant) ? $asset->tenant->first() : [];
             }
             $this->baseData['item']['countries'] = Country::get('country');
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
@@ -151,7 +151,7 @@ class AssetController extends BaseController
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
 //        dd($request->id );
-        if (isset($request->id) ) {
+        if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
@@ -334,26 +334,26 @@ class AssetController extends BaseController
         }
 
         if ($request->asset_status === 'Rented') {
-            if($request->tenant){
+            if ($request->tenant) {
                 $tenantData = json_decode($request->tenant);
 //                dd($tenantData);
                 Tenant::updateOrCreate([
                     'email' => $tenantData->email,
                     'phone' => $tenantData->phone,
                 ],
-                [
-                    'name' => $tenantData->name,
-                    'surname' => $tenantData->surname,
-                    'id_number' => $tenantData->id_number,
-                    'citizenship' => $tenantData->citizenship,
-                    'agreement_date' => $tenantData->agreement_date,
+                    [
+                        'name' => $tenantData->name,
+                        'surname' => $tenantData->surname,
+                        'id_number' => $tenantData->id_number,
+                        'citizenship' => $tenantData->citizenship,
+                        'agreement_date' => $tenantData->agreement_date,
 //                    'agreement_date' => now(),
-                    'agreement_term' => $tenantData->agreement_term,
-                    'monthly_rent' => $tenantData->monthly_rent,
-                    'currency' => $tenantData->currency,
-                    'prefix' => $tenantData->prefix,
-                    'asset_id' => $asset->id,
-                ]);
+                        'agreement_term' => $tenantData->agreement_term,
+                        'monthly_rent' => $tenantData->monthly_rent,
+                        'currency' => $tenantData->currency,
+                        'prefix' => $tenantData->prefix,
+                        'asset_id' => $asset->id,
+                    ]);
             }
             if ($asset->rentals) {
                 $asset->rentals()->delete();
@@ -363,7 +363,7 @@ class AssetController extends BaseController
                 foreach (json_decode($request->rentals) as $rental) {
                     Rental::create([
                         'number' => $rental->number,
-                        'payment_date' => $rental->date,
+                        'payment_date' => $rental->payment_date,
                         'amount' => $rental->amount,
                         'asset_id' => $asset->id
                     ]);
@@ -467,6 +467,24 @@ class AssetController extends BaseController
         }
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::success($this->baseData));
+    }
+
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function investorView($id = '')
+    {
+        try {
+            $this->baseData['routes']['create_form_data'] = route('asset.create_data');
+
+            $this->baseData['id'] = $id;
+
+        } catch (\Exception $ex) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.investor_view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.investor_view', ServiceResponse::success($this->baseData));
     }
 
     /**
