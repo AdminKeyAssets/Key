@@ -102,7 +102,7 @@
 
             <div v-if="form.payments && form.payments.length">
                 <el-table :data="form.payments" style="width: 100%">
-                    <el-table-column prop="number" label="Payment Number" width="150"/>
+                    <el-table-column prop="number" label="Payment" width="150"/>
                     <el-table-column prop="payment_date" label="Payment Date" width="180">
                         <template slot-scope="scope">
                             <el-date-picker

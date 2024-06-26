@@ -161,8 +161,26 @@
             <div v-if="rentals.length">
                 <el-table :data="rentals" style="width: 100%">
                     <el-table-column prop="number" label="Payment" width="150"/>
-                    <el-table-column prop="payment_date" label="Payment Date" width="180"/>
-                    <el-table-column prop="amount" label="Amount" width="180"/>
+                    <el-table-column prop="payment_date" label="Payment Date" width="180">
+                        <template slot-scope="scope">
+                            <el-date-picker
+                                v-model="scope.row.payment_date"
+                                type="date"
+                                format="yyyy/MM/dd"
+                                value-format="yyyy/MM/dd"
+                                @change="updateRentalDate(scope.$index, scope.row.payment_date)"
+                            ></el-date-picker>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="amount" label="Amount" width="180">
+                        <template slot-scope="scope">
+                            <el-input
+                                type="number"
+                                v-model="scope.row.amount"
+                                @input="updateRentalAmount(scope.$index)"
+                            ></el-input>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </div>
         </div>
@@ -282,7 +300,41 @@ export default {
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
             this.$emit('update-form', { ...this.form, total_price: totalPrice });
-        }
+        },
+
+        updateRentalDate(index, date) {
+            this.$set(this.rentals, index, {
+                ...this.rentals[index],
+                payment_date: date
+            });
+        },
+        updateRentalAmount(index) {
+            const totalAmount = parseFloat(this.tenant.monthly_rent) * parseInt(this.tenant.agreement_term, 10);
+            let amountSum = this.rentals.reduce((sum, rental, idx) => {
+                return idx !== index ? sum + parseFloat(rental.amount) : sum;
+            }, 0);
+            const finalAmount = totalAmount - amountSum;
+
+            this.$set(this.rentals, index, {
+                ...this.rentals[index],
+                amount: parseFloat(this.rentals[index].amount)
+            });
+
+            this.updateFinalRentalAmount(this.rentals);
+        },
+        updateFinalRentalAmount(rentals) {
+            const totalAmount = parseFloat(this.tenant.monthly_rent) * parseInt(this.tenant.agreement_term, 10);
+            let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
+                return sum + parseFloat(rental.amount);
+            }, 0);
+
+            const finalAmount = totalAmount - amountSum;
+
+            this.$set(rentals, rentals.length - 1, {
+                ...rentals[rentals.length - 1],
+                amount: finalAmount.toFixed(2)
+            });
+        },
     }
 }
 </script>
