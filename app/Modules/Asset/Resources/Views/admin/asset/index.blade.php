@@ -46,9 +46,16 @@
                         </tr>
                         </thead>
                         <tbody>
+
                         @foreach($allData as $item)
                             <tr>
-                                <td><a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->name !!}</a></td>
+                                <td>
+                                    @if(Auth::guard('investor')->check())
+                                        <a href="{{route($moduleKey . '.details', [ $item->id ])}}">{!! $item->name !!}</a>
+                                    @else
+                                        <a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->name !!}</a>
+                                    @endif
+                                </td>
                                 <td>{!! $item->city !!}</td>
                                 <td>{!! $item->delivery_date !!}</td>
                                 <td>{!! $item->type !!}</td>

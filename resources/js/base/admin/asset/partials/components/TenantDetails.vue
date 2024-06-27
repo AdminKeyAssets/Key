@@ -32,7 +32,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Email:</label>
             <div class="col-md-10 uppercase-medium">
-                <el-input v-model="tenant.email" placeholder="Email"></el-input>
+                <el-input type="email" v-model="tenant.email" placeholder="Email"></el-input>
             </div>
         </div>
         <div class="form-group phone">
@@ -60,13 +60,13 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Term:</label>
             <div class="col-md-10 uppercase-medium">
-                <el-input v-model="tenant.agreement_term" placeholder="Agreement Term"></el-input>
+                <el-input type="number" v-model="tenant.agreement_term" placeholder="Agreement Term"></el-input>
             </div>
         </div>
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Monthly Rent:</label>
             <div class="col-md-7 uppercase-medium">
-                <el-input v-model="tenant.monthly_rent" placeholder="Monthly Rent"></el-input>
+                <el-input type="number" v-model="tenant.monthly_rent" placeholder="Monthly Rent"></el-input>
             </div>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="tenant.currency" placeholder="Currency">

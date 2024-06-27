@@ -20,28 +20,28 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Floor:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.floor"></input>
+                <input type="number" class="form-control" :disabled="loading" v-model="form.floor"></input>
             </div>
         </div>
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Flat number:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.flat_number"></input>
+                <input class="form-control" type="number" :disabled="loading" v-model="form.flat_number"></input>
             </div>
         </div>
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Area (m2):</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.area"></input>
+                <input class="form-control" type="number" :disabled="loading" v-model="form.area"></input>
             </div>
         </div>
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">M2 Price:</label>
             <div class="col-md-7 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.price"></input>
+                <input class="form-control" type="number" :disabled="loading" v-model="form.price"></input>
             </div>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="form.currency"
@@ -61,7 +61,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Total Price:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.total_price"></input>
+                <input class="form-control" type="number" :disabled="loading" v-model="form.total_price"></input>
             </div>
         </div>
 
@@ -192,10 +192,11 @@ import ImageModal from "../../../../components/admin/ImageModal.vue";
 import TenantDetails from './TenantDetails.vue';
 
 export default {
-    components: { ImageModal, TenantDetails },
+    components: {ImageModal, TenantDetails},
     props: ['form', 'loading', 'types', 'currencies', 'conditions', 'investors', 'updateData', 'item'],
     data() {
         return {
+            currency: 'USD',
             tenant: {
                 name: '',
                 surname: '',
@@ -211,15 +212,15 @@ export default {
             rentals: [],
         }
     },
-    created(){
-        console.log(this.form.tenant)
-    },
     watch: {
         'form.price': 'updateTotalPrice',
         'form.area': 'updateTotalPrice',
         'form'() {
             if (this.form) {
-                this.tenant = this.form.tenant || [];
+
+                if (this.form.tenant.id) {
+                    this.tenant = this.form.tenant;
+                }
                 this.rentals = this.form.rentals || [];
             }
         }
@@ -230,7 +231,7 @@ export default {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.$emit('update-form', { ...this.form, floor_plan: file, floorPlanPreview: e.target.result });
+                    this.$emit('update-form', {...this.form, floor_plan: file, floorPlanPreview: e.target.result});
                 };
                 reader.onerror = (error) => {
                     console.error('Error loading file:', error);
@@ -239,7 +240,7 @@ export default {
             }
         },
         removeFloorPlan() {
-            this.$emit('update-form', { ...this.form, floor_plan: null, floorPlanPreview: null });
+            this.$emit('update-form', {...this.form, floor_plan: null, floorPlanPreview: null});
         },
 
         onFlatPlanChange(e) {
@@ -247,7 +248,7 @@ export default {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.$emit('update-form', { ...this.form, flat_plan: file, flatPlanPreview: e.target.result });
+                    this.$emit('update-form', {...this.form, flat_plan: file, flatPlanPreview: e.target.result});
                 };
                 reader.onerror = (error) => {
                     console.error('Error loading file:', error);
@@ -256,11 +257,11 @@ export default {
             }
         },
         removeFlatPlan() {
-            this.$emit('update-form', { ...this.form, flat_plan: null, flatPlanPreview: null });
+            this.$emit('update-form', {...this.form, flat_plan: null, flatPlanPreview: null});
         },
 
         updateTenant(newTenant) {
-            this.$emit('update-form', { ...this.form, tenant: newTenant });
+            this.$emit('update-form', {...this.form, tenant: newTenant});
         },
 
         generateRentalList() {
@@ -279,14 +280,14 @@ export default {
 
                 rentals.push({
                     number: i + 1,
-                    date: this.formatDate(paymentDate),
+                    payment_date: this.formatDate(paymentDate),
                     amount: this.tenant.monthly_rent,
                     status: 'Pending'
                 });
             }
 
             this.rentals = rentals;
-            this.$emit('update-form', { ...this.form, rentals: this.rentals });
+            this.$emit('update-form', {...this.form, rentals: this.rentals});
         },
 
         formatDate(date) {
@@ -299,7 +300,7 @@ export default {
             const price = parseFloat(this.form.price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
-            this.$emit('update-form', { ...this.form, total_price: totalPrice });
+            this.$emit('update-form', {...this.form, total_price: totalPrice});
         },
 
         updateRentalDate(index, date) {

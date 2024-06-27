@@ -150,7 +150,7 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
-//        dd($request->id );
+//        dd($request->id);
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
@@ -336,7 +336,7 @@ class AssetController extends BaseController
         if ($request->asset_status === 'Rented') {
             if ($request->tenant) {
                 $tenantData = json_decode($request->tenant);
-//                dd($tenantData);
+
                 Tenant::updateOrCreate([
                     'email' => $tenantData->email,
                     'phone' => $tenantData->phone,

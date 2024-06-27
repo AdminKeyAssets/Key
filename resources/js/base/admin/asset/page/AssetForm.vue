@@ -99,7 +99,7 @@ export default {
                             this.form.rentals = data.item.rentals;
                         }
                     }
-                    this.form.id = this.id;
+                    this.form.id = this.id ?? '';
                 }
                 this.loading = false
             })
