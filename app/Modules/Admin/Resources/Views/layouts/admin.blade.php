@@ -22,15 +22,19 @@
                             <div class="sidebar-section sidebar-user clearfix sidebar-nav-mini-hide">
                                 <div class="sidebar-user-avatar">
                                     <a href="{{ route('admin.profile.index') }}">
-                                        <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                        @if( \Auth::user()->profile_picture)
+                                            <img src="{{ \Auth::user()->profile_picture }}" alt="avatar">
+                                        @else
+                                            <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                        @endif
                                     </a>
                                 </div>
                                 <div class="sidebar-user-name">{{ \Auth::user()->name }}</div>
                                 <div class="sidebar-user-links">
                                     <a href="{{ route('admin.profile.index') }}" data-toggle="tooltip"
-                                       data-placement="bottom" title="პროფილი"><i class="el-icon-user"></i></a>
+                                       data-placement="bottom" title="Profile"><i class="el-icon-user"></i></a>
                                     <a href="javascript:;" class="logout-link" data-toggle="tooltip"
-                                       data-placement="bottom" title="გასვლა"><i class="el-icon-switch-button"></i></a>
+                                       data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
                                 </div>
                             </div>
                             <!-- END User Info -->

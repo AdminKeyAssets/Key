@@ -105,6 +105,7 @@ class AdminRepository extends BaseRepository implements IAdminRepository
 
                     $profilePictureFile = $request->file('profile_picture');
                     $profilePicture = $profilePictureFile->store('uploads', 'public');
+                    $data['profile_picture'] = Storage::url($profilePicture);
 
                 } else if ($request->input('profile_picture') === null) {
                     if ($this->admin->profile_picture && Storage::disk('public')->exists($this->admin->profile_picture)) {
@@ -112,7 +113,6 @@ class AdminRepository extends BaseRepository implements IAdminRepository
                     }
                 }
 
-                $data['profile_picture'] = Storage::url($profilePicture);
                 $this->admin->update($data);
 
             } else {

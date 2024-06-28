@@ -156,7 +156,8 @@ class UserController extends BaseController
             }
 
             $admin = Admin::find($request->get('id'));
-            if ($admin->investors) {
+
+            if (count($admin->investors)) {
                 throw new \Exception('You are not allowed to delete user, while having investors attached on it!!');
             }
 

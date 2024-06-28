@@ -87,6 +87,23 @@
 
                 <div class="form-group">
 
+                    <label class="col-md-2 control-label">Select Manager: <span class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <el-select v-model="form.admin_id" filterable
+                                   placeholder="Manager">
+                            <el-option
+                                v-for="manager in this.managers"
+                                :key="manager.id"
+                                :label="manager.name + ' ' + manager.surname"
+                                :value="manager.id"
+                            ></el-option>
+                        </el-select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
                     <label class="col-md-2 control-label">Password <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit
@@ -165,6 +182,7 @@ export default {
             options: {},
             countries: [],
             prefixes: [],
+            managers: [],
             /**
              * Form data
              */
@@ -216,6 +234,9 @@ export default {
                     }
                     if(data.prefixes){
                         this.prefixes = data.prefixes;
+                    }
+                    if(data.managers){
+                        this.managers = data.managers;
                     }
                 }
                 this.loading = false

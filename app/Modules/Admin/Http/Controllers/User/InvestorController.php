@@ -65,6 +65,9 @@ class InvestorController extends BaseController
     public function index(Request $request)
     {
         $query = Investor::query();
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
         if ($request->citizenship) {
             $query->where('citizenship', '=', $request->input('citizenship'));
         }
@@ -77,20 +80,20 @@ class InvestorController extends BaseController
             });
         }
 
-        if($request->create_date){
+        if ($request->create_date) {
             $createdDates = explode(',', $request->create_date);
-            if(isset($createdDates[0])){
+            if (isset($createdDates[0])) {
                 $query->where('created_at', '>=', $createdDates[0]);
             }
-            if(isset($createdDates[1])){
+            if (isset($createdDates[1])) {
                 $query->where('created_at', '<=', $createdDates[1]);
             }
         }
 
-        if($request->manager){
+        if ($request->manager) {
             $managerName = $request->manager;
-            $query->whereHas('admin', function ($query) use ($managerName){
-                $query->whereHas('roles', function ($roleQuery) use ($managerName){
+            $query->whereHas('admin', function ($query) use ($managerName) {
+                $query->whereHas('roles', function ($roleQuery) use ($managerName) {
                     $roleQuery->where('name', '=', $managerName);
                 });
             });
@@ -162,6 +165,9 @@ class InvestorController extends BaseController
             $this->baseData['countries'] = Country::get('country');
             $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
 
+            $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                $query->where('name', 'like', '%manager%');
+            })->get();
         } catch (\Exception $ex) {
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
@@ -189,35 +195,41 @@ class InvestorController extends BaseController
 
                     $profilePictureFile = $request->file('profile_picture');
                     $profilePicture = $profilePictureFile->store('uploads', 'public');
+                    $profilePicture = Storage::url($profilePicture);
 
                 } else if ($request->input('profile_picture') === null) {
                     if ($investor->profile_picture && Storage::disk('public')->exists($investor->profile_picture)) {
                         Storage::disk('public')->delete($investor->profile_picture);
                     }
+                } else {
+                    $profilePicture = $request->input('profile_picture');
                 }
 
                 if ($request->hasFile('passport')) {
                     if ($investor->passport && Storage::disk('public')->exists($investor->passport)) {
                         Storage::disk('public')->delete($investor->profile_picture);
                     }
-
                     $passportFile = $request->file('passport');
                     $passport = $passportFile->store('uploads', 'public');
-
+                    $passport = Storage::url($passport);
                 } else if ($request->input('passport') === null) {
                     if ($investor->passport && Storage::disk('public')->exists($investor->passport)) {
                         Storage::disk('public')->delete($investor->passport);
                     }
+                } else {
+                    $passport = $request->input('passport');
                 }
 
             } else {
                 if ($request->hasFile('profile_picture')) {
                     $profilePictureFile = $request->file('profile_picture');
                     $profilePicture = $profilePictureFile->store('uploads', 'public');
+                    $profilePicture = Storage::url($profilePicture);
                 }
                 if ($request->hasFile('passport')) {
                     $passportFile = $request->file('passport');
                     $passport = $passportFile->store('uploads', 'public');
+                    $passport = Storage::url($passport);
                 }
             }
 
@@ -234,9 +246,9 @@ class InvestorController extends BaseController
                     'citizenship' => $request->citizenship,
                     'address' => $request->address,
                     'password' => $request->password,
-                    'passport' => !is_null($passport) ? Storage::url($passport) : null,
-                    'profile_picture' => !is_null($profilePicture) ? Storage::url($profilePicture) : null,
-                    'admin_id' => Auth::user()->getAuthIdentifier()
+                    'passport' => $passport,
+                    'profile_picture' => $profilePicture,
+                    'admin_id' => $request->admin_id ?? Auth::user()->getAuthIdentifier()
                 ]
             );
         } catch (\Exception $ex) {

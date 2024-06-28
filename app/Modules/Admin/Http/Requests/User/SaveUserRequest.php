@@ -33,6 +33,8 @@ class SaveUserRequest extends FormRequest
         return [
             'name'  => 'required',
             'email' => 'required',
+            'phone' => 'required',
+            'prefix' => 'required',
             'password'  => [$passwordRequired,
 //                'min:8',
 //                'regex:/[a-z]/',

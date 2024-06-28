@@ -56,7 +56,7 @@
                                 <td>
                                     @if($item->profile_picture)
                                         <img
-                                            style="border-radius: 50%; margin-left: 25%"
+                                            style="border-radius: 50%;"
                                             width="50"
                                             height="50"
                                             src="{!! $item->profile_picture !!}">
@@ -99,3 +99,9 @@
     </div>
     <!-- END Page Content -->
 @endsection
+
+<style>
+    th, td{
+        text-align: center !important;
+    }
+</style>
