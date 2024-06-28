@@ -98,7 +98,7 @@
                     <el-option
                         v-for="item in investors"
                         :key="item.id"
-                        :label="item.name"
+                        :label="item.name+ ' ' + item.surname"
                         :value="item.id">
                     </el-option>
                 </el-select>
@@ -145,6 +145,7 @@
                 <el-select v-model="form.asset_status" placeholder="Select Status">
                     <el-option label="Vacant" value="Vacant"></el-option>
                     <el-option label="Under Renovation" value="Under Renovation"></el-option>
+                    <el-option label="Under Construction" value="Under Construction"></el-option>
                     <el-option label="Rented" value="Rented"></el-option>
                 </el-select>
             </div>
