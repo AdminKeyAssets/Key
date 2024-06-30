@@ -27,7 +27,7 @@ class PaymentRequest extends FormRequest
             'month' => ['required','integer'],
             'payment_date' => 'required',
             'currency' => 'required',
-            'amount' => ['required', 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/'],
+            'amount' => ['required', 'numeric'],
         ];
     }
 
@@ -42,7 +42,7 @@ class PaymentRequest extends FormRequest
             'payment_date.required' => 'Payment Date can not be empty.',
             'amount.required' => 'Amount can not be empty.',
             'currency.required' => 'Currency can not be empty.',
-            'amount.regex' => 'Amount should be double.',
+            'amount.numeric' => 'Amount should be numeric.',
         ];
     }
 }

@@ -32,8 +32,8 @@ class AssetRequest extends FormRequest
             'city' => 'required',
             'delivery_date' => 'required',
             'currency' => 'required',
-            'area' => ['required', 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/'],
-            'total_price' => ['required', 'regex:/^[0-9]+(\.[0-9][0-9]?)?$/']
+            'area' => ['required', 'numeric'],
+            'total_price' => ['required', 'numeric']
         ];
     }
 
@@ -48,8 +48,8 @@ class AssetRequest extends FormRequest
             'delivery_date.required' => 'Delivery Date can not be empty.',
             'area.required' => 'Area can not be empty.',
             'currency.required' => 'Currency can not be empty.',
-            'area.regex' => 'Area should be double.',
-            'total_price.regex' => 'Price should be double.',
+            'area.numeric' => 'Area should be numeric.',
+            'total_price.numeric' => 'Price should be numeric.',
             'total_price.required' => 'Price can not be empty.',
         ];
     }

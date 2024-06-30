@@ -4,7 +4,7 @@ namespace App\Modules\Admin\Http\Controllers\User;
 
 use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
-use App\Modules\Admin\Http\Requests\User\SaveUserRequest;
+use App\Modules\Admin\Http\Requests\Investor\SaveInvestorRequest;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
@@ -177,10 +177,10 @@ class InvestorController extends BaseController
     }
 
     /**
-     * @param SaveUserRequest $request
+     * @param SaveInvestorRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function save(SaveUserRequest $request)
+    public function save(SaveInvestorRequest $request)
     {
         try {
             $passport = null;
@@ -232,7 +232,6 @@ class InvestorController extends BaseController
                     $passport = Storage::url($passport);
                 }
             }
-
 
             Investor::updateOrCreate(
                 ['id' => $request->id],

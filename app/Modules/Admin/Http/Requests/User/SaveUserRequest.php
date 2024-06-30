@@ -26,21 +26,42 @@ class SaveUserRequest extends FormRequest
 
         $passwordRequired = 'required';
 
-        if ( !empty($this->request->all()['id'])) {
+        if (!empty($this->request->all()['id'])) {
             $passwordRequired = 'nullable';
         }
 
         return [
-            'name'  => 'required',
-            'email' => 'required',
+            'name' => 'required',
+            'surname' => 'required',
+            'email' => ['required', 'unique:admins,email', 'email'],
+            'pid' => ['required', 'unique:admins,pid', 'numeric'],
             'phone' => 'required',
             'prefix' => 'required',
-            'password'  => [$passwordRequired,
+            'role_id' => 'required',
+            'password' => [$passwordRequired,
 //                'min:8',
 //                'regex:/[a-z]/',
 //                'regex:/[A-Z]/',
 //                'regex:/[0-9]/'
             ],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.numeric' => 'Name can not be empty.',
+            'surname.required' => 'Surname can not be empty.',
+            'email.required' => 'Email can not be empty.',
+            'email.email' => 'Missing @ in Email.',
+            'pid.required' => 'ID/Passport Number can not be empty.',
+            'pid.numeric' => 'ID/Passport Number should numeric.',
+            'phone.required' => 'Phone Number can not be empty.',
+            'prefix.required' => 'Prefix Number can not be empty.',
+            'email.unique' => 'The email has already been taken.',
+            'pid.unique' => 'ID/Passport has already been taken.',
+            'password.required' => 'Password is required.',
+            'role_id.required' => 'Please Select Role.',
         ];
     }
 }

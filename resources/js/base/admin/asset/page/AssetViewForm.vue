@@ -16,7 +16,7 @@
                             <el-row>
 
                                 <div v-if="form.icon" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Upload Icon:</label>
+                                    <label class="col-md-1 control-label">Icon:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <div v-if="form.icon">
                                             <ImageModal v-if="form.iconPreview"
@@ -144,7 +144,7 @@
                                 </div>
 
                                 <div v-if="form.floor_plan" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Upload Floor Plan:</label>
+                                    <label class="col-md-1 control-label">Floor Plan:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <div v-if="form.floor_plan">
                                             <ImageModal v-if="form.floorPlanPreview" :image-path="form.floorPlanPreview"
@@ -156,7 +156,7 @@
                                 </div>
 
                                 <div v-if="form.flat_plan" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Upload Flat Plan:</label>
+                                    <label class="col-md-1 control-label">Flat Plan:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <div v-if="form.flat_plan">
                                             <ImageModal v-if="form.flatPlanPreview" :image-path="form.flatPlanPreview"

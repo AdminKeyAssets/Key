@@ -12,7 +12,7 @@
                     <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                  v-model="form.name"></el-input>
+                                  v-model="form.name" @input="capitalizeFirstLetter('name')"></el-input>
                     </div>
                 </div>
 
@@ -20,7 +20,7 @@
                     <label class="col-md-2 control-label">Surname: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                  v-model="form.surname"></el-input>
+                                  v-model="form.surname" @input="capitalizeFirstLetter('surname')"></el-input>
                     </div>
                 </div>
 
@@ -145,7 +145,7 @@
             </el-row>
 
             <div class="el-form-item registration-btn">
-                <el-button type="primary" @click="save" :disabled="loading || !form.name || !form.email"
+                <el-button type="primary" @click="save" :disabled="loading"
                            style="margin: 0 1rem">Save
                 </el-button>
             </div>
@@ -332,6 +332,11 @@ export default {
         removePassport() {
             this.form.passport = null;
             this.form.passportPreview = null;
+        },
+        capitalizeFirstLetter(field) {
+            if (this.form[field]) {
+                this.form[field] = this.form[field].charAt(0).toUpperCase() + this.form[field].slice(1);
+            }
         },
     }
 

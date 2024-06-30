@@ -3,10 +3,10 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Tenant Name:</label>
             <div class="col-md-5 uppercase-medium">
-                <el-input v-model="tenant.name" placeholder="Name"></el-input>
+                <el-input v-model="tenant.name" placeholder="Name" @input="capitalizeFirstLetter('name')"></el-input>
             </div>
             <div class="col-md-5 uppercase-medium">
-                <el-input v-model="tenant.surname" placeholder="Surname"></el-input>
+                <el-input v-model="tenant.surname" placeholder="Surname" @input="capitalizeFirstLetter('surname')"></el-input>
             </div>
         </div>
         <div class="form-group dashed">
@@ -93,6 +93,12 @@ export default {
         }
     },
     methods: {
+        capitalizeFirstLetter(field) {
+            if (this.tenant[field]) {
+                this.tenant[field] = this.tenant[field].charAt(0).toUpperCase() + this.tenant[field].slice(1);
+                this.$emit('update-tenant', this.tenant);
+            }
+        },
         generateRentalList() {
             this.$emit('generate-rental-list');
         }
