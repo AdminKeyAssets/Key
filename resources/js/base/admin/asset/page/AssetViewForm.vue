@@ -14,56 +14,59 @@
                                  class="form-horizontal form-bordered">
 
                             <el-row>
-
-                                <div v-if="form.icon" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Icon:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        <div v-if="form.icon">
-                                            <ImageModal v-if="form.iconPreview"
-                                                        :image-path="form.iconPreview"
-                                                        :thumbnail="form.iconPreview"></ImageModal>
-                                            <ImageModal v-else
-                                                        :image-path="form.icon"
-                                                        :thumbnail="form.icon"></ImageModal>
+                                <el-col :span="16">
+                                    <div v-if="form.project_name" class="form-group dashed">
+                                        <label class="col-md-2 control-label">Project Name:</label>
+                                        <div class="col-md-10 uppercase-medium">
+                                            {{ form.project_name }}
                                         </div>
                                     </div>
-                                </div>
 
-                                <div v-if="form.project_name" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Project Name:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{ form.project_name }}
+                                    <div v-if="form.project_description" class="form-group dashed">
+                                        <label class="col-md-2 control-label">Project Description:</label>
+                                        <div class="col-md-10 uppercase-medium">
+                                            {{ form.project_description }}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div v-if="form.project_description" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Project Description:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{ form.project_description }}
+                                    <div v-if="form.project_link" class="form-group dashed">
+                                        <label class="col-md-2 control-label">Project Link:</label>
+                                        <div class="col-md-10 uppercase-medium">
+                                            <a :href="form.project_link" target="_blank">
+                                                {{ form.project_link }}
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div v-if="form.project_link" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Project Link:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{ form.project_link }}
+                                    <div v-if="form.city" class="form-group dashed">
+                                        <label class="col-md-2 control-label">City:</label>
+                                        <div class="col-md-10 uppercase-medium">
+                                            {{ form.city }}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div v-if="form.city" class="form-group dashed">
-                                    <label class="col-md-1 control-label">City:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{ form.city }}
+                                    <div v-if="form.address" class="form-group dashed">
+                                        <label class="col-md-2 control-label">Address:</label>
+                                        <div class="col-md-10 uppercase-medium">
+                                            {{ form.address }}
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div v-if="form.address" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Address:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{ form.address }}
+                                </el-col>
+                                <el-col :span="8">
+                                    <div v-if="form.icon" class="form-group dashed">
+                                        <div class="col-md-10 uppercase-medium">
+                                            <div v-if="form.icon">
+                                                <ImageModal
+                                                    :image-path="form.icon"
+                                                    :thumbnail="form.icon"
+                                                    :width="300"
+                                                    :height="300"></ImageModal>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-
+                                </el-col>
+                            </el-row>
+                            <el-row>
                                 <div v-if="form.location" class="form-group dashed">
                                     <label class="col-md-1 control-label">Location:</label>
                                     <MapMarker disabled v-if="form.location || !form.id" :item="form"></MapMarker>
@@ -137,7 +140,8 @@
                                     <div class="col-md-10 uppercase-medium">
                                         <el-select v-model="form.investor_id" disabled :value="form.investor_id"
                                                    filterable placeholder="Select">
-                                            <el-option v-for="item in investors" :key="item.id" :label="item.name + item.surname"
+                                            <el-option v-for="item in investors" :key="item.id"
+                                                       :label="item.name + item.surname"
                                                        :value="item.id"></el-option>
                                         </el-select>
                                     </div>
@@ -232,7 +236,7 @@
                                     </div>
                                 </div>
 
-                                <div v-if="form.attachments.length" class="form-group dashed">
+                                <div v-if="form.attachments" class="form-group dashed">
                                     <label class="col-md-1 control-label">Attachments:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <div v-if="form.attachments">
@@ -250,7 +254,7 @@
                                     </div>
                                 </div>
 
-                                <div v-if="form.extraDetails.length" class="form-group dashed">
+                                <div v-if="form.extraDetails" class="form-group dashed">
                                     <label class="col-md-1 control-label">Extra Details:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <el-form-item v-for="extraDetail in form.extraDetails" :key="extraDetail.id">
