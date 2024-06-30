@@ -60,7 +60,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Term:</label>
             <div class="col-md-10 uppercase-medium">
-                <el-select v-model="tenant.agreement_term" placeholder="Agreement Term">
+                <el-select v-model="tenant.agreement_term" placeholder="Agreement Term" filterable>
                     <el-option
                         v-for="term in agreementTerms"
                         :key="term"
