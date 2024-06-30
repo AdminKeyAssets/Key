@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SaveUserRequest extends FormRequest
 {
@@ -33,11 +34,11 @@ class SaveUserRequest extends FormRequest
         return [
             'name' => 'required',
             'surname' => 'required',
-            'email' => ['required', 'unique:admins,email', 'email'],
-            'pid' => ['required', 'unique:admins,pid', 'numeric'],
+            'email' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,email', 'email'],
+            'pid' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,pid', 'numeric'],
             'phone' => 'required',
             'prefix' => 'required',
-            'role_id' => 'required',
+            'roles' => 'required',
             'password' => [$passwordRequired,
 //                'min:8',
 //                'regex:/[a-z]/',
@@ -61,7 +62,7 @@ class SaveUserRequest extends FormRequest
             'email.unique' => 'The email has already been taken.',
             'pid.unique' => 'ID/Passport has already been taken.',
             'password.required' => 'Password is required.',
-            'role_id.required' => 'Please Select Role.',
+            'roles.required' => 'Please Select Role.',
         ];
     }
 }

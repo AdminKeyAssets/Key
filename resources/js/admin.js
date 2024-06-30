@@ -43,6 +43,7 @@ Vue.component('checked-all-component', require('./base/components/admin/checkedA
 Vue.component('per-page-component', require('./base/components/admin/perPage').default);
 Vue.component('status-component', require('./base/components/admin/Status').default);
 Vue.component('save-config', require('./base/components/admin/SaveConfig').default);
+Vue.component('image-modal', require('./base/components/admin/ImageModal').default);
 
 //Asset
 Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').default);

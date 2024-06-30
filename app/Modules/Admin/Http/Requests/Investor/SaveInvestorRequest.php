@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Http\Requests\Investor;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SaveInvestorRequest extends FormRequest
 {
@@ -33,8 +34,8 @@ class SaveInvestorRequest extends FormRequest
         return [
             'name'  => 'required',
             'surname'  => 'required',
-            'email' => ['required', 'unique:admins,email', 'email'],
-            'pid' => ['required', 'unique:admins,pid', 'numeric'],
+            'email' => ['required', !empty($this->request->all()['id']) ? Rule::unique('investors', 'pid')->ignore($this->request->all()['id']) : 'unique:investors,email', 'email'],
+            'pid' => ['required', !empty($this->request->all()['id']) ? Rule::unique('investors', 'pid')->ignore($this->request->all()['id']) : 'unique:investors,pid', 'numeric'],
             'phone' => 'required',
             'prefix' => 'required',
             'citizenship' => 'required',

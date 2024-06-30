@@ -1,6 +1,7 @@
 <template>
     <div>
-        <img :src="thumbnail" alt="Image thumbnail" @click="showModal = true" style="cursor: pointer; max-width: 100px; max-height: 100px;">
+        <img v-if="this.rounded" width="50" height="50" :src="this.thumbnail" alt="Image thumbnail" @click="showModal = true" style="border-radius: 50%; cursor: pointer; max-width: 100px; max-height: 100px;">
+        <img v-else :src="this.thumbnail" alt="Image thumbnail" @click="showModal = true" style="cursor: pointer; max-width: 100px; max-height: 100px;">
         <el-dialog :visible.sync="showModal" width="50%" :before-close="handleClose">
             <img :src="imagePath" alt="Image full view" style="width: 100%;">
         </el-dialog>
@@ -13,12 +14,18 @@ export default {
     props: {
         imagePath: {
             type: String,
-            required: true
+            required: false,
+            default: ''
         },
         thumbnail: {
             type: String,
             required: false,
-            default: '' // Set a default thumbnail if needed
+            default: ''
+        },
+        rounded: {
+            type: Boolean,
+            required: false,
+            default: false
         }
     },
     data() {

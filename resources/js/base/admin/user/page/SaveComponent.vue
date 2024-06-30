@@ -141,7 +141,8 @@
                  */
                 form: {
                     guard_name: 'admin',
-                    password: ''
+                    password: '',
+                    roles: null
                 },
 
             }
@@ -170,7 +171,7 @@
                     phone: this.user ? this.user.phone : '',
                     pid: this.user ? this.user.pid : '',
                     profile_picture: this.user ? this.user.profile_picture : '',
-                    roles: this.user && this.user.rolesId ? this.user.rolesId[0] : null,
+                    roles: this.user && this.user.rolesId ? this.user.rolesId[0] : '',
                     password: ''
                 }
             },
