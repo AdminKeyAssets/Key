@@ -65,7 +65,7 @@
                                 <td>{!! $item->rolesName !!}</td>
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
-                                <td>{!! $item->created_at->toDateTimeString() !!}</td>
+                                <td>{!! $item->created_at->toDateString() !!}</td>
                                 <td class="text-center">
 
                                     @can(getPermissionKey($moduleKey, 'update', true))
