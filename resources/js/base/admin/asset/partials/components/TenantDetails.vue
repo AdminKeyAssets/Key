@@ -60,7 +60,14 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Term:</label>
             <div class="col-md-10 uppercase-medium">
-                <el-input type="number" v-model="tenant.agreement_term" placeholder="Agreement Term"></el-input>
+                <el-select v-model="tenant.agreement_term" placeholder="Agreement Term">
+                    <el-option
+                        v-for="term in agreementTerms"
+                        :key="term"
+                        :label="term"
+                        :value="term"
+                    ></el-option>
+                </el-select>
             </div>
         </div>
         <div class="form-group dashed">
@@ -84,6 +91,11 @@
 <script>
 export default {
     props: ['tenant', 'loading', 'countries', 'prefixes'],
+    data() {
+        return {
+            agreementTerms: this.getAgreementTerms()
+        }
+    },
     watch: {
         tenant: {
             handler(newTenant) {
@@ -101,6 +113,13 @@ export default {
         },
         generateRentalList() {
             this.$emit('generate-rental-list');
+        },
+        getAgreementTerms() {
+            let terms = [];
+            for (let i = 2; i <= 120; i++) {
+                terms.push(i);
+            }
+            return terms;
         }
     }
 }
