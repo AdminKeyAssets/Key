@@ -31,8 +31,6 @@
                                 </div>
                                 <div class="sidebar-user-name">{{ \Auth::user()->name }}</div>
                                 <div class="sidebar-user-links">
-                                    <a href="{{ route('admin.profile.index') }}" data-toggle="tooltip"
-                                       data-placement="bottom" title="Profile"><i class="el-icon-user"></i></a>
                                     <a href="javascript:;" class="logout-link" data-toggle="tooltip"
                                        data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
                                 </div>
@@ -80,10 +78,6 @@
                                 <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
                                     <li class="dropdown-header text-center">My Account</li>
                                     <li>
-                                        <a href="{{ route('admin.profile.index') }}">
-                                            <i class="el-icon-user pull-right"></i>
-                                            profile
-                                        </a>
                                         <a href="javascript:;" class="logout-link"><i
                                                 class="el-icon-switch-button pull-right"></i> logout</a>
                                         <form action="{{ route('admin.logout') }}" id="logout-form" method="post"
