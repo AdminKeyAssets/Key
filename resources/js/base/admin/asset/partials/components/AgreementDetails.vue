@@ -188,7 +188,7 @@ export default {
 
                 payments.push({
                     number: i + 1,
-                    payment_date: paymentDate.toISOString().substring(0, 10),
+                    payment_date: this.formatDate(paymentDate),
                     amount: amountPerPeriod
                 });
             }
@@ -231,6 +231,12 @@ export default {
                 ...payments[payments.length - 1],
                 amount: finalAmount.toFixed(2)
             });
+        },
+        formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}/${month}/${day}`;
         },
     }
 }
