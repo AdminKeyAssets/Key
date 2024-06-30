@@ -218,7 +218,9 @@ export default {
         'form.area': 'updateTotalPrice',
         'form'() {
             if (this.form) {
-
+                if (!this.form.currency) {
+                    this.$emit('update-form', { ...this.form, currency: 'USD' });
+                }
                 if (this.form.tenant.id) {
                     this.tenant = this.form.tenant;
                 }
