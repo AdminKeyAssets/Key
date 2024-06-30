@@ -51,9 +51,9 @@
                             <tr>
                                 <td>
                                     @if(Auth::guard('investor')->check())
-                                        <a href="{{route($moduleKey . '.details', [ $item->id ])}}">{!! $item->name !!}</a>
+                                        <a href="{{route($moduleKey . '.details', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @else
-                                        <a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->name !!}</a>
+                                        <a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>

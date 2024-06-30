@@ -17,7 +17,6 @@ class CreateAssetsTable extends Migration
             $table->id();
             $table->bigInteger('investor_id')->nullable();
             $table->string('icon')->nullable();
-            $table->string('name');
             $table->string('project_name');
             $table->string('project_description');
             $table->string('project_link');

@@ -80,7 +80,7 @@
                                 </div>
 
                                 <div v-if="form.type" class="form-group dashed">
-                                    <label class="col-md-1 control-label">Type:</label>
+                                    <label class="col-md-1 control-label">Asset Type:</label>
                                     <div class="col-md-3 uppercase-medium">
                                         {{ form.type }}
                                     </div>
@@ -352,17 +352,29 @@
                              class="form-horizontal form-bordered">
                             <el-card class="box-card" v-if="salesManager">
                                 <div slot="header" class="clearfix box-card-header">
-                                    <span>Asset Manager</span>
+                                    <el-row>
+                                        <el-col :span="6">
+                                            <ImageModal v-if="salesManager.profile_picture"
+                                                        :thumbnail="salesManager.profile_picture"
+                                                        :image-path="salesManager.profile_picture"
+                                                        :rounded="true"></ImageModal>
+                                        </el-col>
+                                        <el-col :span="18">
+                                            <span>Asset Manager</span>
+                                        </el-col>
+                                    </el-row>
                                 </div>
                                 <div class="text item">
                                     <p v-if="salesManager.name || salesManager.surname">
                                         Name: {{ this.salesManager.name }} {{ this.salesManager.surname }}
                                     </p>
                                     <p v-if="salesManager.phone">
-                                        Phone: {{ this.salesManager.phone }}
+                                        Phone: {{ this.salesManager.prefix }}{{ this.salesManager.phone }}
                                     </p>
                                     <p v-if="salesManager.email">
-                                        Email: {{ this.salesManager.email }}
+                                        <a :href="'mailto: ' + salesManager.email">
+                                            Email: {{ this.salesManager.email }}
+                                        </a>
                                     </p>
                                 </div>
                             </el-card>

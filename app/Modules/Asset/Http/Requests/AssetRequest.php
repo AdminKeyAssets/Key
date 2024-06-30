@@ -40,7 +40,6 @@ class AssetRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Name can not be empty.',
             'address.required' => 'Address can not be empty.',
             'cadastral_number.required' => 'Cadastral Number can not be empty.',
             'investor_id.required' => 'Investor can not be empty.',

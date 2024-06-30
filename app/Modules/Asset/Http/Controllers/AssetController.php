@@ -461,6 +461,7 @@ class AssetController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('asset.create_data');
 
             $this->baseData['id'] = $id;
+            $this->baseData['name'] = Asset::where('id', $id)->first()->toArray()['project_name'];
 
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
@@ -479,7 +480,7 @@ class AssetController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('asset.create_data');
 
             $this->baseData['id'] = $id;
-
+            $this->baseData['name'] = Asset::where('id', $id)->first()->toArray()['project_name'];
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.investor_view', ServiceResponse::error($ex->getMessage()));
         }

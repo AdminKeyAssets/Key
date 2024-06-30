@@ -7,13 +7,6 @@
                      element-loading-background="rgba(0, 0, 0, 0.0)"
                      ref="form" :model="form" class="form-horizontal form-bordered">
                 <el-row style="margin-left: 15px">
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Name:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.name"></input>
-                        </div>
-                    </div>
-
                     <el-tabs v-model="activeNames">
                         <el-tab-pane label="Project Details" name="1">
                             <ProjectDetails :form="form" :loading="loading" @update-form="updateForm" :item="item" :update-data="updateData"/>
