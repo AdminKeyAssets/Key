@@ -4,7 +4,7 @@
         <ul class="comments-list">
             <li v-for="comment in comments" :key="comment.id" class="comment-item">
                 <div class="comment-header">
-                    <span class="comment-user">{{ comment.admin.name }}</span>
+                    <span class="comment-user">{{ comment.admin.name }} {{ comment.admin.surname }}</span>
                     <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
                 </div>
                 <p class="comment-text">{{ comment.comment }}</p>

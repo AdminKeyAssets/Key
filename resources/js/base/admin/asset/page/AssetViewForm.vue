@@ -137,7 +137,7 @@
                                     <div class="col-md-10 uppercase-medium">
                                         <el-select v-model="form.investor_id" disabled :value="form.investor_id"
                                                    filterable placeholder="Select">
-                                            <el-option v-for="item in investors" :key="item.id" :label="item.name"
+                                            <el-option v-for="item in investors" :key="item.id" :label="item.name + item.surname"
                                                        :value="item.id"></el-option>
                                         </el-select>
                                     </div>
@@ -351,8 +351,8 @@
                                     <span>Asset Manager</span>
                                 </div>
                                 <div class="text item">
-                                    <p v-if="salesManager.name">
-                                        Name: {{ this.salesManager.name }}
+                                    <p v-if="salesManager.name || salesManager.surname">
+                                        Name: {{ this.salesManager.name }} {{ this.salesManager.surname }}
                                     </p>
                                     <p v-if="salesManager.phone">
                                         Phone: {{ this.salesManager.phone }}

@@ -20,7 +20,7 @@
                                         <el-option
                                             v-for="(item, index) in managers"
                                             :key="index"
-                                            :label="item.name"
+                                            :label="item.name + item.surname"
                                             :value="item.id">
                                         </el-option>
                                     </el-select>
