@@ -82,3 +82,9 @@
     </div>
     <!-- END Page Content -->
 @endsection
+
+<style>
+    th, td{
+        text-align: center !important;
+    }
+</style>
