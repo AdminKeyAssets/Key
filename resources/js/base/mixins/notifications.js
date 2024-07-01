@@ -13,6 +13,7 @@ export const notifications = (request) => {
             title: '',
             message: request.message,
             offset: 100,
+            duration: 10000
         });
     }
 

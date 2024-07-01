@@ -18,12 +18,12 @@ class CreateAssetsTable extends Migration
             $table->bigInteger('investor_id')->nullable();
             $table->string('icon')->nullable();
             $table->string('project_name');
-            $table->string('project_description');
-            $table->string('project_link');
+            $table->string('project_description')->nullable();
+            $table->string('project_link')->nullable();
             $table->string('location')->nullable();
             $table->string('type');
-            $table->string('floor');
-            $table->string('flat_number');
+            $table->string('floor')->nullable();
+            $table->string('flat_number')->nullable();
             $table->double('price');
             $table->string('condition');
             $table->string('city');

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="form-group dashed">
-            <label class="col-md-1 control-label">Type:</label>
+            <label class="col-md-1 control-label">Asset Type:</label>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="form.type"
                            :value="form.type"
