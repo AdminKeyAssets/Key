@@ -810,3 +810,8 @@ padding: 60px;
 .form-horizontal .control-label{
     text-align: left!important;
 }
+
+.table thead > tr > th {
+    font-size: 13px !important;
+    font-weight: bold !important;
+}
