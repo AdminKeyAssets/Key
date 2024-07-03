@@ -46,7 +46,18 @@
 
 <script>
 export default {
-    props: ['form', 'loading', 'updateData'],
+    props: {
+        form: {
+            type: Object,
+            required: true,
+            default: () => ({
+                attachments: [],
+                extraDetails: []
+            })
+        },
+        loading: Boolean,
+        updateData: Function
+    },
     methods: {
         onFileChange(e) {
             const files = e.target.files;
@@ -56,7 +67,7 @@ export default {
                 reader.onload = (e) => {
                     this.$emit('update-form', {
                         ...this.form,
-                        attachments: [...this.form.attachments, {
+                        attachments: [...(Array.isArray(this.form.attachments) ? this.form.attachments : []), {
                             file: file,
                             preview: file.type.startsWith('image/') ? e.target.result : null,
                             name: file.name,
@@ -67,14 +78,14 @@ export default {
             }
         },
         removeAttachment(index) {
-            const attachments = [...this.form.attachments];
+            const attachments = Array.isArray(this.form.attachments) ? [...this.form.attachments] : [];
             attachments.splice(index, 1);
             this.$emit('update-form', { ...this.form, attachments });
         },
         addDetail() {
             this.$emit('update-form', {
                 ...this.form,
-                extraDetails: [...this.form.extraDetails, {
+                extraDetails: [...(Array.isArray(this.form.extraDetails) ? this.form.extraDetails : []), {
                     id: Date.now(),
                     key: '',
                     value: ''
@@ -82,7 +93,7 @@ export default {
             });
         },
         removeDetail(item) {
-            const extraDetails = this.form.extraDetails.filter(detail => detail.id !== item.id);
+            const extraDetails = Array.isArray(this.form.extraDetails) ? this.form.extraDetails.filter(detail => detail.id !== item.id) : [];
             this.$emit('update-form', { ...this.form, extraDetails });
         }
     }
