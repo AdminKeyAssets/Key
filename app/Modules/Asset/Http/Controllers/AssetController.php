@@ -105,7 +105,8 @@ class AssetController extends BaseController
                 $nextPayment = null;
 
                 if ($asset->investor_id) {
-                    $salesManager = Admin::where('id', $asset->admin_id)->first();
+                    $investor = Investor::where('id', $asset->investor_id)->first();
+                    $salesManager = Admin::where('id', $investor->admin_id)->first();
                 }
 
                 if ($asset->payments) {
@@ -339,7 +340,7 @@ class AssetController extends BaseController
         if ($request->asset_status === 'Rented') {
             if ($request->tenant) {
                 $tenantData = $request->tenant;
-//dd($tenantData);
+
                 Tenant::updateOrCreate([
                     'email' => $tenantData['email'],
                     'phone' => $tenantData['phone'],

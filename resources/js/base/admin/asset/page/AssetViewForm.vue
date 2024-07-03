@@ -402,7 +402,27 @@
                     <div class="block col-md-3">
                         <div v-loading="loading"
                              class="form-horizontal form-bordered">
-                            <el-card class="box-card" v-if="salesManager">
+                            <el-card class="box-card" v-if="nextPayment" style="margin-top: 20px">
+                                <div slot="header" class="clearfix box-card-header">
+                                    <span>Next Payment</span> <i
+                                    v-if="Date.now() < new Date(this.nextPayment.payment_date)"
+                                    class="el-icon-warning"
+                                    style="color: red"></i>
+                                </div>
+                                <div class="text item">
+                                    <p v-if="nextPayment.month">
+                                        Payment #: {{ this.nextPayment.month }}
+                                    </p>
+                                    <p v-if="nextPayment.payment_date">
+                                        Date: {{ this.nextPayment.payment_date }}
+                                    </p>
+                                    <p v-if="nextPayment.amount">
+                                        Amount: {{ this.nextPayment.amount }}
+                                    </p>
+                                </div>
+                            </el-card>
+
+                            <el-card class="box-card asset-manager" v-if="salesManager">
                                 <div slot="header" class="clearfix box-card-header">
                                     <el-row>
                                         <el-col :span="6">
@@ -451,26 +471,6 @@
                                         <a :href="'mailto:' + salesManager.email">
                                             <i class="fas fa-envelope"></i>
                                         </a>
-                                    </p>
-                                </div>
-                            </el-card>
-
-                            <el-card class="box-card" v-if="nextPayment" style="margin-top: 20px">
-                                <div slot="header" class="clearfix box-card-header">
-                                    <span>Next Payment</span> <i
-                                    v-if="Date.now() < new Date(this.nextPayment.payment_date)"
-                                    class="el-icon-warning"
-                                    style="color: red"></i>
-                                </div>
-                                <div class="text item">
-                                    <p v-if="nextPayment.month">
-                                        Payment #: {{ this.nextPayment.month }}
-                                    </p>
-                                    <p v-if="nextPayment.payment_date">
-                                        Date: {{ this.nextPayment.payment_date }}
-                                    </p>
-                                    <p v-if="nextPayment.amount">
-                                        Amount: {{ this.nextPayment.amount }}
                                     </p>
                                 </div>
                             </el-card>
