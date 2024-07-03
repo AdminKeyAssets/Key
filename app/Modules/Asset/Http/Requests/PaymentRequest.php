@@ -24,8 +24,7 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'month' => ['required','integer'],
-            'payment_date' => 'required',
+            'date' => 'required',
             'currency' => 'required',
             'amount' => ['required', 'numeric'],
         ];
@@ -37,12 +36,10 @@ class PaymentRequest extends FormRequest
     public function messages()
     {
         return [
-            'month.required' => 'Month can not be empty.',
-            'month.integer' => 'Month should be number.',
-            'payment_date.required' => 'Payment Date can not be empty.',
+            'date.required' => 'Payment Date can not be empty.',
             'amount.required' => 'Amount can not be empty.',
-            'currency.required' => 'Currency can not be empty.',
             'amount.numeric' => 'Amount should be numeric.',
+            'currency.required' => 'Currency can not be empty.',
         ];
     }
 }

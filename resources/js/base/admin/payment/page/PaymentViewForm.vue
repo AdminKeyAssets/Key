@@ -13,13 +13,6 @@
                             <el-row>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Payment #:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{form.month}}
-                                    </div>
-                                </div>
-
-                                <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Payment Date:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{form.payment_date}}
@@ -30,18 +23,6 @@
                                     <label class="col-md-1 control-label">Amount:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{this.formatPrice(form.amount)}} {{form.currency}}
-                                    </div>
-                                </div>
-
-                                <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Status:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        <el-switch
-                                            disabled
-                                            v-model="form.status"
-                                            active-color="#13ce66"
-                                            inactive-color="#ff4949">
-                                        </el-switch>
                                     </div>
                                 </div>
 
@@ -120,7 +101,6 @@ export default {
                     if (data.item) {
                         this.form = data.item;
                     }
-                    this.form.status = data.item.status ? true : false
                     this.form.id = this.id;
                 }
                 this.loading = false

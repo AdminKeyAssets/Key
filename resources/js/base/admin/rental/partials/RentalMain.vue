@@ -12,7 +12,7 @@
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Price:</label>
                         <div class="col-md-7 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.price"></input>
+                            <input class="form-control" :disabled="loading" v-model="form.amount"></input>
                         </div>
                         <div class="col-md-3 uppercase-medium">
                             <el-select v-model="form.currency" :value="form.currency" filterable placeholder="Select">
@@ -27,10 +27,10 @@
                     </div>
 
                     <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Date From:</label>
+                        <label class="col-md-1 control-label">Payment Date:</label>
                         <div class="col-md-10 uppercase-medium">
                             <el-date-picker
-                                v-model="form.date_from"
+                                v-model="form.date"
                                 format="yyyy/MM/dd"
                                 value-format="yyyy/MM/dd"
                                 type="date"
@@ -39,32 +39,21 @@
                         </div>
                     </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Date To:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <el-date-picker
-                                v-model="form.date_to"
-                                format="yyyy/MM/dd"
-                                value-format="yyyy/MM/dd"
-                                type="date"
-                                placeholder="Pick a rental date to">
-                            </el-date-picker>
-                        </div>
-                    </div>
                 </el-row>
+
                 <div class="form-group dashed">
-                    <label class="col-md-1 control-label">Select Asset:</label>
+                    <label class="col-md-1 control-label">Attachment:</label>
                     <div class="col-md-10 uppercase-medium">
-                        <el-select v-model="form.asset_id" :value="form.asset_id" filterable placeholder="Select">
-                            <el-option
-                                v-for="item in assets"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                            </el-option>
-                        </el-select>
+                        <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
+                            Attachment</a>
+                            <el-button type="danger" icon="el-icon-delete" size="small"
+                                       @click="removeFile"
+                            ></el-button>
+                        </p>
+                        <input v-else type="file" class="form-control" @change="onFileChange">
                     </div>
                 </div>
+
             </el-form>
         </div>
     </div>
@@ -85,7 +74,9 @@ export default {
     ],
     data() {
         return {
-            form: {},
+            form: {
+                currency: 'USD'
+            },
             loading: false,
             editor: ClassicEditor,
             addDetailIsBtnDisabled: true,
@@ -105,6 +96,14 @@ export default {
             }
         }
     },
+    methods: {
+        onFileChange(e) {
+            this.form.attachment = e.target.files[0];
+        },
+        removeFile() {
+            this.form.attachment = null;
+        },
+    }
 }
 
 </script>

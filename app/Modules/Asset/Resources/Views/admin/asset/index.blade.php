@@ -63,15 +63,20 @@
                                 <td>{!! number_format($item->total_price,2,".",",") !!}</td>
                                 <td>{!! $item->asset_status !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
-                                <td>{!! count($item->payments) ? $item->payments->where('status', 0)->first()->payment_date : '' !!}</td>
-                                <td>{!! count($item->payments) ? $item->payments->where('status', 0)->first()->amount : '' !!}</td>
+                                <td>{!! count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date : '' !!}</td>
+                                <td>{!! count($item->payments)  && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->amount : '' !!}</td>
 
                                 <td class="text-center">
-                                    @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.change',['route' => route($moduleKey . '.change', [ $item->id ])])
+
+                                    @can(getPermissionKey('rental', 'index', true))
+                                        @if(count($item->rentalPaymentsHistories))
+                                            @include('admin::includes.actions.rental',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                        @else
+                                            @include('admin::includes.actions.rental-disabled',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                        @endif
                                     @endcan
                                     @can(getPermissionKey('payment', 'index', true))
-                                        @if(count($item->payments))
+                                        @if(count($item->paymentsHistories))
                                             @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
                                         @else
                                             @include('admin::includes.actions.payment-disabled',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
@@ -106,7 +111,7 @@
 @endsection
 
 <style>
-    th, td{
+    th, td {
         text-align: center !important;
     }
 </style>

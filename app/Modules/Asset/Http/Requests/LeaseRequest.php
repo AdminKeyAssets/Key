@@ -24,10 +24,9 @@ class LeaseRequest extends FormRequest
     public function rules()
     {
         return [
-            'date_from' => 'required',
-            'date_to' => 'required',
+            'date' => 'required',
             'currency' => 'required',
-            'price' => ['required', 'numeric'],
+            'amount' => ['required', 'numeric'],
         ];
     }
 
@@ -37,11 +36,10 @@ class LeaseRequest extends FormRequest
     public function messages()
     {
         return [
-            'date_from.required' => 'Date From can not be empty.',
-            'date_to.required' => 'Date To can not be empty.',
-            'price.required' => 'Price can not be empty.',
+            'date.required' => 'Payment Date can not be empty.',
+            'amount.required' => 'Amount can not be empty.',
+            'amount.numeric' => 'Amount should be numeric.',
             'currency.required' => 'Currency can not be empty.',
-            'price.numeric' => 'Price should be numeric.',
         ];
     }
 }

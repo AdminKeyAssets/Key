@@ -83,7 +83,6 @@ export default {
 
                     this.routes = data.routes;
                     this.options = data.options;
-                    this.assets = data.assets;
 
                     if (data.item) {
                         this.form = data.item;

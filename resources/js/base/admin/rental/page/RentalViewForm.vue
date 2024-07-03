@@ -22,20 +22,7 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Date From:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.date_from}}
-                                    </div>
-                                </div>
-
-                                <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Date To:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{form.date_to}}
-                                    </div>
-                                </div>
-                                <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Expected Revenue:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{formatPrice(income)}} {{form.currency}}
+                                        {{form.date}}
                                     </div>
                                 </div>
                             </el-row>

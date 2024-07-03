@@ -53,6 +53,9 @@ Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetView
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
 
+//Payment
+Vue.component('rental-page-form', require('./base/admin/rental/page/RentalForm').default);
+
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 

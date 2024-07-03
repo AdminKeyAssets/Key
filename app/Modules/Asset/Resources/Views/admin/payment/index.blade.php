@@ -30,27 +30,18 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th> Payment #</th>
                             <th> Payment Date</th>
                             <th> Amount</th>
-                            <th> Paid</th>
+                            <th> Currency</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->month !!}</td>
-                                <td>{!! $item->payment_date !!}</td>
+                                <td>{!! $item->date !!}</td>
                                 <td>{!! number_format($item->amount,2,".",",") !!}</td>
-                                <td>
-                                    @if($item->status)
-                                        <i class="el-icon-check" style="color: green"></i>
-                                    @else
-                                        <i class="el-icon-close" style="color: red"></i>
-                                    @endif
-                                </td>
-
+                                <td>{!! $item->currency !!}</td>
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.payments.view', [$assetId, $item->id, ])])

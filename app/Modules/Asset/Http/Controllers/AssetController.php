@@ -115,6 +115,8 @@ class AssetController extends BaseController
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
                 $this->baseData['item']['payments'] = $asset->payments;
+                $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
+                $this->baseData['item']['rental_payments_histories'] = $asset->rentalPaymentsHistories;
                 $this->baseData['item']['rentals'] = $asset->rentals;
                 $this->baseData['item']['currentValues'] = $asset->currentValues;
                 $this->baseData['salesManager'] = $salesManager;
@@ -267,7 +269,6 @@ class AssetController extends BaseController
         }
 
         $assetData = [
-            'name' => $request->name,
             'address' => $request->address,
             'cadastral_number' => $request->cadastral_number,
             'investor_id' => $request->investor_id,
@@ -313,6 +314,7 @@ class AssetController extends BaseController
                         'number' => $payment->number,
                         'payment_date' => $payment->payment_date,
                         'amount' => $payment->amount,
+                        'left_amount' => $payment->amount,
                         'asset_id' => $asset->id
                     ]);
                 }
@@ -327,6 +329,7 @@ class AssetController extends BaseController
                         'month' => $payment['number'],
                         'payment_date' => $payment['date'],
                         'amount' => $payment['amount'],
+                        'left_amount' => $payment['amount'],
                         'asset_id' => $asset->id
                     ]);
                 }
@@ -347,7 +350,6 @@ class AssetController extends BaseController
                         'id_number' => $tenantData->id_number,
                         'citizenship' => $tenantData->citizenship,
                         'agreement_date' => $tenantData->agreement_date,
-//                    'agreement_date' => now(),
                         'agreement_term' => $tenantData->agreement_term,
                         'monthly_rent' => $tenantData->monthly_rent,
                         'currency' => $tenantData->currency,
@@ -365,6 +367,7 @@ class AssetController extends BaseController
                         'number' => $rental->number,
                         'payment_date' => $rental->payment_date,
                         'amount' => $rental->amount,
+                        'left_amount' => $rental->amount,
                         'asset_id' => $asset->id
                     ]);
                 }
@@ -379,7 +382,7 @@ class AssetController extends BaseController
                     Rental::create([
                         'month' => $payment['number'],
                         'payment_date' => $payment['date'],
-                        'amount' => $payment['amount'],
+                        'left_amount' => $payment['amount'],
                         'asset_id' => $asset->id
                     ]);
                 }

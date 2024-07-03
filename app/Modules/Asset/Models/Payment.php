@@ -11,8 +11,8 @@ class Payment extends Model
         'payment_date',
         'status',
         'amount',
+        'left_amount',
         'asset_id',
-        'attachment',
         'currency'
     ];
 

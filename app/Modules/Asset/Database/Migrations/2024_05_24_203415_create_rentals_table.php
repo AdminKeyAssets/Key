@@ -20,7 +20,6 @@ class CreateRentalsTable extends Migration
             $table->double('amount');
             $table->boolean('status')->default(false);
             $table->string('currency')->default('USD');
-            $table->string('attachment')->nullable();
             $table->foreignId('asset_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

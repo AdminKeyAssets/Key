@@ -227,13 +227,39 @@
                                             {{ form.tenant.monthly_rent }} {{ form.tenant.currency }}
                                         </div>
                                     </div>
-                                    <div v-if="form.rentals.length">
-                                        <el-table :data="form.rentals" style="width: 100%">
-                                            <el-table-column prop="number" label="Payment" width="150"/>
-                                            <el-table-column prop="payment_date" label="Payment Date" width="180"/>
-                                            <el-table-column prop="amount" label="Amount" width="180"/>
-                                        </el-table>
-                                    </div>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <div v-if="form.rentals.length">
+                                                <el-table :data="form.rentals" style="width: 100%">
+                                                    <el-table-column prop="number" label="Payment" width="100"/>
+                                                    <el-table-column prop="payment_date" label="Payment Date"
+                                                                     width="150"/>
+                                                    <el-table-column prop="amount" label="Amount" width="150"/>
+                                                    <el-table-column prop="status" label="Status" width="100">
+                                                        <template slot-scope="scope">
+                                                            <i v-if="scope.row.status" class="el-icon-check"
+                                                               style="color: green"></i>
+                                                            <i v-else class="el-icon-close" style="color: red"></i>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <div v-if="form.rental_payments_histories && form.rental_payments_histories.length">
+                                                <el-table :data="form.rental_payments_histories" style="width: 100%">
+                                                    <el-table-column prop="date" label="Payment Date" width="150"/>
+                                                    <el-table-column prop="amount" label="Amount" width="150"/>
+                                                    <el-table-column prop="attachment" label="Attachment" width="180">
+                                                        <template slot-scope="scope">
+                                                            <a :href="scope.row.attachment" target="_blank">View
+                                                                Attachment</a>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
                                 </div>
 
                                 <div v-if="form.attachments" class="form-group dashed">
@@ -322,14 +348,40 @@
                                             {{ form.period }}
                                         </div>
                                     </div>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <div v-if="form.payments && form.payments.length">
+                                                <el-table :data="form.payments" style="width: 100%">
+                                                    <el-table-column prop="number" label="Payment" width="100"/>
+                                                    <el-table-column prop="payment_date" label="Payment Date"
+                                                                     width="150"/>
+                                                    <el-table-column prop="amount" label="Amount" width="150"/>
+                                                    <el-table-column prop="status" label="Status" width="100">
+                                                        <template slot-scope="scope">
+                                                            <i v-if="scope.row.status" class="el-icon-check"
+                                                               style="color: green"></i>
+                                                            <i v-else class="el-icon-close" style="color: red"></i>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
 
-                                    <div v-if="form.payments && form.payments.length">
-                                        <el-table :data="form.payments" style="width: 100%">
-                                            <el-table-column prop="number" label="Payment" width="150"/>
-                                            <el-table-column prop="payment_date" label="Payment Date" width="180"/>
-                                            <el-table-column prop="amount" label="Amount" width="180"/>
-                                        </el-table>
-                                    </div>
+                                        <el-col :span="12">
+                                            <div v-if="form.payments_histories && form.payments_histories.length">
+                                                <el-table :data="form.payments_histories" style="width: 100%">
+                                                    <el-table-column prop="date" label="Payment Date" width="150"/>
+                                                    <el-table-column prop="amount" label="Amount" width="150"/>
+                                                    <el-table-column prop="attachment" label="Attachment" width="180">
+                                                        <template slot-scope="scope">
+                                                            <a :href="scope.row.attachment" target="_blank">View
+                                                                Attachment</a>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
                                 </template>
 
                                 <div v-if="form.current_value" class="form-group dashed">
@@ -371,7 +423,8 @@
                                     <p v-if="salesManager.phone">
                                         <a :href="whatsappLink" target="_blank" class="phone-container">
                                             <span class="whatsapp-icon">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px"
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px"
+                                                     height="24px"
                                                      clip-rule="evenodd">
                                                     <path fill="#fff"
                                                           d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z"/>
@@ -571,6 +624,7 @@ export default {
     color: #25D366; /* WhatsApp green */
     cursor: pointer;
 }
+
 .phone-container {
     display: flex;
     align-items: center;

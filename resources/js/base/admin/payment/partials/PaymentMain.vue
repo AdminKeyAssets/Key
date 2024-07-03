@@ -8,19 +8,11 @@
                      ref="form" :model="form" class="form-horizontal form-bordered">
 
                 <el-row>
-
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Payment #:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.month"></input>
-                        </div>
-                    </div>
-
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Date:</label>
                         <div class="col-md-10 uppercase-medium">
                             <el-date-picker
-                                v-model="form.payment_date"
+                                v-model="form.date"
                                 format="yyyy/MM/dd"
                                 value-format="yyyy/MM/dd"
                                 type="date"
@@ -43,18 +35,6 @@
                                     :value="index">
                                 </el-option>
                             </el-select>
-                        </div>
-                    </div>
-
-
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Paid:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <el-switch
-                                v-model="form.status"
-                                active-color="#13ce66"
-                                inactive-color="#ff4949">
-                            </el-switch>
                         </div>
                     </div>
 
@@ -91,7 +71,9 @@ export default {
     ],
     data() {
         return {
-            form: {},
+            form: {
+                currency: 'USD'
+            },
             loading: false,
             editor: ClassicEditor,
             addDetailIsBtnDisabled: true,
@@ -108,9 +90,6 @@ export default {
         'item'() {
             if (this.item) {
                 this.form = this.item;
-                if(this.item.status){
-                    this.form.status = true;
-                }
             }
         }
     },
