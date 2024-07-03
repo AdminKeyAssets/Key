@@ -338,22 +338,22 @@ class AssetController extends BaseController
 
         if ($request->asset_status === 'Rented') {
             if ($request->tenant) {
-                $tenantData = json_decode($request->tenant);
-
+                $tenantData = $request->tenant;
+//dd($tenantData);
                 Tenant::updateOrCreate([
-                    'email' => $tenantData->email,
-                    'phone' => $tenantData->phone,
+                    'email' => $tenantData['email'],
+                    'phone' => $tenantData['phone'],
                 ],
                     [
-                        'name' => $tenantData->name,
-                        'surname' => $tenantData->surname,
-                        'id_number' => $tenantData->id_number,
-                        'citizenship' => $tenantData->citizenship,
-                        'agreement_date' => $tenantData->agreement_date,
-                        'agreement_term' => $tenantData->agreement_term,
-                        'monthly_rent' => $tenantData->monthly_rent,
-                        'currency' => $tenantData->currency,
-                        'prefix' => $tenantData->prefix,
+                        'name' => $tenantData['name'],
+                        'surname' => $tenantData['surname'],
+                        'id_number' => $tenantData['id_number'],
+                        'citizenship' => $tenantData['citizenship'],
+                        'agreement_date' => $tenantData['agreement_date'],
+                        'agreement_term' => $tenantData['agreement_term'],
+                        'monthly_rent' => $tenantData['monthly_rent'],
+                        'currency' => $tenantData['currency'],
+                        'prefix' => $tenantData['prefix'],
                         'asset_id' => $asset->id,
                     ]);
             }

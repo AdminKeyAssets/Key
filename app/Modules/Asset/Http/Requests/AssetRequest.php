@@ -16,6 +16,14 @@ class AssetRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        // Decode the tenant JSON
+        $this->merge([
+            'tenant' => json_decode($this->input('tenant'), true),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,6 +31,7 @@ class AssetRequest extends FormRequest
      */
     public function rules()
     {
+//        dd($this->request->all());
         return [
             'project_name' => 'required',
             'address' => 'required',
@@ -39,17 +48,18 @@ class AssetRequest extends FormRequest
             'price' => 'required|numeric',
             'condition' => 'required',
             'asset_status' => 'required',
-//            'tenant.name' => 'required_if:asset_status,Rented',
-//            'tenant.surname' => 'required_if:asset_status,Rented',
-//            'tenant.id_number' => 'required_if:asset_status,Rented|numeric',
-//            'tenant.citizenship' => 'required_if:asset_status,Rented',
-//            'tenant.email' => 'required_if:asset_status,Rented|email',
-//            'tenant.prefix' => 'required_if:asset_status,Rented',
-//            'tenant.phone' => 'required_if:asset_status,Rented|numeric',
-//            'tenant.agreement_date' => 'required_if:asset_status,Rented',
-//            'tenant.agreement_term' => 'required_if:asset_status,Rented|numeric',
-//            'tenant.monthly_rent' => 'required_if:asset_status,Rented|numeric',
-//            'tenant.currency' => 'required_if:asset_status,Rented',
+
+            'tenant.name' => 'required_if:asset_status,Rented',
+            'tenant.surname' => 'required_if:asset_status,Rented',
+            'tenant.id_number' => 'required_if:asset_status,Rented|numeric',
+            'tenant.citizenship' => 'required_if:asset_status,Rented',
+            'tenant.email' => 'required_if:asset_status,Rented|email',
+            'tenant.prefix' => 'required_if:asset_status,Rented',
+            'tenant.phone' => 'required_if:asset_status,Rented|numeric',
+            'tenant.agreement_date' => 'required_if:asset_status,Rented',
+            'tenant.agreement_term' => 'required_if:asset_status,Rented|numeric',
+            'tenant.monthly_rent' => 'required_if:asset_status,Rented|numeric',
+            'tenant.currency' => 'required_if:asset_status,Rented',
 
             'agreement_date' => 'required',
             'agreement_status' => 'required',
