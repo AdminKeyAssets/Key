@@ -55,7 +55,17 @@ class AssetController extends BaseController
      */
     public function index(Request $request)
     {
-        $this->baseData['allData'] = Asset::orderByDesc('id')->paginate(25);
+        $user = auth()->user();
+        $userId = $user->getAuthIdentifier();
+
+        $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
+
+        if (in_array($user->getRolesNameAttribute(), $managers)) {
+            $investors = Investor::where('admin_id', $userId)->pluck('id');
+            $this->baseData['allData'] = Asset::whereIn('investor_id', $investors)->orderByDesc('id')->paginate(25);
+        }else {
+            $this->baseData['allData'] = Asset::orderByDesc('id')->paginate(25);
+        }
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -66,7 +76,6 @@ class AssetController extends BaseController
      */
     public function myassets(Request $request)
     {
-        $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'SalesManager'];
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
 
@@ -506,23 +515,6 @@ class AssetController extends BaseController
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
-    }
-
-    public function change($assetId)
-    {
-        $asset = Asset::where('id', $assetId)->first();
-
-        $this->baseData['salesManagers'] = Admin::role(['Asset Manager'])->get(['name', 'id']);
-        $this->baseData['managerId'] = $asset->admin_id;
-        $this->baseData['assetId'] = $assetId;
-        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.manager', $this->baseData);
-    }
-
-    public function storeManager(Request $request)
-    {
-        $asset = Asset::where(['id' => $request->id])->update(['admin_id' => $request->admin_id]);
-
-        return ServiceResponse::jsonNotification('Asset Added successfully', 200, $this->baseData);
     }
 
     public function generatePaymentsList($firstPaymentDate, $period, $totalAmount)

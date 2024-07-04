@@ -50,6 +50,9 @@ Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').de
 Vue.component('manager-page-form', require('./base/admin/asset/page/ManagerForm').default);
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
 
+//Revenue
+Vue.component('revenue-filter-component', require('./base/admin/asset/partials/RevenueFilters').default);
+
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
 

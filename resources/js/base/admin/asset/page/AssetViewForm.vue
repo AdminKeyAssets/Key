@@ -135,7 +135,7 @@
                                     </div>
                                 </div>
 
-                                <div v-if="form.investor_id" class="form-group dashed">
+                                <div v-if="!investorView && form.investor_id" class="form-group dashed">
                                     <label class="col-md-1 control-label">Investor:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <el-select v-model="form.investor_id" disabled :value="form.investor_id"
@@ -506,6 +506,7 @@ export default {
         AgreementDetails, ExtraDetails, TenantDetails, AssetDetails, ImageModal, MapMarker, AssetComments
     },
     props: [
+        'investorView',
         'getSaveDataRoute',
         'id'
     ],

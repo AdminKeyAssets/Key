@@ -14,6 +14,7 @@
             <div class="col-xs-12">
                 <asset-view-page-form
                     :id="{{ $data['id'] }}"
+                    :investor-view="{{true}}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                 </asset-view-page-form>
 

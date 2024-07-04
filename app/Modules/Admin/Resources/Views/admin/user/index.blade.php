@@ -59,8 +59,8 @@
                                             <image-modal thumbnail="{!! $item->profile_picture !!}"
                                                          image-path="{!! $item->profile_picture !!}"
                                                          :rounded="true"
-                                                         width="50"
-                                                         height="50"></image-modal>
+                                                         :width="{{50}}"
+                                                         :height="{{50}}"></image-modal>
                                         @endif
                                     @endif
                                 </td>

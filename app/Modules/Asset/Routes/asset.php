@@ -20,10 +20,6 @@ Route::prefix('assets')->name('asset.')->group(function () {
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
-    Route::get('/change-manager/{id?}', $controller . '@change')->name('change')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
-    Route::post('/store-manager', $controller . '@storeManager')->name('store_manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
-
-
     $paymentController = 'PaymentsHistoryController';
     $paymentModuleName = 'payment';
 
@@ -65,5 +61,10 @@ Route::prefix('assets')->name('asset.')->group(function () {
     // Delete
     Route::post('/{asset}/rental/delete', $leaseController . '@destroy')->name('rental.delete')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'delete', true)]);
 
+    $revenueController = 'RevenueController';
+    $revenueModuleName = 'revenue';
+
+    Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
+    Route::get('/revenues', $revenueController . '@index')->name('revenue.index')->middleware(['auth:admin']);
 });
 
