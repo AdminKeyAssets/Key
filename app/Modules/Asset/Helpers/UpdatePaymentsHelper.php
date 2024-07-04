@@ -23,8 +23,12 @@ class UpdatePaymentsHelper
                 $payment->left_amount -= $amount;
                 $amount = 0;
             }
+            $payment->update();
+        }
 
-            $payment->save();
+        if ($asset->payments()->where('status', 0)->count() === 0) {
+            $asset->agreement_status = 'Complete';
+            $asset->update();
         }
     }
 
