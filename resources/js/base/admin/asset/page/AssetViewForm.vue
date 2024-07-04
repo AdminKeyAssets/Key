@@ -141,7 +141,7 @@
                                         <el-select v-model="form.investor_id" disabled :value="form.investor_id"
                                                    filterable placeholder="Select">
                                             <el-option v-for="item in investors" :key="item.id"
-                                                       :label="item.name + item.surname"
+                                                       :label="item.name + ' ' + item.surname"
                                                        :value="item.id"></el-option>
                                         </el-select>
                                     </div>
