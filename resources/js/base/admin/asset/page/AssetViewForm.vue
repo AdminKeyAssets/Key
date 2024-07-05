@@ -227,15 +227,23 @@
                                             {{ form.tenant.monthly_rent }} {{ form.tenant.currency }}
                                         </div>
                                     </div>
-                                    <el-row>
-                                        <el-col :span="12">
+                                    <el-row  style="display: flex; justify-content: space-between">
+                                        <el-col :span="11">
                                             <div v-if="form.rentals.length">
+                                                <div class="rentals-schedule-heading" style="text-align: center; max-width: 500px">
+                                                    <h4>Rentals Schedule</h4>
+                                                </div>
                                                 <el-table :data="form.rentals" style="width: 100%">
-                                                    <el-table-column prop="number" label="Payment" width="100"/>
-                                                    <el-table-column prop="payment_date" label="Payment Date"
-                                                                     width="150"/>
-                                                    <el-table-column prop="amount" label="Amount" width="150"/>
-                                                    <el-table-column prop="status" label="Status" width="100">
+                                                    <el-table-column prop="number" label="Payment"/>
+                                                    <el-table-column prop="payment_date" label="Payment Date"/>
+                                                    <el-table-column prop="amount" label="Amount">
+                                                        <template slot-scope="scope">
+                                                            {{
+                                                                scope.row.status ? scope.row.amount : scope.row.left_amount
+                                                            }}
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="status" label="Status">
                                                         <template slot-scope="scope">
                                                             <i v-if="scope.row.status" class="el-icon-check"
                                                                style="color: green"></i>
@@ -245,12 +253,15 @@
                                                 </el-table>
                                             </div>
                                         </el-col>
-                                        <el-col :span="12">
+                                        <el-col :span="11">
                                             <div v-if="form.rental_payments_histories && form.rental_payments_histories.length">
+                                                <div class="payments-history-heading" style="text-align: center; max-width: 500px">
+                                                    <h4>Payments History</h4>
+                                                </div>
                                                 <el-table :data="form.rental_payments_histories" style="width: 100%">
-                                                    <el-table-column prop="date" label="Payment Date" width="150"/>
-                                                    <el-table-column prop="amount" label="Amount" width="150"/>
-                                                    <el-table-column prop="attachment" label="Attachment" width="180">
+                                                    <el-table-column prop="date" label="Payment Date"/>
+                                                    <el-table-column prop="amount" label="Amount"/>
+                                                    <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
                                                             <a :href="scope.row.attachment" target="_blank">View
                                                                 Attachment</a>
@@ -345,18 +356,27 @@
                                     <div v-if="form.period" class="form-group dashed">
                                         <label class="col-md-1 control-label">Period:</label>
                                         <div class="col-md-3 uppercase-medium">
-                                            {{ form.period }}
+                                            {{ form.period }} Month(s)
                                         </div>
                                     </div>
-                                    <el-row>
-                                        <el-col :span="12">
+                                    <el-row style="display: flex; justify-content: space-between">
+                                        <el-col :span="11">
                                             <div v-if="form.payments && form.payments.length">
-                                                <el-table :data="form.payments" style="width: 100%">
-                                                    <el-table-column prop="number" label="Payment" width="100"/>
+                                                <div class="payments-schedule-heading" style="text-align: center; max-width: 500px">
+                                                    <h4>Payments Schedule</h4>
+                                                </div>
+                                                <el-table border :data="form.payments" style="width: 100%">
+                                                    <el-table-column prop="number" label="Payment"/>
                                                     <el-table-column prop="payment_date" label="Payment Date"
                                                                      width="150"/>
-                                                    <el-table-column prop="amount" label="Amount" width="150"/>
-                                                    <el-table-column prop="status" label="Status" width="100">
+                                                    <el-table-column prop="amount" label="Amount">
+                                                        <template slot-scope="scope">
+                                                            {{
+                                                                scope.row.status ? scope.row.amount : scope.row.left_amount
+                                                            }}
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="status" label="Status">
                                                         <template slot-scope="scope">
                                                             <i v-if="scope.row.status" class="el-icon-check"
                                                                style="color: green"></i>
@@ -367,12 +387,15 @@
                                             </div>
                                         </el-col>
 
-                                        <el-col :span="12">
+                                        <el-col :span="11">
                                             <div v-if="form.payments_histories && form.payments_histories.length">
-                                                <el-table :data="form.payments_histories" style="width: 100%">
-                                                    <el-table-column prop="date" label="Payment Date" width="150"/>
-                                                    <el-table-column prop="amount" label="Amount" width="150"/>
-                                                    <el-table-column prop="attachment" label="Attachment" width="180">
+                                                <div class="payments-history-heading" style="text-align: center; max-width: 500px">
+                                                    <h4>Payments History</h4>
+                                                </div>
+                                                <el-table border :data="form.payments_histories" style="width: 100%">
+                                                    <el-table-column prop="date" label="Payment Date" />
+                                                    <el-table-column prop="amount" label="Amount" />
+                                                    <el-table-column prop="attachment" label="Attachment" >
                                                         <template slot-scope="scope">
                                                             <a :href="scope.row.attachment" target="_blank">View
                                                                 Attachment</a>
@@ -416,8 +439,8 @@
                                     <p v-if="nextPayment.payment_date">
                                         Date: {{ this.nextPayment.payment_date }}
                                     </p>
-                                    <p v-if="nextPayment.amount">
-                                        Amount: {{ this.nextPayment.amount }}
+                                    <p v-if="nextPayment.left_amount">
+                                        Amount: {{ this.nextPayment.left_amount }}
                                     </p>
                                 </div>
                             </el-card>

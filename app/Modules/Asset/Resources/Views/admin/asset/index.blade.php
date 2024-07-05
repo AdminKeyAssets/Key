@@ -64,7 +64,7 @@
                                 <td>{!! $item->asset_status !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date : '' !!}</td>
-                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments)  && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->amount : '' !!}</td>
+                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments)  && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->left_amount : '' !!}</td>
 
                                 <td class="text-center">
 
