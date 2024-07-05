@@ -272,8 +272,8 @@
                                     </el-card>
 
                                     <el-row v-if="form.asset_status === 'Rented'"
-                                            style="margin-top: 20px; display: flex; justify-content: space-between">
-                                        <el-col :span="11">
+                                            style="margin-top: 20px; " class="payments-wrapper">
+                                        <el-col :span="24" :md="11">
                                             <div v-if="form.rentals.length">
                                                 <div class="rentals-schedule-heading"
                                                      style="text-align: center; max-width: 500px">
@@ -299,7 +299,7 @@
                                                 </el-table>
                                             </div>
                                         </el-col>
-                                        <el-col :span="11">
+                                        <el-col :span="24" :md="11">
                                             <div
                                                 v-if="form.rental_payments_histories && form.rental_payments_histories.length">
                                                 <div class="payments-history-heading"
@@ -451,8 +451,8 @@
                                             </el-col>
                                         </el-row>
 
-                                        <el-row style="margin-top: 20px; display: flex; justify-content: space-between">
-                                            <el-col :span="11">
+                                        <el-row style="margin-top: 20px;" class="payments-wrapper">
+                                            <el-col  :span="24" :md="11">
                                                 <div v-if="form.payments && form.payments.length">
                                                     <div class="payments-schedule-heading"
                                                          style="text-align: center; max-width: 500px">
@@ -460,8 +460,7 @@
                                                     </div>
                                                     <el-table border :data="form.payments" style="width: 100%">
                                                         <el-table-column prop="number" label="Payment"/>
-                                                        <el-table-column prop="payment_date" label="Payment Date"
-                                                                         width="150"/>
+                                                        <el-table-column prop="payment_date" label="Payment Date"/>
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{
@@ -480,7 +479,7 @@
                                                 </div>
                                             </el-col>
 
-                                            <el-col :span="11">
+                                            <el-col :span="24" :md="11">
                                                 <div v-if="form.payments_histories && form.payments_histories.length">
                                                     <div class="payments-history-heading"
                                                          style="text-align: center; max-width: 500px">
@@ -777,4 +776,11 @@ export default {
     font-size: 16px;
     font-weight: bold;
 }
+@media (min-width: 769px) {
+    .payments-wrapper{
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
 </style>
