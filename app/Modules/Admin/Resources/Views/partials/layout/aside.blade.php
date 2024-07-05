@@ -46,10 +46,12 @@
                 <span class="sidebar-nav-mini-hide">Assets</span></a>
         </li>
 
-        <li
-                {!! strpos(request()->route()->getName(), 'asset.revenue.investor') !== false ? ' class="active"' : '' !!}>
-            <a href="{{route('asset.revenue.investor')}}"><i class="el-icon-house sidebar-nav-icon"></i>
-                <span class="sidebar-nav-mini-hide">Revenues</span></a>
-        </li>
+        @if(0)
+            <li
+                    {!! strpos(request()->route()->getName(), 'asset.revenue.investor') !== false ? ' class="active"' : '' !!}>
+                <a href="{{route('asset.revenue.investor')}}"><i class="el-icon-house sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-mini-hide">Revenues</span></a>
+            </li>
+        @endif
     @endif
 </ul>

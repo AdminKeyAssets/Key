@@ -64,7 +64,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $revenueController = 'RevenueController';
     $revenueModuleName = 'revenue';
 
-    Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
+    //Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
     Route::get('/revenues', $revenueController . '@index')->name('revenue.index')->middleware(['auth:admin']);
 });
 
