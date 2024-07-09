@@ -39,33 +39,6 @@
         </div>
 
         <div class="form-group dashed">
-            <label class="col-md-1 control-label">M2 Price:</label>
-            <div class="col-md-7 uppercase-medium">
-                <input class="form-control" type="number" :disabled="loading" v-model="form.price"></input>
-            </div>
-            <div class="col-md-3 uppercase-medium">
-                <el-select v-model="form.currency"
-                           :value="form.currency"
-                           filterable
-                           placeholder="Select">
-                    <el-option
-                        v-for="(currency, index) in currencies"
-                        :key="index"
-                        :label="currency"
-                        :value="index">
-                    </el-option>
-                </el-select>
-            </div>
-        </div>
-
-        <div class="form-group dashed">
-            <label class="col-md-1 control-label">Total Price:</label>
-            <div class="col-md-10 uppercase-medium">
-                <input class="form-control" type="number" :disabled="loading" v-model="form.total_price"></input>
-            </div>
-        </div>
-
-        <div class="form-group dashed">
             <label class="col-md-1 control-label">Delivery Condition:</label>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="form.condition"

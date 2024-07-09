@@ -33,7 +33,6 @@ class Asset extends Model
         'agreement_date',
         'first_payment_date',
         'period',
-        'total_agreement_price',
         'floor_plan',
         'flat_plan',
         'agreement',

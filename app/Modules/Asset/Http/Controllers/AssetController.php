@@ -63,7 +63,7 @@ class AssetController extends BaseController
         if (in_array($user->getRolesNameAttribute(), $managers)) {
             $investors = Investor::where('admin_id', $userId)->pluck('id');
             $this->baseData['allData'] = Asset::whereIn('investor_id', $investors)->orderByDesc('id')->paginate(25);
-        }else {
+        } else {
             $this->baseData['allData'] = Asset::orderByDesc('id')->paginate(25);
         }
 
@@ -307,7 +307,6 @@ class AssetController extends BaseController
             'asset_status' => $request->asset_status,
             'first_payment_date' => $request->first_payment_date ?? null,
             'period' => $request->period ?? null,
-            'total_agreement_price' => $request->total_agreement_price ?? null,
             'current_value' => $request->current_value ?? 0
         ];
 
@@ -331,7 +330,7 @@ class AssetController extends BaseController
             } else {
                 $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
                 $period = $request->input('period');
-                $totalAmount = $request->input('total_agreement_price');
+                $totalAmount = $request->input('total_price');
                 $payments = $this->generatePaymentsList($firstPaymentDate, $period, $totalAmount);
 
                 foreach ($payments as $payment) {
@@ -382,17 +381,14 @@ class AssetController extends BaseController
                     ]);
                 }
             } else {
-                $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
-                $period = $request->input('period');
-                $totalAmount = $request->input('total_agreement_price');
+                $firstPaymentDate = Carbon::parse($tenantData['agreement_date']);
+                $period = $tenantData['agreement_term'];
 
-                $payments = $this->generatePaymentsList($firstPaymentDate, $period, $totalAmount);
-
-                foreach ($payments as $payment) {
+                for ($i = 1; $i <= $period; $i++) {
                     Rental::create([
-                        'month' => $payment['number'],
-                        'payment_date' => $payment['date'],
-                        'left_amount' => $payment['amount'],
+                        'month' => $i,
+                        'payment_date' => $firstPaymentDate->copy()->addMonths($i),
+                        'left_amount' => $tenantData['monthly_rent'],
                         'asset_id' => $asset->id
                     ]);
                 }

@@ -26,6 +26,33 @@
         </div>
 
         <div class="form-group dashed">
+            <label class="col-md-1 control-label">M2 Price:</label>
+            <div class="col-md-7 uppercase-medium">
+                <input class="form-control" type="number" :disabled="loading" v-model="form.price"></input>
+            </div>
+            <div class="col-md-3 uppercase-medium">
+                <el-select v-model="form.currency"
+                           :value="form.currency"
+                           filterable
+                           placeholder="Select">
+                    <el-option
+                        v-for="(currency, index) in currencies"
+                        :key="index"
+                        :label="currency"
+                        :value="index">
+                    </el-option>
+                </el-select>
+            </div>
+        </div>
+
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Total Price:</label>
+            <div class="col-md-10 uppercase-medium">
+                <input class="form-control" type="number" :disabled="loading" v-model="form.total_price"></input>
+            </div>
+        </div>
+
+        <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Status:</label>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="form.agreement_status"
@@ -57,12 +84,6 @@
         </template>
 
         <template v-if="form.agreement_status === 'Installments'">
-            <div class="form-group dashed">
-                <label class="col-md-1 control-label">Total Amount:</label>
-                <div class="col-md-10 uppercase-medium">
-                    <input class="form-control" :disabled="loading" v-model="form.total_agreement_price"></input>
-                </div>
-            </div>
 
             <div class="form-group dashed">
                 <label class="col-md-1 control-label">First Payment Date:</label>
@@ -132,6 +153,17 @@
 <script>
 export default {
     props: ['form', 'loading', 'agreementStatuses', 'numbers'],
+    watch: {
+        'form.price': 'updateTotalPrice',
+        'form.area': 'updateTotalPrice',
+        'form'() {
+            if (this.form) {
+                if (!this.form.currency) {
+                    this.$emit('update-form', { ...this.form, currency: 'USD' });
+                }
+            }
+        }
+    },
     methods: {
         onAgreementChange(e) {
             const file = e.target.files[0];
@@ -172,7 +204,7 @@ export default {
                 this.$set(this.form, 'payments', []);
             }
 
-            const totalAmount = parseFloat(this.form.total_agreement_price);
+            const totalAmount = parseFloat(this.form.total_price);
             const period = parseInt(this.form.period);
             const firstPaymentDate = new Date(this.form.first_payment_date);
 
@@ -205,7 +237,7 @@ export default {
         },
 
         updatePaymentAmount(index) {
-            const totalAmount = parseFloat(this.form.total_agreement_price);
+            const totalAmount = parseFloat(this.form.total_price);
             let amountSum = this.form.payments.reduce((sum, payment, idx) => {
                 return idx !== index ? sum + parseFloat(payment.amount) : sum;
             }, 0);
@@ -220,7 +252,7 @@ export default {
         },
 
         updateFinalPaymentAmount(payments) {
-            const totalAmount = parseFloat(this.form.total_agreement_price);
+            const totalAmount = parseFloat(this.form.total_price);
             let amountSum = payments.slice(0, -1).reduce((sum, payment) => {
                 return sum + parseFloat(payment.amount);
             }, 0);
@@ -237,6 +269,13 @@ export default {
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}/${month}/${day}`;
+        },
+
+        updateTotalPrice() {
+            const price = parseFloat(this.form.price) || 0;
+            const area = parseFloat(this.form.area) || 0;
+            const totalPrice = price * area;
+            this.$emit('update-form', {...this.form, total_price: totalPrice});
         },
     }
 }
