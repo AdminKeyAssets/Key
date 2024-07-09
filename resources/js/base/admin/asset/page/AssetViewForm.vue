@@ -66,7 +66,7 @@
                                         </div>
                                     </el-col>
                                     <el-col :span="8">
-                                        <div v-if="form.icon" class="form-group dashed">
+                                        <div v-if="form.icon" class="form-group">
                                             <div class="col-md-10 uppercase-medium">
                                                 <div v-if="form.icon">
                                                     <ImageModal
@@ -82,7 +82,7 @@
                             </el-card>
 
                             <el-row>
-                                <div v-if="form.location" class="form-group dashed">
+                                <div v-if="form.location" class="form-group">
                                     <label class="col-md-1 control-label">Location:</label>
                                     <MapMarker disabled v-if="form.location || !form.id" :item="form"></MapMarker>
                                 </div>
@@ -93,113 +93,118 @@
                                     </div>
 
                                     <el-row>
-                                        <el-col :span="12">
 
-                                            <div v-if="form.type" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Asset Type:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.type }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.flat_number" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Flat number:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.flat_number }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.price" class="form-group dashed">
-                                                <label class="col-md-4 control-label">M2 Price:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.price }} {{ form.currency }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.condition" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Delivery Condition:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.condition }}
-                                                </div>
-                                            </div>
-
-
-                                            <div v-if="form.flat_plan" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Flat Plan:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    <div v-if="form.flat_plan">
-                                                        <ImageModal :image-path="form.flat_plan"
-                                                                    :width="100"
-                                                                    :height="100"
-                                                                    :thumbnail="form.flat_plan"></ImageModal>
+                                        <el-row class="row-item dashed" v-if="form.type || form.floor">
+                                            <el-col :span="12">
+                                                <div v-if="form.type" class="form-group">
+                                                    <label class="col-md-4 control-label">Asset Type:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.type }}
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div v-if="form.asset_status" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Asset Status:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.asset_status }}
-                                                </div>
-                                            </div>
-                                        </el-col>
-
-
-                                        <el-col :span="12">
-
-                                            <div v-if="form.floor" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Floor:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.floor }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.area" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Area (m2):</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.area }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.total_price" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Total Price:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.total_price }} {{ form.currency }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.cadastral_number" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Cadastral Number:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.cadastral_number }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.floor_plan" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Floor Plan:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    <div v-if="form.floor_plan">
-                                                        <ImageModal :image-path="form.floor_plan"
-                                                                    :width="100"
-                                                                    :height="100"
-                                                                    :thumbnail="form.floor_plan"></ImageModal>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.floor" class="form-group">
+                                                    <label class="col-md-4 control-label">Floor:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.floor }}
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </el-col>
+                                        </el-row>
 
-                                            <div v-if="!investorView && form.investor_id" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Investor:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    <el-select v-model="form.investor_id" disabled
-                                                               :value="form.investor_id"
-                                                               filterable placeholder="Select">
-                                                        <el-option v-for="item in investors" :key="item.id"
-                                                                   :label="item.name + ' ' + item.surname"
-                                                                   :value="item.id"></el-option>
-                                                    </el-select>
+                                        <el-row class="row-item dashed" v-if="form.flat_number || form.area">
+                                            <el-col :span="12">
+                                                <div v-if="form.flat_number" class="form-group">
+                                                    <label class="col-md-4 control-label">Flat number:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.flat_number }}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </el-col>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.area" class="form-group">
+                                                    <label class="col-md-4 control-label">Area (m2):</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.area }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed" v-if="form.condition || form.cadastral_number">
+                                            <el-col :span="12">
+                                                <div v-if="form.condition" class="form-group">
+                                                    <label class="col-md-4 control-label">Delivery Condition:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.condition }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.cadastral_number" class="form-group">
+                                                    <label class="col-md-4 control-label">Cadastral Number:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.cadastral_number }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+
+                                        <el-row class="row-item dashed" v-if="form.flat_plan || form.floor_plan">
+                                            <el-col :span="12">
+                                                <div v-if="form.flat_plan" class="form-group">
+                                                    <label class="col-md-4 control-label">Flat Plan:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-if="form.flat_plan">
+                                                            <ImageModal :image-path="form.flat_plan"
+                                                                        :width="100"
+                                                                        :height="100"
+                                                                        :thumbnail="form.flat_plan"></ImageModal>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.floor_plan" class="form-group">
+                                                    <label class="col-md-4 control-label">Floor Plan:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-if="form.floor_plan">
+                                                            <ImageModal :image-path="form.floor_plan"
+                                                                        :width="100"
+                                                                        :height="100"
+                                                                        :thumbnail="form.floor_plan"></ImageModal>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed" v-if="form.asset_status || form.investor_id">
+                                            <el-col :span="12">
+                                                <div v-if="form.asset_status" class="form-group">
+                                                    <label class="col-md-4 control-label">Asset Status:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.asset_status }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="!investorView && form.investor_id" class="form-group">
+                                                    <label class="col-md-4 control-label">Investor:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <el-select v-model="form.investor_id" disabled
+                                                                   :value="form.investor_id"
+                                                                   filterable placeholder="Select">
+                                                            <el-option v-for="item in investors" :key="item.id"
+                                                                       :label="item.name + ' ' + item.surname"
+                                                                       :value="item.id"></el-option>
+                                                        </el-select>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
 
                                     </el-row>
 
@@ -208,65 +213,83 @@
                                             <span>Tenant Details</span>
                                         </div>
                                         <el-row>
-                                            <el-col :span="12">
-                                                <div v-if="form.tenant.name || form.tenant.surname"
-                                                     class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Tenant Name:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.name }} {{ form.tenant.surname }}
+                                            <el-row class="row-item dashed" v-if="(form.tenant.name || form.tenant.surname) || form.tenant.id_number">
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.name || form.tenant.surname"
+                                                         class="form-group dashed">
+                                                        <label class="col-md-4 control-label">Tenant Name:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.name }} {{ form.tenant.surname }}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.id_number" class="form-group dashed">
+                                                        <label class="col-md-4 control-label">ID Number:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.id_number }}
+                                                        </div>
+                                                    </div>
+                                                </el-col>
+                                            </el-row>
 
-                                                <div v-if="form.tenant.citizenship" class="form-group">
-                                                    <label class="col-md-4 control-label">Citizenship:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.citizenship }}
+                                            <el-row class="row-item dashed" v-if="form.tenant.citizenship || form.tenant.email">
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.citizenship" class="form-group">
+                                                        <label class="col-md-4 control-label">Citizenship:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.citizenship }}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.email" class="form-group dashed">
+                                                        <label class="col-md-4 control-label">Email:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.email }}
+                                                        </div>
+                                                    </div>
+                                                </el-col>
+                                            </el-row>
 
-                                                <div v-if="form.tenant.phone" class="form-group phone">
-                                                    <label class="col-md-4 control-label">Phone:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.prefix + form.tenant.phone }}
+                                            <el-row class="row-item dashed" v-if="form.tenant.phone || form.tenant.agreement_date">
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.phone" class="form-group phone">
+                                                        <label class="col-md-4 control-label">Phone:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.prefix + form.tenant.phone }}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.agreement_date" class="form-group dashed">
+                                                        <label class="col-md-4 control-label">Agreement Date:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.agreement_date }}
+                                                        </div>
+                                                    </div>
+                                                </el-col>
+                                            </el-row>
 
-                                                <div v-if="form.tenant.agreement_term" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Agreement Term:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.agreement_term }}
+                                            <el-row class="row-item dashed" v-if="form.tenant.agreement_term || form.tenant.monthly_rent">
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.agreement_term" class="form-group dashed">
+                                                        <label class="col-md-4 control-label">Agreement Term:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.agreement_term }}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </el-col>
-                                            <el-col :span="12">
-                                                <div v-if="form.tenant.id_number" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">ID Number:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.id_number }}
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <div v-if="form.tenant.monthly_rent" class="form-group dashed">
+                                                        <label class="col-md-4 control-label">Monthly Rent:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            {{ form.tenant.monthly_rent }} {{ form.tenant.currency }}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </el-col>
+                                            </el-row>
 
-                                                <div v-if="form.tenant.email" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Email:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.email }}
-                                                    </div>
-                                                </div>
-
-                                                <div v-if="form.tenant.agreement_date" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Agreement Date:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.agreement_date }}
-                                                    </div>
-                                                </div>
-
-                                                <div v-if="form.tenant.monthly_rent" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Monthly Rent:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.monthly_rent }} {{ form.tenant.currency }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
                                         </el-row>
 
                                     </el-card>
@@ -285,8 +308,8 @@
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
                                                             {{
-                                                                scope.row.status ? scope.row.amount : scope.row.left_amount
-                                                            }}
+                                                                scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
+                                                            }} {{ form.currency }}
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="status" label="Status">
@@ -309,7 +332,11 @@
                                                 <el-table border :data="form.rental_payments_histories"
                                                           style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
-                                                    <el-table-column prop="amount" label="Amount"/>
+                                                    <el-table-column prop="amount" label="Amount">
+                                                        <template slot-scope="scope">
+                                                            {{ formatPrice(scope.row.amount) }} {{ form.currency }}
+                                                        </template>
+                                                    </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
                                                             <a :href="scope.row.attachment" target="_blank">View
@@ -323,12 +350,12 @@
 
                                 </el-card>
 
-                                <el-card class="box-card">
+                                <el-card class="box-card"v-if="(form.extraDetails && form.extraDetails.length) || (form.extraDetails && form.extraDetails.length)">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Extra Details</span>
                                     </div>
                                     <el-row>
-                                        <el-col v-if="form.attachments" :span="12">
+                                        <el-col v-if="form.attachments.length" :span="12">
                                             <div class="form-group dashed">
                                                 <label class="col-md-1 control-label">Attachments:</label>
                                                 <div class="col-md-10 uppercase-medium">
@@ -351,7 +378,7 @@
                                             </div>
                                         </el-col>
 
-                                        <el-col v-if="form.extraDetails" :span="12">
+                                        <el-col v-if="form.extraDetails.length" :span="12">
                                             <div class="form-group dashed">
                                                 <label class="col-md-1 control-label">Extra Details:</label>
                                                 <div class="col-md-10 uppercase-medium">
@@ -378,62 +405,79 @@
                                         <span>Agreement Details</span>
                                     </div>
                                     <el-row>
-                                        <el-col :span="12">
-                                            <div v-if="form.agreement_date" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Agreement Date:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.agreement_date }}
-                                                </div>
-                                            </div>
-
-                                            <div v-if="form.agreement_status" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Agreement Status:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    {{ form.agreement_status }}
-                                                </div>
-                                            </div>
-                                        </el-col>
-
-                                        <el-col :span="12">
-
-                                            <div v-if="form.agreement" class="form-group dashed">
-                                                <label class="col-md-4 control-label">Agreement:</label>
-                                                <div class="col-md-6 uppercase-medium">
-                                                    <div v-if="form.agreement">
-                                                        <p v-if="form.agreement">
-                                                            <a :href="form.agreement"
-                                                               target="_blank">View
-                                                                Attachment</a></p>
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <div v-if="form.agreement_date" class="form-group dashed">
+                                                    <label class="col-md-4 control-label">Agreement Date:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.agreement_date }}
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <template v-if="form.agreement_status === 'Complete'">
-                                                <div v-if="form.ownership_certificate" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Ownership Certificate:</label>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.agreement" class="form-group dashed">
+                                                    <label class="col-md-4 control-label">Agreement:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        <div v-if="form.ownership_certificate">
-                                                            <p v-if="form.ownership_certificate"><a
-                                                                :href="form.ownership_certificate" target="_blank">View
-                                                                Attachment</a></p>
+                                                        <div v-if="form.agreement">
+                                                            <p v-if="form.agreement">
+                                                                <a :href="form.agreement"
+                                                                   target="_blank">View
+                                                                    Attachment</a></p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </template>
-                                        </el-col>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed" v-if="form.price || form.total_price">
+                                            <el-col :span="12">
+                                                <div v-if="form.price" class="form-group">
+                                                    <label class="col-md-4 control-label">M2 Price:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.price }} {{ form.currency }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.total_price" class="form-group">
+                                                    <label class="col-md-4 control-label">Total Price:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.total_price }} {{ form.currency }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed" v-if="form.agreement_status">
+                                            <el-col :span="12">
+                                                <div v-if="form.agreement_status" class="form-group dashed">
+                                                    <label class="col-md-4 control-label">Agreement Status:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.agreement_status }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <template v-if="form.agreement_status === 'Complete'">
+                                                    <div v-if="form.ownership_certificate" class="form-group dashed">
+                                                        <label class="col-md-4 control-label">Ownership Certificate:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            <div v-if="form.ownership_certificate">
+                                                                <p v-if="form.ownership_certificate"><a
+                                                                    :href="form.ownership_certificate" target="_blank">View
+                                                                    Attachment</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </el-col>
+                                        </el-row>
+
                                     </el-row>
 
                                     <template v-if="form.agreement_status === 'Installments'">
                                         <el-row>
-                                            <el-col :span="8">
-                                                <div v-if="form.total_agreement_price" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Total Amount:</label>
-                                                    <div class="col-md-8 uppercase-medium">
-                                                        {{ form.total_agreement_price }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                            <el-col :span="8">
+                                            <el-col :span="12">
                                                 <div v-if="form.first_payment_date" class="form-group dashed">
                                                     <label class="col-md-4 control-label">First Payment Date:</label>
                                                     <div class="col-md-8 uppercase-medium">
@@ -441,7 +485,7 @@
                                                     </div>
                                                 </div>
                                             </el-col>
-                                            <el-col :span="8">
+                                            <el-col :span="12">
                                                 <div v-if="form.period" class="form-group dashed">
                                                     <label class="col-md-4 control-label">Period:</label>
                                                     <div class="col-md-8 uppercase-medium">
@@ -452,7 +496,7 @@
                                         </el-row>
 
                                         <el-row style="margin-top: 20px;" class="payments-wrapper">
-                                            <el-col  :span="24" :md="11">
+                                            <el-col :span="24" :md="11">
                                                 <div v-if="form.payments && form.payments.length">
                                                     <div class="payments-schedule-heading"
                                                          style="text-align: center; max-width: 500px">
@@ -464,8 +508,8 @@
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{
-                                                                    scope.row.status ? scope.row.amount : scope.row.left_amount
-                                                                }}
+                                                                    scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
+                                                                }} {{ form.currency }}
                                                             </template>
                                                         </el-table-column>
                                                         <el-table-column prop="status" label="Status">
@@ -488,7 +532,11 @@
                                                     <el-table border :data="form.payments_histories"
                                                               style="width: 100%">
                                                         <el-table-column prop="date" label="Payment Date"/>
-                                                        <el-table-column prop="amount" label="Amount"/>
+                                                        <el-table-column prop="amount" label="Amount">
+                                                            <template slot-scope="scope">
+                                                                {{ formatPrice(scope.row.amount) }} {{ form.currency }}
+                                                            </template>
+                                                        </el-table-column>
                                                         <el-table-column prop="attachment" label="Attachment">
                                                             <template slot-scope="scope">
                                                                 <a :href="scope.row.attachment" target="_blank">View
@@ -510,10 +558,10 @@
 
                                     <el-row v-if="form.current_value">
                                         <el-col :span="12">
-                                            <div  class="form-group dashed">
+                                            <div class="form-group dashed">
                                                 <label class="col-md-4 control-label">Current Value:</label>
                                                 <div class="col-md-8 uppercase-medium">
-                                                    {{ form.current_value }} {{form.currency}}
+                                                    {{ form.current_value }} {{ form.currency }}
                                                 </div>
                                             </div>
                                         </el-col>
@@ -548,7 +596,7 @@
                                         Date: {{ this.nextPayment.payment_date }}
                                     </p>
                                     <p v-if="nextPayment.left_amount">
-                                        Amount: {{ this.nextPayment.left_amount }}
+                                        Amount: {{ this.nextPayment.left_amount }} {{form.currency}}
                                     </p>
                                 </div>
                             </el-card>
@@ -711,13 +759,14 @@ export default {
             })
         },
         formatPrice(amount) {
+            //Do not Format
             if (amount !== undefined && amount !== '') {
                 // const value = parseFloat(amount.replace(/,/g, ''));
                 if (!isNaN(amount)) {
                     return new Intl.NumberFormat('en-US', {
                         style: 'decimal',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
                     }).format(amount);
                 }
             }
@@ -776,11 +825,20 @@ export default {
     font-size: 16px;
     font-weight: bold;
 }
+
 @media (min-width: 769px) {
-    .payments-wrapper{
+    .payments-wrapper {
         display: flex;
         justify-content: space-between;
     }
 }
 
+.payments-wrapper .el-table th > .cell, .payments-wrapper .el-table td > .cell{
+    font-size: 13px !important;
+    text-align: center;
+}
+
+ .dashed.el-row{
+    border-bottom: 1px dashed #eaedf1;
+}
 </style>
