@@ -26,7 +26,8 @@
                 <div class="col-md-10 uppercase-medium">
                     <input type="file" @change="onCurrentValueAttachmentChange">
                     <div v-if="form.current_value_attachment">
-                        <p v-if="form.current_value_attachment">File: <a :href="form.current_value_attachment" target="_blank">View Attachment</a></p>
+                        <p v-if="form.current_value_attachment">File: <a :href="form.current_value_attachment"
+                                                                         target="_blank">View Attachment</a></p>
                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                    @click="removeCurrentValueAttachment"></el-button>
                     </div>
@@ -55,13 +56,26 @@
 <script>
 export default {
     props: ['form', 'loading', 'currencies', 'updateData'],
+    watch: {
+        'form'() {
+            if (this.form) {
+                if (!this.form.current_value_currency) {
+                    this.$emit('update-form', {...this.form, current_value_currency: 'USD'});
+                }
+            }
+        }
+    },
     methods: {
         onCurrentValueAttachmentChange(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.$emit('update-form', { ...this.form, current_value_attachment: file, currentValueAttachmentPreview: e.target.result });
+                    this.$emit('update-form', {
+                        ...this.form,
+                        current_value_attachment: file,
+                        currentValueAttachmentPreview: e.target.result
+                    });
                 };
                 reader.onerror = (error) => {
                     console.error('Error loading file:', error);
@@ -70,7 +84,11 @@ export default {
             }
         },
         removeCurrentValueAttachment() {
-            this.$emit('update-form', { ...this.form, current_value_attachment: null, currentValueAttachmentPreview: null });
+            this.$emit('update-form', {
+                ...this.form,
+                current_value_attachment: null,
+                currentValueAttachmentPreview: null
+            });
         },
     }
 }
