@@ -152,7 +152,7 @@
 
 <script>
 export default {
-    props: ['form', 'loading', 'agreementStatuses', 'numbers'],
+    props: ['form', 'loading', 'currencies', 'agreementStatuses', 'numbers'],
     watch: {
         'form.price': 'updateTotalPrice',
         'form.area': 'updateTotalPrice',

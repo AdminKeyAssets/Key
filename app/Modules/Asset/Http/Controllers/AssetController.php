@@ -396,8 +396,8 @@ class AssetController extends BaseController
         }
 
         if ($request->current_value) {
-            if ($asset->current_value != $request->current_value) {
-                $asset->update($request->all());
+            $currentValueLastItem = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->first();
+            if (!$currentValueLastItem || $currentValueLastItem->value != $request->current_value) {
 
                 CurrentValue::create([
                     'asset_id' => $asset->id,
