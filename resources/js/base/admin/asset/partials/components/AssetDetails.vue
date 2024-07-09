@@ -113,6 +113,33 @@
         </div>
 
         <div class="form-group dashed">
+            <label class="col-md-1 control-label">Extra Details:</label>
+            <div class="col-md-10 uppercase-medium">
+                <el-form-item v-for="(extraDetail, index) in form.extraDetails" :key="extraDetail.id">
+                    <div class="col-md-3 uppercase-medium">
+                        <el-input class="col-md-12" v-model="extraDetail.key" placeholder="Name for extra detail"></el-input>
+                    </div>
+                    <div class="col-md-3 uppercase-medium">
+                        <el-input class="col-md-12" v-model="extraDetail.value" placeholder="Value for extra detail"></el-input>
+                    </div>
+                    <div class="col-md-3 uppercase-medium">
+                        <input type="file" @change="onExtraDetailFileChange($event, index)" v-if="!extraDetail.attachment">
+                        <div v-if="extraDetail.attachment">
+                            <img v-if="extraDetail.attachment.preview" :src="extraDetail.attachment.preview" alt="preview"
+                                 style="max-width: 100px;"/>
+                            <a v-else :href="extraDetail.attachment" target="_blank">View Attachment</a>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                   @click.prevent="removeDetail(extraDetail)"></el-button>
+                    </div>
+                </el-form-item>
+                <el-button type="primary" size="medium" icon="el-icon-plus" @click="addDetail">Add Extra Details</el-button>
+            </div>
+        </div>
+
+        <div class="form-group dashed">
             <label class="col-md-1 control-label">Asset Status:</label>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="form.asset_status" placeholder="Select Status">
@@ -312,6 +339,39 @@ export default {
                 amount: finalAmount.toFixed(2)
             });
         },
+
+        onExtraDetailFileChange(e, index) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const extraDetails = [...this.form.extraDetails];
+                    extraDetails[index].attachment = {
+                        file: file,
+                        preview: file.type.startsWith('image/') ? e.target.result : null,
+                        name: file.name,
+                    };
+                    console.log(extraDetails)
+                    this.$emit('update-form', { ...this.form, extraDetails });
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        addDetail() {
+            this.$emit('update-form', {
+                ...this.form,
+                extraDetails: [...(Array.isArray(this.form.extraDetails) ? this.form.extraDetails : []), {
+                    id: Date.now(),
+                    key: '',
+                    value: '',
+                    attachment: null
+                }]
+            });
+        },
+        removeDetail(item) {
+            const extraDetails = Array.isArray(this.form.extraDetails) ? this.form.extraDetails.filter(detail => detail.id !== item.id) : [];
+            this.$emit('update-form', {...this.form, extraDetails});
+        }
     }
 }
 </script>

@@ -181,6 +181,27 @@
                                             </el-col>
                                         </el-row>
 
+                                        <el-row class="row-item dashed" v-if="form.extraDetails && form.extraDetails.length">
+                                            <el-col :span="12">
+                                                <div class="form-group dashed">
+                                                    <label class="col-md-1 control-label">Extra Details:</label>
+                                                    <div class="col-md-10 uppercase-medium">
+                                                        <el-form-item v-for="extraDetail in form.extraDetails"
+                                                                      :key="extraDetail.id">
+                                                            <div class="col-md-5 uppercase-medium">{{
+                                                                    extraDetail.key
+                                                                }}:
+                                                            </div>
+                                                            <div class="col-md-5 uppercase-medium">{{
+                                                                    extraDetail.value
+                                                                }}
+                                                            </div>
+                                                        </el-form-item>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
                                         <el-row class="row-item dashed" v-if="form.asset_status || form.investor_id">
                                             <el-col :span="12">
                                                 <div v-if="form.asset_status" class="form-group">
@@ -379,25 +400,6 @@
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </el-col>
-
-                                        <el-col v-if="form.extraDetails.length" :span="12">
-                                            <div class="form-group dashed">
-                                                <label class="col-md-1 control-label">Extra Details:</label>
-                                                <div class="col-md-10 uppercase-medium">
-                                                    <el-form-item v-for="extraDetail in form.extraDetails"
-                                                                  :key="extraDetail.id">
-                                                        <div class="col-md-5 uppercase-medium">{{
-                                                                extraDetail.key
-                                                            }}:
-                                                        </div>
-                                                        <div class="col-md-5 uppercase-medium">{{
-                                                                extraDetail.value
-                                                            }}
-                                                        </div>
-                                                    </el-form-item>
                                                 </div>
                                             </div>
                                         </el-col>

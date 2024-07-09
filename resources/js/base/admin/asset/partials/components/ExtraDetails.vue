@@ -21,26 +21,7 @@
             </div>
         </div>
 
-        <div class="form-group dashed">
-            <label class="col-md-1 control-label">Extra Details:</label>
-            <div class="col-md-10 uppercase-medium">
-                <el-form-item
-                    v-for="(extraDetail) in form.extraDetails"
-                    :key="extraDetail.id">
-                    <div class="col-md-5 uppercase-medium">
-                        <el-input class="col-md-5" v-model="extraDetail.key"
-                                  placeholder="Name for extra detail"></el-input>
-                    </div>
-                    <div class="col-md-5 uppercase-medium">
-                        <el-input class="col-md-5" v-model="extraDetail.value"
-                                  placeholder="Value for extra detail"></el-input>
-                    </div>
-                    <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                               @click.prevent="removeDetail(extraDetail)"></el-button>
-                </el-form-item>
-                <el-button type="primary" size="medium" icon="el-icon-plus" @click="addDetail">Add Extra Details</el-button>
-            </div>
-        </div>
+
     </div>
 </template>
 
@@ -82,20 +63,7 @@ export default {
             attachments.splice(index, 1);
             this.$emit('update-form', { ...this.form, attachments });
         },
-        addDetail() {
-            this.$emit('update-form', {
-                ...this.form,
-                extraDetails: [...(Array.isArray(this.form.extraDetails) ? this.form.extraDetails : []), {
-                    id: Date.now(),
-                    key: '',
-                    value: ''
-                }]
-            });
-        },
-        removeDetail(item) {
-            const extraDetails = Array.isArray(this.form.extraDetails) ? this.form.extraDetails.filter(detail => detail.id !== item.id) : [];
-            this.$emit('update-form', { ...this.form, extraDetails });
-        }
+
     }
 }
 </script>

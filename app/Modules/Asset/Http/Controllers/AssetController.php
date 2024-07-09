@@ -459,11 +459,31 @@ class AssetController extends BaseController
         }
 
         $asset->informations()->delete();
+//        dd($request->extraDetails);
         if (!empty($request->extraDetails)) {
-            foreach (json_decode($request->extraDetails) as $info) {
+            foreach ($request->extraDetails as $detail) {
+                $extraDetailAttachmentPath = null;
+
+                if (isset($request->id)) {
+                    if ($detail['attachment']) {
+                        $extraDetailAttachmentFile = $detail['attachment'];
+                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');
+                        $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
+                    } else {
+                        $extraDetailAttachmentPath = $detail['attachment'];
+                    }
+                }else{
+                    if ($detail['attachment']) {
+                        $extraDetailAttachmentFile = $detail['attachment'];
+                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');
+                        $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
+                    }
+                }
+
                 $asset->informations()->create([
-                    'key' => $info->key,
-                    'value' => $info->value,
+                    'key' => $detail['key'],
+                    'value' => $detail['value'],
+                    'attachment' => $extraDetailAttachmentPath
                 ]);
             }
         }

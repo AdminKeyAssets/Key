@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class AssetInformation extends Model
 {
-    protected $fillable = ['asset_id', 'key', 'value'];
+    protected $fillable = ['asset_id', 'key', 'value', 'attachment'];
 }

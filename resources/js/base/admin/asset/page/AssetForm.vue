@@ -92,10 +92,10 @@ export default {
                             this.form.attachments = data.item.files;
                             this.form.existingAttachments = attachments || [];
                         }
-                        if(data.item.tenant){
+                        if (data.item.tenant) {
                             this.form.tenant = data.item.tenant;
                         }
-                        if(data.item.rentals){
+                        if (data.item.rentals) {
                             this.form.rentals = data.item.rentals;
                         }
                     }
@@ -126,7 +126,11 @@ export default {
                 } else if (key === 'ownership_certificate' && this.form[key]) {
                     formData.append(key, this.form[key]);
                 } else if (key === 'extraDetails') {
-                    formData.append(key, JSON.stringify(this.form[key]));
+                    this.form.extraDetails.forEach((detail, index) => {
+                        formData.append(`extraDetails[${index}][key]`, detail.key);
+                        formData.append(`extraDetails[${index}][value]`, detail.value);
+                        formData.append(`extraDetails[${index}][attachment]`, detail.attachment.file);
+                    });
                 } else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'rentals') {
