@@ -56,6 +56,19 @@
         </div>
 
         <div class="form-group dashed">
+            <label class="col-md-1 control-label">Condition Description:</label>
+            <div class="col-md-10 uppercase-medium">
+                <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="Condition Description"
+                    :disabled="loading"
+                    v-model="form.delivery_condition_description">
+                </el-input>
+            </div>
+        </div>
+
+        <div class="form-group dashed">
             <label class="col-md-1 control-label">Cadastral Number:</label>
             <div class="col-md-10 uppercase-medium">
                 <input class="form-control" :disabled="loading"

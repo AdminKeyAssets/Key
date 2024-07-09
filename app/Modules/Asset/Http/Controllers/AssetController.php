@@ -295,6 +295,8 @@ class AssetController extends BaseController
             'currency' => $request->currency,
             'project_name' => $request->project_name,
             'project_description' => $request->project_description,
+            'total_floors' => $request->total_floors ?? null,
+            'delivery_condition_description' => $request->delivery_condition_description,
             'project_link' => $request->project_link,
             'location' => $request->location,
             'type' => $request->type,
@@ -417,7 +419,7 @@ class AssetController extends BaseController
                     } else {
                         $currentValueAttachmentPath = $request->current_value_attachment;
                     }
-                }else{
+                } else {
                     if ($request->hasFile('current_value_attachment')) {
                         $currentValueAttachmentFile = $request->file('current_value_attachment');
                         $currentValueAttachmentPath = $currentValueAttachmentFile->store('uploads', 'public');
@@ -465,14 +467,14 @@ class AssetController extends BaseController
                 $extraDetailAttachmentPath = null;
 
                 if (isset($request->id)) {
-                    if ($detail['attachment']) {
+                    if (gettype($detail['attachment']) == 'object') {
                         $extraDetailAttachmentFile = $detail['attachment'];
                         $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');
                         $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
                     } else {
                         $extraDetailAttachmentPath = $detail['attachment'];
                     }
-                }else{
+                } else {
                     if ($detail['attachment']) {
                         $extraDetailAttachmentFile = $detail['attachment'];
                         $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');

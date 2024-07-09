@@ -107,7 +107,7 @@
                                                 <div v-if="form.floor" class="form-group">
                                                     <label class="col-md-4 control-label">Floor:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ form.floor }}
+                                                        {{ form.floor }} / {{ form.total_floors }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -146,6 +146,14 @@
                                                     <label class="col-md-4 control-label">Cadastral Number:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ form.cadastral_number }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="24">
+                                                <div v-if="form.delivery_condition_description" class="form-group">
+                                                    <label class="col-md-4 control-label">Condition Description:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.delivery_condition_description }}
                                                     </div>
                                                 </div>
                                             </el-col>

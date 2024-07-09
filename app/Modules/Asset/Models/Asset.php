@@ -38,7 +38,9 @@ class Asset extends Model
         'agreement',
         'ownership_certificate',
         'current_value',
-        'current_value_currency'
+        'current_value_currency',
+        'delivery_condition_description',
+        'total_floors'
     ];
 
     public function informations()

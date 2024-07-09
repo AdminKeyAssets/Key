@@ -59,6 +59,13 @@
         </div>
 
         <div class="form-group dashed">
+            <label class="col-md-1 control-label">Total Floors:</label>
+            <div class="col-md-10 uppercase-medium">
+                <input type="number" class="form-control" :disabled="loading" v-model="form.total_floors"></input>
+            </div>
+        </div>
+
+        <div class="form-group dashed">
             <label class="col-md-1 control-label">Location:</label>
             <MapMarker
                 v-if="item.location || !item.id"
