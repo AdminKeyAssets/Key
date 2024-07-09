@@ -307,7 +307,8 @@ class AssetController extends BaseController
             'asset_status' => $request->asset_status,
             'first_payment_date' => $request->first_payment_date ?? null,
             'period' => $request->period ?? null,
-            'current_value' => $request->current_value ?? 0
+            'current_value' => $request->current_value ?? 0,
+            'current_value_currency' => $request->current_value_currency ?? 'USD'
         ];
 
 
@@ -398,11 +399,38 @@ class AssetController extends BaseController
         if ($request->current_value) {
             $currentValueLastItem = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->first();
             if (!$currentValueLastItem || $currentValueLastItem->value != $request->current_value) {
+                $currentValueAttachmentPath = null;
+                if (isset($request->id)) {
+                    if ($request->hasFile('current_value_attachment')) {
+                        if ($currentValueLastItem->current_value_attachment && Storage::disk('public')->exists($currentValueLastItem->current_value_attachment)) {
+                            Storage::disk('public')->delete($currentValueLastItem->current_value_attachment);
+                        }
+                        $currentValueAttachmentFile = $request->file('current_value_attachment');
+                        $currentValueAttachmentPath = $currentValueAttachmentFile->store('uploads', 'public');
+                        $currentValueAttachmentPath = Storage::url($currentValueAttachmentPath);
+
+                    } else if ($request->input('current_value_attachment') === null) {
+                        if ($currentValueLastItem->current_value_attachment && Storage::disk('public')->exists($currentValueLastItem->current_value_attachment)) {
+                            Storage::disk('public')->delete($currentValueLastItem->current_value_attachment);
+                        }
+                        $currentValueAttachmentPath = null;
+                    } else {
+                        $currentValueAttachmentPath = $request->current_value_attachment;
+                    }
+                }else{
+                    if ($request->hasFile('current_value_attachment')) {
+                        $currentValueAttachmentFile = $request->file('current_value_attachment');
+                        $currentValueAttachmentPath = $currentValueAttachmentFile->store('uploads', 'public');
+                        $currentValueAttachmentPath = Storage::url($currentValueAttachmentPath);
+                    }
+                }
 
                 CurrentValue::create([
                     'asset_id' => $asset->id,
                     'value' => $request->current_value,
                     'date' => now(),
+                    'currency' => $request->current_value_currency,
+                    'attachment' => $currentValueAttachmentPath
                 ]);
             }
         }

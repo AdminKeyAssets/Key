@@ -213,7 +213,8 @@
                                             <span>Tenant Details</span>
                                         </div>
                                         <el-row>
-                                            <el-row class="row-item dashed" v-if="(form.tenant.name || form.tenant.surname) || form.tenant.id_number">
+                                            <el-row class="row-item dashed"
+                                                    v-if="(form.tenant.name || form.tenant.surname) || form.tenant.id_number">
                                                 <el-col :span="12">
                                                     <div v-if="form.tenant.name || form.tenant.surname"
                                                          class="form-group dashed">
@@ -233,7 +234,8 @@
                                                 </el-col>
                                             </el-row>
 
-                                            <el-row class="row-item dashed" v-if="form.tenant.citizenship || form.tenant.email">
+                                            <el-row class="row-item dashed"
+                                                    v-if="form.tenant.citizenship || form.tenant.email">
                                                 <el-col :span="12">
                                                     <div v-if="form.tenant.citizenship" class="form-group">
                                                         <label class="col-md-4 control-label">Citizenship:</label>
@@ -252,7 +254,8 @@
                                                 </el-col>
                                             </el-row>
 
-                                            <el-row class="row-item dashed" v-if="form.tenant.phone || form.tenant.agreement_date">
+                                            <el-row class="row-item dashed"
+                                                    v-if="form.tenant.phone || form.tenant.agreement_date">
                                                 <el-col :span="12">
                                                     <div v-if="form.tenant.phone" class="form-group phone">
                                                         <label class="col-md-4 control-label">Phone:</label>
@@ -271,7 +274,8 @@
                                                 </el-col>
                                             </el-row>
 
-                                            <el-row class="row-item dashed" v-if="form.tenant.agreement_term || form.tenant.monthly_rent">
+                                            <el-row class="row-item dashed"
+                                                    v-if="form.tenant.agreement_term || form.tenant.monthly_rent">
                                                 <el-col :span="12">
                                                     <div v-if="form.tenant.agreement_term" class="form-group dashed">
                                                         <label class="col-md-4 control-label">Agreement Term:</label>
@@ -350,7 +354,8 @@
 
                                 </el-card>
 
-                                <el-card class="box-card"v-if="(form.extraDetails && form.extraDetails.length) || (form.extraDetails && form.extraDetails.length)">
+                                <el-card class="box-card"
+                                         v-if="(form.extraDetails && form.extraDetails.length) || (form.extraDetails && form.extraDetails.length)">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Extra Details</span>
                                     </div>
@@ -460,7 +465,8 @@
                                             <el-col :span="12">
                                                 <template v-if="form.agreement_status === 'Complete'">
                                                     <div v-if="form.ownership_certificate" class="form-group dashed">
-                                                        <label class="col-md-4 control-label">Ownership Certificate:</label>
+                                                        <label class="col-md-4 control-label">Ownership
+                                                            Certificate:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             <div v-if="form.ownership_certificate">
                                                                 <p v-if="form.ownership_certificate"><a
@@ -558,18 +564,20 @@
 
                                     <el-row v-if="form.current_value">
                                         <el-col :span="12">
-                                            <div class="form-group dashed">
-                                                <label class="col-md-4 control-label">Current Value:</label>
-                                                <div class="col-md-8 uppercase-medium">
-                                                    {{ form.current_value }} {{ form.currency }}
-                                                </div>
-                                            </div>
-                                        </el-col>
-                                        <el-col :span="12">
                                             <div v-if="form.currentValues.length">
                                                 <el-table :data="form.currentValues" style="width: 100%">
-                                                    <el-table-column prop="value" label="Value"/>
+                                                    <el-table-column prop="value" label="Value">
+                                                        <template slot-scope="scope">
+                                                            {{ formatPrice(scope.row.value) }} {{ scope.row.currency }}
+                                                        </template>
+                                                    </el-table-column>
                                                     <el-table-column prop="date" label="Date"/>
+                                                    <el-table-column prop="attachment" label="Attachment">
+                                                        <template slot-scope="scope">
+                                                            <a v-if="scope.row.attachment" :href="scope.row.attachment" target="_blank">View
+                                                                Attachment</a>
+                                                        </template>
+                                                    </el-table-column>
                                                 </el-table>
                                             </div>
                                         </el-col>
@@ -596,7 +604,7 @@
                                         Date: {{ this.nextPayment.payment_date }}
                                     </p>
                                     <p v-if="nextPayment.left_amount">
-                                        Amount: {{ this.nextPayment.left_amount }} {{form.currency}}
+                                        Amount: {{ this.nextPayment.left_amount }} {{ form.currency }}
                                     </p>
                                 </div>
                             </el-card>
@@ -833,12 +841,12 @@ export default {
     }
 }
 
-.payments-wrapper .el-table th > .cell, .payments-wrapper .el-table td > .cell{
+.payments-wrapper .el-table th > .cell, .payments-wrapper .el-table td > .cell {
     font-size: 13px !important;
     text-align: center;
 }
 
- .dashed.el-row{
+.dashed.el-row {
     border-bottom: 1px dashed #eaedf1;
 }
 </style>

@@ -37,7 +37,8 @@ class Asset extends Model
         'flat_plan',
         'agreement',
         'ownership_certificate',
-        'current_value'
+        'current_value',
+        'current_value_currency'
     ];
 
     public function informations()

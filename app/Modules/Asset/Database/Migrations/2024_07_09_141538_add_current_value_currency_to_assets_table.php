@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCurrencyToAssetsTable extends Migration
+class AddCurrentValueCurrencyToAssetsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddCurrencyToAssetsTable extends Migration
     public function up()
     {
         Schema::table('assets', function (Blueprint $table) {
-            $table->string('currency')->default('USD');
+            $table->string('current_value_currency')->default('USD');
         });
     }
 
@@ -26,7 +26,7 @@ class AddCurrencyToAssetsTable extends Migration
     public function down()
     {
         Schema::table('assets', function (Blueprint $table) {
-            $table->dropColumn('currency');
+            $table->dropColumn('current_value_currency');
         });
     }
 }
