@@ -16,7 +16,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Upload:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onAgreementChange" accept="image/*">
+                <input type="file" @change="onAgreementChange" accept="*">
                 <div v-if="form.agreement">
                     <p v-if="form.agreement">File: <a :href="form.agreement" target="_blank">View Attachment</a></p>
                     <el-button icon="el-icon-delete-solid" size="small" type="danger"

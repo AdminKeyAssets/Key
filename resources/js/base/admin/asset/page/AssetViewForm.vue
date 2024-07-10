@@ -189,26 +189,7 @@
                                             </el-col>
                                         </el-row>
 
-                                        <el-row class="row-item dashed" v-if="form.extraDetails && form.extraDetails.length">
-                                            <el-col :span="12">
-                                                <div class="form-group dashed">
-                                                    <label class="col-md-1 control-label">Extra Details:</label>
-                                                    <div class="col-md-10 uppercase-medium">
-                                                        <el-form-item v-for="extraDetail in form.extraDetails"
-                                                                      :key="extraDetail.id">
-                                                            <div class="col-md-5 uppercase-medium">{{
-                                                                    extraDetail.key
-                                                                }}:
-                                                            </div>
-                                                            <div class="col-md-5 uppercase-medium">{{
-                                                                    extraDetail.value
-                                                                }}
-                                                            </div>
-                                                        </el-form-item>
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                        </el-row>
+
 
                                         <el-row class="row-item dashed" v-if="form.asset_status || form.investor_id">
                                             <el-col :span="12">
@@ -236,7 +217,25 @@
                                         </el-row>
 
                                     </el-row>
-
+                                    <el-row class="row-item dashed" v-if="form.extraDetails && form.extraDetails.length">
+                                        <div>
+                                            <div class="extra-details-heading"
+                                                 style="max-width: 500px">
+                                                <h5>Extra Details</h5>
+                                            </div>
+                                            <el-table border :data="form.extraDetails"
+                                                      style="width: 100%">
+                                                <el-table-column prop="key" />
+                                                <el-table-column prop="value"/>
+                                                <el-table-column prop="attachment" >
+                                                    <template slot-scope="scope">
+                                                        <a :href="scope.row.attachment" target="_blank">View
+                                                            Attachment</a>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-row>
                                     <el-card class="box-card" v-if="form.asset_status === 'Rented'">
                                         <div slot="header" class="clearfix">
                                             <span>Tenant Details</span>
@@ -382,38 +381,6 @@
                                     </el-row>
 
                                 </el-card>
-
-                                <el-card class="box-card"
-                                         v-if="(form.extraDetails && form.extraDetails.length) || (form.extraDetails && form.extraDetails.length)">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>Extra Details</span>
-                                    </div>
-                                    <el-row>
-                                        <el-col v-if="form.attachments.length" :span="12">
-                                            <div class="form-group dashed">
-                                                <label class="col-md-1 control-label">Attachments:</label>
-                                                <div class="col-md-10 uppercase-medium">
-                                                    <div>
-                                                        <ul>
-                                                            <li v-for="(file, index) in form.attachments" :key="index"
-                                                                style="display: inline-block; margin-right: 10px">
-                                                                <img v-if="file.preview" :src="file.preview"
-                                                                     alt="preview"
-                                                                     style="max-width: 100px;"/>
-                                                                <img v-else-if="file.type === 'image'" :src="file.path"
-                                                                     alt="preview" style="max-width: 100px;"/>
-                                                                <a v-else :href="file.path" target="_blank">{{
-                                                                        file.name
-                                                                    }}</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
-                                </el-card>
-
 
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
@@ -725,6 +692,7 @@ export default {
     },
     created() {
         this.getSaveData();
+        console.log('extra',this.form.extraDetails)
     },
     computed: {
         whatsappLink() {
@@ -770,6 +738,7 @@ export default {
                             this.form.attachments = data.item.files;
                         }
                     }
+                    console.log('extradetails', this.form.extraDetails)
 
                     this.form.id = this.id;
                 }

@@ -66,5 +66,12 @@ Route::prefix('assets')->name('asset.')->group(function () {
 
     //Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
     Route::get('/revenues', $revenueController . '@index')->name('revenue.index')->middleware(['auth:admin']);
+
+
+    $notificationController = 'NotificationController';
+    $notificationModuleName = 'notification';
+
+    Route::get('/notifications/payment', $notificationController . '@payment')->name('notification.list.payment');
+    Route::get('/notifications/rental', $notificationController . '@rental')->name('notification.list.rental');
 });
 

@@ -14,5 +14,14 @@ class NotificationController extends BaseController
         parent::__construct();
     }
 
+    public function payment()
+    {
+
+    }
+
+    public function rental()
+    {
+
+    }
 
 }
