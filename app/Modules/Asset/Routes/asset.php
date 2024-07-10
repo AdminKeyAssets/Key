@@ -71,7 +71,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';
 
-    Route::get('/notifications/payment', $notificationController . '@payment')->name('notification.list.payment');
-    Route::get('/notifications/rental', $notificationController . '@rental')->name('notification.list.rental');
+    Route::get('/notifications/pending-payment', $notificationController . '@payment')->name('notification.list.payment');
+    Route::get('/notifications/pending-rentals', $notificationController . '@rental')->name('notification.list.rental');
 });
 

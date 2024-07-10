@@ -61,6 +61,8 @@ Vue.component('rental-page-form', require('./base/admin/rental/page/RentalForm')
 
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
+Vue.component('pending-payments', require('./base/admin/notification/PaymentNotification').default);
+Vue.component('pending-rentals', require('./base/admin/notification/RentalNotification').default);
 
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);

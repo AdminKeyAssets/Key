@@ -1,8 +1,7 @@
 <template>
-    <div class="header">
         <div class="comments-container">
             <el-badge :value="unreadCommentsCount" class="item" style="cursor: pointer">
-                <i class="el-icon-bell" @click="toggleUnreadCommentsList" style="color:white"></i>
+                <i class="el-icon-chat-round" @click="toggleUnreadCommentsList" style="color:white"></i>
             </el-badge>
             <el-drawer
                 title="Notifications"
@@ -37,23 +36,17 @@
             </el-drawer>
 
         </div>
-    </div>
 </template>
 
 <script>
 
 export default {
-    props: [
-        'id'
-    ],
     data() {
         return {
             unreadComments: [],
             unreadCommentsCount: 0,
             showUnreadComments: false,
         }
-    },
-    created() {
     },
     mounted() {
         this.fetchUnreadComments();

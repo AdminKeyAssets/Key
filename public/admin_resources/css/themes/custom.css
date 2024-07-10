@@ -792,7 +792,7 @@ padding: 60px;
     }
 }
 
-.comments-container .el-badge.item{
+.comments-container .el-badge.item, .payments-container .el-badge.item, .rentals-container .el-badge.item{
     margin-bottom: 0 !important;
     margin-top: 18px;
     margin-right: 10px;
@@ -814,4 +814,8 @@ padding: 60px;
 .table thead > tr > th {
     font-size: 13px !important;
     font-weight: bold !important;
+}
+
+.rental-notification-wrapper .el-card__header, .payment-notification-wrapper .el-card__header{
+    padding: 10px 20px !important;
 }

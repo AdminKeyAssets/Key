@@ -1,3 +1,2 @@
-<unread-comments
-:id="1"></unread-comments>
+<unread-comments></unread-comments>
 

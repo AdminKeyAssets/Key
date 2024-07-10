@@ -67,7 +67,9 @@
                         <ul class="nav navbar-nav-custom pull-right">
                             <!-- User Dropdown -->
                             <li>
-                                <div id="header">
+                                <div id="header" style="display: flex;">
+                                    @include('asset::admin.notifications.rentals')
+                                    @include('asset::admin.notifications.payments')
                                     @include('asset::admin.comment.unread')
                                 </div>
                             </li>

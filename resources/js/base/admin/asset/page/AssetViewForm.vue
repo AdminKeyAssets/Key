@@ -692,7 +692,6 @@ export default {
     },
     created() {
         this.getSaveData();
-        console.log('extra',this.form.extraDetails)
     },
     computed: {
         whatsappLink() {
@@ -738,7 +737,6 @@ export default {
                             this.form.attachments = data.item.files;
                         }
                     }
-                    console.log('extradetails', this.form.extraDetails)
 
                     this.form.id = this.id;
                 }
