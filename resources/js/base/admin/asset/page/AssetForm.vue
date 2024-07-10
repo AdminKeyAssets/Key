@@ -129,10 +129,12 @@ export default {
                     this.form.extraDetails.forEach((detail, index) => {
                         formData.append(`extraDetails[${index}][key]`, detail.key);
                         formData.append(`extraDetails[${index}][value]`, detail.value);
-                        if(detail.attachment.file){
-                            formData.append(`extraDetails[${index}][attachment]`, detail.attachment.file);
-                        }else{
-                            formData.append(`extraDetails[${index}][attachment]`, detail.attachment);
+                        if (detail.attachment) {
+                            if (detail.attachment.file) {
+                                formData.append(`extraDetails[${index}][attachment]`, detail.attachment.file);
+                            } else {
+                                formData.append(`extraDetails[${index}][attachment]`, detail.attachment);
+                            }
                         }
                     });
                 } else if (key === 'payments') {
@@ -141,7 +143,7 @@ export default {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'tenant') {
                     formData.append(key, JSON.stringify(this.form[key]));
-                }  else {
+                } else {
                     formData.append(key, this.form[key]);
                 }
             }

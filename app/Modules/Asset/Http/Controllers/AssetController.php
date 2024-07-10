@@ -475,7 +475,7 @@ class AssetController extends BaseController
                         $extraDetailAttachmentPath = $detail['attachment'];
                     }
                 } else {
-                    if ($detail['attachment']) {
+                    if (isset($detail['attachment'])) {
                         $extraDetailAttachmentFile = $detail['attachment'];
                         $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');
                         $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
