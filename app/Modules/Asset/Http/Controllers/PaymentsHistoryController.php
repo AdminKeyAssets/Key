@@ -111,6 +111,8 @@ class PaymentsHistoryController extends BaseController
 
         if (isset($request->id)) {
             $paymentHistory = PaymentsHistory::where('id', $request->id)->first();
+            $oldAmount = $paymentHistory->amount;
+
             if ($request->hasFile('attachment')) {
                 if ($paymentHistory->attachment && Storage::disk('public')->exists($paymentHistory->attachment)) {
                     Storage::disk('public')->delete($paymentHistory->attachment);
@@ -124,27 +126,38 @@ class PaymentsHistoryController extends BaseController
                 if ($paymentHistory->attachment && Storage::disk('public')->exists($paymentHistory->attachment)) {
                     Storage::disk('public')->delete($paymentHistory->attachment);
                 }
+            } else {
+                $path = $paymentHistory->attachment;
             }
 
+            $paymentHistory->update([
+                'asset_id' => $assetId,
+                'date' => $request->date,
+                'amount' => $request->amount,
+                'currency' => $request->currency,
+                'attachment' => $path
+            ]);
+
+            $this->paymentsHelper->recalculatePaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $path = $file->store('uploads', 'public');
                 $path = Storage::url($path);
             }
+
+            $paymentHistory = PaymentsHistory::create([
+                'asset_id' => $assetId,
+                'date' => $request->date,
+                'amount' => $request->amount,
+                'currency' => $request->currency,
+                'attachment' => $path
+            ]);
+
+            $this->paymentsHelper->updatePayments($paymentHistory->asset, $paymentHistory->amount);
         }
 
-        $updatedPaymentsHistory = PaymentsHistory::updateOrCreate(['id' => $request->id], [
-            'asset_id' => $assetId,
-            'date' => $request->date,
-            'amount' => $request->amount,
-            'currency' => $request->currency,
-            'attachment' => $path
-        ]);
-
-        $this->paymentsHelper->updatePayments($updatedPaymentsHistory->asset, $updatedPaymentsHistory->amount);
-
-        $this->baseData['item'] = $updatedPaymentsHistory;
+        $this->baseData['item'] = $paymentHistory;
 
         return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
     }
@@ -196,7 +209,12 @@ class PaymentsHistoryController extends BaseController
     public function destroy(Request $request, $assetId)
     {
         try {
-            PaymentsHistory::findOrFail($request->get('id'))->delete();
+            $paymentHistory = PaymentsHistory::findOrFail($request->get('id'));
+            $amount = $paymentHistory->amount;
+            $asset = $paymentHistory->asset;
+            $paymentHistory->delete();
+
+            $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
