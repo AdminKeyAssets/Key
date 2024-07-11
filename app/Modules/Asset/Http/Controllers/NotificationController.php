@@ -22,8 +22,13 @@ class NotificationController extends BaseController
 
     public function payment()
     {
-        $tenDaysFromNow = Carbon::now()->addDays(40)->format('Y/m/d');
-        $user = auth()->user();
+        $tenDaysFromNow = Carbon::now()->addDays(10)->format('Y/m/d');
+        $user = auth('investor')->user();
+
+        if (!$user) {
+            $user = auth('admin')->user();
+        }
+
         $query = Payment::query();
 
         if (Auth::guard('investor')->check()) {
@@ -59,8 +64,14 @@ class NotificationController extends BaseController
 
     public function rental()
     {
-        $tenDaysFromNow = Carbon::now()->addDays(40)->format('Y/m/d');
-        $user = auth()->user();
+        $tenDaysFromNow = Carbon::now()->addDays(10)->format('Y/m/d');
+
+        $user = auth('investor')->user();
+
+        if (!$user) {
+            $user = auth('admin')->user();
+        }
+
         $query = Rental::query();
 
         if (Auth::guard('investor')->check()) {

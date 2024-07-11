@@ -18,7 +18,7 @@ class CreateCommentsTable extends Migration
             $table->text('comment');
             $table->string('attachment')->nullable();
             $table->boolean('read')->default(false);
-            $table->foreignId('admin_id')->constrained()->onDelete('cascade');
+            $table->bigInteger('admin_id')->nullable();
             $table->foreignId('asset_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

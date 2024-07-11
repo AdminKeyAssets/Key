@@ -34,11 +34,6 @@ class Investor  extends Authenticatable
         $this->attributes['password'] = bcrypt($password);
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
     public function assets()
     {
         return $this->hasMany(Asset::class);

@@ -4,7 +4,8 @@
         <ul class="comments-list">
             <li v-for="comment in comments" :key="comment.id" class="comment-item">
                 <div class="comment-header">
-                    <span class="comment-user">{{ comment.admin.name }} {{ comment.admin.surname }}</span>
+                    <span class="comment-user" v-if="comment.admin">{{ comment.admin.name }} {{ comment.admin.surname }}</span>
+                    <span class="comment-user" v-else-if="comment.investor">{{ comment.investor.name }} {{ comment.investor.surname }}</span>
                     <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
                 </div>
                 <p class="comment-text">{{ comment.comment }}</p>
@@ -33,7 +34,8 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
     props: [
-        'id'
+        'id',
+        'investorView'
     ],
     data() {
         return {
@@ -82,7 +84,8 @@ export default {
                 formData.append('attachment', this.attachment);
             }
 
-            await axios.post(`/assets/${this.id}/comments`, formData)
+            let url = this.investorView ? `/assets/${this.id}/investor/comments` : `/assets/${this.id}/comments`
+            await axios.post(url, formData)
                 .then(response => {
                     responseParse(response);
                     this.comments = response.data.data;

@@ -36,10 +36,14 @@ class CommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
+            ->with(['investor' => function ($query) {
+                $query->select('id', 'name', 'surname');
+            }])
             ->where('asset_id', $assetId)->get();
 
-        return ServiceResponse::jsonNotification('', 200, $comments);;
+        return ServiceResponse::jsonNotification('', 200, $comments);
     }
+
 
     /**
      * @param Request $request
@@ -58,12 +62,50 @@ class CommentController extends BaseController
             'comment' => $request->comment,
             'asset_id' => $assetId,
             'admin_id' => Auth::user()->getAuthIdentifier(),
+            'investor_id' => null,
             'attachment' => $path ? Storage::url($path) : null
         ]);
 
         $comments = Comment::query()
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
+            }])
+            ->with(['investor' => function ($query) {
+                $query->select('id', 'name', 'surname');
+            }])
+            ->where('asset_id', $assetId)->get();
+
+        return ServiceResponse::jsonNotification('Comment Added successfully', 200, $comments);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param $assetId
+     * @return JsonResponse
+     */
+    public function investorStore(Request $request, $assetId)
+    {
+        $path = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $path = $file->store('uploads', 'public');
+        }
+
+        Comment::create([
+            'comment' => $request->comment,
+            'asset_id' => $assetId,
+            'admin_id' => null,
+            'investor_id' => Auth::user()->getAuthIdentifier(),
+            'attachment' => $path ? Storage::url($path) : null
+        ]);
+
+        $comments = Comment::query()
+            ->with(['admin' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->with(['investor' => function ($query) {
+                $query->select('id', 'name', 'surname');
             }])
             ->where('asset_id', $assetId)->get();
 
@@ -89,6 +131,9 @@ class CommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
+            ->with(['investor' => function ($query) {
+                $query->select('id', 'name', 'surname');
+            }])
             ->where('asset_id', $assetId)->get();
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $comments);
@@ -100,7 +145,7 @@ class CommentController extends BaseController
      */
     public function read($commentId)
     {
-        $comment = Comment::where('id',$commentId)->first();
+        $comment = Comment::where('id', $commentId)->first();
 
         $assetId = $comment->asset_id;
 
@@ -117,16 +162,23 @@ class CommentController extends BaseController
      */
     public function unread(Request $request)
     {
-        $user = auth()->user();
+        $user = auth('investor')->user();
+
+        if (!$user) {
+            $user = auth('admin')->user();
+        }
+
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'SalesManager'];
         $assets = null;
 
-        if (in_array($user->getRolesNameAttribute(), $managers)) {
-            $assets = Asset::where('admin_id', $user->getAuthIdentifier())->get();
-        } else if ($user->getRolesNameAttribute() === 'Investor') {
+        if (Auth::guard('investor')->check()) {
             $assets = Asset::where('investor_id', $user->getAuthIdentifier())->get();
-        }else if ($user->getRolesNameAttribute() === 'administrator') {
-            $assets = Asset::all();
+        } elseif (Auth::guard('admin')->check()) {
+            if (in_array($user->getRolesNameAttribute(), $managers)) {
+                $assets = Asset::where('admin_id', $user->getAuthIdentifier())->get();
+            } else if ($user->getRolesNameAttribute() === 'administrator') {
+                $assets = Asset::all();
+            }
         }
 
         $assetIds = [];
@@ -136,11 +188,27 @@ class CommentController extends BaseController
 
         $comments = Comment::query()
             ->with(['admin' => function ($query) {
-                $query->select('id', 'name');
+                $query->select('id', 'name', 'surname');
             }])
-            ->whereIn('asset_id', $assetIds)
-            ->where('admin_id', '!=', $user->getAuthIdentifier())->get();
+            ->with(['investor' => function ($query) {
+                $query->select('id', 'name', 'surname');
+            }])
+            ->whereIn('asset_id', $assetIds);
 
-        return ServiceResponse::jsonNotification('', 200, $comments);;
+
+        if (Auth::guard('admin')->check()) {
+           $comments = $comments->where(function ($query) use ($user) {
+                $query->where('admin_id', '!=', $user->getAuthIdentifier())
+                    ->orWhereNull('admin_id');
+            })->get();
+        } else if (Auth::guard('investor')->check()) {
+           $comments = $comments->where(function ($query) use ($user) {
+                $query->where('investor_id', '!=', $user->getAuthIdentifier())
+                    ->orWhereNull('investor_id');
+            })->get();
+
+        }
+
+        return ServiceResponse::jsonNotification('', 200, $comments);
     }
 }

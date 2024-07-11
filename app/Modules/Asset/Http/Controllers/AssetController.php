@@ -298,7 +298,7 @@ class AssetController extends BaseController
             'total_floors' => $request->total_floors ?? null,
             'delivery_condition_description' => $request->delivery_condition_description,
             'project_link' => $request->project_link,
-            'location' => $request->location,
+            'location' => json_encode($request->location),
             'type' => $request->type,
             'floor' => $request->floor,
             'flat_number' => $request->flat_number,
@@ -520,7 +520,8 @@ class AssetController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('asset.create_data');
 
             $this->baseData['id'] = $id;
-            $this->baseData['name'] = Asset::where('id', $id)->first()->toArray()['project_name'];
+            $asset = Asset::where('id', $id)->first();
+            $this->baseData['name'] = $asset->project_name ?? '';
 
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));

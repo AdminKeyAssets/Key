@@ -43,6 +43,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/comments/{id}', $commentController . '@read')->name('comments.view')->middleware(['permission:' . getPermissionKey($commentModuleName, 'view', true)]);
     //Save
     Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);
+    Route::post('/{asset}/investor/comments', $commentController . '@investorStore')->name('comments.investor.store')->middleware(['auth:investor']);
     // Delete
     Route::post('/{asset}/comments/delete/{id?}', $commentController . '@destroy')->name('comments.delete')->middleware(['permission:' . getPermissionKey($commentModuleName, 'delete', true)]);
 

@@ -143,6 +143,9 @@ export default {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'tenant') {
                     formData.append(key, JSON.stringify(this.form[key]));
+                } else if (key === 'location') {
+                    formData.append('location[lat]', this.form[key]['lat']);
+                    formData.append('location[lng]', this.form[key]['lng']);
                 } else {
                     formData.append(key, this.form[key]);
                 }

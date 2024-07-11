@@ -1,41 +1,44 @@
 <template>
-        <div class="comments-container">
-            <el-badge :value="unreadCommentsCount" class="item" style="cursor: pointer">
-                <i class="el-icon-chat-round" @click="toggleUnreadCommentsList" style="color:white"></i>
-            </el-badge>
-            <el-drawer
-                title="Notifications"
-                class="notifications-sidebar"
-                :modal="false"
-                :size="'50%'"
-                :visible.sync="showUnreadComments">
-                <div class="comment-wrapper" v-for="comment in unreadComments" :key="comment.id">
-                    <el-card class="box-card" v-bind:class = "(comment.read)?'read-comment':'unread-comment'">
-                        <div slot="header" class="clearfix">
-                            <span>{{ comment.admin.name }} {{ comment.admin.surname }}</span>
-                        </div>
-                        <div class="text item">
-                            <div class="comment-body">
-                                <p>
-                                    {{ comment.comment }}
-                                </p>
-                                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
-                                   class="comment-attachment">View Attachment</a>
-                            </div>
-
-                            <div style="display: flex; justify-content: space-between; ">
-                                <span>{{ formatDate(comment.created_at) }}</span>
-                                <a :href="`/assets/comments/${comment.id}`" class="view-asset-link">
-                                    read
-                                </a>
-                            </div>
+    <div class="comments-container">
+        <el-badge :value="unreadCommentsCount" class="item" style="cursor: pointer">
+            <i class="el-icon-chat-round" @click="toggleUnreadCommentsList" style="color:white"></i>
+        </el-badge>
+        <el-drawer
+            title="Notifications"
+            class="notifications-sidebar"
+            :modal="false"
+            :size="'50%'"
+            :visible.sync="showUnreadComments">
+            <div class="comment-wrapper" v-for="comment in unreadComments" :key="comment.id">
+                <el-card class="box-card" v-bind:class="(comment.read)?'read-comment':'unread-comment'">
+                    <div slot="header" class="clearfix" v-if="comment.admin">
+                        <span>{{ comment.admin.name }} {{ comment.admin.surname }}</span>
+                    </div>
+                    <div slot="header" class="clearfix" v-else-if="comment.investor">
+                        <span>{{ comment.investor.name }} {{ comment.investor.surname }}</span>
+                    </div>
+                    <div class="text item">
+                        <div class="comment-body">
+                            <p>
+                                {{ comment.comment }}
+                            </p>
+                            <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
+                               class="comment-attachment">View Attachment</a>
                         </div>
 
-                    </el-card>
-                </div>
-            </el-drawer>
+                        <div style="display: flex; justify-content: space-between; ">
+                            <span>{{ formatDate(comment.created_at) }}</span>
+                            <a :href="`/assets/comments/${comment.id}`" class="view-asset-link">
+                                read
+                            </a>
+                        </div>
+                    </div>
 
-        </div>
+                </el-card>
+            </div>
+        </el-drawer>
+
+    </div>
 </template>
 
 <script>
@@ -55,13 +58,13 @@ export default {
         async fetchUnreadComments() {
             await axios.get('/assets/comments/unread').then(response => {
                 this.unreadComments = response.data.data;
-
-                this.unreadComments.forEach((comment, index) => {
-                    if (!comment.read) {
-                        this.unreadCommentsCount += 1;
-                    }
-                });
-
+                if (this.unreadComments && this.unreadComments.length) {
+                    this.unreadComments.forEach((comment, index) => {
+                        if (!comment.read) {
+                            this.unreadCommentsCount += 1;
+                        }
+                    });
+                }
             });
         },
 
@@ -96,10 +99,12 @@ export default {
     overflow: hidden;
     white-space: nowrap;
 }
-.box-card.read-comment{
+
+.box-card.read-comment {
     border-left: 5px solid gray;
 }
-.box-card.unread-comment{
+
+.box-card.unread-comment {
     border-left: 5px solid red;
 }
 </style>

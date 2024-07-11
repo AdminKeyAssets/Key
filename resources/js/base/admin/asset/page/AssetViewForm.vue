@@ -643,6 +643,7 @@
                     <div class="block col-md-9">
                         <AssetComments
                             :id="this.form.id"
+                            :investor-view="this.investorView"
                         ></AssetComments>
                     </div>
                 </div>
