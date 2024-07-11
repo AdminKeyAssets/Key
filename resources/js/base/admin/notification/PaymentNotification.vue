@@ -1,35 +1,40 @@
 <template>
-        <div class="payments-container">
-            <el-badge :value="pendingPaymentsCount" class="item" style="cursor: pointer" type="primary">
-                <i class="el-icon-bell" @click="togglePendingPaymentsList" style="color:white"></i>
-            </el-badge>
-            <el-drawer
-                title="Pending Payments"
-                class="notifications-sidebar"
-                :modal="false"
-                :size="'50%'"
-                :visible.sync="showPendingPayments">
-                <div class="payment-notification-wrapper" v-for="(payment, index) in pendingPayments" :key="index" :class="getItemClass(index)">
+    <div class="payments-container">
+
+        <el-popover
+            placement="bottom"
+            title="Pending Payments"
+            width="400"
+            trigger="click">
+            <div class="items-wrapper">
+                <div class="payment-notification-wrapper" v-for="(payment, index) in pendingPayments" :key="index"
+                     :class="getItemClass(index)">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                            <i class="el-icon-house"> {{payment.project_name}}</i>
+                            <i class="el-icon-house"> {{ payment.project_name }}</i>
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
-                                <i class="el-icon-money" style="color:green"> {{payment.amount}} {{payment.currency}}</i>
+                                <i class="el-icon-money" style="color:green"> {{ payment.amount }}
+                                    {{ payment.currency }}</i>
                             </div>
                             <div>
-                                <i class="el-icon-date" style="color:gray"> {{payment.payment_date}}</i>
+                                <i class="el-icon-date" style="color:gray"> {{ payment.payment_date }}</i>
                             </div>
                         </div>
                         <div class="text item" v-if="!investorView">
-                            <i class="el-icon-user"> {{payment.investor_name}} {{payment.investor_surname}}</i>
+                            <i class="el-icon-user"> {{ payment.investor_name }} {{ payment.investor_surname }}</i>
                         </div>
                     </el-card>
                 </div>
-            </el-drawer>
+            </div>
+            <el-badge slot="reference" :value="pendingPaymentsCount" class="item" style="cursor: pointer"
+                      type="primary">
+                <i class="el-icon-bell" @click="togglePendingPaymentsList" style="color:white"></i>
+            </el-badge>
+        </el-popover>
 
-        </div>
+    </div>
 </template>
 
 <script>
@@ -92,17 +97,29 @@ export default {
     white-space: nowrap;
 }
 
-.even-item .box-card{
+.even-item .box-card {
     border-left: 5px solid #807f7f;
 }
-.odd-item .box-card{
+
+.odd-item .box-card {
     border-left: 5px solid #646262;
 }
 
-.text.item{
+.text.item {
     margin-bottom: 7px;
 }
-.el-card__header{
+
+.el-card__header {
     padding: 18px 20px !important;
+}
+
+.items-wrapper::-webkit-scrollbar {
+    display: none;
+}
+.items-wrapper{
+    max-height: 70vh;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;
 }
 </style>

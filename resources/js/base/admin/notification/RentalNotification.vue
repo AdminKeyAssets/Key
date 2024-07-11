@@ -1,36 +1,37 @@
 <template>
         <div class="rentals-container">
-            <el-badge :value="pendingRentalsCount" class="item" style="cursor: pointer" type="warning">
-                <i class="el-icon-bell" @click="togglePendingRentalsList" style="color:white"></i>
-            </el-badge>
-            <el-drawer
+            <el-popover
+                placement="bottom"
                 title="Pending Rentals"
-                class="notifications-sidebar"
-                :modal="false"
-                :size="'50%'"
-                :visible.sync="showPendingRentals">
-                <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index" :class="getItemClass(index)">
-                    <el-card class="box-card">
-                        <div slot="header" class="clearfix">
-                            <i class="el-icon-house"> {{rental.project_name}}</i>
-                        </div>
-                        <div class="text item">
-                            <div style="padding-bottom: 5px">
-                                <i class="el-icon-money" style="color:green"> {{rental.amount}} {{rental.currency}}</i>
+                width="400"
+                trigger="click">
+                <div class="items-wrapper">
+                    <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index" :class="getItemClass(index)">
+                        <el-card class="box-card">
+                            <div slot="header" class="clearfix">
+                                <i class="el-icon-house"> {{rental.project_name}}</i>
                             </div>
-                            <div>
-                                <i class="el-icon-date" style="color:gray"> {{rental.payment_date}}</i>
+                            <div class="text item">
+                                <div style="padding-bottom: 5px">
+                                    <i class="el-icon-money" style="color:green"> {{rental.amount}} {{rental.currency}}</i>
+                                </div>
+                                <div>
+                                    <i class="el-icon-date" style="color:gray"> {{rental.payment_date}}</i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="text item">
-                            <i class="el-icon-user-solid"> {{rental.tenant_name}} {{rental.tenant_surname}}</i>
-                        </div>
-                        <div class="text item" v-if="!investorView">
-                            <i class="el-icon-user"> {{rental.investor_name}} {{rental.investor_surname}}</i>
-                        </div>
-                    </el-card>
+                            <div class="text item">
+                                <i class="el-icon-user-solid"> {{rental.tenant_name}} {{rental.tenant_surname}}</i>
+                            </div>
+                            <div class="text item" v-if="!investorView">
+                                <i class="el-icon-user"> {{rental.investor_name}} {{rental.investor_surname}}</i>
+                            </div>
+                        </el-card>
+                    </div>
                 </div>
-            </el-drawer>
+                <el-badge slot="reference" :value="pendingRentalsCount" class="item" style="cursor: pointer" type="warning">
+                    <i class="el-icon-bell" @click="togglePendingRentalsList" style="color:white"></i>
+                </el-badge>
+            </el-popover>
 
         </div>
 </template>
@@ -105,5 +106,15 @@ export default {
 }
 .el-card__header{
     padding: 10px 20px;
+}
+
+.items-wrapper::-webkit-scrollbar {
+    display: none;
+}
+.items-wrapper{
+    max-height: 70vh;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;
 }
 </style>

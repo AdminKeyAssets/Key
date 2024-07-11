@@ -1,43 +1,45 @@
 <template>
     <div class="comments-container">
-        <el-badge :value="unreadCommentsCount" class="item" style="cursor: pointer">
-            <i class="el-icon-chat-round" @click="toggleUnreadCommentsList" style="color:white"></i>
-        </el-badge>
-        <el-drawer
+
+        <el-popover
+            placement="bottom"
             title="Notifications"
-            class="notifications-sidebar"
-            :modal="false"
-            :size="'50%'"
-            :visible.sync="showUnreadComments">
-            <div class="comment-wrapper" v-for="comment in unreadComments" :key="comment.id">
-                <el-card class="box-card" v-bind:class="(comment.read)?'read-comment':'unread-comment'">
-                    <div slot="header" class="clearfix" v-if="comment.admin">
-                        <span>{{ comment.admin.name }} {{ comment.admin.surname }}</span>
-                    </div>
-                    <div slot="header" class="clearfix" v-else-if="comment.investor">
-                        <span>{{ comment.investor.name }} {{ comment.investor.surname }}</span>
-                    </div>
-                    <div class="text item">
-                        <div class="comment-body">
-                            <p>
-                                {{ comment.comment }}
-                            </p>
-                            <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
-                               class="comment-attachment">View Attachment</a>
+            width="400"
+            trigger="click">
+            <div class="items-wrapper">
+                <div class="comment-wrapper" v-for="comment in unreadComments" :key="comment.id">
+                    <el-card class="box-card" v-bind:class="(comment.read)?'read-comment':'unread-comment'">
+                        <div slot="header" class="clearfix" v-if="comment.admin">
+                            <span>{{ comment.admin.name }} {{ comment.admin.surname }}</span>
+                        </div>
+                        <div slot="header" class="clearfix" v-else-if="comment.investor">
+                            <span>{{ comment.investor.name }} {{ comment.investor.surname }}</span>
+                        </div>
+                        <div class="text item">
+                            <div class="comment-body">
+                                <p>
+                                    {{ comment.comment }}
+                                </p>
+                                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
+                                   class="comment-attachment">View Attachment</a>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; ">
+                                <span>{{ formatDate(comment.created_at) }}</span>
+                                <a :href="`/assets/comments/${comment.id}`" class="view-asset-link">
+                                    read
+                                </a>
+                            </div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; ">
-                            <span>{{ formatDate(comment.created_at) }}</span>
-                            <a :href="`/assets/comments/${comment.id}`" class="view-asset-link">
-                                read
-                            </a>
-                        </div>
-                    </div>
-
-                </el-card>
+                    </el-card>
+                </div>
             </div>
-        </el-drawer>
 
+            <el-badge slot="reference" :value="unreadCommentsCount" class="item" style="cursor: pointer">
+                <i class="el-icon-chat-round" @click="toggleUnreadCommentsList" style="color:white"></i>
+            </el-badge>
+        </el-popover>
     </div>
 </template>
 

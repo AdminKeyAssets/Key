@@ -849,7 +849,7 @@ padding: 60px;
 }
 
 #header {
-    display: flex;
+    display: inline-flex;
     flex-direction: row
 }
 
