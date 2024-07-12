@@ -3,7 +3,7 @@
 
         <el-popover
             placement="bottom"
-            title="Pending Payments"
+            title="Pending Installment"
             width="400"
             trigger="click">
             <div class="items-wrapper">

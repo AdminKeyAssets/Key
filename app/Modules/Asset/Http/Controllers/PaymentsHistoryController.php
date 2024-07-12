@@ -215,6 +215,11 @@ class PaymentsHistoryController extends BaseController
             $paymentHistory->delete();
 
             $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
+
+            if ($asset->paymentsHistories()->count() == 0) {
+                $asset->agreement_status = 'Installments';
+                $asset->save();
+            }
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }

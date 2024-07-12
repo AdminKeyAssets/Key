@@ -107,13 +107,14 @@ export default {
                 }
             })
                 .then(response => {
-                    this.loading = false;
                     responseParse(response);
                     const data = response.data.data;
                     setTimeout(() => {
                         window.location.href = `assets/${data.item.asset_id}/rental`;
                         // window.location.reload();
                     }, 1000);
+
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.loading = false;

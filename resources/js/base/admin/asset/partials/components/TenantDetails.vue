@@ -54,7 +54,12 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Date:</label>
             <div class="col-md-10 uppercase-medium">
-                <el-date-picker v-model="tenant.agreement_date" format="yyyy/MM/dd" type="date" placeholder="Pick a date"></el-date-picker>
+                <el-date-picker
+                    v-model="tenant.agreement_date"
+                    format="yyyy/MM/dd"
+                    type="date"
+                    value-format="yyyy/MM/dd"
+                    placeholder="Pick a date"></el-date-picker>
             </div>
         </div>
         <div class="form-group dashed">

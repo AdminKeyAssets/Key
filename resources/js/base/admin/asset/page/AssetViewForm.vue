@@ -21,13 +21,6 @@
                                 <el-row>
                                     <el-col :span="16">
 
-                                        <div v-if="form.project_name" class="form-group dashed">
-                                            <label class="col-md-2 control-label">Project Name:</label>
-                                            <div class="col-md-10 uppercase-medium">
-                                                {{ form.project_name }}
-                                            </div>
-                                        </div>
-
                                         <div v-if="form.project_description" class="form-group dashed">
                                             <label class="col-md-2 control-label">Project Description:</label>
                                             <div class="col-md-10 uppercase-medium">
@@ -308,7 +301,7 @@
                                                     <div v-if="form.tenant.agreement_term" class="form-group dashed">
                                                         <label class="col-md-4 control-label">Agreement Term:</label>
                                                         <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.agreement_term }}
+                                                            {{ form.tenant.agreement_term }} Month(s)
                                                         </div>
                                                     </div>
                                                 </el-col>
@@ -566,29 +559,10 @@
                     <div class="block col-md-3">
                         <div v-loading="loading"
                              class="form-horizontal form-bordered">
-                            <el-card class="box-card" v-if="nextPayment" style="margin-top: 20px">
-                                <div slot="header" class="clearfix box-card-header">
-                                    <span>Next Payment</span> <i
-                                    v-if="Date.now() < new Date(this.nextPayment.payment_date)"
-                                    class="el-icon-warning"
-                                    style="color: red"></i>
-                                </div>
-                                <div class="text item">
-                                    <p v-if="nextPayment.month">
-                                        Payment #: {{ this.nextPayment.month }}
-                                    </p>
-                                    <p v-if="nextPayment.payment_date">
-                                        Date: {{ this.nextPayment.payment_date }}
-                                    </p>
-                                    <p v-if="nextPayment.left_amount">
-                                        Amount: {{ this.nextPayment.left_amount }} {{ form.currency }}
-                                    </p>
-                                </div>
-                            </el-card>
 
                             <el-card class="box-card asset-manager" v-if="salesManager">
                                 <div slot="header" class="clearfix box-card-header">
-                                    <el-row>
+                                    <el-row style="display: flex; align-items: center;">
                                         <el-col :span="6">
                                             <ImageModal v-if="salesManager.profile_picture"
                                                         :thumbnail="salesManager.profile_picture"
@@ -596,7 +570,7 @@
                                                         :rounded="true"></ImageModal>
                                         </el-col>
                                         <el-col :span="18">
-                                            <span>Asset Manager</span>
+                                            <h4>Asset Manager</h4>
                                         </el-col>
                                     </el-row>
                                 </div>

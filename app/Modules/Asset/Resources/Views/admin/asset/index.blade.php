@@ -69,18 +69,10 @@
                                 <td class="text-center">
 
                                     @can(getPermissionKey('rental', 'index', true))
-                                        @if(count($item->rentalPaymentsHistories))
-                                            @include('admin::includes.actions.rental',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
-                                        @else
-                                            @include('admin::includes.actions.rental-disabled',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
-                                        @endif
+                                        @include('admin::includes.actions.rental',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
                                     @endcan
                                     @can(getPermissionKey('payment', 'index', true))
-                                        @if(count($item->paymentsHistories))
-                                            @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
-                                        @else
-                                            @include('admin::includes.actions.payment-disabled',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
-                                        @endif
+                                        @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['route' => route($moduleKey . '.edit', [ $item->id ])])

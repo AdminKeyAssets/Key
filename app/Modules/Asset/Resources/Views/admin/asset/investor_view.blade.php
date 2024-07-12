@@ -28,3 +28,8 @@
 
 @endsection
 
+<style>
+    .header-section{
+        text-align: center;
+    }
+</style>

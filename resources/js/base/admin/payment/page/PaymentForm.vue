@@ -105,7 +105,6 @@ export default {
                 }
             })
                 .then(response => {
-                    this.loading = false;
                     responseParse(response);
                     const data = response.data.data;
                     setTimeout(() => {
@@ -113,6 +112,7 @@ export default {
                         window.location.href = `assets/${data.item.asset_id}/payments`;
                         // window.location.reload();
                     }, 1000);
+                    this.loading = false;
                 })
                 .catch(error => {
                     this.loading = false;

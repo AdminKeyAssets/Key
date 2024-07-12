@@ -2,14 +2,14 @@
         <div class="rentals-container">
             <el-popover
                 placement="bottom"
-                title="Pending Rentals"
+                title="Pending Rent"
                 width="400"
                 trigger="click">
                 <div class="items-wrapper">
                     <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index" :class="getItemClass(index)">
                         <el-card class="box-card">
                             <div slot="header" class="clearfix">
-                                <i class="el-icon-house"> {{rental.project_name}}</i>
+                                <i class="el-icon-house"> {{rental.project_name}}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
                             </div>
                             <div class="text item">
                                 <div style="padding-bottom: 5px">
@@ -21,9 +21,6 @@
                             </div>
                             <div class="text item">
                                 <i class="el-icon-user-solid"> {{rental.tenant_name}} {{rental.tenant_surname}}</i>
-                            </div>
-                            <div class="text item" v-if="!investorView">
-                                <i class="el-icon-user"> {{rental.investor_name}} {{rental.investor_surname}}</i>
                             </div>
                         </el-card>
                     </div>

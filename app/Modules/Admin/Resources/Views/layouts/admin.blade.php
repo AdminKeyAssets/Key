@@ -21,13 +21,13 @@
                             <!-- User Info -->
                             <div class="sidebar-section sidebar-user clearfix sidebar-nav-mini-hide">
                                 <div class="sidebar-user-avatar">
-                                    <a href="{{ route('admin.profile.index') }}">
-                                        @if( \Auth::user()->profile_picture)
-                                            <img src="{{ \Auth::user()->profile_picture }}" alt="avatar">
-                                        @else
-                                            <img src="{{ config('admin.user_avatar') }}" alt="avatar">
-                                        @endif
-                                    </a>
+                                    @if( \Auth::user()->profile_picture)
+                                        <img src="{{ \Auth::user()->profile_picture }}" alt="avatar">
+                                    @else
+                                        <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                    @endif
+{{--                                    <a href="{{ route('admin.profile.index') }}">--}}
+{{--                                    </a>--}}
                                 </div>
                                 <div class="sidebar-user-name">{{ \Auth::user()->name }}</div>
                                 <div class="sidebar-user-links">
@@ -72,23 +72,6 @@
                                     @include('asset::admin.notifications.payments')
                                     @include('asset::admin.comment.unread')
                                 </div>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="el-icon-more-outline"></i> <i class="fa fa-angle-down"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
-                                    <li class="dropdown-header text-center">My Account</li>
-                                    <li>
-                                        <a href="javascript:;" class="logout-link"><i
-                                                class="el-icon-switch-button pull-right"></i> logout</a>
-                                        <form action="{{ route('admin.logout') }}" id="logout-form" method="post"
-                                              style="display: none;">
-                                            {{csrf_field()}}
-                                            <button type="submit"></button>
-                                        </form>
-                                    </li>
-                                </ul>
                             </li>
                             <!-- END User Dropdown -->
                         </ul>
