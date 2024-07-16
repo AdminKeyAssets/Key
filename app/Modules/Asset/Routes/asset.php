@@ -40,7 +40,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
 
     Route::get('/{asset}/comments', $commentController . '@index')->name('comments.list');
     Route::get('/comments/unread', $commentController . '@unread')->name('comments.list.unread');
-    Route::get('/comments/{id}', $commentController . '@read')->name('comments.view')->middleware(['permission:' . getPermissionKey($commentModuleName, 'view', true)]);
+    Route::get('/comments/{id}', $commentController . '@read')->name('comments.view');
     //Save
     Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);
     Route::post('/{asset}/investor/comments', $commentController . '@investorStore')->name('comments.investor.store')->middleware(['auth:investor']);

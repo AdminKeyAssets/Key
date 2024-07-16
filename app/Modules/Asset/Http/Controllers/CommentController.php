@@ -146,14 +146,29 @@ class CommentController extends BaseController
     public function read($commentId)
     {
         $comment = Comment::where('id', $commentId)->first();
-
         $assetId = $comment->asset_id;
+        $user = auth('investor')->user();
 
-        Comment::where('asset_id', $assetId)->update([
+        if (!$user) {
+            $user = auth('admin')->user();
+        }
+
+        $comments = Comment::where('asset_id', $assetId);
+        $route = route('asset.view', [$assetId]);
+        if (Auth::guard('investor')->check()) {
+            $comments = $comments->where('investor_id', '!=', $user->getAuthIdentifier())
+                ->orWhereNull('investor_id');
+            $route = route('asset.details', [$assetId]);
+        } elseif (Auth::guard('admin')->check()) {
+            $comments = $comments->where('admin_id', '!=', $user->getAuthIdentifier())
+                ->orWhereNull('admin_id');
+        }
+
+        $comments->update([
             'read' => 1
         ]);
 
-        return redirect(route('asset.view', [$assetId]));
+        return redirect($route . '#comments');
     }
 
     /**
@@ -197,12 +212,12 @@ class CommentController extends BaseController
 
 
         if (Auth::guard('admin')->check()) {
-           $comments = $comments->where(function ($query) use ($user) {
+            $comments = $comments->where(function ($query) use ($user) {
                 $query->where('admin_id', '!=', $user->getAuthIdentifier())
                     ->orWhereNull('admin_id');
             })->get();
         } else if (Auth::guard('investor')->check()) {
-           $comments = $comments->where(function ($query) use ($user) {
+            $comments = $comments->where(function ($query) use ($user) {
                 $query->where('investor_id', '!=', $user->getAuthIdentifier())
                     ->orWhereNull('investor_id');
             })->get();

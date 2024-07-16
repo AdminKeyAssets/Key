@@ -145,7 +145,7 @@
                                             <el-col :span="24">
                                                 <div v-if="form.delivery_condition_description" class="form-group">
                                                     <label class="col-md-4 control-label">Condition Description:</label>
-                                                    <div class="col-md-6 uppercase-medium">
+                                                    <div class="col-md-6 uppercase-medium" style="white-space: pre-wrap">
                                                         {{ form.delivery_condition_description }}
                                                     </div>
                                                 </div>
@@ -611,7 +611,7 @@
                             </el-card>
                         </div>
                     </div>
-                    <div class="block col-md-9">
+                    <div class="block col-md-9" id="comments">
                         <AssetComments
                             :id="this.form.id"
                             :investor-view="this.investorView"
