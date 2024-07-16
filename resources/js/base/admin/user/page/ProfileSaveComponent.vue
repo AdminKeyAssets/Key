@@ -8,22 +8,66 @@
 
             <el-row>
 
-                <div class="form-group">
-
-                    <label class="col-md-2 control-label">{{ lang.name }} <span class="text-danger">*</span>:</label>
+                <div class="form-group" v-if="form.name || form.surname">
+                    <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
-                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                  v-model="form.name"></el-input>
+                        <span v-if="form.name">{{ form.name }} </span><span>{{ form.surname }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group" v-if="form.name || form.surname">
+                    <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <span v-if="form.name">{{ form.name }} </span><span>{{ form.surname }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group" v-if="form.pid">
+                    <label class="col-md-2 control-label">ID/Passport Number: <span
+                        class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <span>
+                            {{ form.pid }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group" v-if="form.citizenship">
+                    <label class="col-md-2 control-label">Citizenship: <span
+                        class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <span>{{ form.citizenship }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group" v-if="form.address">
+                    <label class="col-md-2 control-label">Address: <span
+                        class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <span v-if="form.address">{{ form.address }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group" v-if="form.email">
+                    <label class="col-md-2 control-label">Email: <span class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <span>{{ form.email }}</span>
                     </div>
 
                 </div>
 
-                <div class="form-group">
-
-                    <label class="col-md-2 control-label">{{ lang.email }} <span class="text-danger">*</span>:</label>
+                <div class="form-group phone" v-if="form.prefix && form.phone">
+                    <label class="col-md-2 control-label">Phone: </label>
                     <div class="col-md-6">
-                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                  v-model="form.email"></el-input>
+                        <span>{{ form.prefix }}</span><span>{{ form.phone }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group" v-if="form.manager">
+
+                    <label class="col-md-2 control-label">Asset Manager: <span class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <span>{{ form.manager }}</span>
                     </div>
 
                 </div>
@@ -42,7 +86,7 @@
 
 
             <div class="el-form-item registration-btn">
-                <el-button type="primary" @click="save" :disabled="loading || !form.name || !form.email" style="margin: 0 1rem">{{ lang.save_text }}</el-button>
+                <el-button type="primary" @click="save" :disabled="loading" style="margin: 0 1rem">{{ lang.save_text }}</el-button>
             </div>
         </el-form>
     </div>
@@ -90,9 +134,17 @@ export default {
         modifyCreateData(){
             this.form = {
                 name: this.user ? this.user.name : '',
+                surname: this.user ? this.user.surname : '',
+                pid: this.user ? this.user.pid : '',
                 email: this.user ? this.user.email : '',
+                address: this.user ? this.user.address : '',
+                prefix: this.user ? this.user.prefix : '',
+                phone: this.user ? this.user.phone : '',
+                citizenship: this.user ? this.user.citizenship : '',
+                manager: this.user ? this.user.manager : '',
                 password: ''
             }
+            console.log(this.user)
 
         },
 

@@ -66,7 +66,6 @@ Vue.component('pending-rentals', require('./base/admin/notification/RentalNotifi
 
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
-Vue.component('admin-investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
 Vue.component('admin-investor-component', require('./base/admin/investor/partials/Investor').default);
 Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 

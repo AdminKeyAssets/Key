@@ -8,6 +8,9 @@ use App\Modules\Admin\Helper\UserHelper;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\Profile\SaveProfileRequest;
 use App\Modules\Admin\Http\Requests\User\SaveUserRequest;
+use App\Modules\Admin\Models\Country;
+use App\Modules\Admin\Models\User\Admin;
+use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Admin\Repositories\Contracts\IAdminRepository;
 use App\Modules\Admin\Repositories\Contracts\IPermissionRepository;
 use App\Modules\Admin\Repositories\Contracts\IRoleRepository;
@@ -54,15 +57,22 @@ class ProfileController extends BaseController
     {
 
         try {
-
-            $this->baseData['user'] = \Auth::guard('admin')->user();
-            $this->baseData['routes'] = ProfileHelper::getRoutes();
+            if (\Auth::guard('investor')->check()) {
+                $user = \Auth::guard('investor')->user();
+                $this->baseData['user'] = $user;
+                $this->baseData['routes'] = ProfileHelper::getRoutes('investor');
+                $manager = Admin::where('id', $user->admin_id)->first();
+                $this->baseData['user']['manager'] = $manager->name . ' ' . $manager->surname;
+            } else {
+                $this->baseData['user'] = \Auth::guard('admin')->user();
+                $this->baseData['routes'] = ProfileHelper::getRoutes();
+            }
 
         } catch (\Exception $ex) {
-            return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
         }
 
-        return  view($this->baseModuleName   . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
     }
 
     /**
@@ -72,14 +82,24 @@ class ProfileController extends BaseController
     public function getCreateData(Request $request)
     {
         try {
-            $this->baseData['routes'] = ProfileHelper::getRoutes();
-            $this->baseData['user'] = \Auth::guard('admin')->user();
+            if (\Auth::guard('investor')->check()) {
+                $user = \Auth::guard('investor')->user();
+                $this->baseData['user'] = $user;
+                $this->baseData['routes'] = ProfileHelper::getRoutes('investor');
+                $manager = Admin::where('id', $user->admin_id)->first();
+                $this->baseData['manager'] = $manager->name . ' ' . $manager->surname;
+
+
+            } else {
+                $this->baseData['routes'] = ProfileHelper::getRoutes();
+                $this->baseData['user'] = \Auth::guard('admin')->user();
+            }
         } catch (\Exception $ex) {
             Log::error('Error during user profile index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
 
-        return ServiceResponse::jsonNotification(__('Get profile data successfully'), 200,  $this->baseData );
+        return ServiceResponse::jsonNotification(__('Get profile data successfully'), 200, $this->baseData);
     }
 
     /**
@@ -90,15 +110,23 @@ class ProfileController extends BaseController
     {
         try {
 
-            // Save role.
-            $this->adminRepository->updateProfile($request, \Auth::guard('admin')->user());
+            if (\Auth::guard('investor')->check()) {
+                $user = \Auth::guard('investor')->user();
+                Investor::where('id', $user->getAuthIdentifier())->update([
+                        'password' => bcrypt($request->password)
+                    ]
+                );
+            } else {
+                $user = \Auth::guard('admin')->user();
+                $this->adminRepository->updateProfile($request, $user);
+            }
 
         } catch (\Exception $ex) {
             Log::error('Error during user profile update', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
 
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['save_successfully'], 200,  $this->baseData );
+        return ServiceResponse::jsonNotification($this->baseData['trans_text']['save_successfully'], 200, $this->baseData);
     }
 
 }

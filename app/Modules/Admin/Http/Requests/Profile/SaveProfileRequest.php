@@ -24,11 +24,7 @@ class SaveProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'  => 'required',
-            'email' => 'required',
-            'password'  => ['nullable','min:8','regex:/[a-z]/',
-                'regex:/[A-Z]/',
-                'regex:/[0-9]/'],
+            'password'  => ['nullable'],
         ];
     }
 }
