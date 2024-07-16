@@ -33,6 +33,10 @@
                                 <div class="sidebar-user-links">
                                     <a href="javascript:;" class="logout-link" data-toggle="tooltip"
                                        data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
+                                    <form action="{{ route('admin.logout') }}" id="logout-form" method="post" style="display: none;">
+                                        {{csrf_field()}}
+                                        <button type="submit"></button>
+                                    </form>
                                 </div>
                             </div>
                             <!-- END User Info -->
