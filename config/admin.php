@@ -34,7 +34,7 @@ return [
      */
     'login_logo'                => [
         [
-            'src'       => 'admin_resources/img/placeholders/avatars/KA.png',
+            'src'       => 'admin_resources/img/placeholders/avatars/KA_WHITE-01.svg',
             'style'     => 'width: 100px'
         ]
     ],
