@@ -309,7 +309,7 @@
                                                     <div v-if="form.tenant.monthly_rent" class="form-group dashed">
                                                         <label class="col-md-4 control-label">Monthly Rent:</label>
                                                         <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.monthly_rent }} {{ form.tenant.currency }}
+                                                            {{ formatPrice(form.tenant.monthly_rent) }} {{ form.tenant.currency }}
                                                         </div>
                                                     </div>
                                                 </el-col>
@@ -576,7 +576,7 @@
                                 </div>
                                 <div class="text item">
                                     <p v-if="salesManager.name || salesManager.surname">
-                                        Name: {{ salesManager.name }} {{ salesManager.surname }}
+                                        {{ salesManager.name }} {{ salesManager.surname }}
                                     </p>
                                     <p v-if="salesManager.phone">
                                         <a :href="whatsappLink" target="_blank" class="phone-container">
@@ -604,10 +604,7 @@
                                     </p>
                                     <p v-if="salesManager.email">
                                         <a :href="'mailto:' + salesManager.email">
-                                            Email: {{ salesManager.email }}
-                                        </a>
-                                        <a :href="'mailto:' + salesManager.email">
-                                            <i class="fas fa-envelope"></i>
+                                            <i class="el-icon-message"> {{ salesManager.email }}</i>
                                         </a>
                                     </p>
                                 </div>

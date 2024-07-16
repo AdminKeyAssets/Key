@@ -60,11 +60,11 @@
                                 <td>{!! $item->delivery_date !!}</td>
                                 <td>{!! $item->type !!}</td>
                                 <td>{!! $item->area !!}</td>
-                                <td>{!! number_format($item->total_price,2,".",",") !!}</td>
+                                <td>{!! number_format($item->total_price,0,".",",") !!}</td>
                                 <td>{!! $item->asset_status !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date : '' !!}</td>
-                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments)  && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->left_amount : '' !!}</td>
+                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments)  && count($item->payments->where('status', 0)) ? number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") : '' !!}</td>
 
                                 <td class="text-center">
 
