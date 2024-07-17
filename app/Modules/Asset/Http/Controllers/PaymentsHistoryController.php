@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\PaymentScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
@@ -16,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
 
 class PaymentsHistoryController extends BaseController
@@ -226,4 +228,11 @@ class PaymentsHistoryController extends BaseController
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 
+
+    public function export(Request $request, $assetId)
+    {
+        $filters = ['asset_id' => $assetId];
+
+        return Excel::download(new PaymentScheduleExport($filters), 'payments_schedule.xlsx');
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\RentsScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
 use App\Modules\Asset\Http\Requests\LeaseRequest;
@@ -19,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
 
 class RentalPaymentsHistoryController extends BaseController
@@ -232,5 +234,11 @@ class RentalPaymentsHistoryController extends BaseController
         $exactMonthDifference = $totalMonths + $fractionOfMonth;
 
         return $price * $exactMonthDifference;
+    }
+
+    public function export(Request $request, $assetId)
+    {
+        $filters = ['asset_id' => $assetId];
+        return Excel::download(new RentsScheduleExport($filters), 'rents_schedule.xlsx');
     }
 }

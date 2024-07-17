@@ -33,7 +33,9 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/{asset}/payments/store', $paymentController . '@store')->name('payments.store')->middleware(['permission:' . getPermissionKey($paymentModuleName, 'create', true)]);
     // Delete
     Route::post('/{asset}/payments/delete', $paymentController . '@destroy')->name('payments.delete')->middleware(['permission:' . getPermissionKey($paymentModuleName, 'delete', true)]);
-
+    //Export Rentals
+    Route::get('/{asset}/payments/export', $paymentController . '@export')
+        ->name('export');
 
     $commentController = 'CommentController';
     $commentModuleName = 'comment';
@@ -61,6 +63,10 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/{asset}/rental/store', $leaseController . '@store')->name('rental.store')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'create', true)]);
     // Delete
     Route::post('/{asset}/rental/delete', $leaseController . '@destroy')->name('rental.delete')->middleware(['permission:' . getPermissionKey($leaseModuleName, 'delete', true)]);
+    //Export Rentals
+    Route::get('/{asset}/rental/export', $leaseController . '@export')
+        ->name('export');
+
 
     $revenueController = 'RevenueController';
     $revenueModuleName = 'revenue';
