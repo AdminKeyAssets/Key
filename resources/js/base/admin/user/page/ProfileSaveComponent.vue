@@ -15,13 +15,6 @@
                     </div>
                 </div>
 
-                <div class="form-group" v-if="form.name || form.surname">
-                    <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
-                    <div class="col-md-6">
-                        <span v-if="form.name">{{ form.name }} </span><span>{{ form.surname }}</span>
-                    </div>
-                </div>
-
                 <div class="form-group" v-if="form.pid">
                     <label class="col-md-2 control-label">ID/Passport Number: <span
                         class="text-danger">*</span>:</label>

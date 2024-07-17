@@ -37,7 +37,18 @@ Route::group(['prefix' => 'admin', 'middleware' => ['guest:admin'], 'namespace' 
     /**
      * Logout method.
      */
-    Route::post('logout', 'LoginController@logout')
+    Route::get('logout', 'LoginController@logout')
         ->name('admin.logout');
+
+});
+
+
+Route::group(['prefix' => 'investor','namespace' => 'Auth'], function () {
+
+    /**
+     * Logout method.
+     */
+    Route::get('logout', 'InvestorLoginController@logout')
+        ->name('investor.logout');
 
 });

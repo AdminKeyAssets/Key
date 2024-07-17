@@ -14,7 +14,7 @@
                             <!-- Brand -->
                             <a href="" class="sidebar-brand">
                                 <i class="gi gi-flash"></i><span
-                                        class="sidebar-nav-mini-hide"><strong>{{ config('admin.project_name') }}</strong></span>
+                                    class="sidebar-nav-mini-hide"><strong>{{ config('admin.project_name') }}</strong></span>
                             </a>
                             <!-- END Brand -->
 
@@ -31,16 +31,17 @@
                                 </div>
                                 <div class="sidebar-user-name">{{ \Auth::user()->name }}</div>
                                 <div class="sidebar-user-links">
-                                    <a href="{{ \Auth::guard('investor')->check() ? route('investor.profile.index') : route('admin.profile.index')}}" data-toggle="tooltip"
+                                    <a href="{{ \Auth::guard('investor')->check() ? route('investor.profile.index') : route('admin.profile.index')}}"
+                                       data-toggle="tooltip"
                                        data-placement="bottom" title="Profile"><i class="el-icon-user"></i></a>
 
-                                    <a href="javascript:;" class="logout-link" data-toggle="tooltip"
-                                       data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
-                                    <form action="{{ route('admin.logout') }}" id="logout-form" method="post"
-                                          style="display: none;">
-                                        {{csrf_field()}}
-                                        <button type="submit"></button>
-                                    </form>
+                                    @if(\Auth::guard('admin')->check())
+                                        <a href="{{ route('admin.logout') }}" class="logout-link" data-toggle="tooltip"
+                                           data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
+                                    @elseif(\Auth::guard('investor')->check())
+                                        <a href="{{route('investor.logout')}}" class="logout-link" data-toggle="tooltip"
+                                           data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
+                                    @endif
                                 </div>
                             </div>
                             <!-- END User Info -->
@@ -95,8 +96,8 @@
                     <footer class="clearfix">
                         <div class="pull-right">
                             Handcrafted with <i class="fa fa-heart text-danger"></i> by <a
-                                    href="{{ config('admin.handcrafted_by_url') }}"
-                                    target="_blank">{{ config('admin.handcrafted_by') }}</a>
+                                href="{{ config('admin.handcrafted_by_url') }}"
+                                target="_blank">{{ config('admin.handcrafted_by') }}</a>
                         </div>
                     </footer>
                     <!-- END Footer -->
