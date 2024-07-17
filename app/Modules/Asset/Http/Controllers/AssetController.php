@@ -403,8 +403,9 @@ class AssetController extends BaseController
             if (!$currentValueLastItem || $currentValueLastItem->value != $request->current_value) {
                 $currentValueAttachmentPath = null;
                 if (isset($request->id)) {
+
                     if ($request->hasFile('current_value_attachment')) {
-                        if ($currentValueLastItem->current_value_attachment && Storage::disk('public')->exists($currentValueLastItem->current_value_attachment)) {
+                        if ($currentValueLastItem && $currentValueLastItem->current_value_attachment && Storage::disk('public')->exists($currentValueLastItem->current_value_attachment)) {
                             Storage::disk('public')->delete($currentValueLastItem->current_value_attachment);
                         }
                         $currentValueAttachmentFile = $request->file('current_value_attachment');
