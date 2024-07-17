@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Models;
 
+use App\Modules\Admin\Models\User\Investor;
 use Illuminate\Database\Eloquent\Model;
 
 class Asset extends Model
@@ -85,5 +86,10 @@ class Asset extends Model
     public function rentalPaymentsHistories()
     {
         return $this->hasMany(RentalPaymentsHistory::class);
+    }
+
+    public function investor()
+    {
+        return $this->belongsTo(Investor::class);
     }
 }

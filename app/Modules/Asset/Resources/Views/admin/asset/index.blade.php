@@ -32,14 +32,13 @@
                         <tr>
                             <th> Name</th>
                             <th> City</th>
-                            <th> Delivery Date</th>
-                            <th> Asset Type</th>
-                            <th> Size (m2)</th>
-                            <th> Total Price</th>
-                            <th> Asset Status</th>
+                            @if(Auth::guard('admin')->check())
+                                <th> Investor</th>
+                            @endif
+                            <th> Asset Type / Size</th>
                             <th> Agreement Status</th>
-                            <th> Next Payment Date</th>
-                            <th> Next Payment</th>
+                            <th> Next Installment</th>
+                            <th> Next Rent</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
@@ -57,14 +56,13 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>
-                                <td>{!! $item->delivery_date !!}</td>
-                                <td>{!! $item->type !!}</td>
-                                <td>{!! $item->area !!}</td>
-                                <td>{!! number_format($item->total_price,0,".",",") !!}</td>
-                                <td>{!! $item->asset_status !!}</td>
+                                @if(Auth::guard('admin')->check())
+                                    <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
+                                @endif
+                                <td>{!! $item->type !!} - {!! $item->area !!}sq.m</td>
                                 <td>{!! $item->agreement_status !!}</td>
-                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date : '' !!}</td>
-                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments)  && count($item->payments->where('status', 0)) ? number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") : '' !!}</td>
+                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") . ' ' . $item->payments->where('status', 0)->first()->currency : '' !!}</td>
+                                <td>{!! $item->asset_status == 'Rented' && count($item->rentals) && count($item->rentals->where('status', 0)) ? $item->rentals->where('status', 0)->first()->payment_date . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount,0,".",",") . ' ' . $item->rentals->where('status', 0)->first()->currency : '' !!}</td>
 
                                 <td class="text-center">
 
@@ -79,8 +77,8 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                            :url="'{{ route($moduleKey . '.delete') }}'"
-                                            :id="{{ $item->id }}"
+                                                :url="'{{ route($moduleKey . '.delete') }}'"
+                                                :id="{{ $item->id }}"
                                         ></delete-component>
                                     @endcan
                                 </td>
