@@ -16,13 +16,13 @@ class AssetRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation()
-    {
-        // Decode the tenant JSON
-        $this->merge([
-            'tenant' => json_decode($this->input('tenant'), true),
-        ]);
-    }
+//    protected function prepareForValidation()
+//    {
+//        // Decode the tenant JSON
+//        $this->merge([
+//            'tenant' => json_decode($this->input('tenant'), true),
+//        ]);
+//    }
 
     /**
      * Get the validation rules that apply to the request.

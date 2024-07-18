@@ -146,7 +146,14 @@ export default {
                 } else if (key === 'rentals') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'tenant') {
-                    formData.append(key, JSON.stringify(this.form[key]));
+                    for (let tenantKey in this.form.tenant) {
+                        if (tenantKey === 'passport' && this.form.tenant[tenantKey] && this.form.tenant[tenantKey].file) {
+                            formData.append('tenant[passport]', this.form.tenant[tenantKey].file);
+                        } else {
+                            formData.append(`tenant[${tenantKey}]`, this.form.tenant[tenantKey]);
+                        }
+                    }
+                    // formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'location') {
                     formData.append('location[lat]', this.form[key]['lat']);
                     formData.append('location[lng]', this.form[key]['lng']);

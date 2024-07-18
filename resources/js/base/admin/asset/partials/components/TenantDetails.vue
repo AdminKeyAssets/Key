@@ -51,6 +51,24 @@
                 </el-input>
             </div>
         </div>
+
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Passport:</label>
+            <div class="col-md-10 uppercase-medium">
+                <input type="file" @change="onPassportChange" accept="image/*">
+                <div v-if="tenant.passport">
+                    <ImageModal v-if="tenant.passport.preview"
+                                :image-path="tenant.passport.preview"
+                                :thumbnail="tenant.passport.preview"></ImageModal>
+                    <ImageModal v-else
+                                :image-path="tenant.passport"
+                                :thumbnail="tenant.passport"></ImageModal>
+                    <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                               @click="removePassport"></el-button>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Date:</label>
             <div class="col-md-10 uppercase-medium">
@@ -94,7 +112,9 @@
 </template>
 
 <script>
+import ImageModal from "../../../../components/admin/ImageModal.vue";
 export default {
+    components: {ImageModal},
     props: ['tenant', 'loading', 'countries', 'prefixes'],
     data() {
         return {
@@ -125,7 +145,22 @@ export default {
                 terms.push(i);
             }
             return terms;
-        }
+        },
+        onPassportChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.tenant.passport = { file: file, preview: e.target.result };
+                    this.$emit('update-tenant', this.tenant);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removePassport() {
+            this.tenant.passport = null;
+            this.$emit('update-tenant', this.tenant);
+        },
     }
 }
 </script>

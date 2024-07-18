@@ -19,7 +19,8 @@ class Tenant extends Model
         'agreement_term',
         'monthly_rent',
         'currency',
-        'status'
+        'status',
+        'passport'
     ];
 
     public function asset()
