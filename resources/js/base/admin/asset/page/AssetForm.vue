@@ -2,11 +2,6 @@
     <div>
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
-
-                <div class="project-title">
-
-                </div>
-
                 <AssetMain
                     :routes="routes"
                     :updateData="updateData"

@@ -2,11 +2,8 @@
     <div>
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
-                <div class="project-title">
-
-                </div>
-                <div>
-                    <div class="block col-md-9">
+                <div class="content-wrapper">
+                    <div class="block col-md-9 asset-details-wrapper">
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
@@ -565,7 +562,7 @@
                             </el-row>
                         </el-form>
                     </div>
-                    <div class="block col-md-3">
+                    <div class="block col-md-3 asset-manager-details">
                         <div v-loading="loading"
                              class="form-horizontal form-bordered">
 
@@ -836,6 +833,14 @@ export default {
     .payments-wrapper {
         display: flex;
         justify-content: space-between;
+    }
+    .content-wrapper{
+        position: relative;
+    }
+    .block.col-md-3.asset-manager-details{
+        position: fixed;
+        max-width: 21%;
+        right: 25px;
     }
 }
 

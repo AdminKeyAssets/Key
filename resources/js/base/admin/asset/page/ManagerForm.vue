@@ -3,10 +3,6 @@
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
 
-                <div class="project-title">
-
-                </div>
-
                 <div class="block">
                     <el-form ref="form" :model="form" class="form-horizontal form-bordered">
 
