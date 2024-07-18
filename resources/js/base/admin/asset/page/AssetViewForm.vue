@@ -606,6 +606,8 @@
                                             <ImageModal v-if="salesManager.profile_picture"
                                                         :thumbnail="salesManager.profile_picture"
                                                         :image-path="salesManager.profile_picture"
+                                                        :width="50"
+                                                        :height="50"
                                                         :rounded="true"></ImageModal>
                                         </el-col>
                                         <el-col :span="18">
