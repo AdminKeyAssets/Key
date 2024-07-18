@@ -121,7 +121,8 @@ class PaymentsHistoryController extends BaseController
                 }
 
                 $file = $request->file('attachment');
-                $path = $file->store('uploads', 'public');
+                $originalFileName = $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $originalFileName,'public');
                 $path = Storage::url($path);
 
             } else if ($request->input('attachment') === null) {
@@ -144,7 +145,8 @@ class PaymentsHistoryController extends BaseController
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
-                $path = $file->store('uploads', 'public');
+                $originalFileName = $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $originalFileName,'public');
                 $path = Storage::url($path);
             }
 

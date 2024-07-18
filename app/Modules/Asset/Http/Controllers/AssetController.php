@@ -124,6 +124,7 @@ class AssetController extends BaseController
 
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
+                $this->baseData['item']['agreements'] = $asset->agreements;
                 $this->baseData['item']['payments'] = $asset->payments;
                 $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
                 $this->baseData['item']['rental_payments_histories'] = $asset->rentalPaymentsHistories;
@@ -171,7 +172,8 @@ class AssetController extends BaseController
                 }
 
                 $file = $request->file('icon');
-                $path = $file->store('uploads', 'public');
+                $originalFileName = $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $originalFileName,'public');
                 $path = Storage::url($path);
             } else if ($request->input('icon') === null) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
@@ -188,7 +190,8 @@ class AssetController extends BaseController
                 }
 
                 $floorPlanFile = $request->file('floor_plan');
-                $floorPlanPath = $floorPlanFile->store('uploads', 'public');
+                $originalFileName = $floorPlanFile->getClientOriginalName();
+                $floorPlanPath = $floorPlanFile->storeAs('uploads', $originalFileName,'public');
                 $floorPlanPath = Storage::url($floorPlanPath);
             } else if ($request->input('flat_plan') === null) {
                 if ($asset->flat_plan && Storage::disk('public')->exists($asset->flat_plan)) {
@@ -205,7 +208,8 @@ class AssetController extends BaseController
                 }
 
                 $flatPlanFile = $request->file('flat_plan');
-                $flatPlanPath = $flatPlanFile->store('uploads', 'public');
+                $originalFileName = $flatPlanFile->getClientOriginalName();
+                $flatPlanPath = $flatPlanFile->storeAs('uploads', $originalFileName,'public');
                 $flatPlanPath = Storage::url($flatPlanPath);
             } else if ($request->input('flat_plan') === null) {
                 if ($asset->flat_plan && Storage::disk('public')->exists($asset->flat_plan)) {
@@ -216,29 +220,13 @@ class AssetController extends BaseController
                 $flatPlanPath = $request->flat_plan;
             }
 
-            if ($request->hasFile('agreement')) {
-                if ($asset->agreement && Storage::disk('public')->exists($asset->agreement)) {
-                    Storage::disk('public')->delete($asset->agreement);
-                }
-
-                $agreementFile = $request->file('agreement');
-                $agreementPath = $agreementFile->store('uploads', 'public');
-                $agreementPath = Storage::url($agreementPath);
-            } else if ($request->input('agreement') === null) {
-                if ($asset->agreement && Storage::disk('public')->exists($asset->agreement)) {
-                    Storage::disk('public')->delete($asset->agreement);
-                }
-                $agreementPath = null;
-            } else {
-                $agreementPath = $request->agreement;
-            }
-
             if ($request->hasFile('ownership_certificate')) {
                 if ($asset->ownership_certificate && Storage::disk('public')->exists($asset->ownership_certificate)) {
                     Storage::disk('public')->delete($asset->ownership_certificate);
                 }
                 $ownershipCertificateFile = $request->file('ownership_certificate');
-                $ownershipCertificatePath = $ownershipCertificateFile->store('uploads', 'public');
+                $originalFileName = $ownershipCertificateFile->getClientOriginalName();
+                $ownershipCertificatePath = $ownershipCertificateFile->storeAs('uploads', $originalFileName,'public');
                 $ownershipCertificatePath = Storage::url($ownershipCertificatePath);
 
             } else if ($request->input('ownership_certificate') === null) {
@@ -253,27 +241,26 @@ class AssetController extends BaseController
         } else {
             if ($request->hasFile('icon')) {
                 $file = $request->file('icon');
-                $path = $file->store('uploads', 'public');
+                $originalFileName = $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $originalFileName,'public');
                 $path = Storage::url($path);
             }
             if ($request->hasFile('floor_plan')) {
                 $floorPlanFile = $request->file('floor_plan');
-                $floorPlanPath = $floorPlanFile->store('uploads', 'public');
+                $originalFileName = $floorPlanFile->getClientOriginalName();
+                $floorPlanPath = $floorPlanFile->storeAs('uploads', $originalFileName,'public');
                 $floorPlanPath = Storage::url($floorPlanPath);
             }
             if ($request->hasFile('flat_plan')) {
                 $flatPlanFile = $request->file('flat_plan');
-                $flatPlanPath = $flatPlanFile->store('uploads', 'public');
+                $originalFileName = $flatPlanFile->getClientOriginalName();
+                $flatPlanPath = $flatPlanFile->storeAs('uploads', $originalFileName,'public');
                 $flatPlanPath = Storage::url($flatPlanPath);
-            }
-            if ($request->hasFile('agreement')) {
-                $agreementFile = $request->file('agreement');
-                $agreementPath = $agreementFile->store('uploads', 'public');
-                $agreementPath = Storage::url($agreementPath);
             }
             if ($request->hasFile('ownership_certificate')) {
                 $ownershipCertificateFile = $request->file('ownership_certificate');
-                $ownershipCertificatePath = $ownershipCertificateFile->store('uploads', 'public');
+                $originalFileName = $ownershipCertificateFile->getClientOriginalName();
+                $ownershipCertificatePath = $ownershipCertificateFile->storeAs('uploads', $originalFileName,'public');
                 $ownershipCertificatePath = Storage::url($ownershipCertificatePath);
             }
         }
@@ -289,7 +276,7 @@ class AssetController extends BaseController
             'icon' => $path,
             'floor_plan' => $floorPlanPath && $floorPlanPath !== 'null' ? $floorPlanPath : null,
             'flat_plan' => $flatPlanPath  && $flatPlanPath !== 'null' ? $flatPlanPath : null,
-            'agreement' => $agreementPath  && $agreementPath !== 'null' ? $agreementPath : null,
+            'agreement' => null,
             'ownership_certificate' => $ownershipCertificatePath  && $ownershipCertificatePath !== 'null' ? $ownershipCertificatePath : null,
             'admin_id' => Auth::user()->getAuthIdentifier(),
             'currency' => $request->currency,
@@ -409,7 +396,8 @@ class AssetController extends BaseController
                             Storage::disk('public')->delete($currentValueLastItem->current_value_attachment);
                         }
                         $currentValueAttachmentFile = $request->file('current_value_attachment');
-                        $currentValueAttachmentPath = $currentValueAttachmentFile->store('uploads', 'public');
+                        $originalFileName = $currentValueAttachmentFile->getClientOriginalName();
+                        $currentValueAttachmentPath = $currentValueAttachmentFile->storeAs('uploads', $originalFileName,'public');
                         $currentValueAttachmentPath = Storage::url($currentValueAttachmentPath);
 
                     } else if ($request->input('current_value_attachment') === null) {
@@ -423,7 +411,8 @@ class AssetController extends BaseController
                 } else {
                     if ($request->hasFile('current_value_attachment')) {
                         $currentValueAttachmentFile = $request->file('current_value_attachment');
-                        $currentValueAttachmentPath = $currentValueAttachmentFile->store('uploads', 'public');
+                        $originalFileName = $currentValueAttachmentFile->getClientOriginalName();
+                        $currentValueAttachmentPath = $currentValueAttachmentFile->storeAs('uploads', $originalFileName,'public');
                         $currentValueAttachmentPath = Storage::url($currentValueAttachmentPath);
                     }
                 }
@@ -462,7 +451,7 @@ class AssetController extends BaseController
         }
 
         $asset->informations()->delete();
-//        dd($request->extraDetails);
+
         if (!empty($request->extraDetails)) {
             foreach ($request->extraDetails as $detail) {
                 $extraDetailAttachmentPath = null;
@@ -470,7 +459,8 @@ class AssetController extends BaseController
                 if (isset($request->id)) {
                     if (gettype($detail['attachment']) == 'object') {
                         $extraDetailAttachmentFile = $detail['attachment'];
-                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');
+                        $originalFileName = $extraDetailAttachmentFile->getClientOriginalName();
+                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->storeAs('uploads', $originalFileName,'public');
                         $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
                     } else {
                         $extraDetailAttachmentPath = $detail['attachment'];
@@ -478,7 +468,8 @@ class AssetController extends BaseController
                 } else {
                     if (isset($detail['attachment'])) {
                         $extraDetailAttachmentFile = $detail['attachment'];
-                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->store('uploads', 'public');
+                        $originalFileName = $extraDetailAttachmentFile->getClientOriginalName();
+                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->storeAs('uploads', $originalFileName,'public');
                         $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
                     }
                 }
@@ -490,6 +481,38 @@ class AssetController extends BaseController
                 ]);
             }
         }
+
+        $asset->agreements()->delete();
+
+        if (!empty($request->agreements)) {
+            foreach ($request->agreements as $agreement) {
+                $agreementAttachmentPath = null;
+
+                if (isset($request->id)) {
+                    if (gettype($agreement['attachment']) == 'object') {
+                        $agreementAttachmentFile = $agreement['attachment'];
+                        $originalFileName = $agreementAttachmentFile->getClientOriginalName();
+                        $agreementAttachmentPath = $agreementAttachmentFile->storeAs('uploads', $originalFileName,'public');
+                        $agreementAttachmentPath = Storage::url($agreementAttachmentPath);
+                    } else {
+                        $agreementAttachmentPath = $agreement['attachment'];
+                    }
+                } else {
+                    if (isset($detail['attachment'])) {
+                        $agreementAttachmentFile = $detail['attachment'];
+                        $originalFileName = $agreementAttachmentFile->getClientOriginalName();
+                        $agreementAttachmentPath = $agreementAttachmentFile->storeAs('uploads', $originalFileName,'public');
+                        $agreementAttachmentPath = Storage::url($agreementAttachmentPath);
+                    }
+                }
+
+                $asset->agreements()->create([
+                    'name' => $agreement['name'],
+                    'attachment' => $agreementAttachmentPath
+                ]);
+            }
+        }
+
         return ServiceResponse::jsonNotification('Asset Added successfully', 200, $this->baseData);
     }
 

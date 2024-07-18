@@ -6,14 +6,15 @@
     <div id="page-content">
 
         <!-- Statistics Widgets Header -->
-    @include('admin::includes.header-section', ['name'   => $data['name'] ])
-    <!-- END Statistics Widgets Header -->
+        @include('admin::includes.header-section', ['name'   => $data['name'] ])
+        <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
                 <asset-view-page-form
                     :id="{{ $data['id'] }}"
+                    :is-admin="{{\Auth::user()->getRolesNameAttribute() == 'administrator'}}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                 </asset-view-page-form>
             </div>

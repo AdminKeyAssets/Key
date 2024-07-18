@@ -121,8 +121,6 @@ export default {
                     formData.append(key, this.form[key]);
                 } else if (key === 'floor_plan' && this.form[key]) {
                     formData.append(key, this.form[key]);
-                } else if (key === 'agreement' && this.form[key]) {
-                    formData.append(key, this.form[key]);
                 } else if (key === 'ownership_certificate' && this.form[key]) {
                     formData.append(key, this.form[key]);
                 } else if (key === 'extraDetails') {
@@ -134,6 +132,17 @@ export default {
                                 formData.append(`extraDetails[${index}][attachment]`, detail.attachment.file);
                             } else {
                                 formData.append(`extraDetails[${index}][attachment]`, detail.attachment);
+                            }
+                        }
+                    });
+                } else if (key === 'agreements') {
+                    this.form.agreements.forEach((agreement, index) => {
+                        formData.append(`agreements[${index}][name]`, agreement.name);
+                        if (agreement.attachment) {
+                            if (agreement.attachment.file) {
+                                formData.append(`agreements[${index}][attachment]`, agreement.attachment.file);
+                            } else {
+                                formData.append(`agreements[${index}][attachment]`, agreement.attachment);
                             }
                         }
                     });

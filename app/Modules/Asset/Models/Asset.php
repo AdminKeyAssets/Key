@@ -92,4 +92,9 @@ class Asset extends Model
     {
         return $this->belongsTo(Investor::class);
     }
+
+    public function agreements()
+    {
+        return $this->hasMany(AssetAgreement::class);
+    }
 }

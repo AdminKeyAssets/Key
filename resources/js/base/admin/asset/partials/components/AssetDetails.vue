@@ -364,7 +364,6 @@ export default {
                         preview: file.type.startsWith('image/') ? e.target.result : null,
                         name: file.name,
                     };
-                    console.log(extraDetails)
                     this.$emit('update-form', { ...this.form, extraDetails });
                 };
                 reader.readAsDataURL(file);

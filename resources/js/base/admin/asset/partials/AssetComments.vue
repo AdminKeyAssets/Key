@@ -9,10 +9,9 @@
                     <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
                 </div>
                 <p class="comment-text">{{ comment.comment }}</p>
-                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank" class="comment-attachment">View
-                    Attachment</a>
-                <div class="comment-actions">
-                <span class="comment-delete" @click="deleteComment(comment.id)">
+                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank" class="comment-attachment">View {{getFilename(comment.attachment)}}</a>
+                <div class="comment-actions" v-if="isAdmin">
+                <span class="comment-delete"  @click="deleteComment(comment.id)">
                     Delete
                 </span>
                 </div>
@@ -35,6 +34,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 export default {
     props: [
         'id',
+        'isAdmin',
         'investorView'
     ],
     data() {
@@ -103,6 +103,10 @@ export default {
             const minutes = String(date.getMinutes()).padStart(2, '0');
             const seconds = String(date.getSeconds()).padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        },
+
+        getFilename(path) {
+            return path.split('/').pop();
         }
     }
 }

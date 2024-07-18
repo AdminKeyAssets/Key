@@ -15,6 +15,7 @@
                 <asset-view-page-form
                     :id="{{ $data['id'] }}"
                     :investor-view="{{true}}"
+                    :is-admin="{{false}}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                 </asset-view-page-form>
 

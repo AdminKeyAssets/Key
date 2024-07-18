@@ -222,8 +222,7 @@
                                                 <el-table-column prop="value"/>
                                                 <el-table-column prop="attachment" >
                                                     <template slot-scope="scope">
-                                                        <a :href="scope.row.attachment" target="_blank">View
-                                                            Attachment</a>
+                                                        <a :href="scope.row.attachment" target="_blank">View {{getFilename(scope.row.attachment)}}</a>
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -372,8 +371,7 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" target="_blank">View
-                                                                Attachment</a>
+                                                            <a :href="scope.row.attachment" target="_blank">View {{getFilename(scope.row.attachment)}}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -398,14 +396,13 @@
                                                 </div>
                                             </el-col>
                                             <el-col :span="12">
-                                                <div v-if="form.agreement" class="form-group dashed">
-                                                    <label class="col-md-4 control-label">Agreement:</label>
+                                                <div v-if="form.agreements && form.agreements.length" class="form-group dashed">
+                                                    <label class="col-md-4 control-label">Agreement(s):</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        <div v-if="form.agreement">
-                                                            <p v-if="form.agreement">
-                                                                <a :href="form.agreement"
-                                                                   target="_blank">View
-                                                                    Attachment</a></p>
+                                                        <div v-for="agreement in form.agreements">
+                                                            <p>
+                                                                <a :href="agreement.attachment"
+                                                                   target="_blank">{{agreement.name}}</a></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -448,8 +445,7 @@
                                                         <div class="col-md-6 uppercase-medium">
                                                             <div v-if="form.ownership_certificate">
                                                                 <p v-if="form.ownership_certificate"><a
-                                                                    :href="form.ownership_certificate" target="_blank">View
-                                                                    Attachment</a></p>
+                                                                    :href="form.ownership_certificate" target="_blank">View {{getFilename(form.ownership_certificate)}}</a></p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -530,8 +526,7 @@
                                                         </el-table-column>
                                                         <el-table-column prop="attachment" label="Attachment">
                                                             <template slot-scope="scope">
-                                                                <a :href="scope.row.attachment" target="_blank">View
-                                                                    Attachment</a>
+                                                                <a :href="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
                                                             </template>
                                                         </el-table-column>
                                                     </el-table>
@@ -559,8 +554,7 @@
                                                     <el-table-column prop="date" label="Date"/>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a v-if="scope.row.attachment" :href="scope.row.attachment" target="_blank">View
-                                                                Attachment</a>
+                                                            <a v-if="scope.row.attachment" :href="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -629,6 +623,7 @@
                     <div class="block col-md-9" id="comments">
                         <AssetComments
                             :id="this.form.id"
+                            :is-admin="this.isAdmin"
                             :investor-view="this.investorView"
                         ></AssetComments>
                     </div>
@@ -658,6 +653,7 @@ export default {
     },
     props: [
         'investorView',
+        'isAdmin',
         'getSaveDataRoute',
         'id'
     ],
@@ -777,6 +773,10 @@ export default {
             } catch (error) {
                 console.error('Error exporting payments:', error);
             }
+        },
+
+        getFilename(path) {
+            return path.split('/').pop();
         }
     }
 }

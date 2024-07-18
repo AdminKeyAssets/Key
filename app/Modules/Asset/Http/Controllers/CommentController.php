@@ -55,7 +55,8 @@ class CommentController extends BaseController
         $path = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            $path = $file->store('uploads', 'public');
+            $originalFilename = $file->getClientOriginalName();
+            $path = $file->storeAs('uploads', $originalFilename,'public');
         }
 
         Comment::create([
@@ -89,7 +90,8 @@ class CommentController extends BaseController
         $path = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            $path = $file->store('uploads', 'public');
+            $originalFilename = $file->getClientOriginalName();
+            $path = $file->storeAs('uploads', $originalFilename,'public');
         }
 
         Comment::create([
@@ -201,7 +203,7 @@ class CommentController extends BaseController
             $assetIds[] = $asset->id;
         }
 
-        $comments = Comment::query()
+        $comments = Comment::query()->where('read', '=',0)
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name', 'surname');
             }])

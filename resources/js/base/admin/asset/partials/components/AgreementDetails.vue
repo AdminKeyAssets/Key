@@ -14,14 +14,26 @@
         </div>
 
         <div class="form-group dashed">
-            <label class="col-md-1 control-label">Agreement Upload:</label>
+            <label class="col-md-1 control-label">Upload Agreement(s):</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onAgreementChange" accept="*">
-                <div v-if="form.agreement">
-                    <p v-if="form.agreement">File: <a :href="form.agreement" target="_blank">View Attachment</a></p>
-                    <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                               @click="removeAgreement"></el-button>
-                </div>
+                <el-form-item v-for="(agreement, index) in form.agreements" :key="agreement.id">
+                    <div class="col-md-3 uppercase-medium">
+                        <el-input class="col-md-12" v-model="agreement.name" placeholder="Name for Agreement"></el-input>
+                    </div>
+                    <div class="col-md-3 uppercase-medium">
+                        <input type="file" @change="onAgreementFileChange($event, index)" v-if="!agreement.attachment">
+                        <div v-if="agreement.attachment">
+                            <img v-if="agreement.attachment.preview" :src="agreement.attachment.preview" alt="preview"
+                                 style="max-width: 100px;"/>
+                            <a v-else :href="agreement.attachment" target="_blank">{{agreement.name}}</a>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                   @click.prevent="removeAgreement(agreement)"></el-button>
+                    </div>
+                </el-form-item>
+                <el-button type="primary" size="medium" icon="el-icon-plus" @click="addAgreement">Add Agreement</el-button>
             </div>
         </div>
 
@@ -165,23 +177,6 @@ export default {
         }
     },
     methods: {
-        onAgreementChange(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.$emit('update-form', { ...this.form, agreement: file, agreementPreview: e.target.result });
-                };
-                reader.onerror = (error) => {
-                    console.error('Error loading file:', error);
-                };
-                reader.readAsDataURL(file);
-            }
-        },
-        removeAgreement() {
-            this.$emit('update-form', { ...this.form, agreement: null, agreementPreview: null });
-        },
-
         onOwnershipCertificateChange(e) {
             const file = e.target.files[0];
             if (file) {
@@ -277,6 +272,37 @@ export default {
             const totalPrice = price * area;
             this.$emit('update-form', {...this.form, total_price: totalPrice});
         },
+
+        onAgreementFileChange(e, index) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const agreements = [...this.form.agreements];
+                    agreements[index].attachment = {
+                        file: file,
+                        preview: file.type.startsWith('image/') ? e.target.result : null,
+                        name: file.name,
+                    };
+                    this.$emit('update-form', { ...this.form, agreements });
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        addAgreement() {
+            this.$emit('update-form', {
+                ...this.form,
+                agreements: [...(Array.isArray(this.form.agreements) ? this.form.agreements : []), {
+                    id: Date.now(),
+                    name: '',
+                    attachment: null
+                }]
+            });
+        },
+        removeAgreement(item) {
+            const agreements = Array.isArray(this.form.agreements) ? this.form.agreements.filter(detail => detail.id !== item.id) : [];
+            this.$emit('update-form', {...this.form, agreements});
+        }
     }
 }
 </script>
