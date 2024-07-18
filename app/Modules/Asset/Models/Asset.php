@@ -97,4 +97,9 @@ class Asset extends Model
     {
         return $this->hasMany(AssetAgreement::class);
     }
+
+    public function gallery()
+    {
+        return $this->hasMany(AssetGallery::class);
+    }
 }

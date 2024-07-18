@@ -125,6 +125,7 @@ class AssetController extends BaseController
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['extraDetails'] = $asset->informations;
                 $this->baseData['item']['agreements'] = $asset->agreements;
+                $this->baseData['item']['gallery'] = $asset->gallery;
                 $this->baseData['item']['payments'] = $asset->payments;
                 $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
                 $this->baseData['item']['rental_payments_histories'] = $asset->rentalPaymentsHistories;
@@ -457,6 +458,32 @@ class AssetController extends BaseController
                     'name' => $file->getClientOriginalName(),
                     'type' => $file->getMimeType()
                 ]);
+            }
+        }
+
+        if ($request->has('gallery')) {
+            $asset->gallery()->delete();
+            foreach ($request->gallery as $key => $file) {
+
+                if (gettype($file) == 'string') {
+                    $path = $file;
+                    $explodedFile = explode('/', $path);
+                    $explodedFile = array_reverse($explodedFile);
+                    $originalFileName = $explodedFile[0];
+                } else {
+                    $originalFileName = $file->getClientOriginalName();
+                    $path = $file->storeAs('uploads', $originalFileName, 'public');
+                    $path = Storage::url($path);
+                }
+
+                $asset->gallery()->create([
+                    'name' => $originalFileName,
+                    'image' => $path
+                ]);
+                if ($key == 0) {
+                    $asset->icon = $path;
+                    $asset->save();
+                }
             }
         }
 

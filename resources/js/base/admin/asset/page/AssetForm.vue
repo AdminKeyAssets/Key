@@ -141,6 +141,16 @@ export default {
                             }
                         }
                     });
+                } else if (key === 'gallery') {
+                    this.form.gallery.forEach((image, index) => {
+                        if (image) {
+                            if (image.file) {
+                                formData.append(`gallery[${index}]`, image.file);
+                            } else {
+                                formData.append(`gallery[${index}]`, image.image);
+                            }
+                        }
+                    });
                 } else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'rentals') {

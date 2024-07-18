@@ -56,14 +56,18 @@
                                         </div>
                                     </el-col>
                                     <el-col :span="8">
-                                        <div v-if="form.icon" class="form-group">
+                                        <div v-if="form.gallery" class="form-group">
                                             <div class="col-md-10 uppercase-medium">
+                                                <el-carousel :interval="4000" type="card" height="200px">
+                                                    <el-carousel-item v-for="item in form.gallery" :key="item.id">
+                                                        <ImageModal
+                                                            :image-path="item.image"
+                                                            :thumbnail="item.image"
+                                                            :height="300"></ImageModal>
+                                                    </el-carousel-item>
+                                                </el-carousel>
                                                 <div v-if="form.icon">
-                                                    <ImageModal
-                                                        :image-path="form.icon"
-                                                        :thumbnail="form.icon"
-                                                        :width="300"
-                                                        :height="300"></ImageModal>
+
                                                 </div>
                                             </div>
                                         </div>
