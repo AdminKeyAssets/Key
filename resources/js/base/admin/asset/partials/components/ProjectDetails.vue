@@ -28,23 +28,6 @@
         </div>
 
         <div class="form-group dashed">
-            <label class="col-md-1 control-label">Upload Icon:</label>
-            <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onIconChange" accept="image/*">
-                <div v-if="form.icon">
-                    <ImageModal v-if="form.iconPreview"
-                                :image-path="form.iconPreview"
-                                :thumbnail="form.iconPreview"></ImageModal>
-                    <ImageModal v-else
-                                :image-path="form.icon"
-                                :thumbnail="form.icon"></ImageModal>
-                    <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                               @click="removeIcon"></el-button>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group dashed">
             <label class="col-md-1 control-label">Project Name:</label>
             <div class="col-md-10 uppercase-medium">
                 <input class="form-control" :disabled="loading" v-model="form.project_name"></input>

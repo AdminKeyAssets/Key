@@ -66,9 +66,7 @@
                                                             :height="300"></ImageModal>
                                                     </el-carousel-item>
                                                 </el-carousel>
-                                                <div v-if="form.icon">
 
-                                                </div>
                                             </div>
                                         </div>
                                     </el-col>
