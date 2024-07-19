@@ -31,7 +31,6 @@ class Investor  extends Authenticatable
 
     public function setPasswordAttribute($password)
     {
-        dd($password);
         $this->attributes['password'] = bcrypt($password);
     }
 
