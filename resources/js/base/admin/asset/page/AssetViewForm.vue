@@ -223,7 +223,7 @@
                                                 <el-table-column prop="value"/>
                                                 <el-table-column prop="attachment">
                                                     <template slot-scope="scope">
-                                                        <a :href="scope.row.attachment" target="_blank">View
+                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View
                                                             {{ getFilename(scope.row.attachment) }}</a>
                                                     </template>
                                                 </el-table-column>
@@ -391,7 +391,7 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" target="_blank">View
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View
                                                                 {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
@@ -467,7 +467,7 @@
                                                         <div class="col-md-6 uppercase-medium">
                                                             <div v-if="form.ownership_certificate">
                                                                 <p v-if="form.ownership_certificate"><a
-                                                                    :href="form.ownership_certificate" target="_blank">View
+                                                                    :href="form.ownership_certificate" v-if="form.ownership_certificate" target="_blank">View
                                                                     {{ getFilename(form.ownership_certificate) }}</a>
                                                                 </p>
                                                             </div>
@@ -550,7 +550,7 @@
                                                         </el-table-column>
                                                         <el-table-column prop="attachment" label="Attachment">
                                                             <template slot-scope="scope">
-                                                                <a :href="scope.row.attachment" target="_blank">View
+                                                                <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View
                                                                     {{ getFilename(scope.row.attachment) }}</a>
                                                             </template>
                                                         </el-table-column>
