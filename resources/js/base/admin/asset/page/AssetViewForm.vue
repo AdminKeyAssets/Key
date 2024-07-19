@@ -58,14 +58,7 @@
                                     <el-col :span="8">
                                         <div v-if="form.gallery" class="form-group">
                                             <div class="col-md-10 uppercase-medium">
-                                                <el-carousel :interval="4000" type="card" height="200px">
-                                                    <el-carousel-item v-for="item in form.gallery" :key="item.id">
-                                                        <ImageModal
-                                                            :image-path="item.image"
-                                                            :thumbnail="item.image"
-                                                            :height="300"></ImageModal>
-                                                    </el-carousel-item>
-                                                </el-carousel>
+                                                <ImageBox :initial-main-image="form.gallery[0].image" :images="form.gallery"></ImageBox>
                                             </div>
                                         </div>
                                     </el-col>
@@ -674,9 +667,11 @@ import TenantDetails from "../partials/components/TenantDetails.vue";
 import ExtraDetails from "../partials/components/ExtraDetails.vue";
 import AgreementDetails from "../partials/components/AgreementDetails.vue";
 import CurrentValue from "../partials/components/CurrentValue.vue";
+import ImageBox from "../../../components/admin/ImageBox.vue";
 
 export default {
     components: {
+        ImageBox,
         CurrentValue,
         AgreementDetails, ExtraDetails, TenantDetails, AssetDetails, ImageModal, MapMarker, AssetComments
     },
