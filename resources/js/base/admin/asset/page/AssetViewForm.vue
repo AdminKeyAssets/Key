@@ -66,7 +66,6 @@
                                                             :height="300"></ImageModal>
                                                     </el-carousel-item>
                                                 </el-carousel>
-
                                             </div>
                                         </div>
                                     </el-col>
