@@ -422,7 +422,7 @@
                                                     <label class="col-md-4 control-label">Agreement(s):</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         <div v-for="agreement in form.agreements">
-                                                            <p>
+                                                            <p v-if="agreement.attachment && agreement.name">
                                                                 <a :href="agreement.attachment"
                                                                    target="_blank">{{ agreement.name }}</a></p>
                                                         </div>
