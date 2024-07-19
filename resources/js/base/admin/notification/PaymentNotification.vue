@@ -11,7 +11,7 @@
                      :class="getItemClass(index)">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                            <i class="el-icon-house"> {{ payment.project_name }}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
+                            <i class="el-icon-house"> {{ payment.project_name }}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{payment.investor_name}} {{payment.investor_surname}}</i></span>
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
