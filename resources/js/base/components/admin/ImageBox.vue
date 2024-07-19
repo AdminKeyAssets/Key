@@ -73,12 +73,14 @@ export default {
 .main-image {
     width: 100%;
     max-width: 600px;
+    height: 400px; /* Fixed height */
     margin-bottom: 20px;
 }
 
 .main-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the fixed height */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
@@ -133,7 +135,8 @@ export default {
 
 .thumbnail {
     width: 100px;
-    height: auto;
+    height: 80px; /* Fixed height for thumbnails */
+    object-fit: cover; /* Ensure thumbnails cover the fixed height */
     cursor: pointer;
     border: 2px solid transparent;
     border-radius: 5px;
