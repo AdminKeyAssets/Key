@@ -374,7 +374,7 @@
                                                      style="text-align: center; max-width: 500px">
                                                     <h4>Payments History</h4>
                                                 </div>
-                                                <el-table border :data="form.rental_payments_histories"
+                                                <el-table :fit="false" border :data="form.rental_payments_histories"
                                                           style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
@@ -502,7 +502,7 @@
                                                         style="margin-bottom: 2rem; margin-right: 3rem;"
                                                         type="secondary"
                                                         class="pull-right"
-                                                        @click="exportPaymentSchedule">Export Payments
+                                                        @click="exportPaymentSchedule">Export Schedule
                                                     </el-button>
                                                     <div class="payments-schedule-heading"
                                                          style="text-align: center; max-width: 500px">
@@ -563,7 +563,7 @@
                                     </div>
 
                                     <el-row v-if="form.current_value">
-                                        <el-col :span="12">
+                                        <el-col :span="24">
                                             <div v-if="form.currentValues.length">
                                                 <el-table :data="form.currentValues" style="width: 100%">
                                                     <el-table-column prop="value" label="Value">
@@ -572,7 +572,8 @@
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="date" label="Date"/>
-                                                    <el-table-column prop="attachment" label="Attachment">
+                                                    <el-table-column prop="attachment" label="Attachment"
+                                                                     width="fit-content">
                                                         <template slot-scope="scope">
                                                             <a v-if="scope.row.attachment" :href="scope.row.attachment"
                                                                target="_blank">View {{
@@ -876,15 +877,22 @@ export default {
     }
 }
 
-.payments-wrapper .el-table th > .cell, .payments-wrapper .el-table td > .cell {
-    font-size: 13px !important;
-    text-align: center;
+@media (min-width: 769px) {
+    .el-table th > .cell, .el-table td > .cell {
+        font-size: 13px !important;
+        text-align: center;
+    }
 }
 
 @media (max-width: 768px) {
     .project-details-wrapper {
         display: flex;
         flex-direction: column;
+    }
+
+    .el-table th > .cell, .el-table td > .cell {
+        font-size: 11px !important;
+        text-align: center;
     }
 
     .project-details-wrapper .project-gallery {
@@ -902,5 +910,9 @@ export default {
 
 .form-group {
     border-bottom-color: transparent !important;
+}
+
+.el-table .cell {
+    padding-right: 0 !important;
 }
 </style>
