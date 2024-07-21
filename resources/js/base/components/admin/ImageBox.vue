@@ -1,13 +1,6 @@
 <template>
     <div class="image-box">
-        <div class="main-image">
-            <el-image
-                :close-on-click-modal="true"
-                fit="contain"
-                :src="mainImage"
-                :preview-src-list="srcList">
-            </el-image>
-        </div>
+        <CustomImagePreview :mainImage="mainImage" :images="srcList" @update-main-image="setMainImage" />
         <div class="thumbnail-carousel-container">
             <span @click="prevImage" class="carousel-button prev-button">❮</span>
             <div class="thumbnail-carousel">
@@ -32,8 +25,13 @@
 </template>
 
 <script>
+import CustomImagePreview from './CustomImagePreview.vue';
+
 export default {
     name: 'ImageBox',
+    components: {
+        CustomImagePreview
+    },
     props: {
         images: {
             type: Array,
@@ -52,8 +50,8 @@ export default {
         };
     },
     created() {
-        if (this.images){
-            this.images.forEach((image, index) => {
+        if (this.images) {
+            this.images.forEach((image) => {
                 this.srcList.push(image.image);
             });
         }
@@ -83,25 +81,6 @@ export default {
     align-items: center;
 }
 
-.main-image {
-    width: 100%;
-    max-width: 600px;
-    height: 400px; /* Fixed height */
-    margin-bottom: 20px;
-}
-
-.main-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensure the image covers the fixed height */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-}
-
-.main-image img:hover {
-    transform: scale(1.05);
-}
 
 .thumbnail-carousel-container {
     display: flex;
