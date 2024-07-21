@@ -2,7 +2,7 @@
     <div class="comments-section">
         <h3>Comments</h3>
         <ul class="comments-list">
-            <li v-for="comment in comments" :key="comment.id" class="comment-item">
+            <li v-for="comment in visibleComments" :key="comment.id" class="comment-item">
                 <div class="comment-header">
                     <span class="comment-user" v-if="comment.admin">{{ comment.admin.name }} {{ comment.admin.surname }}</span>
                     <span class="comment-user" v-else-if="comment.investor">{{ comment.investor.name }} {{ comment.investor.surname }}</span>
@@ -17,6 +17,7 @@
                 </div>
             </li>
         </ul>
+        <el-button v-if="!showAllComments && hasOlderComments" @click="showAllComments = true" class="show-all-comments-button">Show All Comments</el-button>
         <el-form @submit.prevent="submitComment" class="comment-form">
             <el-input v-model="newComment" placeholder="Add a comment" class="comment-input"></el-input>
             <input type="file" @change="onFileChange" class="comment-file-input">
@@ -25,46 +26,52 @@
     </div>
 </template>
 
-
 <script>
-import {responseParse} from '../../../mixins/responseParse'
-import {getData} from '../../../mixins/getData'
+import { responseParse } from '../../../mixins/responseParse';
+import { getData } from '../../../mixins/getData';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
-    props: [
-        'id',
-        'isAdmin',
-        'investorView'
-    ],
+    props: ['id', 'isAdmin', 'investorView'],
     data() {
         return {
             comments: [],
             newComment: '',
             attachment: null,
-        }
+            showAllComments: false,
+        };
     },
     mounted() {
         this.fetchComments();
     },
-
+    computed: {
+        visibleComments() {
+            if (this.showAllComments) {
+                return this.comments;
+            }
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+            return this.comments.filter(comment => new Date(comment.created_at) >= oneMonthAgo);
+        },
+        hasOlderComments() {
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+            return this.comments.some(comment => new Date(comment.created_at) < oneMonthAgo);
+        }
+    },
     methods: {
         onFileChange(e) {
             this.attachment = e.target.files[0];
         },
-
         removeFile() {
             this.attachment = null;
         },
-
         async fetchComments() {
             await axios.get(`/assets/${this.id}/comments`).then(response => {
                 this.comments = response.data.data;
             });
         },
-
         async deleteComment(commentId) {
-
             this.$confirm('Are you sure?', 'You are deleting a comment', {
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No',
@@ -76,7 +83,6 @@ export default {
                 });
             });
         },
-
         async submitComment() {
             const formData = new FormData();
             formData.append('comment', this.newComment);
@@ -84,7 +90,7 @@ export default {
                 formData.append('attachment', this.attachment);
             }
 
-            let url = this.investorView ? `/assets/${this.id}/investor/comments` : `/assets/${this.id}/comments`
+            let url = this.investorView ? `/assets/${this.id}/investor/comments` : `/assets/${this.id}/comments`;
             await axios.post(url, formData)
                 .then(response => {
                     responseParse(response);
@@ -93,7 +99,6 @@ export default {
                     this.attachment = null;
                 });
         },
-
         formatDate(isoString) {
             const date = new Date(isoString);
             const year = date.getFullYear();
@@ -104,14 +109,13 @@ export default {
             const seconds = String(date.getSeconds()).padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         },
-
         getFilename(path) {
             return path.split('/').pop();
         }
     }
-}
-
+};
 </script>
+
 
 <style scoped>
 .comments-section {
@@ -177,12 +181,19 @@ export default {
     display: inline-block;
     margin-top: 10px;
 }
-.comment-actions{
+
+.comment-actions {
     display: flex;
     justify-content: right;
 }
-.comment-delete{
+
+.comment-delete {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.show-all-comments-button {
+    display: block;
+    margin: 20px auto;
 }
 </style>
