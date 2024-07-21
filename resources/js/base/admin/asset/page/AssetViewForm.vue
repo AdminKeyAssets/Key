@@ -15,17 +15,17 @@
                                     <span>Project Details</span>
                                 </div>
 
-                                <el-row class="project-details-wrapper">
+                                <el-row class="project-details-wrapper dashed">
                                     <el-col class="project-details" :span="24" :md="16">
 
-                                        <div v-if="form.project_description" class="form-group dashed">
+                                        <div v-if="form.project_description" class="form-group">
                                             <label class="col-md-2 control-label">Project Description:</label>
                                             <div class="col-md-10 uppercase-medium">
                                                 {{ form.project_description }}
                                             </div>
                                         </div>
 
-                                        <div v-if="form.project_link" class="form-group dashed">
+                                        <div v-if="form.project_link" class="form-group">
                                             <label class="col-md-2 control-label">Project Link:</label>
                                             <div class="col-md-10 uppercase-medium">
                                                 <a :href="form.project_link" target="_blank">
@@ -58,7 +58,8 @@
                                     <el-col class="project-gallery" :span="24" :md="8">
                                         <div v-if="form.gallery" class="form-group">
                                             <div class="col-md-10 uppercase-medium">
-                                                <ImageBox :initial-main-image="form.gallery[0].image" :images="form.gallery"></ImageBox>
+                                                <ImageBox :initial-main-image="form.gallery[0].image"
+                                                          :images="form.gallery"></ImageBox>
                                             </div>
                                         </div>
                                     </el-col>
@@ -215,7 +216,8 @@
                                                 <el-table-column prop="value"/>
                                                 <el-table-column prop="attachment">
                                                     <template slot-scope="scope">
-                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View
+                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                           target="_blank">View
                                                             {{ getFilename(scope.row.attachment) }}</a>
                                                     </template>
                                                 </el-table-column>
@@ -231,7 +233,7 @@
                                                     v-if="(form.tenant.name || form.tenant.surname) || form.tenant.id_number">
                                                 <el-col :span="12">
                                                     <div v-if="form.tenant.name || form.tenant.surname"
-                                                         class="form-group dashed">
+                                                         class="form-group">
                                                         <label class="col-md-4 control-label">Tenant Name:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ form.tenant.name }} {{ form.tenant.surname }}
@@ -239,7 +241,7 @@
                                                     </div>
                                                 </el-col>
                                                 <el-col :span="12">
-                                                    <div v-if="form.tenant.id_number" class="form-group dashed">
+                                                    <div v-if="form.tenant.id_number" class="form-group">
                                                         <label class="col-md-4 control-label">ID Number:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ form.tenant.id_number }}
@@ -259,7 +261,7 @@
                                                     </div>
                                                 </el-col>
                                                 <el-col :span="12">
-                                                    <div v-if="form.tenant.email" class="form-group dashed">
+                                                    <div v-if="form.tenant.email" class="form-group">
                                                         <label class="col-md-4 control-label">Email:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ form.tenant.email }}
@@ -271,7 +273,7 @@
                                             <el-row class="row-item dashed"
                                                     v-if="form.tenant.phone || form.tenant.agreement_date">
                                                 <el-col :span="12">
-                                                    <div v-if="form.tenant.phone" class="form-group phone">
+                                                    <div v-if="form.tenant.phone" class="form-group">
                                                         <label class="col-md-4 control-label">Phone:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ form.tenant.prefix + form.tenant.phone }}
@@ -279,7 +281,7 @@
                                                     </div>
                                                 </el-col>
                                                 <el-col :span="12">
-                                                    <div v-if="form.tenant.agreement_date" class="form-group dashed">
+                                                    <div v-if="form.tenant.agreement_date" class="form-group">
                                                         <label class="col-md-4 control-label">Agreement Date:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ form.tenant.agreement_date }}
@@ -308,7 +310,7 @@
                                             <el-row class="row-item dashed"
                                                     v-if="form.tenant.agreement_term || form.tenant.monthly_rent">
                                                 <el-col :span="12">
-                                                    <div v-if="form.tenant.agreement_term" class="form-group dashed">
+                                                    <div v-if="form.tenant.agreement_term" class="form-group">
                                                         <label class="col-md-4 control-label">Agreement Term:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ form.tenant.agreement_term }} Month(s)
@@ -316,7 +318,7 @@
                                                     </div>
                                                 </el-col>
                                                 <el-col :span="12">
-                                                    <div v-if="form.tenant.monthly_rent" class="form-group dashed">
+                                                    <div v-if="form.tenant.monthly_rent" class="form-group">
                                                         <label class="col-md-4 control-label">Monthly Rent:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             {{ formatPrice(form.tenant.monthly_rent) }}
@@ -331,7 +333,7 @@
                                     </el-card>
 
                                     <el-row v-if="form.asset_status === 'Rented'"
-                                            style="margin-top: 20px; " class="payments-wrapper">
+                                            style="margin-top: 20px; " class="payments-wrapper row-item dashed">
                                         <el-col :span="24" :md="11">
                                             <div v-if="form.rentals.length">
                                                 <el-button
@@ -382,7 +384,8 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                               target="_blank">View
                                                                 {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
@@ -398,9 +401,9 @@
                                         <span>Agreement Details</span>
                                     </div>
                                     <el-row>
-                                        <el-row>
+                                        <el-row class="row-item dashed">
                                             <el-col :span="12">
-                                                <div v-if="form.agreement_date" class="form-group dashed">
+                                                <div v-if="form.agreement_date" class="form-group">
                                                     <label class="col-md-4 control-label">Agreement Date:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ form.agreement_date }}
@@ -409,7 +412,7 @@
                                             </el-col>
                                             <el-col :span="12">
                                                 <div v-if="form.agreements && form.agreements.length"
-                                                     class="form-group dashed">
+                                                     class="form-group">
                                                     <label class="col-md-4 control-label">Agreement(s):</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         <div v-for="agreement in form.agreements">
@@ -443,7 +446,7 @@
 
                                         <el-row class="row-item dashed" v-if="form.agreement_status">
                                             <el-col :span="12">
-                                                <div v-if="form.agreement_status" class="form-group dashed">
+                                                <div v-if="form.agreement_status" class="form-group">
                                                     <label class="col-md-4 control-label">Agreement Status:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ form.agreement_status }}
@@ -452,13 +455,14 @@
                                             </el-col>
                                             <el-col :span="12">
                                                 <template v-if="form.agreement_status === 'Complete'">
-                                                    <div v-if="form.ownership_certificate" class="form-group dashed">
+                                                    <div v-if="form.ownership_certificate" class="form-group">
                                                         <label class="col-md-4 control-label">Ownership
                                                             Certificate:</label>
                                                         <div class="col-md-6 uppercase-medium">
                                                             <div v-if="form.ownership_certificate">
                                                                 <p v-if="form.ownership_certificate"><a
-                                                                    :href="form.ownership_certificate" v-if="form.ownership_certificate" target="_blank">View
+                                                                    :href="form.ownership_certificate"
+                                                                    v-if="form.ownership_certificate" target="_blank">View
                                                                     {{ getFilename(form.ownership_certificate) }}</a>
                                                                 </p>
                                                             </div>
@@ -471,9 +475,9 @@
                                     </el-row>
 
                                     <template v-if="form.agreement_status === 'Installments'">
-                                        <el-row>
+                                        <el-row class="row-item dashed">
                                             <el-col :span="12">
-                                                <div v-if="form.first_payment_date" class="form-group dashed">
+                                                <div v-if="form.first_payment_date" class="form-group">
                                                     <label class="col-md-4 control-label">First Payment Date:</label>
                                                     <div class="col-md-8 uppercase-medium">
                                                         {{ form.first_payment_date }}
@@ -481,7 +485,7 @@
                                                 </div>
                                             </el-col>
                                             <el-col :span="12">
-                                                <div v-if="form.period" class="form-group dashed">
+                                                <div v-if="form.period" class="form-group">
                                                     <label class="col-md-4 control-label">Period:</label>
                                                     <div class="col-md-8 uppercase-medium">
                                                         {{ form.period }} Month(s)
@@ -490,7 +494,7 @@
                                             </el-col>
                                         </el-row>
 
-                                        <el-row style="margin-top: 20px;" class="payments-wrapper">
+                                        <el-row style="margin-top: 20px;" class="payments-wrapper row-item dashed">
                                             <el-col :span="24" :md="11">
                                                 <div v-if="form.payments && form.payments.length">
                                                     <el-button
@@ -540,7 +544,8 @@
                                                         </el-table-column>
                                                         <el-table-column prop="attachment" label="Attachment">
                                                             <template slot-scope="scope">
-                                                                <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View
+                                                                <a :href="scope.row.attachment"
+                                                                   v-if="scope.row.attachment" target="_blank">View
                                                                     {{ getFilename(scope.row.attachment) }}</a>
                                                             </template>
                                                         </el-table-column>
@@ -877,20 +882,25 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .project-details-wrapper{
+    .project-details-wrapper {
         display: flex;
         flex-direction: column;
     }
-    .project-details-wrapper .project-gallery{
+
+    .project-details-wrapper .project-gallery {
         order: 1;
     }
 
-    .project-details-wrapper .project-details{
+    .project-details-wrapper .project-details {
         order: 2;
     }
 }
 
 .dashed.el-row {
     border-bottom: 1px dashed #eaedf1;
+}
+
+.form-group {
+    border-bottom-color: transparent !important;
 }
 </style>
