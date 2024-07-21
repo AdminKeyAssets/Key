@@ -3,7 +3,7 @@
         <div class="main-image" @click="showPreview = true">
             <img :src="mainImage" alt="Main Image" />
         </div>
-        <div v-if="showPreview" class="overlay" @click.self="closePreview">
+        <div v-if="showPreview" class="overlay" @click.self="closePreview" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd">
             <div class="image-preview">
                 <span class="nav-button prev-button" @click.stop="prevImage">❮</span>
                 <img :src="mainImage" alt="Full Image" />
@@ -29,7 +29,9 @@ export default {
     },
     data() {
         return {
-            showPreview: false
+            showPreview: false,
+            touchStartX: 0,
+            touchEndX: 0
         };
     },
     watch: {
@@ -59,6 +61,19 @@ export default {
             const currentIndex = this.images.indexOf(this.mainImage);
             const nextIndex = (currentIndex + 1) % this.images.length;
             this.$emit('update-main-image', this.images[nextIndex]);
+        },
+        onTouchStart(event) {
+            this.touchStartX = event.changedTouches[0].screenX;
+        },
+        onTouchMove(event) {
+            this.touchEndX = event.changedTouches[0].screenX;
+        },
+        onTouchEnd() {
+            if (this.touchStartX - this.touchEndX > 50) {
+                this.nextImage();
+            } else if (this.touchStartX - this.touchEndX < -50) {
+                this.prevImage();
+            }
         }
     },
     beforeDestroy() {
