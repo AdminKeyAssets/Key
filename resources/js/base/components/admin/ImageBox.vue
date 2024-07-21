@@ -2,6 +2,7 @@
     <div class="image-box">
         <div class="main-image">
             <el-image
+                :close-on-click-modal="true"
                 fit="contain"
                 :src="mainImage"
                 :preview-src-list="srcList">

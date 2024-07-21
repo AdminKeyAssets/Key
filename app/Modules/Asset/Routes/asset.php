@@ -80,5 +80,12 @@ Route::prefix('assets')->name('asset.')->group(function () {
 
     Route::get('/notifications/pending-payment', $notificationController . '@payment')->name('notification.list.payment');
     Route::get('/notifications/pending-rentals', $notificationController . '@rental')->name('notification.list.rental');
+
+
+    $currentValueController = 'CurrentValueController';
+    $currentValueModuleName = 'currentValue';
+
+    Route::post('/current-value/update/{currentValue}', $currentValueController . '@update')->name('update.current_value');
+    Route::delete('/current-value/delete/{currentValue}', $currentValueController . '@destroy')->name('delete.current_value');
 });
 
