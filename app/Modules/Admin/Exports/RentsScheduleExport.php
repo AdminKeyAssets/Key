@@ -7,9 +7,11 @@ use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\Rental;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class RentsScheduleExport implements FromCollection, WithHeadings
+class RentsScheduleExport implements FromCollection, WithHeadings, WithColumnWidths
 {
     protected $filters;
 
@@ -27,13 +29,12 @@ class RentsScheduleExport implements FromCollection, WithHeadings
 
         $query->where('asset_id', '=', $this->filters['asset_id']);
 
-        $rents = $query->select('payment_date', 'amount', 'left_amount')->get();
+        $rents = $query->select('payment_date', 'amount')->get();
 
         $rents->transform(function ($rent) {
             return [
                 'payment_date' => '"' . $rent->payment_date . '"',
                 'amount' => $rent->amount,
-                'left_amount' => $rent->left_amount,
             ];
         });
 
@@ -46,7 +47,20 @@ class RentsScheduleExport implements FromCollection, WithHeadings
         return [
             'Payment Date',
             'Amount',
-            'Left Amount',
+        ];
+    }
+
+    public function setColumnAutoSize(Worksheet $sheet)
+    {
+        foreach ($sheet->getColumnIterator() as $column) {
+            $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+        }
+    }
+
+    public function columnWidths(): array
+    {
+        return [
+            'A' => 20,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\RentsPaymentsExport;
 use App\Modules\Admin\Exports\RentsScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
@@ -155,6 +156,7 @@ class RentalPaymentsHistoryController extends BaseController
 
             $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount);
         }
+        $this->baseData['item'] = $paymentHistory;
 
         return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
     }
@@ -242,5 +244,11 @@ class RentalPaymentsHistoryController extends BaseController
     {
         $filters = ['asset_id' => $assetId];
         return Excel::download(new RentsScheduleExport($filters), 'rents_schedule.xlsx');
+    }
+
+    public function exportHistory(Request $request, $assetId)
+    {
+        $filters = ['asset_id' => $assetId];
+        return Excel::download(new RentsPaymentsExport($filters), 'rentals_payments.xlsx');
     }
 }

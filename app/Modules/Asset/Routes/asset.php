@@ -36,6 +36,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     //Export Rentals
     Route::get('/{asset}/payments/export', $paymentController . '@export')
         ->name('export');
+    Route::get('/{asset}/payments-history/export', $paymentController . '@exportHistory')
+        ->name('export.history');
 
     $commentController = 'CommentController';
     $commentModuleName = 'comment';
@@ -66,6 +68,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     //Export Rentals
     Route::get('/{asset}/rental/export', $leaseController . '@export')
         ->name('export');
+    Route::get('/{asset}/rental-payments-history/export', $leaseController . '@exportHistory')
+        ->name('export.history');
 
 
     $revenueController = 'RevenueController';

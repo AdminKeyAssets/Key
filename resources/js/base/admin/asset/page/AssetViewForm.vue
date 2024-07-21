@@ -370,6 +370,13 @@
                                         <el-col :span="24" :md="11">
                                             <div
                                                 v-if="form.rental_payments_histories && form.rental_payments_histories.length">
+                                                <el-button
+                                                    icon="el-icon-document"
+                                                    style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                    type="secondary"
+                                                    class="pull-right"
+                                                    @click="exportRentalPayments">Export Payments
+                                                </el-button>
                                                 <div class="payments-history-heading"
                                                      style="text-align: center; max-width: 500px">
                                                     <h4>Payments History</h4>
@@ -530,6 +537,13 @@
 
                                             <el-col :span="24" :md="11">
                                                 <div v-if="form.payments_histories && form.payments_histories.length">
+                                                    <el-button
+                                                        icon="el-icon-document"
+                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                        type="secondary"
+                                                        class="pull-right"
+                                                        @click="exportPayments">Export Payments
+                                                    </el-button>
                                                     <div class="payments-history-heading"
                                                          style="text-align: center; max-width: 500px">
                                                         <h4>Payments History</h4>
@@ -796,6 +810,40 @@ export default {
                 const link = document.createElement('a');
                 link.href = url;
                 link.setAttribute('download', 'payments_schedule.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting payments:', error);
+            }
+        },
+
+        async exportRentalPayments() {
+            try {
+                const response = await axios.get(`/assets/${this.id}/rental-payments-history/export`, {
+                    params: this.filters,
+                    responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'rental_payments.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting payments:', error);
+            }
+        },
+
+        async exportPayments() {
+            try {
+                const response = await axios.get(`/assets/${this.id}/payments-history/export`, {
+                    params: this.filters,
+                    responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'payments.xlsx');
                 document.body.appendChild(link);
                 link.click();
             } catch (error) {

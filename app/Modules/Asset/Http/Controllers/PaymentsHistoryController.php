@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\PaymentHistoryExport;
 use App\Modules\Admin\Exports\PaymentScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
@@ -236,5 +237,13 @@ class PaymentsHistoryController extends BaseController
         $filters = ['asset_id' => $assetId];
 
         return Excel::download(new PaymentScheduleExport($filters), 'payments_schedule.xlsx');
+    }
+
+    public function exportHistory(Request $request, $assetId)
+    {
+
+        $filters = ['asset_id' => $assetId];
+
+        return Excel::download(new PaymentHistoryExport($filters), 'payments_history.xlsx');
     }
 }
