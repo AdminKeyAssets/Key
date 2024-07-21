@@ -1,23 +1,27 @@
 <template>
     <div class="image-box">
         <div class="main-image">
-            <img :src="mainImage" alt="Main Image">
+            <el-image
+                fit="contain"
+                :src="mainImage"
+                :preview-src-list="srcList">
+            </el-image>
         </div>
         <div class="thumbnail-carousel-container">
             <span @click="prevImage" class="carousel-button prev-button">❮</span>
             <div class="thumbnail-carousel">
                 <div
-                    v-for="(image, index) in images"
+                    v-for="(image, index) in srcList"
                     :key="index"
                     class="thumbnail-item"
                     :style="{ transform: `translateX(${-currentIndex * 100}%)` }"
                 >
                     <img
-                        :src="image.image"
+                        :src="image"
                         alt="Thumbnail"
                         class="thumbnail"
-                        @click="setMainImage(image.image)"
-                        :class="{ 'active': image.image === mainImage }"
+                        @click="setMainImage(image)"
+                        :class="{ 'active': image === mainImage }"
                     >
                 </div>
             </div>
@@ -42,8 +46,16 @@ export default {
     data() {
         return {
             mainImage: this.initialMainImage,
-            currentIndex: 0
+            currentIndex: 0,
+            srcList: []
         };
+    },
+    created() {
+        if (this.images){
+            this.images.forEach((image, index) => {
+                this.srcList.push(image.image);
+            });
+        }
     },
     methods: {
         setMainImage(image) {

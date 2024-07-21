@@ -15,8 +15,8 @@
                                     <span>Project Details</span>
                                 </div>
 
-                                <el-row>
-                                    <el-col :span="16">
+                                <el-row class="project-details-wrapper">
+                                    <el-col class="project-details" :span="24" :md="16">
 
                                         <div v-if="form.project_description" class="form-group dashed">
                                             <label class="col-md-2 control-label">Project Description:</label>
@@ -55,7 +55,7 @@
                                             </div>
                                         </div>
                                     </el-col>
-                                    <el-col :span="8">
+                                    <el-col class="project-gallery" :span="24" :md="8">
                                         <div v-if="form.gallery" class="form-group">
                                             <div class="col-md-10 uppercase-medium">
                                                 <ImageBox :initial-main-image="form.gallery[0].image" :images="form.gallery"></ImageBox>
@@ -347,7 +347,6 @@
 
                                                 </div>
                                                 <el-table border :data="form.rentals" style="width: 100%">
-                                                    <el-table-column prop="number" label="Payment"/>
                                                     <el-table-column prop="payment_date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
@@ -506,7 +505,6 @@
                                                         <h4>Payments Schedule</h4>
                                                     </div>
                                                     <el-table border :data="form.payments" style="width: 100%">
-                                                        <el-table-column prop="number" label="Payment"/>
                                                         <el-table-column prop="payment_date" label="Payment Date"/>
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
@@ -876,6 +874,20 @@ export default {
 .payments-wrapper .el-table th > .cell, .payments-wrapper .el-table td > .cell {
     font-size: 13px !important;
     text-align: center;
+}
+
+@media (max-width: 768px) {
+    .project-details-wrapper{
+        display: flex;
+        flex-direction: column;
+    }
+    .project-details-wrapper .project-gallery{
+        order: 1;
+    }
+
+    .project-details-wrapper .project-details{
+        order: 2;
+    }
 }
 
 .dashed.el-row {
