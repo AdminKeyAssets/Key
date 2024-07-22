@@ -2,7 +2,7 @@
     <div>
         <img v-if="this.rounded" :style="getImageStyle()" :width="this.width" :height="this.height" :src="this.thumbnail" alt="Image thumbnail" @click="showModal = true" style="border-radius: 50%; cursor: pointer; ">
         <img v-else :style="getImageStyle()" :src="this.thumbnail" :width="this.width" :height="this.height" alt="Image thumbnail" @click="showModal = true" style="cursor: pointer; ">
-        <el-dialog :visible.sync="showModal" :append-to-body="true" width="80%" :before-close="handleClose">
+        <el-dialog :visible.sync="showModal" :append-to-body="true" width="70%" :before-close="handleClose">
             <img :src="imagePath" alt="Image full view" style="width: 100%;">
         </el-dialog>
     </div>

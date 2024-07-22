@@ -286,7 +286,7 @@ class AssetController extends BaseController
             'total_floors' => $request->total_floors ?? null,
             'delivery_condition_description' => $request->delivery_condition_description,
             'project_link' => $request->project_link,
-            'location' => json_encode($request->location),
+            'location' => $request->location,
             'type' => $request->type,
             'floor' => $request->floor,
             'flat_number' => $request->flat_number,

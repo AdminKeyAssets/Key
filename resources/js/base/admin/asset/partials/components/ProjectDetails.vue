@@ -77,11 +77,15 @@
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Location:</label>
-            <MapMarker
-                v-if="item.location || !item.id"
-                :update-data="updateData"
-                :item="item"
-            ></MapMarker>
+            <div class="col-md-10 uppercase-medium">
+                <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="Embeded link for location"
+                    :disabled="loading"
+                    v-model="form.location">
+                </el-input>
+            </div>
         </div>
 
         <div class="form-group dashed">

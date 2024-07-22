@@ -86,13 +86,13 @@ export default {
 .main-image {
     width: 100%;
     max-width: 600px;
-    height: 400px; /* Fixed height */
+    height: 280px; /* Fixed height */
     margin-bottom: 20px;
 }
 
 .main-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
     cursor: pointer;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

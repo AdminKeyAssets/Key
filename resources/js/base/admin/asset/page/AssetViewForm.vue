@@ -69,7 +69,9 @@
                             <el-row>
                                 <div v-if="form.location" class="form-group">
                                     <label class="col-md-1 control-label">Location:</label>
-                                    <MapMarker disabled v-if="form.location || !form.id" :item="form"></MapMarker>
+                                    <div v-html="modifiedText">
+
+                                    </div>
                                 </div>
 
                                 <el-card class="box-card">
@@ -741,6 +743,9 @@ export default {
                 return `https://wa.me/${sanitizedPrefix}${sanitizedPhone}`;
             }
             return '';
+        },
+        modifiedText() {
+            return this.replaceWidth(this.form.location);
         }
     },
     methods: {
@@ -867,6 +872,10 @@ export default {
 
         getFilename(path) {
             return path.split('/').pop();
+        },
+
+        replaceWidth(text) {
+            return text.replace(/width="600"/g, 'width="100%"');
         }
     }
 }
