@@ -3,7 +3,12 @@
         <CustomImagePreview :mainImage="mainImage" :images="srcList" @update-main-image="setMainImage" />
         <div class="thumbnail-carousel-container">
             <span @click="prevImage" class="carousel-button prev-button">❮</span>
-            <div class="thumbnail-carousel">
+            <div
+                class="thumbnail-carousel"
+                @touchstart="onTouchStart"
+                @touchmove="onTouchMove"
+                @touchend="onTouchEnd"
+            >
                 <div
                     v-for="(image, index) in srcList"
                     :key="index"
@@ -16,7 +21,7 @@
                         class="thumbnail"
                         @click="setMainImage(image)"
                         :class="{ 'active': image === mainImage }"
-                    >
+                    />
                 </div>
             </div>
             <span @click="nextImage" class="carousel-button next-button">❯</span>
@@ -46,7 +51,10 @@ export default {
         return {
             mainImage: this.initialMainImage,
             currentIndex: 0,
-            srcList: []
+            srcList: [],
+            touchStartX: 0,
+            touchEndX: 0,
+            isDragging: false
         };
     },
     created() {
@@ -69,6 +77,25 @@ export default {
             if (this.currentIndex < this.images.length - 3) { // Assuming we show 3 thumbnails at a time
                 this.currentIndex++;
             }
+        },
+        onTouchStart(event) {
+            this.touchStartX = event.changedTouches[0].screenX;
+            this.isDragging = true;
+        },
+        onTouchMove(event) {
+            if (this.isDragging) {
+                this.touchEndX = event.changedTouches[0].screenX;
+            }
+        },
+        onTouchEnd() {
+            if (this.isDragging) {
+                if (this.touchStartX - this.touchEndX > 50) {
+                    this.nextImage();
+                } else if (this.touchStartX - this.touchEndX < -50) {
+                    this.prevImage();
+                }
+                this.isDragging = false;
+            }
         }
     }
 };
@@ -80,7 +107,6 @@ export default {
     flex-direction: column;
     align-items: center;
 }
-
 
 .thumbnail-carousel-container {
     display: flex;

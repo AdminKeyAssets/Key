@@ -163,8 +163,15 @@
 </template>
 
 <script>
+import { Notification } from 'element-ui';
 export default {
     props: ['form', 'loading', 'currencies', 'agreementStatuses', 'numbers'],
+    data() {
+        return {
+            previousAgreementStatus: '',
+            errorMessage: ''
+        };
+    },
     watch: {
         'form.price': 'updateTotalPrice',
         'form.area': 'updateTotalPrice',
@@ -174,7 +181,15 @@ export default {
                     this.$emit('update-form', { ...this.form, currency: 'USD' });
                 }
             }
-        }
+        },
+        'form.agreement_status'(newStatus) {
+            if (newStatus === 'Complete' && this.form.payments_histories && this.form.payments_histories.length > 0) {
+                this.form.agreement_status = 'Installments'; // Reset the status
+                Notification.error({
+                    message: 'Clean up payment history first!',
+                });
+            }
+        },
     },
     methods: {
         onOwnershipCertificateChange(e) {

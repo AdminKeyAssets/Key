@@ -437,7 +437,7 @@
                                                 <div v-if="form.price" class="form-group">
                                                     <label class="col-md-4 control-label">M2 Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ form.price }} {{ form.currency }}
+                                                        {{ formatPrice(form.price) }} {{ form.currency }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -445,7 +445,7 @@
                                                 <div v-if="form.total_price" class="form-group">
                                                     <label class="col-md-4 control-label">Total Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ form.total_price }} {{ form.currency }}
+                                                        {{ formatPrice(form.total_price) }} {{ form.currency }}
                                                     </div>
                                                 </div>
                                             </el-col>

@@ -18,7 +18,8 @@
                             <ExtraDetails :form="form" :loading="loading" @update-form="updateForm"/>
                         </el-tab-pane>
                         <el-tab-pane label="Agreement Details" name="4">
-                            <AgreementDetails :form="form" :loading="loading" :currencies="currencies" :agreement-statuses="agreementStatuses" :numbers="numbers" @update-form="updateForm"/>
+                            <AgreementDetails
+                                :form="form" :loading="loading" :currencies="currencies" :agreement-statuses="agreementStatuses" :numbers="numbers" @update-form="updateForm"/>
                         </el-tab-pane>
                         <el-tab-pane label="Current Value" name="5">
                             <CurrentValue :form="form"  :currencies="currencies" :loading="loading" @update-form="updateForm"/>
