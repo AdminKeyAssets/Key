@@ -693,12 +693,26 @@ export default {
         CurrentValue,
         AgreementDetails, ExtraDetails, TenantDetails, AssetDetails, ImageModal, MapMarker, AssetComments
     },
-    props: [
-        'investorView',
-        'isAdmin',
-        'getSaveDataRoute',
-        'id'
-    ],
+
+    props: {
+        id: {
+            type: [String, Number],
+            required: true
+        },
+        getSaveDataRoute: {
+            type: [String, Number],
+            required: true
+        },
+        isAdmin: {
+            type: [Boolean, Number],
+            default: false
+        },
+        investorView: {
+            type: [Boolean, Number],
+            default: false
+        }
+    },
+
     data() {
         return {
             item: {},

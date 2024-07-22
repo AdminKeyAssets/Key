@@ -4,20 +4,27 @@
         <ul class="comments-list">
             <li v-for="comment in visibleComments" :key="comment.id" class="comment-item">
                 <div class="comment-header">
-                    <span class="comment-user" v-if="comment.admin">{{ comment.admin.name }} {{ comment.admin.surname }}</span>
-                    <span class="comment-user" v-else-if="comment.investor">{{ comment.investor.name }} {{ comment.investor.surname }}</span>
+                    <span class="comment-user" v-if="comment.admin">{{ comment.admin.name }} {{
+                            comment.admin.surname
+                        }}</span>
+                    <span class="comment-user" v-else-if="comment.investor">{{
+                            comment.investor.name
+                        }} {{ comment.investor.surname }}</span>
                     <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
                 </div>
                 <p class="comment-text">{{ comment.comment }}</p>
-                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank" class="comment-attachment">View {{getFilename(comment.attachment)}}</a>
+                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank" class="comment-attachment">View
+                    {{ getFilename(comment.attachment) }}</a>
                 <div class="comment-actions" v-if="isAdmin">
-                <span class="comment-delete"  @click="deleteComment(comment.id)">
-                    Delete
-                </span>
+                    <span class="comment-delete" @click="deleteComment(comment.id)">
+                        Delete
+                    </span>
                 </div>
             </li>
         </ul>
-        <el-button v-if="!showAllComments && hasOlderComments" @click="showAllComments = true" class="show-all-comments-button">Show All Comments</el-button>
+        <el-button v-if="!showAllComments && hasOlderComments" @click="showAllComments = true"
+                   class="show-all-comments-button">Show All Comments
+        </el-button>
         <el-form @submit.prevent="submitComment" class="comment-form">
             <el-input v-model="newComment" placeholder="Add a comment" class="comment-input"></el-input>
             <input type="file" @change="onFileChange" class="comment-file-input">
@@ -27,12 +34,25 @@
 </template>
 
 <script>
-import { responseParse } from '../../../mixins/responseParse';
-import { getData } from '../../../mixins/getData';
+import {responseParse} from '../../../mixins/responseParse';
+import {getData} from '../../../mixins/getData';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
-    props: ['id', 'isAdmin', 'investorView'],
+    props: {
+        id: {
+            type: [String, Number],
+            required: true
+        },
+        isAdmin: {
+            type: [Boolean, Number],
+            default: false
+        },
+        investorView: {
+            type: [Boolean, Number],
+            default: false
+        }
+    },
     data() {
         return {
             comments: [],

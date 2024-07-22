@@ -12,11 +12,18 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <asset-view-page-form
-                    :id="{{ $data['id'] }}"
-                    :is-admin="{{\Auth::user()->getRolesNameAttribute() == 'administrator'}}"
-                    :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
-                </asset-view-page-form>
+                @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                    <asset-view-page-form
+                        :id="{{ $data['id'] }}"
+                        :is-admin="{{ true }}"
+                        :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
+                    </asset-view-page-form>
+                @else
+                    <asset-view-page-form
+                        :id="{{ $data['id'] }}"
+                        :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
+                    </asset-view-page-form>
+                @endif
             </div>
         </div>
         <!-- END Responsive Full Block -->
@@ -24,11 +31,10 @@
     </div>
     <!-- END Page Content -->
 
-
 @endsection
 
 <style>
-    .header-section{
+    .header-section {
         text-align: center;
     }
 </style>
