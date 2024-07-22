@@ -9,18 +9,18 @@
                     <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index" :class="getItemClass(index)">
                         <el-card class="box-card">
                             <div slot="header" class="clearfix">
-                                <i class="el-icon-house"> {{rental.project_name}}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
+                                <i class="el-icon-house"> {{ rental.project_name }}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
                             </div>
                             <div class="text item">
                                 <div style="padding-bottom: 5px">
-                                    <i class="el-icon-money" style="color:green"> {{rental.amount}} {{rental.currency}}</i>
+                                    <i class="el-icon-money" style="color:green"> {{ formatPrice(rental.amount) }} {{ rental.currency }}</i>
                                 </div>
                                 <div>
-                                    <i class="el-icon-date" style="color:gray"> {{rental.payment_date}}</i>
+                                    <i class="el-icon-date" style="color:gray"> {{ rental.payment_date }}</i>
                                 </div>
                             </div>
                             <div class="text item">
-                                <i class="el-icon-user-solid"> {{rental.tenant_name}} {{rental.tenant_surname}}</i>
+                                <i class="el-icon-user-solid"> {{ rental.tenant_name }} {{ rental.tenant_surname }}</i>
                             </div>
                         </el-card>
                     </div>
@@ -79,7 +79,21 @@ export default {
 
         getItemClass(index) {
             return index % 2 === 0 ? 'even-item' : 'odd-item';
-        }
+        },
+        formatPrice(amount) {
+            //Do not Format
+            if (amount !== undefined && amount !== '') {
+                // const value = parseFloat(amount.replace(/,/g, ''));
+                if (!isNaN(amount)) {
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'decimal',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                    }).format(amount);
+                }
+            }
+            return '0.00';
+        },
     }
 }
 

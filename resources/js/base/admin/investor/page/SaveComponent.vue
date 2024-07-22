@@ -103,14 +103,13 @@
                 </div>
 
                 <div class="form-group">
-
                     <label class="col-md-2 control-label">Password <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-input class="el-input--is-round" maxlength="150" show-word-limit
                                   v-model="form.password"></el-input>
                     </div>
                     <div class="col-md-3">
-                        <el-button type="warning" @click="generatePassword" :disabled="loading " style="margin: 0 1rem">
+                        <el-button type="warning" @click="generatePassword" :disabled="loading" style="margin: 0 1rem">
                             Generate Password
                         </el-button>
                     </div>
@@ -162,10 +161,10 @@
 }
 </style>
 <script>
-import {responseParse} from '../../../mixins/responseParse'
-import {getData} from '../../../mixins/getData'
-import {hasPermission} from '../../../mixins/hasPermission'
-import {Notification} from 'element-ui'
+import { responseParse } from '../../../mixins/responseParse'
+import { getData } from '../../../mixins/getData'
+import { hasPermission } from '../../../mixins/hasPermission'
+import { Notification } from 'element-ui'
 
 export default {
     props: [
@@ -183,75 +182,66 @@ export default {
             countries: [],
             prefixes: [],
             managers: [],
-            /**
-             * Form data
-             */
             form: {
                 guard_name: 'admin',
-                password: ''
+                password: '',
+                // Ensure other form fields are initialized properly
+                name: '',
+                surname: '',
+                pid: '',
+                citizenship: '',
+                address: '',
+                email: '',
+                phone: '',
+                prefix: '',
+                admin_id: '',
+                profile_picture: null,
+                profilePicturePreview: null,
+                passport: null,
+                passportPreview: null
             },
-
         }
     },
     created() {
-        if(this.id){
+        if (this.id) {
             this.form.id = this.id;
         }
-
         this.getSaveData();
     },
-
     methods: {
-        /**
-         *
-         * Get save data.
-         *
-         * @returns {Promise<void>}
-         */
         async getSaveData() {
-
             this.loading = true;
-
             await getData({
                 method: 'POST',
                 url: this.getSaveDataRoute,
                 data: this.form
             }).then(response => {
-                // Parse response notification.
                 responseParse(response, false);
                 if (response.status == 200) {
-                    // Response data.
                     let data = response.data.data;
-
                     this.routes = data.routes;
                     this.options = data.options;
                     if (data.item) {
-                        this.form = data.item;
+                        this.form = { ...this.form, ...data.item };
                     }
-
-                    if(data.countries){
+                    if (data.countries) {
                         this.countries = data.countries;
                     }
-                    if(data.prefixes){
+                    if (data.prefixes) {
                         this.prefixes = data.prefixes;
                     }
-                    if(data.managers){
+                    if (data.managers) {
                         this.managers = data.managers;
                     }
                 }
                 this.loading = false
-            })
+            });
         },
-
         async save() {
             this.loading = true;
-
             let formData = new FormData();
             for (let key in this.form) {
-                if (key === 'passport' && this.form[key]) {
-                    formData.append(key, this.form[key]);
-                }
-                else if (key === 'profile_picture' && this.form[key]) {
+                if ((key === 'passport' || key === 'profile_picture') && this.form[key]) {
                     formData.append(key, this.form[key]);
                 } else {
                     formData.append(key, this.form[key]);
@@ -266,15 +256,13 @@ export default {
                 this.loading = false;
                 responseParse(response);
                 setTimeout(() => {
-                    window.location.href ='/admin/investors';
+                    window.location.href = '/admin/investors';
                 }, 1000);
-            })
-                .catch(error => {
-                    this.loading = false;
-                    responseParse(error.response);
-                });
+            }).catch(error => {
+                this.loading = false;
+                responseParse(error.response);
+            });
         },
-
         generatePassword() {
             let charactersArray = 'a-z,A-Z,0-9,#'.split(',');
             let CharacterSet = '';
@@ -314,7 +302,6 @@ export default {
             this.form.profile_picture = null;
             this.form.profilePicturePreview = null;
         },
-
         onPassportChange(e) {
             const file = e.target.files[0];
             if (file) {
@@ -339,6 +326,5 @@ export default {
             }
         },
     }
-
 }
 </script>

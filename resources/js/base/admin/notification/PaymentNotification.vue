@@ -15,7 +15,7 @@
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
-                                <i class="el-icon-money" style="color:green"> {{ payment.amount }}
+                                <i class="el-icon-money" style="color:green"> {{ formatPrice(payment.amount) }}
                                     {{ payment.currency }}</i>
                             </div>
                             <div>
@@ -80,7 +80,21 @@ export default {
 
         getItemClass(index) {
             return index % 2 === 0 ? 'even-item' : 'odd-item';
-        }
+        },
+        formatPrice(amount) {
+            //Do not Format
+            if (amount !== undefined && amount !== '') {
+                // const value = parseFloat(amount.replace(/,/g, ''));
+                if (!isNaN(amount)) {
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'decimal',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                    }).format(amount);
+                }
+            }
+            return '0.00';
+        },
     }
 }
 
