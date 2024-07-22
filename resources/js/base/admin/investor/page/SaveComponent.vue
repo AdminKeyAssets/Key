@@ -185,7 +185,6 @@ export default {
             form: {
                 guard_name: 'admin',
                 password: '',
-                // Ensure other form fields are initialized properly
                 name: '',
                 surname: '',
                 pid: '',
