@@ -5,6 +5,10 @@
             <span @click="prevImage" class="carousel-button prev-button">❮</span>
             <div
                 class="thumbnail-carousel"
+                @mousedown="onMouseDown"
+                @mousemove="onMouseMove"
+                @mouseup="onMouseUp"
+                @mouseleave="onMouseUp"
                 @touchstart="onTouchStart"
                 @touchmove="onTouchMove"
                 @touchend="onTouchEnd"
@@ -55,6 +59,9 @@ export default {
             touchStartX: 0,
             touchEndX: 0,
             isDragging: false,
+            mouseStartX: 0,
+            mouseEndX: 0,
+            isMouseDragging: false,
             currentTranslate: 0,
             prevTranslate: 0,
             startPos: 0,
@@ -118,6 +125,33 @@ export default {
                 this.isDragging = false;
                 this.prevTranslate = this.currentTranslate;
             }
+        },
+        onMouseDown(event) {
+            this.mouseStartX = event.clientX;
+            this.startPos = this.mouseStartX;
+            this.isMouseDragging = true;
+            this.prevTranslate = this.currentTranslate;
+            event.preventDefault(); // Prevent text selection while dragging
+        },
+        onMouseMove(event) {
+            if (this.isMouseDragging) {
+                const currentPosition = event.clientX;
+                const delta = currentPosition - this.startPos;
+                this.currentTranslate = this.prevTranslate + delta;
+            }
+        },
+        onMouseUp(event) {
+            if (this.isMouseDragging) {
+                this.mouseEndX = event.clientX;
+                const movedBy = this.mouseStartX - this.mouseEndX;
+                if (movedBy > 50) {
+                    this.nextImage();
+                } else if (movedBy < -50) {
+                    this.prevImage();
+                }
+                this.isMouseDragging = false;
+                this.prevTranslate = this.currentTranslate;
+            }
         }
     }
 };
@@ -167,6 +201,10 @@ export default {
     overflow: hidden;
     width: 100%;
     cursor: grab; /* Indicate draggable area */
+}
+
+.thumbnail-carousel:active {
+    cursor: grabbing; /* Indicate active dragging */
 }
 
 .thumbnail-item {
