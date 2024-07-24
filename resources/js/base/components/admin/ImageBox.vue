@@ -10,10 +10,10 @@
                 @touchend="onTouchEnd"
             >
                 <div
-                    v-for="(image, index) in srcList"
+                    v-for="(image, index) in loopedImages"
                     :key="index"
                     class="thumbnail-item"
-                    :style="{ transform: `translateX(${-currentIndex * 100}%)` }"
+                    :style="{ transform: `translateX(${-currentTranslate}px)` }"
                 >
                     <img
                         :src="image"
@@ -54,8 +54,16 @@ export default {
             srcList: [],
             touchStartX: 0,
             touchEndX: 0,
-            isDragging: false
+            isDragging: false,
+            currentTranslate: 0,
+            prevTranslate: 0,
+            startPos: 0
         };
+    },
+    computed: {
+        loopedImages() {
+            return [...this.srcList, ...this.srcList, ...this.srcList]; // Triplicate the list to simulate infinite loop
+        }
     },
     created() {
         if (this.images) {
@@ -69,32 +77,42 @@ export default {
             this.mainImage = image;
         },
         prevImage() {
-            if (this.currentIndex > 0) {
-                this.currentIndex--;
+            this.currentIndex--;
+            if (this.currentIndex < 0) {
+                this.currentIndex = this.srcList.length - 1;
+                this.currentTranslate = (this.srcList.length) * 100; // Jump to the middle copy
             }
+            this.currentTranslate -= 100;
         },
         nextImage() {
-            if (this.currentIndex < this.images.length - 3) { // Assuming we show 3 thumbnails at a time
-                this.currentIndex++;
+            this.currentIndex++;
+            if (this.currentIndex >= this.srcList.length) {
+                this.currentIndex = 0;
+                this.currentTranslate = (this.srcList.length - 1) * 100; // Jump to the middle copy
             }
+            this.currentTranslate += 100;
         },
         onTouchStart(event) {
             this.touchStartX = event.changedTouches[0].screenX;
+            this.startPos = this.touchStartX;
             this.isDragging = true;
         },
         onTouchMove(event) {
             if (this.isDragging) {
-                this.touchEndX = event.changedTouches[0].screenX;
+                const currentPosition = event.changedTouches[0].screenX;
+                this.currentTranslate = this.prevTranslate + currentPosition - this.startPos;
             }
         },
         onTouchEnd() {
             if (this.isDragging) {
-                if (this.touchStartX - this.touchEndX > 50) {
+                const movedBy = this.touchStartX - this.touchEndX;
+                if (movedBy > 50) {
                     this.nextImage();
-                } else if (this.touchStartX - this.touchEndX < -50) {
+                } else if (movedBy < -50) {
                     this.prevImage();
                 }
                 this.isDragging = false;
+                this.prevTranslate = this.currentTranslate;
             }
         }
     }
@@ -144,6 +162,7 @@ export default {
     display: flex;
     overflow: hidden;
     width: 100%;
+    cursor: grab; /* Indicate draggable area */
 }
 
 .thumbnail-item {
@@ -158,14 +177,10 @@ export default {
     cursor: pointer;
     border: 2px solid transparent;
     border-radius: 5px;
-    transition: border-color 0.3s, transform 0.3s;
+    transition: border-color 0.3s;
 }
 
 .thumbnail.active {
     border-color: #000;
-}
-
-.thumbnail:hover {
-    transform: scale(1.1);
 }
 </style>

@@ -592,9 +592,7 @@
                                                                      width="fit-content">
                                                         <template slot-scope="scope">
                                                             <a v-if="scope.row.attachment" :href="scope.row.attachment"
-                                                               target="_blank">View {{
-                                                                    getFilename(scope.row.attachment)
-                                                                }}</a>
+                                                               target="_blank">{{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
