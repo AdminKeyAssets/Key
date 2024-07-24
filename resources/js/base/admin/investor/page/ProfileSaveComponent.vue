@@ -173,10 +173,9 @@ export default {
                 phone: this.user ? this.user.phone : '',
                 citizenship: this.user ? this.user.citizenship : '',
                 manager: this.user ? this.user.manager : '',
+                profile_picture: this.user ? this.user.profile_picture : '',
                 password: ''
             }
-            console.log(this.user)
-
         },
 
         /**
