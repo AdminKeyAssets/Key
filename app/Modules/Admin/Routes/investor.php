@@ -68,19 +68,19 @@ Route::group(['prefix' => 'investor', 'middleware' => ['auth:investor']], functi
         /**
          * Profile edit page
          */
-        Route::get('', 'User\ProfileController@create')
+        Route::get('', 'User\InvestorProfileController@create')
             ->name('index');
 
         /**
          * Get Update form data.
          */
-        Route::post('profile-form-data', 'User\ProfileController@getCreateData')
+        Route::post('profile-form-data', 'User\InvestorProfileController@getCreateData')
             ->name('form_data');
 
         /**
          * Profile save.
          */
-        Route::post('save', 'User\ProfileController@save')
+        Route::post('save', 'User\InvestorProfileController@save')
             ->name('save');
     });
 });

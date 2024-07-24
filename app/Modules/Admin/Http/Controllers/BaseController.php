@@ -54,6 +54,11 @@ class BaseController extends Controller
     protected $baseAdminViewName = 'admin.';
 
     /**
+     * @var string
+     */
+    protected $baseInvestorViewName = 'investor.';
+
+    /**
      * BaseController constructor.
      */
     public function __construct()

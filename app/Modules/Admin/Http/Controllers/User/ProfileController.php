@@ -57,17 +57,8 @@ class ProfileController extends BaseController
     {
 
         try {
-            if (\Auth::guard('investor')->check()) {
-                $user = \Auth::guard('investor')->user();
-                $this->baseData['user'] = $user;
-                $this->baseData['routes'] = ProfileHelper::getRoutes('investor');
-                $manager = Admin::where('id', $user->admin_id)->first();
-                $this->baseData['user']['manager'] = $manager->name . ' ' . $manager->surname;
-            } else {
-                $this->baseData['user'] = \Auth::guard('admin')->user();
-                $this->baseData['routes'] = ProfileHelper::getRoutes();
-            }
-
+            $this->baseData['user'] = \Auth::guard('admin')->user();
+            $this->baseData['routes'] = ProfileHelper::getRoutes();
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
         }
@@ -82,18 +73,8 @@ class ProfileController extends BaseController
     public function getCreateData(Request $request)
     {
         try {
-            if (\Auth::guard('investor')->check()) {
-                $user = \Auth::guard('investor')->user();
-                $this->baseData['user'] = $user;
-                $this->baseData['routes'] = ProfileHelper::getRoutes('investor');
-                $manager = Admin::where('id', $user->admin_id)->first();
-                $this->baseData['manager'] = $manager->name . ' ' . $manager->surname;
-
-
-            } else {
-                $this->baseData['routes'] = ProfileHelper::getRoutes();
-                $this->baseData['user'] = \Auth::guard('admin')->user();
-            }
+            $this->baseData['routes'] = ProfileHelper::getRoutes();
+            $this->baseData['user'] = \Auth::guard('admin')->user();
         } catch (\Exception $ex) {
             Log::error('Error during user profile index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
@@ -109,17 +90,8 @@ class ProfileController extends BaseController
     public function save(SaveProfileRequest $request)
     {
         try {
-
-            if (\Auth::guard('investor')->check()) {
-                $user = \Auth::guard('investor')->user();
-                Investor::where('id', $user->getAuthIdentifier())->update([
-                        'password' => bcrypt($request->password)
-                    ]
-                );
-            } else {
-                $user = \Auth::guard('admin')->user();
-                $this->adminRepository->updateProfile($request, $user);
-            }
+            $user = \Auth::guard('admin')->user();
+            $this->adminRepository->updateProfile($request, $user);
 
         } catch (\Exception $ex) {
             Log::error('Error during user profile update', ['message' => $ex->getMessage(), 'data' => $request->all()]);
