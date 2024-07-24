@@ -13,7 +13,7 @@
                     v-for="(image, index) in loopedImages"
                     :key="index"
                     class="thumbnail-item"
-                    :style="{ transform: `translateX(${-currentTranslate}px)` }"
+                    :style="{ transform: `translateX(${currentTranslate}px)` }"
                 >
                     <img
                         :src="image"
@@ -57,7 +57,8 @@ export default {
             isDragging: false,
             currentTranslate: 0,
             prevTranslate: 0,
-            startPos: 0
+            startPos: 0,
+            animationFrameId: null
         };
     },
     computed: {
@@ -80,31 +81,34 @@ export default {
             this.currentIndex--;
             if (this.currentIndex < 0) {
                 this.currentIndex = this.srcList.length - 1;
-                this.currentTranslate = (this.srcList.length) * 100; // Jump to the middle copy
+                this.currentTranslate = -this.srcList.length * 100; // Jump to the middle copy
             }
-            this.currentTranslate -= 100;
+            this.currentTranslate += 100;
         },
         nextImage() {
             this.currentIndex++;
             if (this.currentIndex >= this.srcList.length) {
                 this.currentIndex = 0;
-                this.currentTranslate = (this.srcList.length - 1) * 100; // Jump to the middle copy
+                this.currentTranslate = -this.srcList.length * 100; // Jump to the middle copy
             }
-            this.currentTranslate += 100;
+            this.currentTranslate -= 100;
         },
         onTouchStart(event) {
             this.touchStartX = event.changedTouches[0].screenX;
             this.startPos = this.touchStartX;
             this.isDragging = true;
+            this.prevTranslate = this.currentTranslate;
         },
         onTouchMove(event) {
             if (this.isDragging) {
                 const currentPosition = event.changedTouches[0].screenX;
-                this.currentTranslate = this.prevTranslate + currentPosition - this.startPos;
+                const delta = currentPosition - this.startPos;
+                this.currentTranslate = this.prevTranslate + delta;
             }
         },
-        onTouchEnd() {
+        onTouchEnd(event) {
             if (this.isDragging) {
+                this.touchEndX = event.changedTouches[0].screenX;
                 const movedBy = this.touchStartX - this.touchEndX;
                 if (movedBy > 50) {
                     this.nextImage();
