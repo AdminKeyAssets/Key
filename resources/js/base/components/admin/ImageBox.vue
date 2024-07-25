@@ -17,7 +17,6 @@
                     v-for="(imageItem, index) in srcList"
                     :key="imageItem.id"
                     class="thumbnail-item"
-                    :style="{ transform: `translateX(${currentTranslate}px)`, transition: isDragging ? 'none' : 'transform 0.5s ease' }"
                 >
                     <img
                         :src="imageItem.image"
@@ -77,14 +76,12 @@ export default {
             this.mainImage = image;
         },
         prevImage() {
-            this.isDragging = false;
             const lastItem = this.srcList.pop();
             this.srcList.unshift(lastItem);
             this.currentTranslate = -100;
             this.animateSlide(100);
         },
         nextImage() {
-            this.isDragging = false;
             const firstItem = this.srcList.shift();
             this.srcList.push(firstItem);
             this.currentTranslate = 0;
@@ -203,7 +200,7 @@ export default {
 
 .thumbnail-item {
     min-width: 100px;
-    transition: transform 0.5s ease;
+    transition: transform 0.5s;
 }
 
 .thumbnail {
