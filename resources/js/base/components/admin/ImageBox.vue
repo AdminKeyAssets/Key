@@ -14,17 +14,16 @@
                 @touchend="onTouchEnd"
             >
                 <div
-                    v-for="(image, index) in loopedImages"
+                    v-for="(image, index) in srcList"
                     :key="index"
                     class="thumbnail-item"
-                    :style="{ transform: `translateX(${currentTranslate}px)` }"
                 >
                     <img
-                        :src="image"
+                        :src="image.image"
                         alt="Thumbnail"
                         class="thumbnail"
-                        @click="setMainImage(image)"
-                        :class="{ 'active': image === mainImage }"
+                        @click="setMainImage(image.image)"
+                        :class="{ 'active': image.image === mainImage }"
                     />
                 </div>
             </div>
@@ -54,7 +53,6 @@ export default {
     data() {
         return {
             mainImage: this.initialMainImage,
-            currentIndex: 0,
             srcList: [],
             touchStartX: 0,
             touchEndX: 0,
@@ -68,16 +66,9 @@ export default {
             animationFrameId: null
         };
     },
-    computed: {
-        loopedImages() {
-            return [...this.srcList, ...this.srcList, ...this.srcList]; // Triplicate the list to simulate infinite loop
-        }
-    },
     created() {
         if (this.images) {
-            this.images.forEach((image) => {
-                this.srcList.push(image.image);
-            });
+            this.srcList = [...this.images];
         }
     },
     methods: {
@@ -85,20 +76,20 @@ export default {
             this.mainImage = image;
         },
         prevImage() {
-            this.currentIndex--;
-            if (this.currentIndex < 0) {
-                this.currentIndex = this.srcList.length - 1;
-                this.currentTranslate = -this.srcList.length * 100; // Jump to the middle copy
-            }
-            this.currentTranslate += 100;
+            const lastItem = this.srcList.pop();
+            this.srcList.unshift(lastItem);
+            this.currentTranslate = -100;
+            this.animateSlide(100);
         },
         nextImage() {
-            this.currentIndex++;
-            if (this.currentIndex >= this.srcList.length) {
-                this.currentIndex = 0;
-                this.currentTranslate = -this.srcList.length * 100; // Jump to the middle copy
-            }
-            this.currentTranslate -= 100;
+            const firstItem = this.srcList.shift();
+            this.srcList.push(firstItem);
+            this.currentTranslate = 0;
+            this.animateSlide(-100);
+        },
+        animateSlide(offset) {
+            this.currentTranslate += offset;
+            this.prevTranslate = this.currentTranslate;
         },
         onTouchStart(event) {
             this.touchStartX = event.changedTouches[0].screenX;
