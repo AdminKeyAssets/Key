@@ -94,7 +94,6 @@ export default {
     justify-content: center;
     align-items: center;
     width: 80vw;
-    height: 70vh;
     background-color: white; /* White background for empty spaces */
 }
 
@@ -112,8 +111,22 @@ export default {
     justify-content: center;
     align-items: center;
     width: 80vw;
-    height: 70vh;
     margin: auto; /* Center the dialog */
+}
+
+@media (min-width: 769px) {
+    .transparent-dialog .el-dialog__body, .image-container{
+        height: 70vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .transparent-dialog .el-dialog__body, .image-container{
+        height: 30vh;
+    }
+    .el-dialog.transparent-dialog {
+        margin-top: 15vh !important;
+    }
 }
 
 .transparent-dialog .el-dialog__wrapper {
