@@ -94,9 +94,12 @@ export default {
     justify-content: center;
     align-items: center;
     height: auto; /* Adjust as necessary to fit within the modal */
+    max-height: 80vh;
+    overflow: hidden;
 }
 
 .image-container img {
+    width: 60vw;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain; /* Ensures the image maintains its aspect ratio and fits within the container */
