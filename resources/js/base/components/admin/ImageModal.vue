@@ -93,13 +93,13 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: auto; /* Adjust as necessary to fit within the modal */
-    max-height: 80vh;
-    overflow: hidden;
+    width: 80vw;
+    height: 70vh;
+    background-color: white; /* White background for empty spaces */
 }
 
 .image-container img {
-    width: 60vw;
+    width: 100%;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain; /* Ensures the image maintains its aspect ratio and fits within the container */
@@ -111,7 +111,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 70%; /* Maximum width of 70% */
+    width: 80vw;
+    height: 70vh;
     margin: auto; /* Center the dialog */
 }
 
