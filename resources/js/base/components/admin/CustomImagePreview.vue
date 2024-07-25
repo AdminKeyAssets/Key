@@ -53,14 +53,14 @@ export default {
             }
         },
         prevImage() {
-            const currentIndex = this.images.indexOf(this.mainImage);
+            const currentIndex = this.images.findIndex(image => image.image === this.mainImage);
             const prevIndex = (currentIndex - 1 + this.images.length) % this.images.length;
-            this.$emit('update-main-image', this.images[prevIndex]);
+            this.$emit('update-main-image', this.images[prevIndex].image);
         },
         nextImage() {
-            const currentIndex = this.images.indexOf(this.mainImage);
+            const currentIndex = this.images.findIndex(image => image.image === this.mainImage);
             const nextIndex = (currentIndex + 1) % this.images.length;
-            this.$emit('update-main-image', this.images[nextIndex]);
+            this.$emit('update-main-image', this.images[nextIndex].image);
         },
         onTouchStart(event) {
             this.touchStartX = event.changedTouches[0].screenX;

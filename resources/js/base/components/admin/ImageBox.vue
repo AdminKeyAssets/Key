@@ -14,16 +14,16 @@
                 @touchend="onTouchEnd"
             >
                 <div
-                    v-for="(image, index) in srcList"
-                    :key="index"
+                    v-for="(imageItem, index) in srcList"
+                    :key="imageItem.id"
                     class="thumbnail-item"
                 >
                     <img
-                        :src="image.image"
+                        :src="imageItem.image"
                         alt="Thumbnail"
                         class="thumbnail"
-                        @click="setMainImage(image.image)"
-                        :class="{ 'active': image.image === mainImage }"
+                        @click="setMainImage(imageItem.image)"
+                        :class="{ 'active': imageItem.image === mainImage }"
                     />
                 </div>
             </div>
