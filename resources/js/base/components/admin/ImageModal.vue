@@ -93,7 +93,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh; /* Adjust as necessary to fit within the modal */
+    height: auto; /* Adjust as necessary to fit within the modal */
 }
 
 .image-container img {
