@@ -1,9 +1,33 @@
 <template>
     <div>
-        <img v-if="this.rounded" :style="getImageStyle()" :width="this.width" :height="this.height" :src="this.thumbnail" alt="Image thumbnail" @click="showModal = true" style="border-radius: 50%; cursor: pointer; ">
-        <img v-else :style="getImageStyle()" :src="this.thumbnail" :width="this.width" :height="this.height" alt="Image thumbnail" @click="showModal = true" style="cursor: pointer; ">
-        <el-dialog :visible.sync="showModal" :append-to-body="true" width="70%" :before-close="handleClose">
-            <img :src="imagePath" alt="Image full view" style="width: 100%;">
+        <img
+            v-if="rounded"
+            :style="getImageStyle()"
+            :width="width"
+            :height="height"
+            :src="thumbnail"
+            alt="Image thumbnail"
+            @click="showModal = true"
+            style="border-radius: 50%; cursor: pointer;">
+        <img
+            v-else
+            :style="getImageStyle()"
+            :src="thumbnail"
+            :width="width"
+            :height="height"
+            alt="Image thumbnail"
+            @click="showModal = true"
+            style="cursor: pointer;">
+        <el-dialog
+            top="5vh"
+            :visible.sync="showModal"
+            :append-to-body="true"
+            width="fit-content"
+            :before-close="handleClose"
+            custom-class="transparent-dialog">
+            <div class="image-container">
+                <img :src="imagePath" alt="Image full view">
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -35,7 +59,7 @@ export default {
             type: Number,
             required: false
         },
-        fullscreen:{
+        fullscreen: {
             type: Boolean,
             default: false
         }
@@ -65,5 +89,39 @@ export default {
 </script>
 
 <style scoped>
-/* Add any additional styles here */
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* Adjust as necessary to fit within the modal */
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ensures the image maintains its aspect ratio and fits within the container */
+}
+
+.transparent-dialog .el-dialog__body {
+    background-color: transparent;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 70%; /* Maximum width of 70% */
+    margin: auto; /* Center the dialog */
+}
+
+.transparent-dialog .el-dialog__wrapper {
+    width: fit-content; /* Dialog width is fit-content */
+}
+
+.transparent-dialog .el-dialog {
+    margin: auto; /* Center the dialog */
+}
+
+.transparent-dialog .el-dialog__header,
+.transparent-dialog .el-dialog__footer {
+    display: none; /* Hide the header and footer if not needed */
+}
 </style>
