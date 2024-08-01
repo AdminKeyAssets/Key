@@ -6,15 +6,14 @@
             <div id="page-container" class="sidebar-partial sidebar-visible-lg sidebar-no-animations">
 
                 <!-- Main Sidebar -->
-                <div id="sidebar">
+                <div id="sidebar" style="background-image: url('{{ config('admin.sidebar_background') }}')">
                     <!-- Wrapper for scrolling functionality -->
                     <div id="sidebar-scroll">
                         <!-- Sidebar Content -->
                         <div class="sidebar-content">
                             <!-- Brand -->
                             <a href="" class="sidebar-brand">
-                                <i class="gi gi-flash"></i><span
-                                    class="sidebar-nav-mini-hide"><strong>{{ config('admin.project_name') }}</strong></span>
+                                <img class="sidebar-logo" src="{{ config('admin.sidebar_logo') }}">
                             </a>
                             <!-- END Brand -->
 
@@ -88,19 +87,9 @@
                     </header>
                     <!-- END Header -->
 
-                    <div class="admin">
+                    <div class="admin" style="background-image: url('{{ config('admin.auth_background') }}')">
                         @yield('main')
                     </div>
-
-                    <!-- Footer -->
-                    <footer class="clearfix">
-                        <div class="pull-right">
-                            Handcrafted with <i class="fa fa-heart text-danger"></i> by <a
-                                href="{{ config('admin.handcrafted_by_url') }}"
-                                target="_blank">{{ config('admin.handcrafted_by') }}</a>
-                        </div>
-                    </footer>
-                    <!-- END Footer -->
                 </div>
                 <!-- END Main Container -->
             </div>
@@ -108,9 +97,6 @@
         </div>
         <!-- END Page Wrapper -->
     </div>
-    <!-- Scroll to top link, initialized in js/app.js - scrollToTop() -->
-    <a href="#" id="to-top"><i class="fa fa-angle-double-up"></i></a>
-    <!-- END User Settings -->
 @endsection
 
 <script>

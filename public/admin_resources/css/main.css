@@ -52,7 +52,7 @@
 body:lang(ka) h1, body:lang(ka) h2, body:lang(ka) h3, body:lang(ka) h4, body:lang(ka) h5, body:lang(ka) h6,
 body:lang(ka) table thead th, body:lang(ka) label {
     font-family: 'BPGCaps', sans-serif;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
     font-weight: normal;
 }
 
@@ -470,9 +470,16 @@ header.navbar-inverse.navbar-fixed-bottom {
     margin: 0;
     font-weight: 300;
     font-size: 18px;
-    display: block;
+    /*display: block;*/
     color: #ffffff;
-    background: rgba(0, 0, 0, 0.15);
+    background: #0277B6;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.sidebar-logo{
+    max-width: 80%;
 }
 
 a.sidebar-brand:hover,
@@ -505,7 +512,7 @@ a.sidebar-title:focus {
 /* Sidebar User */
 .sidebar-user {
     padding-left: 88px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #3592c5;
 }
 
 .sidebar-user-avatar {
@@ -526,7 +533,7 @@ a.sidebar-title:focus {
 
 .sidebar-user-name {
     font-size: 12px;
-    font-weight: 300;
+    font-weight: bold;
     margin-top: 10px;
     line-height: 26px;
     white-space: normal;
@@ -725,6 +732,7 @@ a.sidebar-title:focus {
     padding: 0 10px;
     min-height: 35px;
     line-height: 35px;
+    font-weight: bold;
 }
 
 .sidebar-nav a:hover,
@@ -734,6 +742,7 @@ a.sidebar-title:focus {
     color: #ffffff;
     text-decoration: none;
     background: rgba(0, 0, 0, 0.15);
+    font-weight: bold;
 }
 
 .sidebar-nav a.active {
@@ -3981,6 +3990,9 @@ p, .table, .alert, .carousel {
     .sidebar-alt-visible-lg.sidebar-alt-partial #sidebar-alt {
         width: 200px;
         opacity: 1;
+        height: 100vh;
+        background-repeat: no-repeat;
+        background-position-y: bottom;
     }
 
     .sidebar-partial #sidebar .sidebar-brand i,

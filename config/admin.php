@@ -28,6 +28,10 @@ return [
      * Project avatar url.
      */
     'project_avatar'        => 'admin_resources/img/placeholders/avatars/avatar2.jpg',
+    'sidebar_background'        => 'admin_resources/img/placeholders/backgrounds/sidebar.svg',
+    'login_background'        => 'admin_resources/img/placeholders/backgrounds/img.png',
+    'auth_background'        => 'admin_resources/img/placeholders/backgrounds/img_1.png',
+    'sidebar_logo'        => 'admin_resources/img/placeholders/avatars/img.png',
 
     /**
      * Login page logo.
@@ -35,7 +39,7 @@ return [
     'login_logo'                => [
         [
             'src'       => 'admin_resources/img/placeholders/avatars/KA_WHITE-01.svg',
-            'style'     => 'width: 100px'
+            'style'     => 'width: 200px'
         ]
     ],
 

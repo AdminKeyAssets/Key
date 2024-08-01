@@ -3,77 +3,79 @@
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
                 <div class="content-wrapper">
-                    <div class="block col-md-9 asset-details-wrapper">
+                    <div class="block col-md-9 asset-details-wrapper form-horizontal form-bordered">
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
                                  element-loading-background="rgba(0, 0, 0, 0.0)"
-                                 class="form-horizontal form-bordered">
+                                 class="">
 
-                            <el-card class="box-card">
-                                <div slot="header" class="clearfix main-header">
-                                    <span>Project Details</span>
-                                </div>
-
-                                <el-row class="project-details-wrapper dashed">
-                                    <el-col class="project-details" :span="24" :md="16">
-
-                                        <div v-if="form.project_description" class="form-group">
-                                            <label class="col-md-2 control-label">Project Description:</label>
-                                            <div class="col-md-10 uppercase-medium">
-                                                {{ form.project_description }}
-                                            </div>
-                                        </div>
-
-                                        <div v-if="form.project_link" class="form-group">
-                                            <label class="col-md-2 control-label">Project Link:</label>
-                                            <div class="col-md-10 uppercase-medium">
-                                                <a :href="form.project_link" target="_blank">
-                                                    {{ form.project_link }}
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <div v-if="form.city" class="form-group dashed">
-                                            <label class="col-md-2 control-label">City:</label>
-                                            <div class="col-md-10 uppercase-medium">
-                                                {{ form.city }}
-                                            </div>
-                                        </div>
-
-                                        <div v-if="form.address" class="form-group dashed">
-                                            <label class="col-md-2 control-label">Address:</label>
-                                            <div class="col-md-10 uppercase-medium">
-                                                {{ form.address }}
-                                            </div>
-                                        </div>
-
-                                        <div v-if="form.delivery_date" class="form-group dashed">
-                                            <label class="col-md-2 control-label">Delivery Date:</label>
-                                            <div class="col-md-10 uppercase-medium">
-                                                {{ form.delivery_date }}
-                                            </div>
-                                        </div>
-                                    </el-col>
-                                    <el-col class="project-gallery" :span="24" :md="8">
-                                        <div v-if="form.gallery" class="form-group">
-                                            <div class="col-md-10 uppercase-medium">
-                                                <ImageBox :initial-main-image="form.gallery[0].image"
-                                                          :images="form.gallery"></ImageBox>
-                                            </div>
-                                        </div>
-                                    </el-col>
-                                </el-row>
-                            </el-card>
-
-                            <el-row>
-                                <div v-if="form.location" class="form-group">
-                                    <label class="col-md-1 control-label">Location:</label>
-                                    <div v-html="modifiedText">
-
+                            <el-row style="margin-bottom: 30px">
+                                <el-card class="box-card">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Project Details</span>
                                     </div>
-                                </div>
 
+                                    <el-row class="project-details-wrapper dashed">
+                                        <el-col class="project-details" :span="24" :md="16">
+
+                                            <div v-if="form.project_description" class="form-group">
+                                                <label class="col-md-2 control-label">Project Description:</label>
+                                                <div class="col-md-10 uppercase-medium">
+                                                    {{ form.project_description }}
+                                                </div>
+                                            </div>
+
+                                            <div v-if="form.project_link" class="form-group">
+                                                <label class="col-md-2 control-label">Project Link:</label>
+                                                <div class="col-md-10 uppercase-medium">
+                                                    <a :href="form.project_link" target="_blank">
+                                                        {{ form.project_link }}
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <div v-if="form.city" class="form-group dashed">
+                                                <label class="col-md-2 control-label">City:</label>
+                                                <div class="col-md-10 uppercase-medium">
+                                                    {{ form.city }}
+                                                </div>
+                                            </div>
+
+                                            <div v-if="form.address" class="form-group dashed">
+                                                <label class="col-md-2 control-label">Address:</label>
+                                                <div class="col-md-10 uppercase-medium">
+                                                    {{ form.address }}
+                                                </div>
+                                            </div>
+
+                                            <div v-if="form.delivery_date" class="form-group dashed">
+                                                <label class="col-md-2 control-label">Delivery Date:</label>
+                                                <div class="col-md-10 uppercase-medium">
+                                                    {{ form.delivery_date }}
+                                                </div>
+                                            </div>
+                                        </el-col>
+                                        <el-col class="project-gallery" :span="24" :md="8">
+                                            <div v-if="form.gallery" class="form-group">
+                                                <div class="col-md-10 uppercase-medium">
+                                                    <ImageBox :initial-main-image="form.gallery[0].image"
+                                                              :images="form.gallery"></ImageBox>
+                                                </div>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <div v-if="form.location" class="form-group">
+                                            <div v-html="modifiedText">
+
+                                            </div>
+                                        </div>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
+                            <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Asset Details</span>
@@ -205,150 +207,23 @@
                                         </el-row>
 
                                     </el-row>
-                                    <el-row class="row-item dashed"
-                                            v-if="form.extraDetails && form.extraDetails.length">
-                                        <div>
-                                            <div class="extra-details-heading"
-                                                 style="max-width: 500px">
-                                                <h5>Extra Details</h5>
-                                            </div>
-                                            <el-table border :data="form.extraDetails"
-                                                      style="width: 100%">
-                                                <el-table-column prop="key"/>
-                                                <el-table-column prop="value"/>
-                                                <el-table-column prop="attachment">
-                                                    <template slot-scope="scope">
-                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                           target="_blank">View
-                                                            {{ getFilename(scope.row.attachment) }}</a>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
-                                        </div>
-                                    </el-row>
-                                    <el-card class="box-card" v-if="form.asset_status === 'Rented'">
-                                        <div slot="header" class="clearfix">
-                                            <span>Tenant Details</span>
-                                        </div>
-                                        <el-row>
-                                            <el-row class="row-item dashed"
-                                                    v-if="(form.tenant.name || form.tenant.surname) || form.tenant.id_number">
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.name || form.tenant.surname"
-                                                         class="form-group">
-                                                        <label class="col-md-4 control-label">Tenant Name:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.name }} {{ form.tenant.surname }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.id_number" class="form-group">
-                                                        <label class="col-md-4 control-label">ID Number:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.id_number }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                            </el-row>
-
-                                            <el-row class="row-item dashed"
-                                                    v-if="form.tenant.citizenship || form.tenant.email">
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.citizenship" class="form-group">
-                                                        <label class="col-md-4 control-label">Citizenship:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.citizenship }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.email" class="form-group">
-                                                        <label class="col-md-4 control-label">Email:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.email }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                            </el-row>
-
-                                            <el-row class="row-item dashed"
-                                                    v-if="form.tenant.phone || form.tenant.agreement_date">
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.phone" class="form-group">
-                                                        <label class="col-md-4 control-label">Phone:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.prefix + form.tenant.phone }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.agreement_date" class="form-group">
-                                                        <label class="col-md-4 control-label">Agreement Date:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.agreement_date }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                            </el-row>
-
-                                            <el-row class="row-item dashed"
-                                                    v-if="form.tenant.passport">
-                                                <el-col :span="12">
-                                                    <div class="form-group">
-                                                        <label class="col-md-4 control-label">Passport:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            <div v-if="form.tenant.passport">
-                                                                <ImageModal :image-path="form.tenant.passport"
-                                                                            :width="100"
-                                                                            :height="100"
-                                                                            :thumbnail="form.tenant.passport"></ImageModal>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                            </el-row>
-
-                                            <el-row class="row-item dashed"
-                                                    v-if="form.tenant.agreement_term || form.tenant.monthly_rent">
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.agreement_term" class="form-group">
-                                                        <label class="col-md-4 control-label">Agreement Term:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ form.tenant.agreement_term }} Month(s)
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                                <el-col :span="12">
-                                                    <div v-if="form.tenant.monthly_rent" class="form-group">
-                                                        <label class="col-md-4 control-label">Monthly Rent:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            {{ formatPrice(form.tenant.monthly_rent) }}
-                                                            {{ form.tenant.currency }}
-                                                        </div>
-                                                    </div>
-                                                </el-col>
-                                            </el-row>
-
-                                        </el-row>
-
-                                    </el-card>
 
                                     <el-row v-if="form.asset_status === 'Rented'"
                                             style="margin-top: 20px; " class="payments-wrapper row-item dashed">
                                         <el-col :span="24" :md="11">
                                             <div v-if="form.rentals.length">
-                                                <el-button
-                                                    icon="el-icon-document"
-                                                    style="margin-bottom: 2rem; margin-right: 3rem;"
-                                                    type="secondary"
-                                                    class="pull-right"
-                                                    @click="exportRentSchedule">Export Rents
-                                                </el-button>
-                                                <div class="rentals-schedule-heading"
-                                                     style="text-align: center; max-width: 500px">
-                                                    <h4>Rentals Schedule</h4>
-
+                                                <div class="payments-schedule-title-wrapper">
+                                                    <div class="rentals-schedule-heading"
+                                                         style="text-align: center; max-width: 500px">
+                                                        <h4>Rentals Schedule</h4>
+                                                    </div>
+                                                    <el-button
+                                                        icon="el-icon-document"
+                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                        type="secondary"
+                                                        class="pull-right"
+                                                        @click="exportRentSchedule">Export Rents
+                                                    </el-button>
                                                 </div>
                                                 <el-table border :data="form.rentals" style="width: 100%">
                                                     <el-table-column prop="payment_date" label="Payment Date"/>
@@ -372,18 +247,20 @@
                                         <el-col :span="24" :md="11">
                                             <div
                                                 v-if="form.rental_payments_histories && form.rental_payments_histories.length">
-                                                <el-button
-                                                    icon="el-icon-document"
-                                                    style="margin-bottom: 2rem; margin-right: 3rem;"
-                                                    type="secondary"
-                                                    class="pull-right"
-                                                    @click="exportRentalPayments">Export Payments
-                                                </el-button>
-                                                <div class="payments-history-heading"
-                                                     style="text-align: center; max-width: 500px">
-                                                    <h4>Payments History</h4>
+                                                <div class="payments-schedule-title-wrapper">
+                                                    <div class="payments-history-heading"
+                                                         style="text-align: center; max-width: 500px">
+                                                        <h4>Payments History</h4>
+                                                    </div>
+                                                    <el-button
+                                                        icon="el-icon-document"
+                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                        type="secondary"
+                                                        class="pull-right"
+                                                        @click="exportRentalPayments">Export Payments
+                                                    </el-button>
                                                 </div>
-                                                <el-table :fit="false" border :data="form.rental_payments_histories"
+                                                <el-table border :data="form.rental_payments_histories"
                                                           style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
@@ -404,7 +281,144 @@
                                     </el-row>
 
                                 </el-card>
+                            </el-row>
 
+                            <el-row style="margin-bottom: 30px"  v-if="form.extraDetails && form.extraDetails.length">
+                                <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Extra Details</span>
+                                    </div>
+                                    <el-row class="row-item dashed">
+                                        <div>
+                                            <el-table border :data="form.extraDetails"
+                                                      style="width: 100%">
+                                                <el-table-column prop="key"/>
+                                                <el-table-column prop="value"/>
+                                                <el-table-column prop="attachment">
+                                                    <template slot-scope="scope">
+                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                           target="_blank">View
+                                                            {{ getFilename(scope.row.attachment) }}</a>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
+
+                            <el-row style="margin-bottom: 30px" v-if="form.tenant">
+                                <el-card class="box-card" v-if="form.asset_status === 'Rented'">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Tenant Details</span>
+                                    </div>
+                                    <el-row>
+                                        <el-row class="row-item dashed"
+                                                v-if="(form.tenant.name || form.tenant.surname) || form.tenant.id_number">
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.name || form.tenant.surname"
+                                                     class="form-group">
+                                                    <label class="col-md-4 control-label">Tenant Name:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.name }} {{ form.tenant.surname }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.id_number" class="form-group">
+                                                    <label class="col-md-4 control-label">ID Number:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.id_number }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed"
+                                                v-if="form.tenant.citizenship || form.tenant.email">
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.citizenship" class="form-group">
+                                                    <label class="col-md-4 control-label">Citizenship:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.citizenship }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.email" class="form-group">
+                                                    <label class="col-md-4 control-label">Email:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.email }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed"
+                                                v-if="form.tenant.phone || form.tenant.agreement_date">
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.phone" class="form-group">
+                                                    <label class="col-md-4 control-label">Phone:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.prefix + form.tenant.phone }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.agreement_date" class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement Date:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.agreement_date }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed"
+                                                v-if="form.tenant.passport">
+                                            <el-col :span="12">
+                                                <div class="form-group">
+                                                    <label class="col-md-4 control-label">Passport:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-if="form.tenant.passport">
+                                                            <ImageModal :image-path="form.tenant.passport"
+                                                                        :width="100"
+                                                                        :height="100"
+                                                                        :thumbnail="form.tenant.passport"></ImageModal>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item dashed"
+                                                v-if="form.tenant.agreement_term || form.tenant.monthly_rent">
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.agreement_term" class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement Term:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.agreement_term }} Month(s)
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.monthly_rent" class="form-group">
+                                                    <label class="col-md-4 control-label">Monthly Rent:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ formatPrice(form.tenant.monthly_rent) }}
+                                                        {{ form.tenant.currency }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                    </el-row>
+
+                                </el-card>
+                            </el-row>
+
+                            <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Agreement Details</span>
@@ -506,16 +520,18 @@
                                         <el-row style="margin-top: 20px;" class="payments-wrapper row-item dashed">
                                             <el-col :span="24" :md="11">
                                                 <div v-if="form.payments && form.payments.length">
-                                                    <el-button
-                                                        icon="el-icon-document"
-                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
-                                                        type="secondary"
-                                                        class="pull-right"
-                                                        @click="exportPaymentSchedule">Export Schedule
-                                                    </el-button>
-                                                    <div class="payments-schedule-heading"
-                                                         style="text-align: center; max-width: 500px">
-                                                        <h4>Payments Schedule</h4>
+                                                    <div class="payments-schedule-title-wrapper">
+                                                        <div class="payments-schedule-heading"
+                                                             style="text-align: center; max-width: 500px">
+                                                            <h4>Payments Schedule</h4>
+                                                        </div>
+                                                        <el-button
+                                                            icon="el-icon-document"
+                                                            style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                            type="secondary"
+                                                            class="pull-right"
+                                                            @click="exportPaymentSchedule">Export Schedule
+                                                        </el-button>
                                                     </div>
                                                     <el-table border :data="form.payments" style="width: 100%">
                                                         <el-table-column prop="payment_date" label="Payment Date"/>
@@ -539,16 +555,18 @@
 
                                             <el-col :span="24" :md="11">
                                                 <div v-if="form.payments_histories && form.payments_histories.length">
-                                                    <el-button
-                                                        icon="el-icon-document"
-                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
-                                                        type="secondary"
-                                                        class="pull-right"
-                                                        @click="exportPayments">Export Payments
-                                                    </el-button>
-                                                    <div class="payments-history-heading"
-                                                         style="text-align: center; max-width: 500px">
-                                                        <h4>Payments History</h4>
+                                                    <div class="payments-schedule-title-wrapper">
+                                                        <div class="payments-history-heading"
+                                                             style="text-align: center; max-width: 500px">
+                                                            <h4>Payments History</h4>
+                                                        </div>
+                                                        <el-button
+                                                            icon="el-icon-document"
+                                                            style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                            type="secondary"
+                                                            class="pull-right"
+                                                            @click="exportPayments">Export Payments
+                                                        </el-button>
                                                     </div>
                                                     <el-table border :data="form.payments_histories"
                                                               style="width: 100%">
@@ -572,15 +590,17 @@
                                     </template>
 
                                 </el-card>
+                            </el-row>
 
-                                <el-card class="box-card">
+                            <el-row style="margin-bottom: 30px" v-if="form.currentValues && form.currentValues.length">
+                                <el-card class="box-card current-value-box">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Current Value</span>
                                     </div>
 
                                     <el-row v-if="form.current_value">
                                         <el-col :span="24">
-                                            <div v-if="form.currentValues.length">
+                                            <div>
                                                 <el-table :data="form.currentValues" style="width: 100%">
                                                     <el-table-column prop="value" label="Value">
                                                         <template slot-scope="scope">
@@ -592,13 +612,29 @@
                                                                      width="fit-content">
                                                         <template slot-scope="scope">
                                                             <a v-if="scope.row.attachment" :href="scope.row.attachment"
-                                                               target="_blank">{{ getFilename(scope.row.attachment) }}</a>
+                                                               target="_blank">{{
+                                                                    getFilename(scope.row.attachment)
+                                                                }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
                                             </div>
                                         </el-col>
                                     </el-row>
+                                </el-card>
+                            </el-row>
+
+                            <el-row style="margin-bottom: 30px">
+                                <el-card class="box-card">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Comments</span>
+                                    </div>
+                                    <AssetComments
+                                        :id="this.form.id"
+                                        :user-id="this.userId"
+                                        :is-admin="this.isAdmin"
+                                        :investor-view="this.investorView"
+                                    ></AssetComments>
                                 </el-card>
                             </el-row>
                         </el-form>
@@ -660,13 +696,7 @@
                             </el-card>
                         </div>
                     </div>
-                    <div class="block col-md-9" id="comments">
-                        <AssetComments
-                            :id="this.form.id"
-                            :is-admin="this.isAdmin"
-                            :investor-view="this.investorView"
-                        ></AssetComments>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -696,6 +726,10 @@ export default {
 
     props: {
         id: {
+            type: [String, Number],
+            required: true
+        },
+        userId: {
             type: [String, Number],
             required: true
         },

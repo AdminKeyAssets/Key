@@ -1,8 +1,8 @@
 <template>
     <div class="comments-section">
-        <h3>Comments</h3>
         <ul class="comments-list">
-            <li v-for="comment in visibleComments" :key="comment.id" class="comment-item">
+            <li v-for="comment in visibleComments" :key="comment.id"
+                :class="['comment-item', { mine: investorView && comment.investor_id === userId }, { mine: !investorView && comment.admin_id === userId }]">
                 <div class="comment-header">
                     <span class="comment-user" v-if="comment.admin">{{ comment.admin.name }} {{
                             comment.admin.surname
@@ -13,7 +13,8 @@
                     <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
                 </div>
                 <p class="comment-text">{{ comment.comment }}</p>
-                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank" class="comment-attachment">View
+                <a v-if="comment.attachment" :href="`${comment.attachment}`" target="_blank"
+                   class="comment-attachment">View
                     {{ getFilename(comment.attachment) }}</a>
                 <div class="comment-actions" v-if="isAdmin">
                     <span class="comment-delete" @click="deleteComment(comment.id)">
@@ -27,8 +28,16 @@
         </el-button>
         <el-form @submit.prevent="submitComment" class="comment-form">
             <el-input v-model="newComment" placeholder="Add a comment" class="comment-input"></el-input>
-            <input type="file" @change="onFileChange" class="comment-file-input">
-            <el-button type="primary" @click="submitComment" class="comment-submit-button">Submit</el-button>
+            <div class="end-comments-form">
+                <div>
+                    <label for="comment-file-input" class="custom-file-label">
+                        <i class="el-icon-upload"></i> Upload File
+                    </label>
+                    <input type="file" id="comment-file-input" @change="onFileChange" class="comment-file-input">
+                    <span class="file-name">{{ attachmentName || 'No file chosen' }}</span>
+                </div>
+                <el-button type="primary" @click="submitComment" class="comment-submit-button">Submit</el-button>
+            </div>
         </el-form>
     </div>
 </template>
@@ -41,6 +50,10 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 export default {
     props: {
         id: {
+            type: [String, Number],
+            required: true
+        },
+        userId: {
             type: [String, Number],
             required: true
         },
@@ -58,6 +71,7 @@ export default {
             comments: [],
             newComment: '',
             attachment: null,
+            attachmentName: null,
             showAllComments: false,
         };
     },
@@ -81,10 +95,14 @@ export default {
     },
     methods: {
         onFileChange(e) {
-            this.attachment = e.target.files[0];
-        },
-        removeFile() {
-            this.attachment = null;
+            const file = e.target.files[0];
+            if (file) {
+                this.attachment = file;
+                this.attachmentName = file.name;
+            } else {
+                this.attachment = null;
+                this.attachmentName = null;
+            }
         },
         async fetchComments() {
             await axios.get(`/assets/${this.id}/comments`).then(response => {
@@ -117,6 +135,7 @@ export default {
                     this.comments = response.data.data;
                     this.newComment = '';
                     this.attachment = null;
+                    this.attachmentName = null;
                 });
         },
         formatDate(isoString) {
@@ -136,7 +155,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .comments-section {
     padding: 20px;
@@ -147,14 +165,21 @@ export default {
 .comments-list {
     list-style-type: none;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .comment-item {
-    padding: 10px;
+    padding: 15px 25px;
     margin-bottom: 10px;
-    background: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 5px;
+    background: #EFF0F1;
+    border-radius: 20px;
+    width: 60%;
+    align-self: flex-start;
+}
+
+.comment-item.mine {
+    align-self: flex-end;
 }
 
 .comment-header {
@@ -166,6 +191,10 @@ export default {
 
 .comment-user {
     color: #333;
+}
+
+.comment-item.mine .comment-user {
+    color: #FF9100;
 }
 
 .comment-date {
@@ -194,12 +223,41 @@ export default {
 }
 
 .comment-file-input {
+    display: none; /* Hide the default file input */
+}
+
+.custom-file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 16px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.custom-file-label:hover {
+    background-color: #f0f0f0;
+}
+
+.file-name {
+    font-style: italic;
+    color: #555;
+    margin-left: 10px;
+}
+
+.end-comments-form {
+    display: flex;
+    align-items: center;
     margin-top: 10px;
 }
 
 .comment-submit-button {
     display: inline-block;
-    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .comment-actions {

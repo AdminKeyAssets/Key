@@ -493,21 +493,23 @@ class AssetController extends BaseController
             foreach ($request->extraDetails as $detail) {
                 $extraDetailAttachmentPath = null;
 
-                if (isset($request->id)) {
-                    if (gettype($detail['attachment']) == 'object') {
-                        $extraDetailAttachmentFile = $detail['attachment'];
-                        $originalFileName = $extraDetailAttachmentFile->getClientOriginalName();
-                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->storeAs('uploads', $originalFileName, 'public');
-                        $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
+                if (isset($detail['attachment'])) {
+                    if (isset($request->id)) {
+                        if (gettype($detail['attachment']) == 'object') {
+                            $extraDetailAttachmentFile = $detail['attachment'];
+                            $originalFileName = $extraDetailAttachmentFile->getClientOriginalName();
+                            $extraDetailAttachmentPath = $extraDetailAttachmentFile->storeAs('uploads', $originalFileName, 'public');
+                            $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
+                        } else {
+                            $extraDetailAttachmentPath = $detail['attachment'];
+                        }
                     } else {
-                        $extraDetailAttachmentPath = $detail['attachment'];
-                    }
-                } else {
-                    if (isset($detail['attachment'])) {
-                        $extraDetailAttachmentFile = $detail['attachment'];
-                        $originalFileName = $extraDetailAttachmentFile->getClientOriginalName();
-                        $extraDetailAttachmentPath = $extraDetailAttachmentFile->storeAs('uploads', $originalFileName, 'public');
-                        $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
+                        if (isset($detail['attachment'])) {
+                            $extraDetailAttachmentFile = $detail['attachment'];
+                            $originalFileName = $extraDetailAttachmentFile->getClientOriginalName();
+                            $extraDetailAttachmentPath = $extraDetailAttachmentFile->storeAs('uploads', $originalFileName, 'public');
+                            $extraDetailAttachmentPath = Storage::url($extraDetailAttachmentPath);
+                        }
                     }
                 }
 
