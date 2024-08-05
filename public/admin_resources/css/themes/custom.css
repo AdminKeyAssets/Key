@@ -659,6 +659,17 @@ button.el-button.el-button--info:not(.el-button--small) {
     font-size: 30px;
 }
 
+@media screen and (min-width: 769px) {
+    .block.push-bit {
+        margin: 0 auto;
+    }
+}
+@media screen and (max-width: 768px) {
+    .block.push-bit {
+        margin: 40% auto;
+    }
+}
+
 .block.push-bit {
     display: flex;
     align-items: center;
@@ -666,7 +677,6 @@ button.el-button.el-button--info:not(.el-button--small) {
     padding: 40px 0px 20px 0;
     width: 400px;
     background: transparent;
-    margin: 0 auto;
 }
 
 

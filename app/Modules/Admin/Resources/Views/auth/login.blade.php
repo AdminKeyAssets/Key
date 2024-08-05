@@ -23,7 +23,9 @@
             <!-- Login Block -->
             <div class="block push-bit login">
                 <div>
-                    <h1 class="title-black cms"><strong>CRM login</strong></h1>
+                    <h1 class="title-black cms">
+                        <img src="{{ config('admin.logo_c') }}" width="155"/>
+                    </h1>
                     <!-- Login Form -->
                     <form class="form-horizontal form-bordered form-control-borderless" id="form-login" method="POST"
                           action="{{ route('admin.login') }}">
