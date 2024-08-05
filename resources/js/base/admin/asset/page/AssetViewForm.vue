@@ -238,7 +238,7 @@
                                                 </el-table>
                                             </div>
                                         </el-col>
-                                        <el-col :span="24" :md="11">
+                                        <el-col :span="24" :md="11" class="payments-history-wrapper-col">
                                             <div
                                                 v-if="form.rental_payments_histories && form.rental_payments_histories.length">
                                                 <div class="payments-schedule-title-wrapper">
@@ -547,7 +547,7 @@
                                                 </div>
                                             </el-col>
 
-                                            <el-col :span="24" :md="11">
+                                            <el-col :span="24" :md="11" class="payments-history-wrapper-col">
                                                 <div v-if="form.payments_histories && form.payments_histories.length">
                                                     <div class="payments-schedule-title-wrapper">
                                                         <div class="payments-history-heading"

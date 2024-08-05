@@ -11,8 +11,9 @@
         <div id="login-container">
             <!-- Login Title -->
 
-            <div class="login-title text-center" style="background-image: url('{{ config('admin.sidebar_background') }}')">
-                <div  class="logo">
+            <div class="login-title text-center"
+                 style="background-image: url('{{ config('admin.sidebar_background') }}')">
+                <div class="logo">
                     @foreach(config('admin.login_logo') as $logo)
                         <img src="{{ $logo['src'] }}" alt="" style="{{ $logo['style'] }}">
                     @endforeach
@@ -37,7 +38,8 @@
                             <div class="col-xs-12">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="gi gi-envelope"></i></span>
-                                    <input type="text" id="login-email" name="email" value="{{ old('email') }}" class="form-control" placeholder="Email">
+                                    <input type="text" id="login-email" name="email" value="{{ old('email') }}"
+                                           class="form-control" placeholder="Email">
                                 </div>
 
                                 @if ($errors->has('email'))
@@ -57,10 +59,16 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="not-registered-wrapper">
+                            <div class="col-xs-12">
+                                <span>Not registered? try Demo.</span>
+                            </div>
+                        </div>
                         <div class="form-group form-actions">
                             <div class="col-xs-4">
                                 <label class="switch switch-primary" data-toggle="tooltip" title="დამიმახსოვრე">
-                                    <input type="checkbox" id="login-remember-me" name="remember"{{ old('remember') ? ' checked' : '' }}>
+                                    <input type="checkbox" id="login-remember-me"
+                                           name="remember"{{ old('remember') ? ' checked' : '' }}>
                                     <span></span>
                                     <small style="font-size: 10px;font-weight: normal;">Remember Me</small>
                                 </label>
@@ -76,7 +84,6 @@
                                 </button>
                             </div>
                         </div>
-
                     </form>
                 </div>
                 <!-- END Login Form -->

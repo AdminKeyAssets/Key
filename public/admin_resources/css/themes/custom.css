@@ -664,9 +664,14 @@ button.el-button.el-button--info:not(.el-button--small) {
         margin: 0 auto;
     }
 }
+
 @media screen and (max-width: 768px) {
     .block.push-bit {
         margin: 25% auto;
+    }
+
+    .payments-history-wrapper-col {
+        margin-top: 20px
     }
 }
 
@@ -882,7 +887,7 @@ padding: 60px;
         z-index: 999;
     }
 
-    .login-header{
+    .login-header {
         width: 100%;
         height: 50px;
         background-color: #043F83;
@@ -1082,4 +1087,14 @@ table thead th {
 .asset-manager-details a {
     font-weight: 600 !important;
     color: #1034D4;
+}
+
+.not-registered-wrapper{
+    margin-bottom: 15px;
+    font-size: 10px;
+}
+@media screen and (min-width: 769px) {
+    .not-registered-wrapper{
+        padding-left: 5px;
+    }
 }
