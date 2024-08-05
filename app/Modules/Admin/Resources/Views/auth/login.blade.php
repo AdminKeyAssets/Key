@@ -78,12 +78,6 @@
             </div>
             <!-- END Login Block -->
 
-            <!-- Footer -->
-        <!-- <footer class="text-muted text-center">
-            <small><span id="year-copy"></span> &copy; <a href="{{ config('admin.handcrafted_by_url') }}" target="_blank">Handcrafted by {{ config('admin.handcrafted_by') }}</a>
-            </small>
-        </footer> -->
-            <!-- END Footer -->
         </div>
         <!-- END Login Container -->
     </div>
