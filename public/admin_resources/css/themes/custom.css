@@ -1104,3 +1104,22 @@ table thead th {
         padding: 10px 0 0 10px;
     }
 }
+
+@keyframes waveEffect {
+    0% {
+        background-position: 0% 100%;
+    }
+    100% {
+        background-position: 100% 0%;
+    }
+}
+.admin, .investor-login-container, .admin-login-container{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: #0277B6;
+    overflow: hidden;
+    background-image: linear-gradient(225deg, transparent 30%, #b3ded5 50%, transparent 70%), linear-gradient(45deg, transparent 30%, #87d1c0 50%, transparent 70%);
+    background-size: 200% 200%;
+    animation: waveEffect 12s ease-in-out infinite !important;
+}
