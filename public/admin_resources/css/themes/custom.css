@@ -1042,16 +1042,27 @@ table thead th {
     background-image: url("/admin_resources/img/placeholders/backgrounds/title_star.svg");
     background-repeat: no-repeat;
 }
-.header-section H1:before{
+
+.header-section H1:before {
     margin-right: 30px;
 }
-.header-section H1:after{
+
+.header-section H1:after {
     margin-left: 30px;
 }
 
-.asset-details-card .el-card__body{
+.asset-details-card .el-card__body {
     background-image: url("/admin_resources/img/placeholders/backgrounds/asset_details.png");
     background-repeat: no-repeat;
     background-position: right top 150px;
     background-size: 70%;
+}
+
+.asset-manager-details h4, .asset-manager-details p, .asset-manager-details span {
+    font-weight: 600 !important;
+}
+
+.asset-manager-details a {
+    font-weight: 600 !important;
+    color: #1034D4;
 }

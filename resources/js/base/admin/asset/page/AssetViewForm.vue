@@ -277,7 +277,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px"  v-if="form.extraDetails && form.extraDetails.length">
+                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
                                 <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Extra Details</span>
@@ -682,8 +682,44 @@
                                         </a>
                                     </p>
                                     <p v-if="salesManager.email">
-                                        <a :href="'mailto:' + salesManager.email">
-                                            <i class="el-icon-message"> {{ salesManager.email }}</i>
+                                        <a :href="'mailto:' + salesManager.email" class="email-container">
+                                            <span class="email-icon">
+                                                <svg width="25" height="16" viewBox="0 0 25 16" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                        <g clip-path="url(#clip0_94_23630)">
+                                                        <path
+                                                            d="M24.9986 15.454V0.542549C24.9986 0.241901 24.7524 0 24.4463 0H24.2107L13.1934 7.78575L23.5775 15.9965H24.4463C24.7524 15.9965 24.9986 15.7546 24.9986 15.454Z"
+                                                            fill="#FF9100"/>
+                                                        <path
+                                                            d="M0 15.454V0.542549C0 0.241901 0.246236 0 0.552272 0H0.787955L11.8053 7.78575L1.42465 16H0.552272C0.246236 16 0 15.7546 0 15.454Z"
+                                                            fill="#F7BA0F"/>
+                                                        <g style="mix-blend-mode:multiply">
+                                                        <path
+                                                            d="M24.7389 15.25L12.7296 5.81934L0.0484371 15.2224C0.0484371 15.2224 -0.102822 15.4919 0.11879 15.561L12.7261 6.61761L24.2112 15.3088L24.7917 15.6474C24.9957 15.6474 24.9288 15.4885 24.7389 15.2465V15.25Z"
+                                                            fill="#FF9100"/>
+                                                        </g>
+                                                        <path
+                                                            d="M24.5251 16.0002H0.552272C0.246236 16.0002 0 15.7548 0 15.4542V15.4404L12.8113 6.50732L25 15.7341C24.905 15.8931 24.7291 16.0002 24.5251 16.0002Z"
+                                                            fill="#FF9100"/>
+                                                        <g style="mix-blend-mode:multiply">
+                                                        <path
+                                                            d="M24.7951 0.300781L24.2147 0.639442L12.7295 9.33404L0.122231 0.39063C-0.102899 0.459745 0.0518782 0.729291 0.0518782 0.729291L12.7295 10.1323L24.7388 0.701645C24.9288 0.4632 24.9956 0.300781 24.7916 0.300781H24.7951Z"
+                                                            fill="#FF9100"/>
+                                                        </g>
+                                                        <path
+                                                            d="M24.5251 0H0.552272C0.246236 0 0 0.241901 0 0.542549V0.556372L12.8113 9.49287L25 0.266091C24.905 0.107127 24.7291 0 24.5251 0Z"
+                                                            fill="#F7BA0F"/>
+                                                        </g>
+                                                        <defs>
+                                                        <clipPath id="clip0_94_23630">
+                                                        <rect width="25" height="16" fill="white"/>
+                                                        </clipPath>
+                                                        </defs>
+                                                    </svg>
+                                            </span>
+                                            <span class="managers-email">
+                                                {{ salesManager.email }}
+                                            </span>
                                         </a>
                                     </p>
                                 </div>
@@ -940,18 +976,14 @@ export default {
     cursor: pointer;
 }
 
-.phone-container {
+.phone-container, .email-container {
     display: flex;
     align-items: center;
 }
 
-.whatsapp-icon {
+.whatsapp-icon, .email-icon {
     margin-right: 10px;
     cursor: pointer;
-}
-
-.managers-phone {
-    font-size: 16px;
 }
 
 .clearfix.main-header {

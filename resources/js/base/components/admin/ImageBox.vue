@@ -21,7 +21,7 @@
                     <img
                         :src="imageItem.image"
                         alt="Thumbnail"
-                        class="thumbnail"
+                        class="carouser-thumbnail-item"
                         @click="setMainImage(imageItem.image)"
                     />
                 </div>
@@ -213,7 +213,7 @@ export default {
     transition: transform 0.5s;
 }
 
-.thumbnail {
+.carouser-thumbnail-item {
     width: 165px;
     height: auto; /* Fixed height for thumbnails */
     max-height: 100px;
