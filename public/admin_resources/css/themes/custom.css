@@ -426,33 +426,40 @@ fieldset[disabled] .btn-default.active {
     border-color: #007AFF;
     transition: all .3s;
 }
-.btn-primary.login{
+
+.btn-primary.login {
     padding: 8px 44px;
     border-radius: 10px;
     font-size: 16px;
     font-weight: bold;
 }
 
+.text-center .btn-primary.edit-icon {
+    padding: 3px 3px !Important;
+    background-color: #3855F7;
+    border-color: #3855F7;
+}
+
+.text-center .btn-success.btn-home.renals-icon {
+    padding: 3px 3px !Important;
+    background-color: #6C93F5;
+    border-color: #6C93F5;
+}
+
+.text-center .btn-success.btn-money.payments-icon {
+    padding: 3px 3px !Important;
+    background-color: #AAD178;
+    border-color: #AAD178;
+}
+
+.list-delete-button.el-button--small {
+    padding: 3px 3px !Important;
+    background-color: #F56C6C;
+    border-color: #F56C6C;
+}
+
 .text-center .btn-primary {
     padding: 2px 6px !Important;
-}
-
-.text-center .btn-success.btn-money, .text-center .btn-info.btn-money {
-    padding: 2px 6px !Important;
-}
-
-.text-center .btn-info.btn-money {
-    background-color: gray !important;
-    border-color: gray !important;
-}
-
-.text-center .btn-success.btn-home, .text-center .btn-info.btn-home {
-    padding: 2px 6px !Important;
-}
-
-.text-center .btn-info.btn-home {
-    background-color: gray !important;
-    border-color: gray !important;
 }
 
 .btn-primary.btn-alt {
@@ -610,7 +617,7 @@ button.el-button.el-button--info:not(.el-button--small) {
 }
 
 /* login */
-.dk-container{
+.dk-container {
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -661,7 +668,6 @@ button.el-button.el-button--info:not(.el-button--small) {
     background: transparent;
     margin: 0 auto;
 }
-
 
 
 .block.push-bit > div {
@@ -915,69 +921,137 @@ padding: 60px;
 #header .el-badge.item i {
     font-size: 20px;
 }
-.view.view-asset .el-card.box-card{
+
+.view.view-asset .el-card.box-card {
     border-radius: 20px;
 }
-.view.view-asset .el-card.box-card .el-card__header{
+
+.view.view-asset .el-card.box-card .el-card__header {
     background-color: #3592C5;
     color: #ffffff;
 }
 
-.extra-details-card .el-table__header-wrapper{
+.extra-details-card .el-table__header-wrapper {
     display: none;
 }
-.current-value-box table thead th{
+
+.current-value-box table thead th {
     background-color: #E5EDF5 !important;
     color: #0277B6;
 }
 
-table thead th{
+table thead th {
     background-color: #0277B6 !important;
     color: #FFFFFF;
     font-weight: 600 !important;
     text-transform: uppercase;
 }
-.rentals-schedule-heading, .payments-history-heading, .payments-schedule-heading{
+
+.rentals-schedule-heading, .payments-history-heading, .payments-schedule-heading {
     text-transform: uppercase;
     color: #0277B6;
 
 }
 
-.rentals-schedule-heading h4, .payments-history-heading h4, .payments-schedule-heading h4{
+.rentals-schedule-heading h4, .payments-history-heading h4, .payments-schedule-heading h4 {
     font-weight: 700 !important;
     font-size: 14px !important;
 }
-.payments-schedule-title-wrapper{
+
+.payments-schedule-title-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
-.payments-schedule-title-wrapper button{
+
+.payments-schedule-title-wrapper button {
     margin-right: 0 !important;
 }
 
-.extra-details-card .el-card__header, .current-value-box .el-card__header{
+.extra-details-card .el-card__header, .current-value-box .el-card__header {
     border-bottom: 0 !important;
 }
 
-.extra-details-card .el-card__body, .current-value-box .el-card__body{
+.extra-details-card .el-card__body, .current-value-box .el-card__body {
     padding: 0 !important;
 }
-.comment-input input{
+
+.comment-input input {
     height: 50px;
     background-color: #EFF0F1;
     border-radius: 20px;
     color: #0277B6;
     border: none !important;
 }
-.end-comments-form{
+
+.end-comments-form {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
-.end-comments-form button.comment-submit-button{
+
+.end-comments-form button.comment-submit-button {
     background-color: #2990FF;
     border-radius: 8px;
     font-weight: 600;
     font-size: 16px;
+}
+
+.project-details {
+    background-image: url("/admin_resources/img/placeholders/backgrounds/project_details.svg");
+    background-repeat: no-repeat;
+    background-position: right -20px center;
+}
+
+.agreement-details-card {
+    background-image: url("/admin_resources/img/placeholders/backgrounds/agreements_details.svg");
+    background-repeat: no-repeat;
+    background-position: right top 60px;
+}
+
+.asset-details-card {
+    /*background-image: url("/admin_resources/img/placeholders/backgrounds/asset_details.svg");*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: right center;*/
+}
+
+.asset-manager .el-card__body {
+    min-height: 230px;
+    background-image: url("/admin_resources/img/placeholders/backgrounds/asset_manager.png");
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 70%;
+}
+
+.header-section {
+    text-align: left;
+}
+
+.header-section H1 {
+    text-transform: uppercase;
+    color: #0277B6;
+    font-weight: 600;
+}
+
+.header-section H1:before, .header-section H1:after {
+    content: ' ';
+    width: 42px;
+    height: 42px;
+    display: inline-block;
+    vertical-align: -30%;
+    background-image: url("/admin_resources/img/placeholders/backgrounds/title_star.svg");
+    background-repeat: no-repeat;
+}
+.header-section H1:before{
+    margin-right: 30px;
+}
+.header-section H1:after{
+    margin-left: 30px;
+}
+
+.asset-details-card .el-card__body{
+    background-image: url("/admin_resources/img/placeholders/backgrounds/asset_details.png");
+    background-repeat: no-repeat;
+    background-position: right top 150px;
+    background-size: 70%;
 }

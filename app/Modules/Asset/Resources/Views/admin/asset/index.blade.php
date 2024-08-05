@@ -66,9 +66,6 @@
 
                                 <td class="text-center">
 
-                                    @can(getPermissionKey('rental', 'index', true))
-                                        @include('admin::includes.actions.rental',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
-                                    @endcan
                                     @can(getPermissionKey('payment', 'index', true))
                                         @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
                                     @endcan
@@ -77,9 +74,12 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                                :url="'{{ route($moduleKey . '.delete') }}'"
-                                                :id="{{ $item->id }}"
+                                            :url="'{{ route($moduleKey . '.delete') }}'"
+                                            :id="{{ $item->id }}"
                                         ></delete-component>
+                                    @endcan
+                                    @can(getPermissionKey('rental', 'index', true))
+                                        @include('admin::includes.actions.rental',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
                                     @endcan
                                 </td>
                             </tr>

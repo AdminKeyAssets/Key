@@ -16,14 +16,13 @@
                 <div
                     v-for="(imageItem, index) in srcList"
                     :key="imageItem.id"
-                    class="thumbnail-item"
+                    :class="['thumbnail-item',{ 'active': imageItem.image === mainImage }]"
                 >
                     <img
                         :src="imageItem.image"
                         alt="Thumbnail"
                         class="thumbnail"
                         @click="setMainImage(imageItem.image)"
-                        :class="{ 'active': imageItem.image === mainImage }"
                     />
                 </div>
             </div>
@@ -179,12 +178,22 @@ export default {
 
 .prev-button {
     position: absolute;
-    left: -40px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    line-height: 18px;
+    border-radius: 50%;
+    text-align: center;
 }
 
 .next-button {
     position: absolute;
-    right: -40px;
+    right: -20px;
+    width: 40px;
+    height: 40px;
+    line-height: 18px;
+    border-radius: 50%;
+    text-align: center;
 }
 
 .thumbnail-carousel {
@@ -199,21 +208,28 @@ export default {
 }
 
 .thumbnail-item {
-    min-width: 100px;
+    //min-width: 100px;
+    height: 104px;
     transition: transform 0.5s;
 }
 
 .thumbnail {
-    width: 100px;
-    height: 80px; /* Fixed height for thumbnails */
+    width: 165px;
+    height: auto; /* Fixed height for thumbnails */
+    max-height: 100px;
     object-fit: cover; /* Ensure thumbnails cover the fixed height */
     cursor: pointer;
-    border: 2px solid transparent;
     border-radius: 5px;
     transition: border-color 0.3s;
 }
 
-.thumbnail.active {
+.thumbnail-item.active {
     border-color: #000;
+}
+
+.thumbnail-item{
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: border-color 0.3s;
 }
 </style>
