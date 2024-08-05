@@ -59,11 +59,6 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="not-registered-wrapper">
-                            <div class="col-xs-12">
-                                <span>Not registered? try Demo.</span>
-                            </div>
-                        </div>
                         <div class="form-group form-actions">
                             <div class="col-xs-4">
                                 <label class="switch switch-primary" data-toggle="tooltip" title="დამიმახსოვრე">
@@ -85,6 +80,11 @@
                             </div>
                         </div>
                     </form>
+                </div>
+                <div class="not-registered-wrapper">
+                    <div class="col-xs-12">
+                        <span>Not registered yet? <span class="try-now">Try Demo User</span></span>
+                    </div>
                 </div>
                 <!-- END Login Form -->
             </div>

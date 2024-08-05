@@ -661,7 +661,7 @@ button.el-button.el-button--info:not(.el-button--small) {
 
 @media screen and (min-width: 769px) {
     .block.push-bit {
-        margin: 0 auto;
+        margin: 20% auto;
     }
 }
 
@@ -677,6 +677,7 @@ button.el-button.el-button--info:not(.el-button--small) {
 
 .block.push-bit {
     display: flex;
+    flex-direction: column;
     align-items: center;
     text-align: left;
     padding: 40px 0px 20px 0;
@@ -1085,8 +1086,16 @@ table thead th {
 }
 
 .not-registered-wrapper{
+    background-color: transparent !important;
+    text-align: center;
+    margin-top: 15%;
     margin-bottom: 15px;
-    font-size: 10px;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 700;
+}
+.not-registered-wrapper .try-now{
+    text-decoration: underline;
 }
 @media screen and (min-width: 769px) {
     .not-registered-wrapper{
