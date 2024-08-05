@@ -666,7 +666,7 @@ button.el-button.el-button--info:not(.el-button--small) {
 }
 @media screen and (max-width: 768px) {
     .block.push-bit {
-        margin: 40% auto;
+        margin: 25% auto;
     }
 }
 
@@ -848,7 +848,7 @@ padding: 60px;
     }
 
     .dk-container #login-container .login-title.text-center {
-        background: transparent;
+        background: transparent !important;
         padding: 20px 60px 20px 20px;
     }
 
@@ -880,6 +880,13 @@ padding: 60px;
 
     .navbar.navbar-inverse {
         z-index: 999;
+    }
+
+    .login-header{
+        width: 100%;
+        height: 50px;
+        background-color: #043F83;
+        padding: 10px 0 0 10px;
     }
 }
 

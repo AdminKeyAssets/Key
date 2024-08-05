@@ -33,6 +33,7 @@ return [
     'auth_background'        => 'admin_resources/img/placeholders/backgrounds/img_1.png',
     'sidebar_logo'        => 'admin_resources/img/placeholders/avatars/img.png',
     'logo_c'        => 'admin_resources/img/placeholders/avatars/logo_c.png',
+    'header_logo'        => 'admin_resources/img/placeholders/avatars/header_logo.png',
 
     /**
      * Login page logo.

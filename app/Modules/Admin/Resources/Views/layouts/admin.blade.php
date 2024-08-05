@@ -87,7 +87,8 @@
                     </header>
                     <!-- END Header -->
 
-                    <div class="admin" style="background-image: url('{{ config('admin.auth_background') }}')">
+{{--                    <div class="admin" style="background-image: url('{{ config('admin.auth_background') }}')">--}}
+                    <div class="admin" style="background-image: url('{{ config('admin.login_background') }}'); background-repeat: no-repeat; background-size: cover">
                         @yield('main')
                     </div>
                 </div>

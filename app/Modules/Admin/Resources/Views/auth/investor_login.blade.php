@@ -4,6 +4,9 @@
     {{--    <img src="{{ asset(config('admin.login_background_image')) }}" alt="Login Background" class="full-bg">--}}
 
     <div class="dk-container" style="background-image: url('{{ config('admin.login_background') }}')">
+        <div class="login-header">
+            <img src="{{ config('admin.header_logo') }}" width="130">
+        </div>
         <!-- Login Container -->
         <div id="login-container">
             <!-- Login Title -->
