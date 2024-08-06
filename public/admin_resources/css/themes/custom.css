@@ -1127,7 +1127,6 @@ table thead th {
     height: 100%;
     position: relative;
     background-color: #0277B6;
-    overflow: hidden;
     background-image: linear-gradient(225deg, transparent 30%, #b3ded5 50%, transparent 70%), linear-gradient(45deg, transparent 30%, #87d1c0 50%, transparent 70%);
     background-size: 200% 200%;
     animation: waveEffect 12s ease-in-out infinite !important;
