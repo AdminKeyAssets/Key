@@ -202,105 +202,8 @@
 
                                     </el-row>
 
-                                    <el-row v-if="form.asset_status === 'Rented'"
-                                            style="margin-top: 20px; " class="payments-wrapper row-item">
-                                        <el-col :span="24" :md="11">
-                                            <div v-if="form.rentals.length">
-                                                <div class="payments-schedule-title-wrapper">
-                                                    <div class="rentals-schedule-heading"
-                                                         style="text-align: center; max-width: 500px">
-                                                        <h4>Rentals Schedule</h4>
-                                                    </div>
-                                                    <el-button
-                                                        icon="el-icon-document"
-                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
-                                                        type="secondary"
-                                                        class="pull-right"
-                                                        @click="exportRentSchedule">Export Rents
-                                                    </el-button>
-                                                </div>
-                                                <el-table border :data="form.rentals" style="width: 100%">
-                                                    <el-table-column prop="payment_date" label="Payment Date"/>
-                                                    <el-table-column prop="amount" label="Amount">
-                                                        <template slot-scope="scope">
-                                                            {{
-                                                                scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
-                                                            }} {{ form.currency }}
-                                                        </template>
-                                                    </el-table-column>
-                                                    <el-table-column prop="status" label="Status">
-                                                        <template slot-scope="scope">
-                                                            <i v-if="scope.row.status" class="el-icon-check"
-                                                               style="color: green"></i>
-                                                            <i v-else class="el-icon-close" style="color: red"></i>
-                                                        </template>
-                                                    </el-table-column>
-                                                </el-table>
-                                            </div>
-                                        </el-col>
-                                        <el-col :span="24" :md="11" class="payments-history-wrapper-col">
-                                            <div
-                                                v-if="form.rental_payments_histories && form.rental_payments_histories.length">
-                                                <div class="payments-schedule-title-wrapper">
-                                                    <div class="payments-history-heading"
-                                                         style="text-align: center; max-width: 500px">
-                                                        <h4>Payments History</h4>
-                                                    </div>
-                                                    <el-button
-                                                        icon="el-icon-document"
-                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
-                                                        type="secondary"
-                                                        class="pull-right"
-                                                        @click="exportRentalPayments">Export Payments
-                                                    </el-button>
-                                                </div>
-                                                <el-table border :data="form.rental_payments_histories"
-                                                          style="width: 100%">
-                                                    <el-table-column prop="date" label="Payment Date"/>
-                                                    <el-table-column prop="amount" label="Amount">
-                                                        <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }} {{ form.currency }}
-                                                        </template>
-                                                    </el-table-column>
-                                                    <el-table-column prop="attachment" label="Attachment">
-                                                        <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                               target="_blank">View
-                                                                {{ getFilename(scope.row.attachment) }}</a>
-                                                        </template>
-                                                    </el-table-column>
-                                                </el-table>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
-
                                 </el-card>
                             </el-row>
-
-                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
-                                <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>Extra Details</span>
-                                    </div>
-                                    <el-row class="row-item">
-                                        <div>
-                                            <el-table border :data="form.extraDetails"
-                                                      style="width: 100%">
-                                                <el-table-column prop="key"/>
-                                                <el-table-column prop="value"/>
-                                                <el-table-column prop="attachment">
-                                                    <template slot-scope="scope">
-                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                           target="_blank">View
-                                                            {{ getFilename(scope.row.attachment) }}</a>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
-                                        </div>
-                                    </el-row>
-                                </el-card>
-                            </el-row>
-
 
                             <el-row style="margin-bottom: 30px" v-if="form.tenant">
                                 <el-card class="box-card" v-if="form.asset_status === 'Rented'">
@@ -409,6 +312,100 @@
 
                                     </el-row>
 
+                                    <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
+                                        <el-col :span="24" :md="11">
+                                            <div v-if="form.rentals.length">
+                                                <div class="payments-schedule-title-wrapper">
+                                                    <div class="rentals-schedule-heading"
+                                                         style="text-align: center; max-width: 500px">
+                                                        <h4>Rentals Schedule</h4>
+                                                    </div>
+                                                    <el-button
+                                                        icon="el-icon-document"
+                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                        type="secondary"
+                                                        class="pull-right"
+                                                        @click="exportRentSchedule">Export Rents
+                                                    </el-button>
+                                                </div>
+                                                <el-table border :data="form.rentals" style="width: 100%">
+                                                    <el-table-column prop="payment_date" label="Payment Date"/>
+                                                    <el-table-column prop="amount" label="Amount">
+                                                        <template slot-scope="scope">
+                                                            {{
+                                                                scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
+                                                            }} {{ form.currency }}
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="status" label="Status">
+                                                        <template slot-scope="scope">
+                                                            <i v-if="scope.row.status" class="el-icon-check"
+                                                               style="color: green"></i>
+                                                            <i v-else class="el-icon-close" style="color: red"></i>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                        <el-col :span="24" :md="11" class="payments-history-wrapper-col">
+                                            <div
+                                                v-if="form.rental_payments_histories && form.rental_payments_histories.length">
+                                                <div class="payments-schedule-title-wrapper">
+                                                    <div class="payments-history-heading"
+                                                         style="text-align: center; max-width: 500px">
+                                                        <h4>Payments History</h4>
+                                                    </div>
+                                                    <el-button
+                                                        icon="el-icon-document"
+                                                        style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                        type="secondary"
+                                                        class="pull-right"
+                                                        @click="exportRentalPayments">Export Payments
+                                                    </el-button>
+                                                </div>
+                                                <el-table border :data="form.rental_payments_histories"
+                                                          style="width: 100%">
+                                                    <el-table-column prop="date" label="Payment Date"/>
+                                                    <el-table-column prop="amount" label="Amount">
+                                                        <template slot-scope="scope">
+                                                            {{ formatPrice(scope.row.amount) }} {{ form.currency }}
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="attachment" label="Attachment">
+                                                        <template slot-scope="scope">
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                               target="_blank">View
+                                                                {{ getFilename(scope.row.attachment) }}</a>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
+                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
+                                <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Extra Details</span>
+                                    </div>
+                                    <el-row class="row-item">
+                                        <div>
+                                            <el-table border :data="form.extraDetails"
+                                                      style="width: 100%">
+                                                <el-table-column prop="key"/>
+                                                <el-table-column prop="value"/>
+                                                <el-table-column prop="attachment">
+                                                    <template slot-scope="scope">
+                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                           target="_blank">View
+                                                            {{ getFilename(scope.row.attachment) }}</a>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-row>
                                 </el-card>
                             </el-row>
 
