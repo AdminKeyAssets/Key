@@ -178,6 +178,16 @@ export default {
     align-self: flex-start;
 }
 
+@media screen and (max-width: 992px) {
+    .comment-item {
+        width: 85%;
+    }
+    .comment-header{
+        flex-direction: column;
+    }
+
+}
+
 .comment-item.mine {
     align-self: flex-end;
 }
@@ -211,6 +221,9 @@ export default {
     margin-top: 5px;
     color: #1e90ff;
     text-decoration: underline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .comment-form {

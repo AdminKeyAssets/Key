@@ -43,7 +43,7 @@ header.navbar-inverse.navbar-fixed-top,
 }
 
 .navbar.navbar-inverse {
-    background-color: #043F83;
+    background-color: #0277B6;
 }
 
 /* Main Light Colors */
@@ -313,7 +313,7 @@ div.tagsinput span.tag,
 .select2-container--default .select2-results__option--highlighted[aria-selected],
 .nav-horizontal a:hover,
 .nav-horizontal li.active a {
-    background-color: #007AFF;
+    background-color: #0277B6;
 }
 
 .timeline-list .active .timeline-icon,
@@ -880,6 +880,9 @@ padding: 60px;
 @media screen and (max-width: 992px) {
     #sidebar.sidebar-show {
         width: 50% !important;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-position-y: bottom;
         max-width: 200px;
         z-index: 998;
     }
