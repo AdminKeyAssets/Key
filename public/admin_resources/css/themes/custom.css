@@ -661,7 +661,7 @@ button.el-button.el-button--info:not(.el-button--small) {
 
 @media screen and (min-width: 769px) {
     .block.push-bit {
-        margin: 18% auto;
+        margin: 15% auto;
     }
 }
 
@@ -1100,6 +1100,7 @@ table thead th {
 @media screen and (min-width: 769px) {
     .not-registered-wrapper{
         padding-left: 5px;
+        margin-top: 10%;
     }
     .login-header {
         display: none;
