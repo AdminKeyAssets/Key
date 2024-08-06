@@ -34,6 +34,7 @@ return [
     'sidebar_logo'        => 'admin_resources/img/placeholders/avatars/img.png',
     'logo_c'        => 'admin_resources/img/placeholders/avatars/logo_c.png',
     'header_logo'        => 'admin_resources/img/placeholders/avatars/header_logo.png',
+    'burger'        => 'admin_resources/img/placeholders/icons/burger.svg',
 
     /**
      * Login page logo.

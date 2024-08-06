@@ -661,13 +661,13 @@ button.el-button.el-button--info:not(.el-button--small) {
 
 @media screen and (min-width: 769px) {
     .block.push-bit {
-        margin: 20% auto;
+        margin: 18% auto;
     }
 }
 
 @media screen and (max-width: 768px) {
     .block.push-bit {
-        margin: 25% auto;
+        margin: 17% auto;
     }
 
     .payments-history-wrapper-col {
@@ -1110,7 +1110,7 @@ table thead th {
         width: 100%;
         height: 50px;
         background-color: #043F83;
-        padding: 10px 0 0 10px;
+        padding: 12px 0 0 10px;
     }
 }
 

@@ -5,7 +5,12 @@
 
     <div class="dk-container admin-login-container">
         <div class="login-header">
-            <img src="{{ config('admin.header_logo') }}" width="130">
+            <span style="padding-right: 10px">
+                <img src="{{ config('admin.burger') }}" width="24">
+            </span>
+            <span>
+                <img src="{{ config('admin.header_logo') }}" width="110">
+            </span>
         </div>
         <!-- Login Container -->
         <div id="login-container">
