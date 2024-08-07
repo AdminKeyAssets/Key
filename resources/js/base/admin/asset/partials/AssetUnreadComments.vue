@@ -36,9 +36,14 @@
                 </div>
             </div>
 
-            <el-badge slot="reference" :value="unreadCommentsCount" class="item" style="cursor: pointer">
-                <i class="el-icon-chat-round" @click="toggleUnreadCommentsList" style="color:white"></i>
+            <el-badge v-if="unreadCommentsCount" slot="reference" class="item" style="cursor: pointer">
+                <i class="el-icon-message-solid" @click="toggleUnreadCommentsList" style="color:#F56C6C"></i>
             </el-badge>
+
+            <el-badge v-else :hidden="true" slot="reference" class="item" style="cursor: pointer">
+                <i class="el-icon-bell" @click="toggleUnreadCommentsList" style="color:white"></i>
+            </el-badge>
+
         </el-popover>
     </div>
 </template>

@@ -25,10 +25,16 @@
                     </el-card>
                 </div>
             </div>
-            <el-badge slot="reference" :value="pendingPaymentsCount" class="item" style="cursor: pointer"
+            <el-badge slot="reference" v-if="pendingPaymentsCount" class="item" style="cursor: pointer"
+                      type="primary">
+                <i class="el-icon-message-solid" @click="togglePendingPaymentsList" style="color:#aad178"></i>
+            </el-badge>
+
+            <el-badge slot="reference" v-else class="item" style="cursor: pointer"
                       type="primary">
                 <i class="el-icon-bell" @click="togglePendingPaymentsList" style="color:white"></i>
             </el-badge>
+
         </el-popover>
 
     </div>
