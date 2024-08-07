@@ -532,6 +532,7 @@ fieldset[disabled] .btn-primary.active:focus {
         border-left-color: #007AFF;
         background-color: #32323a;
     }
+
     .asset-details-wrapper.form-horizontal .control-label {
         font-size: 13px;
     }
@@ -672,7 +673,8 @@ button.el-button.el-button--info:not(.el-button--small) {
         font-size: 15px;
         height: 55px;
     }
-    .block.push-bit > div > h1{
+
+    .block.push-bit > div > h1 {
         margin-bottom: 30px;
     }
 }
