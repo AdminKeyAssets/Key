@@ -532,6 +532,9 @@ fieldset[disabled] .btn-primary.active:focus {
         border-left-color: #007AFF;
         background-color: #32323a;
     }
+    .asset-details-wrapper.form-horizontal .control-label {
+        font-size: 13px;
+    }
 }
 
 /* forms */
