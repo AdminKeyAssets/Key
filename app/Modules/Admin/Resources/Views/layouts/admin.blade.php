@@ -1,5 +1,11 @@
 @extends('admin::layouts.layout')
+<?php
+$user = auth('investor')->user();
 
+if (!$user) {
+    $user = auth('admin')->user();
+}
+?>
 @section('content')
     <div id="admin">
         <div id="page-wrapper">
@@ -21,14 +27,14 @@
                             <div class="sidebar-section sidebar-user clearfix sidebar-nav-mini-hide">
                                 <div class="sidebar-user-avatar">
                                     <a href="{{ \Auth::guard('investor')->check() ? route('investor.profile.index') : route('admin.profile.index')}}">
-                                        @if( \Auth::user()->profile_picture)
-                                            <img src="{{ \Auth::user()->profile_picture }}" alt="avatar">
+                                        @if( $user->profile_picture)
+                                            <img src="{{ $user->profile_picture }}" alt="avatar">
                                         @else
                                             <img src="{{ config('admin.user_avatar') }}" alt="avatar">
                                         @endif
                                     </a>
                                 </div>
-                                <div class="sidebar-user-name">{{ \Auth::user()->name }}</div>
+                                <div class="sidebar-user-name">{{ $user->name }}</div>
                                 <div class="sidebar-user-links">
                                     <a href="{{ \Auth::guard('investor')->check() ? route('investor.profile.index') : route('admin.profile.index')}}"
                                        data-toggle="tooltip"
@@ -63,11 +69,16 @@
                             <!-- Main Sidebar Toggle Button -->
                             <li>
                                 <a href="javascript:void(0)" onclick="toggleClass();this.blur();">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 4.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M12 9.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 14.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 19.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 4.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M12 9.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M21 14.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M21 19.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
                                     </svg>
 
                                 </a>
@@ -93,7 +104,7 @@
                     </header>
                     <!-- END Header -->
 
-{{--                    <div class="admin" style="background-image: url('{{ config('admin.auth_background') }}')">--}}
+                    {{--                    <div class="admin" style="background-image: url('{{ config('admin.auth_background') }}')">--}}
                     <div class="admin">
                         @yield('main')
                     </div>

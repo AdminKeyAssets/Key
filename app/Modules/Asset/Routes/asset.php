@@ -76,8 +76,9 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $revenueModuleName = 'revenue';
 
     //Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
-    Route::get('/revenues', $revenueController . '@index')->name('revenue.index')->middleware(['auth:admin']);
-
+    Route::get('/revenues', $revenueController . '@index')->name('revenue.index');
+    Route::get('/revenues/export', $revenueController . '@export')
+        ->name('revenue_export');
 
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';

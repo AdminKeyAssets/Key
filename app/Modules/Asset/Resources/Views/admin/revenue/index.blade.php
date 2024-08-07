@@ -4,23 +4,26 @@
     <!-- Page content -->
     <div id="page-content">
         <!-- Statistics Widgets Header -->
-        @include('admin::includes.header-section', ['name'   => 'Payments' ])
+        @include('admin::includes.header-section', ['name'   => 'Revenue' ])
         <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
         <div class="row">
 
         </div>
-        <br>
 
-        <div class="row">
-            <revenue-filter-component>
-            </revenue-filter-component>
-        </div>
-        <br>
         <div class="block">
 
             @include('admin::includes.success')
+
+            <div class="row">
+                <revenue-export-component>
+                </revenue-export-component>
+            </div>
+            <div class="row">
+                <revenue-filter-component>
+                </revenue-filter-component>
+            </div>
 
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
@@ -31,9 +34,11 @@
                         <thead>
                         <tr>
                             <th> Project Name</th>
-                            <th> City</th>
+                            @if(Auth::guard('admin')->check())
+                                <th> Investor</th>
+                            @endif
                             <th> Purchase Date</th>
-                            <th> Total Price</th>
+                            <th> Purchase Price</th>
                             <th> Total Investment ({!! $totals['total_rent'] !!})</th>
                             <th> Current Value</th>
                             <th> Capital Gain ({!! $totals['total_capital_gain'] !!})</th>
@@ -50,13 +55,15 @@
                                         <a href="{{route('asset.view', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @endif
                                 </td>
-                                <td>{!! $item->city !!}</td>
+                                @if(Auth::guard('admin')->check())
+                                    <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
+                                @endif
                                 <td>{!! $item->agreement_date !!}</td>
-                                <td>{!! number_format($item->total_price,2,".",",") !!}</td>
-                                <td>{!! number_format($item->total_investment,2,".",",") !!}</td>
-                                <td>{!! number_format($item->current_value,2,".",",") !!}</td>
-                                <td>{!! number_format($item->capital_gain,2,".",",") !!}</td>
-                                <td>{!! number_format($item->rent,2,".",",") !!}</td>
+                                <td>{!! number_format($item->total_price,0,".",",") !!}</td>
+                                <td>{!! number_format($item->total_investment,0,".",",") !!}</td>
+                                <td>{!! number_format($item->current_value,0,".",",") !!}</td>
+                                <td>{!! number_format($item->capital_gain,0,".",",") !!}</td>
+                                <td>{!! number_format($item->rent,0,".",",") !!}</td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -76,7 +83,7 @@
 @endsection
 
 <style>
-    th, td{
+    th, td {
         text-align: center !important;
     }
 </style>

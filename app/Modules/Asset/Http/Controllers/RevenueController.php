@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\RevenueExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
@@ -10,7 +11,9 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RevenueController extends BaseController
 {
@@ -42,11 +45,18 @@ class RevenueController extends BaseController
      */
     public function index(Request $request)
     {
-        $user = auth()->user();
+        $user = auth('investor')->user();
+
+        if (!$user) {
+            $user = auth('admin')->user();
+        }
+
         $userId = $user->getAuthIdentifier();
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
-
-        if (in_array($user->getRolesNameAttribute(), $managers)) {
+        if (Auth::guard('investor')->check()) {
+            $paginatedAssets = Asset::where('investor_id', $userId)->orderByDesc('id');
+            $allAssets = Asset::where('investor_id', $userId);
+        } else if (in_array($user->getRolesNameAttribute(), $managers)) {
             $investors = Investor::where('admin_id', $userId)->pluck('id');
             $paginatedAssets = Asset::whereIn('investor_id', $investors)->orderByDesc('id');
             $allAssets = Asset::whereIn('investor_id', $investors);
@@ -119,15 +129,15 @@ class RevenueController extends BaseController
 
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
-            $totalRent += $asset->rentals()->where('status', true)->sum('amount');
+            $totalRent += $asset->rentalPaymentsHistories()->sum('amount');
             $totalCapitalGain += $asset->current_value - $asset->total_price;
-            $totalInvestment += $asset->payments()->where('status', true)->sum('amount');
+            $totalInvestment += $asset->paymentsHistories()->sum('amount');
         }
 
         foreach ($paginatedAssets as $asset) {
-            $asset->rent = $asset->rentals()->where('status', true)->sum('amount');
+            $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
             $asset->capital_gain = $asset->current_value - $asset->total_price;
-            $asset->total_investment = $asset->payments()->where('status', true)->sum('amount');
+            $asset->total_investment = $asset->paymentsHistories()->sum('amount');
         }
 
         $this->baseData['allData'] = $paginatedAssets;
@@ -136,5 +146,11 @@ class RevenueController extends BaseController
             'total_capital_gain' => $totalCapitalGain,
             'total_investment' => $totalInvestment,
         ];
+    }
+
+    public function export(Request $request)
+    {
+        $filters = $request->only(['agreement_date']);
+        return Excel::download(new RevenueExport($filters), 'revenues.xlsx');
     }
 }

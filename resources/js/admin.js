@@ -52,6 +52,7 @@ Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetView
 
 //Revenue
 Vue.component('revenue-filter-component', require('./base/admin/asset/partials/RevenueFilters').default);
+Vue.component('revenue-export-component', require('./base/admin/asset/partials/RevenueExport').default);
 
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
