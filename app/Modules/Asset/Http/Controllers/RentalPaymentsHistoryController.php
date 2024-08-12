@@ -10,6 +10,7 @@ use App\Modules\Asset\Http\Requests\LeaseRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
+use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
 use DB;
@@ -118,7 +119,7 @@ class RentalPaymentsHistoryController extends BaseController
 
                 $file = $request->file('attachment');
                 $originalFileName = $file->getClientOriginalName();
-                $path = $file->storeAs('uploads', $originalFileName,'public');
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
 
             } else if ($request->input('attachment') === null) {
@@ -142,16 +143,19 @@ class RentalPaymentsHistoryController extends BaseController
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $originalFileName = $file->getClientOriginalName();
-                $path = $file->storeAs('uploads', $originalFileName,'public');
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
             }
 
+            $asset = Asset::where('id', $assetId)->first();
+            $tenant = $asset->tenant->where('status', 1)->first();
             $paymentHistory = RentalPaymentsHistory::create([
                 'asset_id' => $assetId,
                 'date' => $request->date,
                 'amount' => $request->amount,
                 'currency' => $request->currency,
-                'attachment' => $path
+                'attachment' => $path,
+                'tenant_id' => $tenant->id
             ]);
 
             $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount);
@@ -250,5 +254,21 @@ class RentalPaymentsHistoryController extends BaseController
     {
         $filters = ['asset_id' => $assetId];
         return Excel::download(new RentsPaymentsExport($filters), 'rentals_payments.xlsx');
+    }
+
+    public function complete(Request $request, $assetId)
+    {
+        $asset = Asset::where('id', $assetId)->first();
+        $asset->asset_status = 'Vacant';
+        $tenant = $asset->tenant->where('status', 1)->first();
+        if ($tenant) {
+            $tenant->update([
+                'status' => 0
+            ]);
+        }
+        $asset->save();
+        $asset->rentals()->delete();
+
+        return ServiceResponse::jsonNotification('Rent updated successfully', 200, []);
     }
 }

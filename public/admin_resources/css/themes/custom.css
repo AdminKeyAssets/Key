@@ -153,7 +153,6 @@ li.dropdown-header,
     background-color: #dae8e7;
 }
 
-.form-control,
 .input-group-addon,
 .switch-default span,
 .dropdown-menu,
@@ -667,7 +666,7 @@ button.el-button.el-button--info:not(.el-button--small) {
 
 @media screen and (min-width: 769px) {
     .block.push-bit {
-        margin: 15% auto;
+        margin: 10% auto;
         width: 450px;
     }
 
