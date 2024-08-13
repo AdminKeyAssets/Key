@@ -50,9 +50,9 @@
                             <tr>
                                 <td>
                                     @if(Auth::guard('investor')->check())
-                                        <a href="{{route('asset.details', [ $item->id ])}}">{!! $item->project_name !!}</a>
+                                        <a href="{{route('asset.revenue.details', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @else
-                                        <a href="{{route('asset.view', [ $item->id ])}}">{!! $item->project_name !!}</a>
+                                        <a href="{{route('asset.revenue.view', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @endif
                                 </td>
                                 @if(Auth::guard('admin')->check())

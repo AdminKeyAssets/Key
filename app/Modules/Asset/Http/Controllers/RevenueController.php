@@ -4,16 +4,24 @@ namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Exports\RevenueExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Models\Country;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\RentalPaymentsHistory;
+use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
+use Mockery\Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RevenueController extends BaseController
 {
@@ -120,6 +128,11 @@ class RevenueController extends BaseController
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
+    /**
+     * @param $paginatedAssets
+     * @param $allAssets
+     * @return void
+     */
     private function calculateRevenue($paginatedAssets, $allAssets): void
     {
         // Initialize totals
@@ -148,9 +161,87 @@ class RevenueController extends BaseController
         ];
     }
 
+    /**
+     * @param Request $request
+     * @return BinaryFileResponse
+     */
     public function export(Request $request)
     {
         $filters = $request->only(['agreement_date']);
         return Excel::download(new RevenueExport($filters), 'revenues.xlsx');
     }
+
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function view($id = '')
+    {
+        try {
+            $this->baseData['routes']['create_form_data'] = route('asset.revenue_create_form_data');
+
+            $this->baseData['id'] = $id;
+            $asset = Asset::where('id', $id)->first();
+            $this->baseData['name'] = $asset->project_name ?? '';
+
+        } catch (\Exception $ex) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::success($this->baseData));
+    }
+
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function investorView($id = '')
+    {
+        try {
+            $this->baseData['routes']['create_form_data'] = route('asset.revenues.create_data');
+
+            $this->baseData['id'] = $id;
+            $this->baseData['name'] = Asset::where('id', $id)->first()->toArray()['project_name'];
+        } catch (\Exception $ex) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.investor_view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.investor_view', ServiceResponse::success($this->baseData));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function createData(Request $request)
+    {
+        try {
+            $this->baseData['routes'] = [
+                'create_form_data' => route('asset.revenue_create_form_data'),
+            ];
+
+            if ($request->get('id')) {
+                $asset = Asset::findOrFail($request->get('id'));
+//                $this->baseData['item'] = $asset;
+
+                $tenantData = [];
+
+                if($asset->tenant){
+                    foreach ($asset->tenant->orderByDesc('id')->get() as $tenant){
+                        $tenantRentalPayments = RentalPaymentsHistory::where('tenant_id', $tenant->id)->get();
+                        $tenant = $tenant->toArray();
+                        $tenant['rental_payments'] = $tenantRentalPayments;
+                        $tenantData[] = $tenant;
+                    }
+                }
+                $this->baseData['tenants'] = $tenantData;
+            }
+
+        } catch (\Exception $ex) {
+            throw new Exception($ex->getMessage(), $ex->getCode());
+        }
+
+        return ServiceResponse::jsonNotification('', 200, $this->baseData);
+    }
+
 }

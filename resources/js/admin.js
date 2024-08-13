@@ -51,8 +51,9 @@ Vue.component('manager-page-form', require('./base/admin/asset/page/ManagerForm'
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
 
 //Revenue
-Vue.component('revenue-filter-component', require('./base/admin/asset/partials/RevenueFilters').default);
-Vue.component('revenue-export-component', require('./base/admin/asset/partials/RevenueExport').default);
+Vue.component('revenue-filter-component', require('./base/admin/revenue/partials/RevenueFilters').default);
+Vue.component('revenue-export-component', require('./base/admin/revenue/partials/RevenueExport').default);
+Vue.component('revenue-view-page-form', require('./base/admin/revenue/page/RevenueViewForm').default);
 
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);

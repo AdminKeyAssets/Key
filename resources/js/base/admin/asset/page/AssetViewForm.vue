@@ -734,22 +734,15 @@
 
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
-import AssetComments from "../partials/AssetComments.vue";
 import MapMarker from "../../../components/admin/MapMarker.vue";
 import ImageModal from "../../../components/admin/ImageModal.vue";
-import AssetDetails from "../partials/components/AssetDetails.vue";
-import TenantDetails from "../partials/components/TenantDetails.vue";
-import ExtraDetails from "../partials/components/ExtraDetails.vue";
-import AgreementDetails from "../partials/components/AgreementDetails.vue";
-import CurrentValue from "../partials/components/CurrentValue.vue";
 import ImageBox from "../../../components/admin/ImageBox.vue";
 
 export default {
     components: {
-        ImageBox,
-        CurrentValue,
-        AgreementDetails, ExtraDetails, TenantDetails, AssetDetails, ImageModal, MapMarker, AssetComments
+        ImageBox, ImageModal, MapMarker
     },
+
 
     props: {
         id: {
