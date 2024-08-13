@@ -145,7 +145,12 @@ class AssetController extends BaseController
                     }
                 }
                 $this->baseData['item']['files'] = $files;
-                $this->baseData['item']['tenant'] = $asset->tenant ? $asset->tenant->where('status', 1)->first() : [];
+
+                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->first();
+                $this->baseData['item']['tenant'] = [];
+                if ($tenant) {
+                    $this->baseData['item']['tenant'] = $tenant;
+                }
             }
             $this->baseData['item']['countries'] = Country::get('country');
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');

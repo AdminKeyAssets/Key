@@ -95,14 +95,7 @@ export default {
             if (this.item) {
                 this.form = this.item;
                 this.form.existingAttachments = this.item.existingAttachments || [];
-                if(this.item.tenant){
-                    this.form.tenant = [];
-                    if(this.item.tenant.status){
-                        this.form.tenant = this.item.tenant;
-                    }
-                }else{
-                    this.form.tenant = [];
-                }
+                this.form.tenant = this.item.tenant || [];
             }
         }
     },
