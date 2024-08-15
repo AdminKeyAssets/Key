@@ -158,6 +158,54 @@
                                 </el-card>
                             </el-row>
 
+                            <el-row style="margin-bottom: 30px" v-if="investments">
+                                <el-card class="box-card">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Investments</span>
+                                    </div>
+
+                                    <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
+
+                                        <el-col :span="24" class="payments-history-wrapper-col">
+                                            <div>
+
+                                                <el-table border :data="investments"
+                                                          style="width: 100%">
+                                                    <el-table-column prop="date" label="Payment Date"/>
+                                                    <el-table-column prop="status" label="Status"/>
+                                                    <el-table-column prop="amount" label="Amount">
+                                                        <template slot-scope="scope">
+                                                            {{ formatPrice(scope.row.amount) }} {{ scope.row.currency }}
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="description" label="Description">
+                                                        <template slot-scope="scope">
+                                                            <el-popover
+                                                                placement="bottom"
+                                                                width="300"
+                                                                trigger="hover">
+                                                                <div style="word-break: break-word; text-align: left">
+                                                                    {{scope.row.description}}
+                                                                </div>
+                                                                <div slot="reference" style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                    {{scope.row.description}}
+                                                                </div>
+                                                            </el-popover>
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="attachment" label="Attachment">
+                                                        <template slot-scope="scope">
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                               target="_blank">View
+                                                                {{ getFilename(scope.row.attachment) }}</a>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
                         </el-form>
                     </div>
                 </div>
@@ -215,6 +263,7 @@ export default {
             },
             tenants: {},
             rentals: {},
+            investments: [],
         }
     },
     created() {
@@ -250,6 +299,7 @@ export default {
                     this.routes = data.routes;
                     this.options = data.options;
                     this.tenants = data.tenants;
+                    this.investments = data.investments;
 
                     this.tenants.forEach(tenant => {
                         tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent);

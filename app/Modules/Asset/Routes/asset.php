@@ -98,5 +98,21 @@ Route::prefix('assets')->name('asset.')->group(function () {
 
     Route::post('/current-value/update/{currentValue}', $currentValueController . '@update')->name('update.current_value');
     Route::delete('/current-value/delete/{currentValue}', $currentValueController . '@destroy')->name('delete.current_value');
+
+
+    $investmentController = 'InvestmentController';
+    $investmentModuleName = 'investment';
+
+    Route::get('/{asset}/investment', $investmentController . '@index')->name('investment.index')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'index', true)]);
+    //Create/Update view.
+    Route::get('/{asset}/investment/create', $investmentController . '@create')->name('investment.create')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'create', true)]);
+    Route::post('/{asset}/investment/create-data', $investmentController . '@createData')->name('investment.create_data')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'view', true)]);
+    Route::get('/{asset}/investment/edit/{id?}', $investmentController . '@edit')->name('investment.edit')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'update', true)]);
+    Route::get('/{asset}/investment/view/{id?}', $investmentController . '@view')->name('investment.view')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'view', true)]);
+    //Save
+    Route::post('/{asset}/investment/store', $investmentController . '@store')->name('investment.store')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'create', true)]);
+    // Delete
+    Route::post('/{asset}/investment/delete', $investmentController . '@destroy')->name('investment.delete')->middleware(['permission:' . getPermissionKey($investmentModuleName, 'delete', true)]);
+
 });
 

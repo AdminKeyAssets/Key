@@ -64,4 +64,7 @@ return [
         'default' => $default_permissions,
         'custom' => $custom_permissions
     ],
+    'investment' => [
+        'default' => $default_permissions
+    ],
 ];

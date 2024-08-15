@@ -83,6 +83,11 @@ class Asset extends Model
         return $this->hasMany(PaymentsHistory::class);
     }
 
+    public function Investments()
+    {
+        return $this->hasMany(Investment::class);
+    }
+
     public function rentalPaymentsHistories()
     {
         return $this->hasMany(RentalPaymentsHistory::class);

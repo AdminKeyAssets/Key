@@ -15,7 +15,7 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Payment Date:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.payment_date}}
+                                        {{form.date}}
                                     </div>
                                 </div>
 
@@ -112,8 +112,8 @@ export default {
                 if (!isNaN(amount)) {
                     return new Intl.NumberFormat('en-US', {
                         style: 'decimal',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
                     }).format(amount);
                 }
             }

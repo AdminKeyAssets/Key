@@ -234,7 +234,13 @@ class RevenueController extends BaseController
                         $tenantData[] = $tenant;
                     }
                 }
+                $investments = [];
+                if($asset->investments){
+                    $investments = $asset->investments()->get();
+                }
+
                 $this->baseData['tenants'] = $tenantData;
+                $this->baseData['investments'] = $investments;
             }
 
         } catch (\Exception $ex) {

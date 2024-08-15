@@ -40,15 +40,15 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{!! $item->date !!}</td>
-                                <td>{!! number_format($item->amount,2,".",",") !!}</td>
+                                <td>{!! number_format($item->amount,0,".",",") !!}</td>
                                 <td>{!! $item->currency !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
-                                        @include('admin::includes.actions.view',['route' => route($moduleKey . '.rental.view', [$item->id, ])])
+                                        @include('admin::includes.actions.view',['route' => route($moduleKey . '.rental.view',  [$assetId, $item->id, ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.edit',['route' => route($moduleKey . '.rental.edit', [$item->id ])])
+                                        @include('admin::includes.actions.edit',['route' => route($moduleKey . '.rental.edit',  [$assetId, $item->id, ])])
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component

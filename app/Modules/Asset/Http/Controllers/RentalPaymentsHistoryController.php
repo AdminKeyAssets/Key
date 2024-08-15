@@ -187,10 +187,10 @@ class RentalPaymentsHistoryController extends BaseController
      * @param $id
      * @return Application|Factory|View
      */
-    public function view($id = '')
+    public function view($assetId, $id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('asset.rental.create_data');
+            $this->baseData['routes']['create_form_data'] = route('asset.rental.create_data', $assetId);
 
             $this->baseData['id'] = $id;
 

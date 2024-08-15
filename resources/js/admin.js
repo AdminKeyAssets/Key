@@ -57,9 +57,15 @@ Vue.component('revenue-view-page-form', require('./base/admin/revenue/page/Reven
 
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
+Vue.component('payment-view-page-form', require('./base/admin/payment/page/PaymentViewForm').default);
 
-//Payment
+//Rental
 Vue.component('rental-page-form', require('./base/admin/rental/page/RentalForm').default);
+Vue.component('rental-view-page-form', require('./base/admin/rental/page/RentalViewForm').default);
+
+//Invetment
+Vue.component('investment-page-form', require('./base/admin/investment/page/InvestmentForm').default);
+Vue.component('investment-view-page-form', require('./base/admin/investment/page/InvestmentViewForm').default);
 
 //Comment
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);

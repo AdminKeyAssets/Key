@@ -12,9 +12,6 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route('asset.payments.list', [$data['assetId']]) }}" size="medium" class="btn btn-secondary">
-                    <i class="el-icon-back"></i>
-                </a>
 
                 <payment-view-page-form
                     :id="{{ $data['id'] }}"

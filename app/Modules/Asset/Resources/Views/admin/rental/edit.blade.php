@@ -12,9 +12,6 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route('asset.rental.list') }}" size="medium" class="btn btn-secondary">
-                    <i class="el-icon-back"></i>
-                </a>
                 <rental-page-form
                     :id="{{ $data['id'] }}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">

@@ -11,9 +11,7 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <a href="{{ route($moduleKey . '.payments.list', [$assetId]) }}" size="medium" class="btn btn-secondary">
-                    <i class="el-icon-back"></i>
-                </a>
+
                 <payment-page-form
                 :asset-id="{{$assetId}}"
                 :get-save-data-route="'{{ route($moduleKey . '.payments.create_data', $assetId) }}'">

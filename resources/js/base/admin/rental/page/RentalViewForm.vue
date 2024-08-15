@@ -13,16 +13,25 @@
                             <el-row>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Price:</label>
+                                    <label class="col-md-1 control-label">Payment Date:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{this.formatPrice(form.price)}} {{form.currency}}
+                                        {{form.date}}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Date From:</label>
+                                    <label class="col-md-1 control-label">Amount:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.date}}
+                                        {{this.formatPrice(form.amount)}} {{form.currency}}
+                                    </div>
+                                </div>
+
+                                <div class="form-group dashed">
+                                    <label class="col-md-1 control-label">File:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        <p v-if="form.attachment"><a :href="form.attachment" target="_blank">View
+                                            Attachment</a>
+                                        </p>
                                     </div>
                                 </div>
                             </el-row>
@@ -42,8 +51,7 @@ import {getData} from '../../../mixins/getData'
 export default {
     props: [
         'getSaveDataRoute',
-        'id',
-        'income'
+        'id'
     ],
     data() {
         return {
@@ -102,8 +110,8 @@ export default {
                 if (!isNaN(amount)) {
                     return new Intl.NumberFormat('en-US', {
                         style: 'decimal',
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
                     }).format(amount);
                 }
             }

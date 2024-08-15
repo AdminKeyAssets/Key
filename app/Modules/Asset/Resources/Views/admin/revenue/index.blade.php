@@ -43,6 +43,9 @@
                             <th> Current Value</th>
                             <th> Capital Gain ({!! $totals['total_capital_gain'] !!})</th>
                             <th> Rent ({!! $totals['total_rent'] !!})</th>
+                            @if(!Auth::guard('investor')->check())
+                                <th width="10%" class="text-center">@lang('Action')</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -64,6 +67,11 @@
                                 <td>{!! number_format($item->current_value,0,".",",") !!}</td>
                                 <td>{!! number_format($item->capital_gain,0,".",",") !!}</td>
                                 <td>{!! number_format($item->rent,0,".",",") !!}</td>
+                                <td>
+                                    @can(getPermissionKey('investment', 'index', true))
+                                        @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
+                                    @endcan
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>
