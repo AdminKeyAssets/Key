@@ -110,7 +110,7 @@
 
                                     <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
                                         <el-col :span="24" :md="11">
-                                            <div v-if="tenant.rentals && tenant.rentals.length">
+                                            <div>
                                                 <div class="payments-schedule-title-wrapper">
                                                     <div class="rentals-schedule-heading"
                                                          style="text-align: center; max-width: 500px">
@@ -302,7 +302,7 @@ export default {
                     this.investments = data.investments;
 
                     this.tenants.forEach(tenant => {
-                        tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent);
+                        tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent, tenant.rental_payments_amount_sum);
                     });
 
                     this.form.id = this.id;
@@ -330,12 +330,14 @@ export default {
             return path.split('/').pop();
         },
 
-        generateRentals(agreement_date, agreement_term, monthly_rent) {
+        generateRentals(agreement_date, agreement_term, monthly_rent, rental_payments_amount_sum) {
+            let leftRentalPaymentsAmount = rental_payments_amount_sum;
+            let enoughtForMonth = Math.ceil(rental_payments_amount_sum/monthly_rent);
             const rentals = [];
             let [year, month, day] = agreement_date.split('/').map(Number);
             let currentDate = new Date(year, month - 1, day);
 
-            for (let i = 0; i < agreement_term; i++) {
+            for (let i = 0; i < enoughtForMonth; i++) {
                 const paymentMonth = new Date(currentDate);
                 paymentMonth.setMonth(paymentMonth.getMonth() + i);
 
@@ -343,8 +345,10 @@ export default {
 
                 rentals.push({
                     payment_date: formattedDate,
-                    amount: monthly_rent,
+                    amount: monthly_rent < leftRentalPaymentsAmount ? monthly_rent : leftRentalPaymentsAmount,
                 });
+
+                leftRentalPaymentsAmount = leftRentalPaymentsAmount - monthly_rent;
             }
 
             return rentals;

@@ -228,15 +228,16 @@ class RevenueController extends BaseController
 
                 if($asset->tenant){
                     foreach ($asset->tenant->orderByDesc('id')->get() as $tenant){
-                        $tenantRentalPayments = RentalPaymentsHistory::where('tenant_id', $tenant->id)->get();
+                        $tenantRentalPayments = RentalPaymentsHistory::where('tenant_id', $tenant->id)->orderByDesc('id');
                         $tenant = $tenant->toArray();
-                        $tenant['rental_payments'] = $tenantRentalPayments;
+                        $tenant['rental_payments'] = $tenantRentalPayments->get();
+                        $tenant['rental_payments_amount_sum'] = $tenantRentalPayments->sum('amount');
                         $tenantData[] = $tenant;
                     }
                 }
                 $investments = [];
                 if($asset->investments){
-                    $investments = $asset->investments()->get();
+                    $investments = $asset->investments()->orderByDesc('id')->get();
                 }
 
                 $this->baseData['tenants'] = $tenantData;
