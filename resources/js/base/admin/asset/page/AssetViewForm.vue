@@ -737,10 +737,11 @@ import {getData} from '../../../mixins/getData'
 import MapMarker from "../../../components/admin/MapMarker.vue";
 import ImageModal from "../../../components/admin/ImageModal.vue";
 import ImageBox from "../../../components/admin/ImageBox.vue";
+import AssetComments from "../partials/AssetComments.vue";
 
 export default {
     components: {
-        ImageBox, ImageModal, MapMarker
+        ImageBox, ImageModal, MapMarker, AssetComments
     },
 
 

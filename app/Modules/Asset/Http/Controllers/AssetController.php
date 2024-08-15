@@ -12,6 +12,7 @@ use App\Modules\Asset\Models\AssetAttachment;
 use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\Rental;
+use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
@@ -128,7 +129,13 @@ class AssetController extends BaseController
                 $this->baseData['item']['gallery'] = $asset->gallery;
                 $this->baseData['item']['payments'] = $asset->payments;
                 $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
-                $this->baseData['item']['rental_payments_histories'] = $asset->rentalPaymentsHistories;
+                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->first();
+                $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
+                if ($tenant) {
+                    $this->baseData['item']['tenant'] = $tenant;
+                    $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
+//                    dd($this->baseData['item']['rental_payments_histories']);
+                }
                 $this->baseData['item']['rentals'] = $asset->rentals;
                 $this->baseData['item']['currentValues'] = $asset->currentValues;
                 $this->baseData['salesManager'] = $salesManager;
@@ -145,12 +152,6 @@ class AssetController extends BaseController
                     }
                 }
                 $this->baseData['item']['files'] = $files;
-
-                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->first();
-                $this->baseData['item']['tenant'] = [];
-                if ($tenant) {
-                    $this->baseData['item']['tenant'] = $tenant;
-                }
             }
             $this->baseData['item']['countries'] = Country::get('country');
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
