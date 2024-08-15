@@ -64,7 +64,7 @@ class AssetRequest extends FormRequest
             'agreement_date' => 'required',
             'agreement_status' => 'required',
             'first_payment_date' => 'required_if:agreement_status,Installments',
-            'period' => 'required_if:agreement_status,Installments|numeric',
+            'period' => 'required_if:agreement_status,Installments',
         ];
     }
 
@@ -109,6 +109,7 @@ class AssetRequest extends FormRequest
             'first_payment_date.required_if' => 'The First Payment Date is required when agreement status is Installments.',
 
             'period.required_if' => 'The Period is required when agreement status is Installments.',
+            'period.numeric_if' => 'The Period must be numeric.',
             'current_value.numeric' => 'The Current must be numeric.',
         ];
     }
