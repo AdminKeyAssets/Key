@@ -106,7 +106,7 @@
             </div>
         </div>
         <div class="form-group dashed">
-            <el-button type="primary" size="medium" @click="generateRentalList">Generate Rental List</el-button>
+            <el-button type="primary" size="medium" @click="generateRentalList">Generate Rent Schedule</el-button>
         </div>
     </div>
 </template>
