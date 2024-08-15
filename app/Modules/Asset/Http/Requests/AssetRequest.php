@@ -107,8 +107,8 @@ class AssetRequest extends FormRequest
             'agreement_date.required' => 'Please select Agreement Date',
             'agreement_status.required' => 'Please select Agreement Status',
             'first_payment_date.required_if' => 'The First Payment Date is required when agreement status is Installments.',
+
             'period.required_if' => 'The Period is required when agreement status is Installments.',
-            'period.numeric' => 'The Period must be numeric.',
             'current_value.numeric' => 'The Current must be numeric.',
         ];
     }
