@@ -15,6 +15,12 @@
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
                                         <span>{{ tenant.name }} {{ tenant.surname }}</span>
+                                        <span>
+                                            <span>{{ tenant.agreement_date }}</span>
+                                            <span v-if="tenant.rentals && tenant.rentals.length && !tenant.status"> - {{
+                                                    tenant.rentals.slice(-1)[0].payment_date
+                                                }}</span>
+                                        </span>
                                     </div>
                                     <el-row>
                                         <el-row class="row-item"
@@ -185,10 +191,11 @@
                                                                 width="300"
                                                                 trigger="hover">
                                                                 <div style="word-break: break-word; text-align: left">
-                                                                    {{scope.row.description}}
+                                                                    {{ scope.row.description }}
                                                                 </div>
-                                                                <div slot="reference" style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                    {{scope.row.description}}
+                                                                <div slot="reference"
+                                                                     style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                    {{ scope.row.description }}
                                                                 </div>
                                                             </el-popover>
                                                         </template>
@@ -332,7 +339,7 @@ export default {
 
         generateRentals(agreement_date, agreement_term, monthly_rent, rental_payments_amount_sum) {
             let leftRentalPaymentsAmount = rental_payments_amount_sum;
-            let enoughtForMonth = Math.ceil(rental_payments_amount_sum/monthly_rent);
+            let enoughtForMonth = Math.ceil(rental_payments_amount_sum / monthly_rent);
             const rentals = [];
             let [year, month, day] = agreement_date.split('/').map(Number);
             let currentDate = new Date(year, month - 1, day);
@@ -353,6 +360,11 @@ export default {
 
             return rentals;
         },
+
+        logAndReturn(value) {
+            console.log(value);
+            return value;
+        }
     }
 }
 
