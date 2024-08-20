@@ -21,7 +21,8 @@
 
                                             <div v-if="form.project_description" class="form-group">
                                                 <label class="col-md-2 control-label">Project Description:</label>
-                                                <div class="col-md-10 uppercase-medium">
+                                                <div class="col-md-10 uppercase-medium"
+                                                     style="white-space: pre-line; padding-left: 15px">
                                                     {{ form.project_description }}
                                                 </div>
                                             </div>
