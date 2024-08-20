@@ -198,7 +198,7 @@ class RevenueController extends BaseController
     public function investorView($id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('asset.revenues.create_data');
+            $this->baseData['routes']['create_form_data'] = route('asset.revenue_create_form_data');
 
             $this->baseData['id'] = $id;
             $this->baseData['name'] = Asset::where('id', $id)->first()->toArray()['project_name'];
