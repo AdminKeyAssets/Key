@@ -1,6 +1,13 @@
 <template>
     <div class="block">
+        <!-- Button to toggle the visibility of the filters -->
+        <el-button type="primary" @click="showFilters = !showFilters" style="margin-bottom: 20px">
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </el-button>
+
+        <!-- Filters form, shown only if showFilters is true -->
         <el-form
+            v-if="showFilters"
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
@@ -22,7 +29,7 @@
 </template>
 
 <script>
-import {responseParse} from "../../../mixins/responseParse";
+import { responseParse } from "../../../mixins/responseParse";
 
 export default {
     data() {
@@ -30,6 +37,7 @@ export default {
             form: {
                 agreement_date: '',
             },
+            showFilters: false, // Controls the visibility of the filters, initially hidden
         };
     },
     mounted() {
@@ -48,6 +56,8 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
+.block {
+    margin-bottom: 20px;
+}
 </style>
