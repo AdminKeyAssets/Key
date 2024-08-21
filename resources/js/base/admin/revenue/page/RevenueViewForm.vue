@@ -12,17 +12,26 @@
 
                             <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
                                     v-bind:key="tenant.id">
-                                <el-card class="box-card">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>{{ tenant.name }} {{ tenant.surname }}</span>
-                                        <span>
+                                <el-card class="box-card" :class="{ 'hidden-body': !tenant.showDetails }">
+                                    <!-- Card Header - Toggles visibility on click -->
+                                    <div slot="header" class="clearfix main-header" @click="tenant.showDetails = !tenant.showDetails" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>{{ tenant.name }} {{ tenant.surname }}</span>
+                                            <span>
                                             <span>{{ tenant.agreement_date }}</span>
                                             <span v-if="tenant.rentals && tenant.rentals.length && !tenant.status"> - {{
                                                     tenant.rentals.slice(-1)[0].payment_date
                                                 }}</span>
                                         </span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!tenant.showDetails" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
                                     </div>
-                                    <el-row>
+
+                                    <!-- Card Content - Shown when tenant.showDetails is true -->
+                                    <el-row v-if="tenant.showDetails">
                                         <el-row class="row-item"
                                                 v-if="tenant.id_number || tenant.citizenship">
                                             <el-col :span="12">
@@ -64,6 +73,7 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+
                                         <el-row class="row-item"
                                                 v-if="tenant.agreement_term || tenant.monthly_rent">
                                             <el-col :span="12">
@@ -84,6 +94,7 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+
                                         <el-row class="row-item"
                                                 v-if="tenant.agreement_date">
                                             <el-col :span="12">
@@ -114,12 +125,11 @@
                                         </el-row>
                                     </el-row>
 
-                                    <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
+                                    <el-row v-if="tenant.showDetails" style="margin-top: 20px;" class="payments-wrapper row-item">
                                         <el-col :span="24" :md="11">
                                             <div>
                                                 <div class="payments-schedule-title-wrapper">
-                                                    <div class="rentals-schedule-heading"
-                                                         style="text-align: center; max-width: 500px">
+                                                    <div class="rentals-schedule-heading" style="text-align: center; max-width: 500px">
                                                         <h4>Rentals Schedule</h4>
                                                     </div>
                                                 </div>
@@ -133,17 +143,15 @@
                                                 </el-table>
                                             </div>
                                         </el-col>
+
                                         <el-col :span="24" :md="11" class="payments-history-wrapper-col">
-                                            <div
-                                                v-if="tenant.rental_payments">
+                                            <div v-if="tenant.rental_payments">
                                                 <div class="payments-schedule-title-wrapper">
-                                                    <div class="payments-history-heading"
-                                                         style="text-align: center; max-width: 500px">
+                                                    <div class="payments-history-heading" style="text-align: center; max-width: 500px">
                                                         <h4>Payments History</h4>
                                                     </div>
                                                 </div>
-                                                <el-table border :data="tenant.rental_payments"
-                                                          style="width: 100%">
+                                                <el-table border :data="tenant.rental_payments" style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
@@ -152,9 +160,7 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                               target="_blank">View
-                                                                {{ getFilename(scope.row.attachment) }}</a>
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -165,18 +171,21 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px" v-if="investments">
-                                <el-card class="box-card">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>Investments</span>
+                                <el-card class="box-card" :class="{ 'hidden-body': !showInvestments }">
+                                    <div slot="header" class="clearfix main-header"  @click="showInvestments = !showInvestments" style="cursor: pointer;">
+                                       <div style="width: 98%">
+                                           <span>Investments</span>
+                                       </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showInvestments" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
                                     </div>
 
-                                    <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
-
+                                    <el-row v-if="showInvestments" style="margin-top: 20px;" class="payments-wrapper row-item">
                                         <el-col :span="24" class="payments-history-wrapper-col">
                                             <div>
-
-                                                <el-table border :data="investments"
-                                                          style="width: 100%">
+                                                <el-table border :data="investments" style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="status" label="Status"/>
                                                     <el-table-column prop="amount" label="Amount">
@@ -186,25 +195,15 @@
                                                     </el-table-column>
                                                     <el-table-column prop="description" label="Description">
                                                         <template slot-scope="scope">
-                                                            <el-popover
-                                                                placement="bottom"
-                                                                width="300"
-                                                                trigger="hover">
-                                                                <div style="word-break: break-word; text-align: left">
-                                                                    {{ scope.row.description }}
-                                                                </div>
-                                                                <div slot="reference"
-                                                                     style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                    {{ scope.row.description }}
-                                                                </div>
+                                                            <el-popover placement="bottom" width="300" trigger="hover">
+                                                                <div style="word-break: break-word; text-align: left">{{ scope.row.description }}</div>
+                                                                <div slot="reference" style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ scope.row.description }}</div>
                                                             </el-popover>
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                               target="_blank">View
-                                                                {{ getFilename(scope.row.attachment) }}</a>
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -222,7 +221,6 @@
 </template>
 
 <script>
-
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import MapMarker from "../../../components/admin/MapMarker.vue";
@@ -271,15 +269,11 @@ export default {
             tenants: {},
             rentals: {},
             investments: [],
+            showInvestments: false,
         }
     },
     created() {
         this.getSaveData();
-    },
-    computed: {
-        modifiedText() {
-            return this.replaceWidth(this.form.location);
-        }
     },
     methods: {
         /**
@@ -310,6 +304,7 @@ export default {
 
                     this.tenants.forEach(tenant => {
                         tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent, tenant.rental_payments_amount_sum);
+                        this.$set(tenant, 'showDetails', false); // Add this line to initialize showDetails to false
                     });
 
                     this.form.id = this.id;
@@ -321,7 +316,6 @@ export default {
         formatPrice(amount) {
             //Do not Format
             if (amount !== undefined && amount !== '') {
-                // const value = parseFloat(amount.replace(/,/g, ''));
                 if (!isNaN(amount)) {
                     return new Intl.NumberFormat('en-US', {
                         style: 'decimal',
@@ -367,7 +361,6 @@ export default {
         }
     }
 }
-
 </script>
 
 <style>
@@ -413,6 +406,9 @@ export default {
     padding-left: 15px;
     font-size: 16px;
     font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 @media (min-width: 769px) {
@@ -469,5 +465,9 @@ export default {
 
 .el-table .cell {
     padding-right: 0 !important;
+}
+
+.box-card.hidden-body .el-card__body{
+    display: none;
 }
 </style>
