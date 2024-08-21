@@ -3,7 +3,7 @@
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
                 <div class="content-wrapper">
-                    <div class="block col-md-9 asset-details-wrapper form-horizontal form-bordered">
+                    <div class="block col-md-9 revenue-wrapper form-horizontal form-bordered">
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
@@ -402,7 +402,7 @@ export default {
     cursor: pointer;
 }
 
-.clearfix.main-header {
+.revenue-wrapper .clearfix.main-header {
     padding-left: 15px;
     font-size: 16px;
     font-weight: bold;
