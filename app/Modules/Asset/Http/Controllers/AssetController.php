@@ -6,6 +6,7 @@ use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
+use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
@@ -42,12 +43,22 @@ class AssetController extends BaseController
      */
     public $viewFolderName = 'asset';
     public $baseName = 'asset.';
+    /**
+     * @var UpdatePaymentsHelper
+     */
+    protected $updatePaymentsHelper;
 
-    public function __construct()
+    /**
+     * @param UpdatePaymentsHelper $updatePaymentsHelper
+     */
+    public function __construct(
+        UpdatePaymentsHelper $updatePaymentsHelper
+    )
     {
         parent::__construct();
         $this->baseData['moduleKey'] = 'asset';
         $this->baseData['baseRouteName'] = $this->baseData['baseRouteName'] . '.' . $this->baseData['moduleKey'] . '.';
+        $this->updatePaymentsHelper = $updatePaymentsHelper;
     }
 
     /**
@@ -324,6 +335,10 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id
                     ]);
                 }
+                if($asset->paymentsHistories){
+                    $totalPaid = $asset->paymentsHistories()->sum('amount');
+                    $this->updatePaymentsHelper->updatePayments($asset, $totalPaid);
+                }
             } else {
                 $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
                 $period = $request->input('period');
@@ -338,6 +353,10 @@ class AssetController extends BaseController
                         'left_amount' => $payment['amount'],
                         'asset_id' => $asset->id
                     ]);
+                }
+                if($asset->paymentsHistories){
+                    $totalPaid = $asset->paymentsHistories()->sum('amount');
+                    $this->updatePaymentsHelper->updatePayments($asset, $totalPaid);
                 }
             }
         }
