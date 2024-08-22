@@ -3,6 +3,7 @@
 namespace App\Modules\Asset\Helpers;
 
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\Tenant;
 
 class UpdateRentalPaymentsHelper
 {
@@ -30,7 +31,8 @@ class UpdateRentalPaymentsHelper
 
     public function recalculateRentalPayments(Asset $asset)
     {
-        $totalPaid = $asset->rentalPaymentsHistories()->sum('amount');
+        $tenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->first();
+        $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $tenant->id)->sum('amount');
 
         $this->updateRentalPayments($asset, $totalPaid);
     }
