@@ -58,7 +58,7 @@ class AssetController extends BaseController
      * @param UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
      */
     public function __construct(
-        UpdatePaymentsHelper $updatePaymentsHelper,
+        UpdatePaymentsHelper       $updatePaymentsHelper,
         UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
     )
     {
@@ -343,7 +343,7 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id
                     ]);
                 }
-                if($asset->paymentsHistories){
+                if ($asset->paymentsHistories) {
                     $totalPaid = $asset->paymentsHistories()->sum('amount');
                     $this->updatePaymentsHelper->updatePayments($asset, $totalPaid);
                 }
@@ -362,7 +362,7 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id
                     ]);
                 }
-                if($asset->paymentsHistories){
+                if ($asset->paymentsHistories) {
                     $totalPaid = $asset->paymentsHistories()->sum('amount');
                     $this->updatePaymentsHelper->updatePayments($asset, $totalPaid);
                 }
@@ -415,10 +415,14 @@ class AssetController extends BaseController
                     ]);
                 }
 
-                if($asset->rentalPaymentsHistories){
-                    $totalPaid = $asset->rentalPaymentsHistories()->sum('amount');
-
+                if ($asset->rentalPaymentsHistories) {
+                    $activeTenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->first();
+                    $totalPaid = 0;
+                    if ($activeTenant->id) {
+                        $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
+                    }
                     $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
+
                 }
             } else {
                 $firstPaymentDate = Carbon::parse($tenantData['agreement_date']);
@@ -433,7 +437,7 @@ class AssetController extends BaseController
                     ]);
                 }
 
-                if($asset->rentalPaymentsHistories){
+                if ($asset->rentalPaymentsHistories) {
                     $totalPaid = $asset->rentalPaymentsHistories()->sum('amount');
 
                     $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);

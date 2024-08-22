@@ -303,7 +303,11 @@ export default {
                     this.investments = data.investments;
 
                     this.tenants.forEach(tenant => {
-                        tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent, tenant.rental_payments_amount_sum);
+                        tenant.rentals = this.generateRentals(
+                            tenant.agreement_date,
+                            tenant.agreement_term,
+                            tenant.monthly_rent,
+                            !tenant.status && tenant.rental_payments_amount_sum ? tenant.rental_payments_amount_sum : (tenant.agreement_term * tenant.monthly_rent));
                         this.$set(tenant, 'showDetails', tenant.status);
                     });
 
@@ -344,6 +348,7 @@ export default {
         },
 
         generateRentals(agreement_date, agreement_term, monthly_rent, rental_payments_amount_sum) {
+
             let leftRentalPaymentsAmount = rental_payments_amount_sum;
             let enoughtForMonth = Math.ceil(rental_payments_amount_sum / monthly_rent);
             const rentals = [];
@@ -356,21 +361,19 @@ export default {
 
                 const formattedDate = `${paymentMonth.getFullYear()}/${String(paymentMonth.getMonth() + 1).padStart(2, '0')}/${String(paymentMonth.getDate()).padStart(2, '0')}`;
 
+                const paymentAmount = Math.min(monthly_rent, leftRentalPaymentsAmount);
+
                 rentals.push({
                     payment_date: formattedDate,
-                    amount: monthly_rent < leftRentalPaymentsAmount ? monthly_rent : leftRentalPaymentsAmount,
+                    amount: paymentAmount,
                 });
 
-                leftRentalPaymentsAmount = leftRentalPaymentsAmount - monthly_rent;
+                leftRentalPaymentsAmount -= paymentAmount;
             }
 
             return rentals;
-        },
-
-        logAndReturn(value) {
-            console.log(value);
-            return value;
         }
+        ,
     }
 }
 </script>

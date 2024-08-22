@@ -120,7 +120,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Floor Plan:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onFloorPlanChange" accept="image/*" />
+                <input type="file" @change="onFloorPlanChange" accept="image/*"/>
                 <div v-if="form.floor_plan">
                     <ImageModal
                         v-if="form.floorPlanPreview"
@@ -145,7 +145,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Flat Plan:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onFlatPlanChange" accept="image/*" />
+                <input type="file" @change="onFlatPlanChange" accept="image/*"/>
                 <div v-if="form.flat_plan">
                     <ImageModal
                         v-if="form.flatPlanPreview"
@@ -220,7 +220,8 @@
                     size="medium"
                     icon="el-icon-plus"
                     @click="addDetail"
-                >Add Extra Details</el-button
+                >Add Extra Details
+                </el-button
                 >
             </div>
         </div>
@@ -266,7 +267,7 @@
             />
             <div v-if="rentals.length">
                 <el-table :data="rentals" style="width: 100%">
-                    <el-table-column prop="number" label="Payment" width="150" />
+                    <el-table-column prop="number" label="Payment" width="150"/>
                     <el-table-column prop="payment_date" label="Payment Date" width="180">
                         <template slot-scope="scope">
                             <el-date-picker
@@ -299,7 +300,7 @@ import TenantDetails from "./TenantDetails.vue";
 import axios from "axios"; // Make sure axios is installed
 
 export default {
-    components: { ImageModal, TenantDetails },
+    components: {ImageModal, TenantDetails},
     props: [
         "form",
         "loading",
@@ -334,7 +335,7 @@ export default {
         form() {
             if (this.form) {
                 if (!this.form.currency) {
-                    this.$emit("update-form", { ...this.form, currency: "USD" });
+                    this.$emit("update-form", {...this.form, currency: "USD"});
                 }
                 if (this.form.tenant.id) {
                     this.tenant = this.form.tenant;
@@ -393,7 +394,7 @@ export default {
             });
         },
         updateTenant(newTenant) {
-            this.$emit("update-form", { ...this.form, tenant: newTenant });
+            this.$emit("update-form", {...this.form, tenant: newTenant});
         },
         generateRentalList() {
             if (
@@ -424,7 +425,7 @@ export default {
             }
 
             this.rentals = rentals;
-            this.$emit("update-form", { ...this.form, rentals: this.rentals });
+            this.$emit("update-form", {...this.form, rentals: this.rentals});
         },
         formatDate(date) {
             const year = date.getFullYear();
@@ -436,7 +437,7 @@ export default {
             const price = parseFloat(this.form.price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
-            this.$emit("update-form", { ...this.form, total_price: totalPrice });
+            this.$emit("update-form", {...this.form, total_price: totalPrice});
         },
         updateRentalDate(index, date) {
             this.$set(this.rentals, index, {
@@ -486,7 +487,7 @@ export default {
                         preview: file.type.startsWith("image/") ? e.target.result : null,
                         name: file.name,
                     };
-                    this.$emit("update-form", { ...this.form, extraDetails });
+                    this.$emit("update-form", {...this.form, extraDetails});
                 };
                 reader.readAsDataURL(file);
             }
@@ -511,10 +512,15 @@ export default {
             const extraDetails = Array.isArray(this.form.extraDetails)
                 ? this.form.extraDetails.filter((detail) => detail.id !== item.id)
                 : [];
-            this.$emit("update-form", { ...this.form, extraDetails });
+            this.$emit("update-form", {...this.form, extraDetails});
         },
         async completeRent() {
-            try {
+            this.$confirm('Are you sure?', 'You are completing the rent', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                type: 'warning'
+            }).then(async () => {
+
                 const response = await axios.post(`assets/${this.form.id}/rental/complete`, [{
                     assetId: this.form.id,
                 }]);
@@ -523,10 +529,7 @@ export default {
                     this.$message.success("Request successful. Page will be refreshed.");
                     location.reload(); // Refresh the page
                 }
-            } catch (error) {
-                this.$message.error("Failed to send request.");
-                console.error(error);
-            }
+            });
         },
     },
 };
