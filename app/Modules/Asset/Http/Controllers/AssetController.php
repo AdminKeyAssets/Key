@@ -153,7 +153,7 @@ class AssetController extends BaseController
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
-                    dd($this->baseData['item']['rental_payments_histories']);
+                    dd([$asset->id, $tenant->id, $this->baseData['item']['rental_payments_histories']]);
                 }
                 $this->baseData['item']['rentals'] = $asset->rentals;
                 $this->baseData['item']['currentValues'] = $asset->currentValues;
