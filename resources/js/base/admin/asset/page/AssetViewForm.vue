@@ -21,8 +21,7 @@
 
                                             <div v-if="form.project_description" class="form-group">
                                                 <label class="col-md-2 control-label">Project Description:</label>
-                                                <div class="col-md-10 uppercase-medium"
-                                                     style="white-space: pre-line; padding-left: 15px">
+                                                <div class="col-md-10 uppercase-medium project-description-div">
                                                     {{ form.project_description }}
                                                 </div>
                                             </div>
@@ -862,15 +861,26 @@ export default {
             })
         },
         formatPrice(amount) {
-            //Do not Format
+            // Do not format if undefined or empty
             if (amount !== undefined && amount !== '') {
-                // const value = parseFloat(amount.replace(/,/g, ''));
+                // Ensure amount is a valid number
                 if (!isNaN(amount)) {
-                    return new Intl.NumberFormat('en-US', {
-                        style: 'decimal',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                    }).format(amount);
+                    // Check if the amount has decimal places
+                    if (amount % 1 === 0) {
+                        // No decimal places for whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                        }).format(amount);
+                    } else {
+                        // Keep two decimal places for non-whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(amount);
+                    }
                 }
             }
             return '0.00';
@@ -1065,5 +1075,17 @@ export default {
 
 .el-table .cell {
     padding-right: 0 !important;
+}
+.project-description-div{
+    white-space: pre-line;
+    padding-left: 15px;
+    margin-top: -20px;
+    max-height: 250px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.project-description-div::-webkit-scrollbar {
+    display: none;
 }
 </style>

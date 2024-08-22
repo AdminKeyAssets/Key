@@ -1034,7 +1034,7 @@ table thead th {
 }
 
 .project-details {
-    background-image: url("/admin_resources/img/placeholders/backgrounds/project_details.svg");
+    /*background-image: url("/admin_resources/img/placeholders/backgrounds/project_details.svg");*/
     background-repeat: no-repeat;
     background-position: right -20px center;
 }
