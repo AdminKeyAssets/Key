@@ -12,7 +12,7 @@
 
                             <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
                                     v-bind:key="tenant.id">
-                                <el-card class="box-card" :class="{ 'hidden-body': !tenant.showDetails }">
+                                <el-card class="box-card" :class="{ 'hidden-body': !tenant.showDetails && !tenant.status }">
                                     <!-- Card Header - Toggles visibility on click -->
                                     <div slot="header" class="clearfix main-header" @click="tenant.showDetails = !tenant.showDetails" style="cursor: pointer;">
                                         <div style="width: 98%">
@@ -304,7 +304,7 @@ export default {
 
                     this.tenants.forEach(tenant => {
                         tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent, tenant.rental_payments_amount_sum);
-                        this.$set(tenant, 'showDetails', false); // Add this line to initialize showDetails to false
+                        this.$set(tenant, 'showDetails', tenant.status);
                     });
 
                     this.form.id = this.id;

@@ -1083,9 +1083,7 @@ export default {
     max-height: 250px;
     overflow-y: scroll;
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    scrollbar-width: thin;
 }
-.project-description-div::-webkit-scrollbar {
-    display: none;
-}
+
 </style>
