@@ -56,7 +56,11 @@ class UpdateRentalPaymentsHelper
                     $amount -= $remaining;
                 } else {
                     $rental->left_amount += $amount;
-                    $amount = 0;
+                    $amount = 0.00;
+                    if (round($rental->left_amount, 2) <= 0.00) {
+                        $rental->status = 1;
+                        $rental->left_amount = 0.00;
+                    }
                 }
             }
             $rental->save();
