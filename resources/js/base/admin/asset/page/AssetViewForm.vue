@@ -1020,7 +1020,13 @@ export default {
     font-size: 16px;
     font-weight: bold;
 }
-
+.block.col-md-3.asset-manager-details{
+    padding: 0;
+    border: none;
+}
+.block.col-md-3.asset-manager-details .el-card.asset-manager{
+    border: none;
+}
 @media (min-width: 769px) {
     .payments-wrapper {
         display: flex;
@@ -1033,8 +1039,8 @@ export default {
 
     .block.col-md-3.asset-manager-details {
         position: fixed;
-        max-width: 21%;
-        right: 25px;
+        max-width: 20%;
+        right: 55px;
     }
 }
 
