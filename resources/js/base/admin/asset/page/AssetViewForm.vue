@@ -21,7 +21,7 @@
 
                                             <div v-if="form.project_description" class="form-group">
                                                 <label class="col-md-2 control-label">Project Description:</label>
-                                                <div class="col-md-10 uppercase-medium">
+                                                <div class="col-md-10 uppercase-medium project-description-div">
                                                     {{ form.project_description }}
                                                 </div>
                                             </div>
@@ -410,8 +410,21 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px">
-                                <el-card class="box-card agreement-details-card">
-                                    <div slot="header" class="clearfix main-header">
+                                <el-card class="box-card agreement-details-card"
+                                         :class="{ 'hidden-body': !showAgreementDetails }">
+
+                                    <div slot="header" v-if="form.agreement_status === 'Complete'"
+                                         class="clearfix main-header"
+                                         @click="showAgreementDetails = !showAgreementDetails" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Agreement Details</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showAgreementDetails" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+                                    <div slot="header" v-else class="clearfix main-header">
                                         <span>Agreement Details</span>
                                     </div>
                                     <el-row>
@@ -488,7 +501,7 @@
 
                                     </el-row>
 
-                                    <template v-if="form.agreement_status === 'Installments'">
+                                    <template>
                                         <el-row class="row-item">
                                             <el-col :span="12">
                                                 <div v-if="form.first_payment_date" class="form-group">
@@ -782,6 +795,7 @@ export default {
             investors: {},
             salesManager: {},
             nextPayment: {},
+            showAgreementDetails: true
         }
     },
     created() {
@@ -836,6 +850,9 @@ export default {
                         if (data.item.files) {
                             this.form.attachments = data.item.files;
                         }
+                        if (this.form.agreement_status === 'Complete'){
+                            this.showAgreementDetails = false;
+                        }
                     }
 
                     this.form.id = this.id;
@@ -844,15 +861,26 @@ export default {
             })
         },
         formatPrice(amount) {
-            //Do not Format
+            // Do not format if undefined or empty
             if (amount !== undefined && amount !== '') {
-                // const value = parseFloat(amount.replace(/,/g, ''));
+                // Ensure amount is a valid number
                 if (!isNaN(amount)) {
-                    return new Intl.NumberFormat('en-US', {
-                        style: 'decimal',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                    }).format(amount);
+                    // Check if the amount has decimal places
+                    if (amount % 1 === 0) {
+                        // No decimal places for whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                        }).format(amount);
+                    } else {
+                        // Keep two decimal places for non-whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(amount);
+                    }
                 }
             }
             return '0.00';
@@ -939,6 +967,16 @@ export default {
 </script>
 
 <style>
+
+.agreement-details-card .clearfix.main-header {
+    padding-left: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .box-card-header {
     font-weight: bold;
 }
@@ -982,7 +1020,13 @@ export default {
     font-size: 16px;
     font-weight: bold;
 }
-
+.block.col-md-3.asset-manager-details{
+    padding: 0;
+    border: none;
+}
+.block.col-md-3.asset-manager-details .el-card.asset-manager{
+    border: none;
+}
 @media (min-width: 769px) {
     .payments-wrapper {
         display: flex;
@@ -995,8 +1039,8 @@ export default {
 
     .block.col-md-3.asset-manager-details {
         position: fixed;
-        max-width: 21%;
-        right: 25px;
+        max-width: 20%;
+        right: 55px;
     }
 }
 
@@ -1038,4 +1082,14 @@ export default {
 .el-table .cell {
     padding-right: 0 !important;
 }
+.project-description-div{
+    white-space: pre-line;
+    padding-left: 15px;
+    margin-top: -20px;
+    max-height: 250px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
+}
+
 </style>

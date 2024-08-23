@@ -1,12 +1,18 @@
 <template>
     <div class="block">
+        <!-- Button to toggle filters visibility -->
+        <el-button type="primary" @click="showFilters = !showFilters" style="margin-bottom: 20px">
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </el-button>
+
+        <!-- Filters form, shown only if showFilters is true -->
         <el-form
+            v-if="showFilters"
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
                 <div class="form-group">
-                    <el-select v-model="form.citizenship" filterable
-                               placeholder="Citizenship">
+                    <el-select v-model="form.citizenship" filterable placeholder="Citizenship">
                         <el-option
                             v-for="country in this.countries"
                             :key="country.country"
@@ -26,9 +32,9 @@
                         end-placeholder="End date">
                     </el-date-picker>
                 </div>
+
                 <div class="form-group">
-                    <el-select v-model="form.manager" filterable
-                               placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager">
                         <el-option
                             v-for="manager in this.managers"
                             :key="manager.name + ' ' + manager.surname"
@@ -42,8 +48,8 @@
                     <el-input class="el-input--is-round" placeholder="Number of Assets" maxlength="150"
                               show-word-limit
                               v-model="form.assets"></el-input>
-
                 </div>
+
                 <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
             </el-row>
         </el-form>
@@ -64,6 +70,7 @@ export default {
             },
             countries: [],
             managers: [],
+            showFilters: false, // Controls the visibility of the filters, initially hidden
         };
     },
     mounted() {
@@ -107,3 +114,8 @@ export default {
 };
 </script>
 
+<style scoped>
+.block {
+    margin-bottom: 20px;
+}
+</style>

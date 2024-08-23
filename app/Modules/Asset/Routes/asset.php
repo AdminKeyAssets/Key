@@ -77,8 +77,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     $revenueController = 'RevenueController';
     $revenueModuleName = 'revenue';
 
-    //Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
-    Route::get('/revenues', $revenueController . '@index')->name('revenue.index');
+    Route::get('/revenue', $revenueController . '@investorRevenues')->name('revenue.investor')->middleware(['auth:investor']);
+    Route::get('/revenues', $revenueController . '@index')->name('revenue.index')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
     Route::get('/revenues/export', $revenueController . '@export')
         ->name('revenue_export');
     Route::get('/revenues/view/{id?}', $revenueController . '@view')->name('revenue.view');

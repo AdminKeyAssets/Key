@@ -1,6 +1,12 @@
 <template>
     <div class="block">
+
+        <el-button type="primary" @click="showFilters = !showFilters" style="margin-bottom: 20px">
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </el-button>
+
         <el-form
+            v-if="showFilters"
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
@@ -44,6 +50,7 @@ export default {
                 create_date: '',
             },
             roles: [],
+            showFilters: false,
         };
     },
     mounted() {

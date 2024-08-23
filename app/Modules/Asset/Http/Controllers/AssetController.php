@@ -6,6 +6,8 @@ use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
+use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
+use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
@@ -42,12 +44,29 @@ class AssetController extends BaseController
      */
     public $viewFolderName = 'asset';
     public $baseName = 'asset.';
+    /**
+     * @var UpdatePaymentsHelper
+     */
+    protected $updatePaymentsHelper;
+    /**
+     * @var UpdateRentalPaymentsHelper
+     */
+    protected $updateRentalPaymentsHelper;
 
-    public function __construct()
+    /**
+     * @param UpdatePaymentsHelper $updatePaymentsHelper
+     * @param UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
+     */
+    public function __construct(
+        UpdatePaymentsHelper       $updatePaymentsHelper,
+        UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
+    )
     {
         parent::__construct();
         $this->baseData['moduleKey'] = 'asset';
         $this->baseData['baseRouteName'] = $this->baseData['baseRouteName'] . '.' . $this->baseData['moduleKey'] . '.';
+        $this->updatePaymentsHelper = $updatePaymentsHelper;
+        $this->updateRentalPaymentsHelper = $updateRentalPaymentsHelper;
     }
 
     /**
@@ -129,12 +148,12 @@ class AssetController extends BaseController
                 $this->baseData['item']['gallery'] = $asset->gallery;
                 $this->baseData['item']['payments'] = $asset->payments;
                 $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
-                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->first();
+                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->orderByDesc('id')->first();
                 $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
-//                    dd($this->baseData['item']['rental_payments_histories']);
+//                    dd([$asset->id, $tenant->id, $this->baseData['item']['rental_payments_histories']]);
                 }
                 $this->baseData['item']['rentals'] = $asset->rentals;
                 $this->baseData['item']['currentValues'] = $asset->currentValues;
@@ -324,6 +343,10 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id
                     ]);
                 }
+                if ($asset->paymentsHistories) {
+                    $totalPaid = $asset->paymentsHistories()->sum('amount');
+                    $this->updatePaymentsHelper->updatePayments($asset, $totalPaid);
+                }
             } else {
                 $firstPaymentDate = Carbon::parse($request->input('first_payment_date'));
                 $period = $request->input('period');
@@ -338,6 +361,10 @@ class AssetController extends BaseController
                         'left_amount' => $payment['amount'],
                         'asset_id' => $asset->id
                     ]);
+                }
+                if ($asset->paymentsHistories) {
+                    $totalPaid = $asset->paymentsHistories()->sum('amount');
+                    $this->updatePaymentsHelper->updatePayments($asset, $totalPaid);
                 }
             }
         }
@@ -387,6 +414,16 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id
                     ]);
                 }
+
+                if ($asset->rentalPaymentsHistories) {
+                    $activeTenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
+                    $totalPaid = 0;
+                    if ($activeTenant->id) {
+                        $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
+                    }
+                    $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
+
+                }
             } else {
                 $firstPaymentDate = Carbon::parse($tenantData['agreement_date']);
                 $period = $tenantData['agreement_term'];
@@ -398,6 +435,12 @@ class AssetController extends BaseController
                         'left_amount' => $tenantData['monthly_rent'],
                         'asset_id' => $asset->id
                     ]);
+                }
+
+                if ($asset->rentalPaymentsHistories) {
+                    $totalPaid = $asset->rentalPaymentsHistories()->sum('amount');
+
+                    $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
                 }
             }
         }

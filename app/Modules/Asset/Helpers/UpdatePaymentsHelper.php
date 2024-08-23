@@ -11,17 +11,21 @@ class UpdatePaymentsHelper
         $payments = $asset->payments()->where('status', 0)->orderBy('id')->get();
 
         foreach ($payments as $payment) {
-            if ($amount <= 0) {
+            if ($amount <= 0.00) {
                 break;
             }
 
             if ($amount >= $payment->left_amount) {
                 $amount -= $payment->left_amount;
                 $payment->status = 1;
-                $payment->left_amount = 0;
+                $payment->left_amount = 0.00;
             } else {
                 $payment->left_amount -= $amount;
-                $amount = 0;
+                $amount = 0.00;
+                if (round($payment->left_amount, 2) <= 0.00) {
+                    $payment->status = 1;
+                    $payment->left_amount = 0.00;
+                }
             }
             $payment->update();
         }

@@ -184,10 +184,16 @@ export default {
         },
         'form.agreement_status'(newStatus) {
             if (newStatus === 'Complete' && this.form.payments_histories && this.form.payments_histories.length > 0) {
-                this.form.agreement_status = 'Installments'; // Reset the status
-                Notification.error({
-                    message: 'Clean up payment history first!',
-                });
+                const totalPayments = this.form.payments_histories.reduce((sum, history) => sum + history.amount, 0);
+
+                if (totalPayments < this.form.agreement_price) {
+                    this.form.agreement_status = 'Installments';
+                    Notification.error({
+                        message: 'Total payments are less than the agreement price!',
+                    });
+                } else {
+                    this.form.agreement_status = newStatus;
+                }
             }
         },
     },

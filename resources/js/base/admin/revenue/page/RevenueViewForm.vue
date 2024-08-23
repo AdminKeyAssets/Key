@@ -3,7 +3,7 @@
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
                 <div class="content-wrapper">
-                    <div class="block col-md-9 asset-details-wrapper form-horizontal form-bordered">
+                    <div class="block col-md-9 revenue-wrapper form-horizontal form-bordered">
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
@@ -12,17 +12,26 @@
 
                             <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
                                     v-bind:key="tenant.id">
-                                <el-card class="box-card">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>{{ tenant.name }} {{ tenant.surname }}</span>
-                                        <span>
+                                <el-card class="box-card" :class="{ 'hidden-body': !tenant.showDetails && !tenant.status }">
+                                    <!-- Card Header - Toggles visibility on click -->
+                                    <div slot="header" class="clearfix main-header" @click="tenant.showDetails = !tenant.showDetails" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>{{ tenant.name }} {{ tenant.surname }}</span>
+                                            <span>
                                             <span>{{ tenant.agreement_date }}</span>
                                             <span v-if="tenant.rentals && tenant.rentals.length && !tenant.status"> - {{
                                                     tenant.rentals.slice(-1)[0].payment_date
                                                 }}</span>
                                         </span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!tenant.showDetails" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
                                     </div>
-                                    <el-row>
+
+                                    <!-- Card Content - Shown when tenant.showDetails is true -->
+                                    <el-row v-if="tenant.showDetails">
                                         <el-row class="row-item"
                                                 v-if="tenant.id_number || tenant.citizenship">
                                             <el-col :span="12">
@@ -64,6 +73,7 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+
                                         <el-row class="row-item"
                                                 v-if="tenant.agreement_term || tenant.monthly_rent">
                                             <el-col :span="12">
@@ -84,6 +94,7 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+
                                         <el-row class="row-item"
                                                 v-if="tenant.agreement_date">
                                             <el-col :span="12">
@@ -114,12 +125,11 @@
                                         </el-row>
                                     </el-row>
 
-                                    <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
+                                    <el-row v-if="tenant.showDetails" style="margin-top: 20px;" class="payments-wrapper row-item">
                                         <el-col :span="24" :md="11">
                                             <div>
                                                 <div class="payments-schedule-title-wrapper">
-                                                    <div class="rentals-schedule-heading"
-                                                         style="text-align: center; max-width: 500px">
+                                                    <div class="rentals-schedule-heading" style="text-align: center; max-width: 500px">
                                                         <h4>Rentals Schedule</h4>
                                                     </div>
                                                 </div>
@@ -133,17 +143,15 @@
                                                 </el-table>
                                             </div>
                                         </el-col>
+
                                         <el-col :span="24" :md="11" class="payments-history-wrapper-col">
-                                            <div
-                                                v-if="tenant.rental_payments">
+                                            <div v-if="tenant.rental_payments">
                                                 <div class="payments-schedule-title-wrapper">
-                                                    <div class="payments-history-heading"
-                                                         style="text-align: center; max-width: 500px">
+                                                    <div class="payments-history-heading" style="text-align: center; max-width: 500px">
                                                         <h4>Payments History</h4>
                                                     </div>
                                                 </div>
-                                                <el-table border :data="tenant.rental_payments"
-                                                          style="width: 100%">
+                                                <el-table border :data="tenant.rental_payments" style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
@@ -152,9 +160,7 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                               target="_blank">View
-                                                                {{ getFilename(scope.row.attachment) }}</a>
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -165,18 +171,21 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px" v-if="investments">
-                                <el-card class="box-card">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>Investments</span>
+                                <el-card class="box-card" :class="{ 'hidden-body': !showInvestments }">
+                                    <div slot="header" class="clearfix main-header"  @click="showInvestments = !showInvestments" style="cursor: pointer;">
+                                       <div style="width: 98%">
+                                           <span>Investments</span>
+                                       </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showInvestments" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
                                     </div>
 
-                                    <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
-
+                                    <el-row v-if="showInvestments" style="margin-top: 20px;" class="payments-wrapper row-item">
                                         <el-col :span="24" class="payments-history-wrapper-col">
                                             <div>
-
-                                                <el-table border :data="investments"
-                                                          style="width: 100%">
+                                                <el-table border :data="investments" style="width: 100%">
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="status" label="Status"/>
                                                     <el-table-column prop="amount" label="Amount">
@@ -186,25 +195,15 @@
                                                     </el-table-column>
                                                     <el-table-column prop="description" label="Description">
                                                         <template slot-scope="scope">
-                                                            <el-popover
-                                                                placement="bottom"
-                                                                width="300"
-                                                                trigger="hover">
-                                                                <div style="word-break: break-word; text-align: left">
-                                                                    {{ scope.row.description }}
-                                                                </div>
-                                                                <div slot="reference"
-                                                                     style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                    {{ scope.row.description }}
-                                                                </div>
+                                                            <el-popover placement="bottom" width="300" trigger="hover">
+                                                                <div style="word-break: break-word; text-align: left">{{ scope.row.description }}</div>
+                                                                <div slot="reference" style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ scope.row.description }}</div>
                                                             </el-popover>
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                               target="_blank">View
-                                                                {{ getFilename(scope.row.attachment) }}</a>
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -222,7 +221,6 @@
 </template>
 
 <script>
-
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import MapMarker from "../../../components/admin/MapMarker.vue";
@@ -271,15 +269,11 @@ export default {
             tenants: {},
             rentals: {},
             investments: [],
+            showInvestments: false,
         }
     },
     created() {
         this.getSaveData();
-    },
-    computed: {
-        modifiedText() {
-            return this.replaceWidth(this.form.location);
-        }
     },
     methods: {
         /**
@@ -309,7 +303,12 @@ export default {
                     this.investments = data.investments;
 
                     this.tenants.forEach(tenant => {
-                        tenant.rentals = this.generateRentals(tenant.agreement_date, tenant.agreement_term, tenant.monthly_rent, tenant.rental_payments_amount_sum);
+                        tenant.rentals = this.generateRentals(
+                            tenant.agreement_date,
+                            tenant.agreement_term,
+                            tenant.monthly_rent,
+                            !tenant.status && tenant.rental_payments_amount_sum ? tenant.rental_payments_amount_sum : (tenant.agreement_term * tenant.monthly_rent));
+                        this.$set(tenant, 'showDetails', tenant.status);
                     });
 
                     this.form.id = this.id;
@@ -319,15 +318,26 @@ export default {
         },
 
         formatPrice(amount) {
-            //Do not Format
+            // Do not format if undefined or empty
             if (amount !== undefined && amount !== '') {
-                // const value = parseFloat(amount.replace(/,/g, ''));
+                // Ensure amount is a valid number
                 if (!isNaN(amount)) {
-                    return new Intl.NumberFormat('en-US', {
-                        style: 'decimal',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                    }).format(amount);
+                    // Check if the amount has decimal places
+                    if (amount % 1 === 0) {
+                        // No decimal places for whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                        }).format(amount);
+                    } else {
+                        // Keep two decimal places for non-whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(amount);
+                    }
                 }
             }
             return '0.00';
@@ -338,6 +348,7 @@ export default {
         },
 
         generateRentals(agreement_date, agreement_term, monthly_rent, rental_payments_amount_sum) {
+
             let leftRentalPaymentsAmount = rental_payments_amount_sum;
             let enoughtForMonth = Math.ceil(rental_payments_amount_sum / monthly_rent);
             const rentals = [];
@@ -350,124 +361,36 @@ export default {
 
                 const formattedDate = `${paymentMonth.getFullYear()}/${String(paymentMonth.getMonth() + 1).padStart(2, '0')}/${String(paymentMonth.getDate()).padStart(2, '0')}`;
 
+                const paymentAmount = Math.min(monthly_rent, leftRentalPaymentsAmount);
+
                 rentals.push({
                     payment_date: formattedDate,
-                    amount: monthly_rent < leftRentalPaymentsAmount ? monthly_rent : leftRentalPaymentsAmount,
+                    amount: paymentAmount,
                 });
 
-                leftRentalPaymentsAmount = leftRentalPaymentsAmount - monthly_rent;
+                leftRentalPaymentsAmount -= paymentAmount;
             }
 
             return rentals;
-        },
-
-        logAndReturn(value) {
-            console.log(value);
-            return value;
         }
+        ,
     }
 }
-
 </script>
 
 <style>
-.box-card-header {
-    font-weight: bold;
-}
 
-.text {
-    font-size: 14px;
-}
-
-.item {
-    margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-    display: table;
-    content: "";
-}
-
-.clearfix:after {
-    clear: both
-}
-
-.fab, .fas {
-    margin-left: 10px;
-    color: #25D366; /* WhatsApp green */
-    cursor: pointer;
-}
-
-.phone-container, .email-container {
-    display: flex;
-    align-items: center;
-}
-
-.whatsapp-icon, .email-icon {
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-.clearfix.main-header {
+.revenue-wrapper .clearfix.main-header {
     padding-left: 15px;
     font-size: 16px;
     font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-@media (min-width: 769px) {
-    .payments-wrapper {
-        display: flex;
-        justify-content: space-between;
-    }
 
-    .content-wrapper {
-        position: relative;
-    }
-
-    .block.col-md-3.asset-manager-details {
-        position: fixed;
-        max-width: 21%;
-        right: 25px;
-    }
-}
-
-@media (min-width: 769px) {
-    .el-table th > .cell, .el-table td > .cell {
-        font-size: 13px !important;
-        text-align: center;
-    }
-}
-
-@media (max-width: 768px) {
-    .project-details-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .el-table th > .cell, .el-table td > .cell {
-        font-size: 11px !important;
-        text-align: center;
-    }
-
-    .project-details-wrapper .project-gallery {
-        order: 1;
-    }
-
-    .project-details-wrapper .project-details {
-        order: 2;
-    }
-}
-
-.dashed.el-row {
-    border-bottom: 1px dashed #eaedf1;
-}
-
-.form-group {
-    border-bottom-color: transparent !important;
-}
-
-.el-table .cell {
-    padding-right: 0 !important;
+.box-card.hidden-body .el-card__body{
+    display: none;
 }
 </style>

@@ -105,18 +105,30 @@ export default {
         },
 
         formatPrice(amount) {
+            // Do not format if undefined or empty
             if (amount !== undefined && amount !== '') {
-                // const value = parseFloat(amount.replace(/,/g, ''));
+                // Ensure amount is a valid number
                 if (!isNaN(amount)) {
-                    return new Intl.NumberFormat('en-US', {
-                        style: 'decimal',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                    }).format(amount);
+                    // Check if the amount has decimal places
+                    if (amount % 1 === 0) {
+                        // No decimal places for whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                        }).format(amount);
+                    } else {
+                        // Keep two decimal places for non-whole numbers
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'decimal',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }).format(amount);
+                    }
                 }
             }
             return '0.00';
-        }
+        },
     }
 }
 

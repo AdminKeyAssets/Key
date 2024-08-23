@@ -9,6 +9,7 @@ use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
+use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -198,7 +199,7 @@ class RevenueController extends BaseController
     public function investorView($id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('asset.revenues.create_data');
+            $this->baseData['routes']['create_form_data'] = route('asset.revenue_create_form_data');
 
             $this->baseData['id'] = $id;
             $this->baseData['name'] = Asset::where('id', $id)->first()->toArray()['project_name'];
@@ -222,12 +223,12 @@ class RevenueController extends BaseController
 
             if ($request->get('id')) {
                 $asset = Asset::findOrFail($request->get('id'));
-//                $this->baseData['item'] = $asset;
 
                 $tenantData = [];
 
                 if($asset->tenant){
-                    foreach ($asset->tenant->orderByDesc('id')->get() as $tenant){
+                    $tenants = Tenant::where('asset_id', $asset->id)->orderByDesc('id')->get();
+                    foreach ($tenants as $tenant){
                         $tenantRentalPayments = RentalPaymentsHistory::where('tenant_id', $tenant->id)->orderByDesc('id');
                         $tenant = $tenant->toArray();
                         $tenant['rental_payments'] = $tenantRentalPayments->get();
