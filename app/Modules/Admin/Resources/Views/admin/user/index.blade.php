@@ -55,7 +55,7 @@
                             <tr>
                                 <td>{!! $item->name !!} {!! $item->surname !!}</td>
                                 <td>
-                                    @if($item->profile_picture  && !is_null($item->profile_picture))
+                                    @if($item->profile_picture  && !is_null($item->profile_picture) && $item->profile_picture !== 'null')
                                         <image-modal thumbnail="{!! $item->profile_picture !!}"
                                                      image-path="{!! $item->profile_picture !!}"
                                                      :rounded="true"
