@@ -379,43 +379,6 @@ export default {
 </script>
 
 <style>
-.box-card-header {
-    font-weight: bold;
-}
-
-.text {
-    font-size: 14px;
-}
-
-.item {
-    margin-bottom: 18px;
-}
-
-.clearfix:before,
-.clearfix:after {
-    display: table;
-    content: "";
-}
-
-.clearfix:after {
-    clear: both
-}
-
-.fab, .fas {
-    margin-left: 10px;
-    color: #25D366; /* WhatsApp green */
-    cursor: pointer;
-}
-
-.phone-container, .email-container {
-    display: flex;
-    align-items: center;
-}
-
-.whatsapp-icon, .email-icon {
-    margin-right: 10px;
-    cursor: pointer;
-}
 
 .revenue-wrapper .clearfix.main-header {
     padding-left: 15px;
@@ -426,61 +389,6 @@ export default {
     justify-content: space-between;
 }
 
-@media (min-width: 769px) {
-    .payments-wrapper {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .content-wrapper {
-        position: relative;
-    }
-
-    .block.col-md-3.asset-manager-details {
-        position: fixed;
-        max-width: 21%;
-        right: 25px;
-    }
-}
-
-@media (min-width: 769px) {
-    .el-table th > .cell, .el-table td > .cell {
-        font-size: 13px !important;
-        text-align: center;
-    }
-}
-
-@media (max-width: 768px) {
-    .project-details-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .el-table th > .cell, .el-table td > .cell {
-        font-size: 11px !important;
-        text-align: center;
-    }
-
-    .project-details-wrapper .project-gallery {
-        order: 1;
-    }
-
-    .project-details-wrapper .project-details {
-        order: 2;
-    }
-}
-
-.dashed.el-row {
-    border-bottom: 1px dashed #eaedf1;
-}
-
-.form-group {
-    border-bottom-color: transparent !important;
-}
-
-.el-table .cell {
-    padding-right: 0 !important;
-}
 
 .box-card.hidden-body .el-card__body{
     display: none;
