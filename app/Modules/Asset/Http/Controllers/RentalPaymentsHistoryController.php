@@ -148,7 +148,7 @@ class RentalPaymentsHistoryController extends BaseController
             }
 
             $asset = Asset::where('id', $assetId)->first();
-            $tenant = $asset->tenant->where('status', 1)->first();
+            $tenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
             $paymentHistory = RentalPaymentsHistory::create([
                 'asset_id' => $assetId,
                 'date' => $request->date,

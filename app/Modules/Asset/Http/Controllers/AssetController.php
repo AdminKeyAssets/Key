@@ -148,7 +148,7 @@ class AssetController extends BaseController
                 $this->baseData['item']['gallery'] = $asset->gallery;
                 $this->baseData['item']['payments'] = $asset->payments;
                 $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
-                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->first();
+                $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->orderByDesc('id')->first();
                 $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
@@ -416,7 +416,7 @@ class AssetController extends BaseController
                 }
 
                 if ($asset->rentalPaymentsHistories) {
-                    $activeTenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->first();
+                    $activeTenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
                     $totalPaid = 0;
                     if ($activeTenant->id) {
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');

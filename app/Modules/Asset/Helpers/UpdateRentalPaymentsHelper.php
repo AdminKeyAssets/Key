@@ -31,7 +31,7 @@ class UpdateRentalPaymentsHelper
 
     public function recalculateRentalPayments(Asset $asset)
     {
-        $tenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->first();
+        $tenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $tenant->id)->sum('amount');
 
         $this->updateRentalPayments($asset, $totalPaid);
