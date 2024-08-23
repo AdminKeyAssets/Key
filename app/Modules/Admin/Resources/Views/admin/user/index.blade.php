@@ -10,18 +10,19 @@
         <!-- Responsive Full Block -->
         <div class="block">
 
-        @include('admin::includes.success')
+            @include('admin::includes.success')
 
             <div class="row">
                 @can(getPermissionKey($moduleKey, 'create', true))
                     <div class="col-md-6">
-                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i class="fa fa-plus"></i>Create User</a>
+                        <a href="{{ route($baseRouteName . 'create_form') }}" class="btn btn-primary"><i
+                                class="fa fa-plus"></i>Create User</a>
                     </div>
                 @endcan
-                    @can(getPermissionKey($moduleKey, 'export', false))
-                        <admin-user-component>
-                        </admin-user-component>
-                    @endcan
+                @can(getPermissionKey($moduleKey, 'export', false))
+                    <admin-user-component>
+                    </admin-user-component>
+                @endcan
             </div>
             <br>
 
@@ -54,14 +55,12 @@
                             <tr>
                                 <td>{!! $item->name !!} {!! $item->surname !!}</td>
                                 <td>
-                                    @if($item->profile_picture)
-                                        @if($item->profile_picture)
-                                            <image-modal thumbnail="{!! $item->profile_picture !!}"
-                                                         image-path="{!! $item->profile_picture !!}"
-                                                         :rounded="true"
-                                                         :width="{{50}}"
-                                                         :height="{{50}}"></image-modal>
-                                        @endif
+                                    @if($item->profile_picture  && !is_null($item->profile_picture))
+                                        <image-modal thumbnail="{!! $item->profile_picture !!}"
+                                                     image-path="{!! $item->profile_picture !!}"
+                                                     :rounded="true"
+                                                     :width="{{50}}"
+                                                     :height="{{50}}"></image-modal>
                                     @endif
                                 </td>
                                 <td>{!! $item->rolesName !!}</td>
@@ -103,7 +102,7 @@
 @endsection
 
 <style>
-    th, td{
+    th, td {
         text-align: center !important;
     }
 </style>
