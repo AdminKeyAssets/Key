@@ -61,6 +61,8 @@
                                                      :rounded="true"
                                                      :width="{{50}}"
                                                      :height="{{50}}"></image-modal>
+                                    @else
+                                        <img src="{{ config('admin.user_avatar') }}" alt="avatar">
                                     @endif
                                 </td>
                                 <td>{!! $item->rolesName !!}</td>
