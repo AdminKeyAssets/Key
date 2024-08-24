@@ -1,5 +1,5 @@
 <template>
-    <div class="block">
+    <div class="block" v-if="!form.is_demo">
         <el-form v-loading="loading"
                  element-loading-text="Loading..."
                  element-loading-spinner="el-icon-loading"

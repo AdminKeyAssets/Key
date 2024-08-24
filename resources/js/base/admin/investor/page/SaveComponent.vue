@@ -68,6 +68,16 @@
 
                 </div>
 
+                <div class="form-group">
+
+                    <label class="col-md-2 control-label">Is Demo: <span class="text-danger">*</span>:</label>
+                    <div class="col-md-6">
+                        <el-switch v-model="form.is_demo">
+                        </el-switch>
+                    </div>
+
+                </div>
+
                 <div class="form-group phone">
                     <label class="col-md-2 control-label">Phone: </label>
                     <div class="col-md-6">
@@ -197,7 +207,8 @@ export default {
                 profile_picture: null,
                 profilePicturePreview: null,
                 passport: null,
-                passportPreview: null
+                passportPreview: null,
+                is_demo: false
             },
         }
     },
@@ -218,10 +229,12 @@ export default {
                 responseParse(response, false);
                 if (response.status == 200) {
                     let data = response.data.data;
+
                     this.routes = data.routes;
                     this.options = data.options;
                     if (data.item) {
                         this.form = { ...this.form, ...data.item };
+                        this.form.is_demo = Boolean(data.item.is_demo === true || data.item.is_demo === "true" || data.item.is_demo === 1);
                     }
                     if (data.countries) {
                         this.countries = data.countries;
@@ -239,10 +252,12 @@ export default {
         async save() {
             this.loading = true;
             let formData = new FormData();
+
             for (let key in this.form) {
                 if ((key === 'passport' || key === 'profile_picture') && this.form[key]) {
                     formData.append(key, this.form[key]);
-                } else {
+                }
+                else {
                     formData.append(key, this.form[key]);
                 }
             }
