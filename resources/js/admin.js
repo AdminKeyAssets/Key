@@ -78,6 +78,10 @@ Vue.component('admin-investor-component', require('./base/admin/investor/partial
 Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 Vue.component('investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
 
+//Lead
+Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').default);
+Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewForm').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -67,4 +67,7 @@ return [
     'investment' => [
         'default' => $default_permissions
     ],
+    'lead' => [
+        'default' => $default_permissions
+    ],
 ];

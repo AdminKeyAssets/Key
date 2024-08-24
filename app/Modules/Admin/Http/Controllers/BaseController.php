@@ -16,17 +16,17 @@ class BaseController extends Controller
     /**
      * @var string
      */
-    protected $successCreateText = 'წარმატებით დაემატა';
+    protected $successCreateText = 'Added Successfully';
 
     /**
      * @var string
      */
-    protected $successUpdateText = 'წარმატებით განახლდა';
+    protected $successUpdateText = 'Updated Successfully';
 
     /**
      * @var string
      */
-    protected $successDeleteText = 'წარმატებით წაიშალა';
+    protected $successDeleteText = 'Deleted Successfully';
 
     /**
      * @var int
