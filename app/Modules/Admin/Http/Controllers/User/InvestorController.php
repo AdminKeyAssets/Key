@@ -241,6 +241,7 @@ class InvestorController extends BaseController
                     'email' => $request->email,
                     'prefix' => $request->prefix,
                     'phone' => $request->phone,
+                    'is_demo' => $request->is_demo === 'true',
                     'pid' => $request->pid,
                     'citizenship' => $request->citizenship,
                     'address' => $request->address,
