@@ -461,7 +461,7 @@ class AssetController extends BaseController
                         $currentValueAttachmentPath = Storage::url($currentValueAttachmentPath);
 
                     } else if ($request->input('current_value_attachment') === null) {
-                        if ($currentValueLastItem->current_value_attachment && Storage::disk('public')->exists($currentValueLastItem->current_value_attachment)) {
+                        if ($currentValueLastItem && Storage::disk('public')->exists($currentValueLastItem->current_value_attachment)) {
                             Storage::disk('public')->delete($currentValueLastItem->current_value_attachment);
                         }
                         $currentValueAttachmentPath = null;
@@ -576,22 +576,14 @@ class AssetController extends BaseController
             foreach ($request->agreements as $agreement) {
                 $agreementAttachmentPath = null;
 
-                if (isset($request->id)) {
-                    if (gettype($agreement['attachment']) == 'object') {
-                        $agreementAttachmentFile = $agreement['attachment'];
-                        $originalFileName = $agreementAttachmentFile->getClientOriginalName();
-                        $agreementAttachmentPath = $agreementAttachmentFile->storeAs('uploads', $originalFileName, 'public');
-                        $agreementAttachmentPath = Storage::url($agreementAttachmentPath);
-                    } else {
-                        $agreementAttachmentPath = $agreement['attachment'];
-                    }
+                if (isset($agreement['attachment']) && gettype($agreement['attachment']) == 'object') {
+                    $agreementAttachmentFile = $agreement['attachment'];
+                    $originalFileName = $agreementAttachmentFile->getClientOriginalName();
+                    $agreementAttachmentPath = $agreementAttachmentFile->storeAs('uploads', $originalFileName, 'public');
+                    $agreementAttachmentPath = Storage::url($agreementAttachmentPath);
                 } else {
-                    if (isset($detail['attachment'])) {
-                        $agreementAttachmentFile = $detail['attachment'];
-                        $originalFileName = $agreementAttachmentFile->getClientOriginalName();
-                        $agreementAttachmentPath = $agreementAttachmentFile->storeAs('uploads', $originalFileName, 'public');
-                        $agreementAttachmentPath = Storage::url($agreementAttachmentPath);
-                    }
+                    // Either use the existing attachment or set it to null
+                    $agreementAttachmentPath = $agreement['attachment'] ?? null;
                 }
 
                 $asset->agreements()->create([

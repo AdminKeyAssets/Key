@@ -26,20 +26,47 @@ if (!$user) {
                             <!-- User Info -->
                             <div class="sidebar-section sidebar-user clearfix sidebar-nav-mini-hide">
                                 <div class="sidebar-user-avatar">
-                                    <a href="{{ \Auth::guard('investor')->check() ? route('investor.profile.index') : route('admin.profile.index')}}">
-                                        @if( $user->profile_picture)
-                                            <img src="{{ $user->profile_picture }}" alt="avatar">
+                                    @if(\Auth::guard('investor')->check())
+                                        @if(!$user->is_demo)
+                                            <a href="{{ !$user->is_demo ?? route('investor.profile.index') }}">
+                                                @if( $user->profile_picture)
+                                                    <img src="{{ $user->profile_picture }}" alt="avatar">
+                                                @else
+                                                    <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                                @endif
+                                            </a>
                                         @else
-                                            <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                            <span>
+                                                @if( $user->profile_picture)
+                                                    <img src="{{ $user->profile_picture }}" alt="avatar">
+                                                @else
+                                                    <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                                @endif
+                                            </span>
                                         @endif
-                                    </a>
+                                    @else
+                                        <a href="{{ route('admin.profile.index') }}">
+                                            @if( $user->profile_picture)
+                                                <img src="{{ $user->profile_picture }}" alt="avatar">
+                                            @else
+                                                <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                            @endif
+                                        </a>
+                                    @endif
                                 </div>
                                 <div class="sidebar-user-name">{{ $user->name }}</div>
                                 <div class="sidebar-user-links">
-                                    <a href="{{ \Auth::guard('investor')->check() ? route('investor.profile.index') : route('admin.profile.index')}}"
-                                       data-toggle="tooltip"
-                                       data-placement="bottom" title="Profile"><i class="el-icon-user"></i></a>
-
+                                    @if(\Auth::guard('investor')->check())
+                                        @if(!$user->is_demo)
+                                            <a href="{{ route('investor.profile.index')}}"
+                                               data-toggle="tooltip"
+                                               data-placement="bottom" title="Profile"><i class="el-icon-user"></i></a>
+                                        @endif
+                                    @else
+                                        <a href="{{ route('admin.profile.index')}}"
+                                           data-toggle="tooltip"
+                                           data-placement="bottom" title="Profile"><i class="el-icon-user"></i></a>
+                                    @endif
                                     @if(\Auth::guard('admin')->check())
                                         <a href="{{ route('admin.logout') }}" class="logout-link" data-toggle="tooltip"
                                            data-placement="bottom" title="Log Out"><i class="el-icon-switch-button"></i></a>
