@@ -13,32 +13,23 @@
                             <el-row>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Price:</label>
+                                    <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{this.formatPrice(form.amount)}} {{form.currency}}
+                                        {{form.name}} {{form.surname}}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Date From:</label>
+                                    <label class="col-md-1 control-label">Email:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.date}}
+                                        {{form.email}}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Status:</label>
+                                    <label class="col-md-1 control-label">Phone:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.status}}
-                                    </div>
-                                </div>
-
-                                <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Attachment:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        <a target="_blank" :href="form.attachment">
-                                            {{form.attachment}}
-                                        </a>
+                                        {{form.phone}}
                                     </div>
                                 </div>
                             </el-row>

@@ -3,6 +3,9 @@
 namespace App\Modules\Lead\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Models\Country;
+use App\Modules\Admin\Models\User\Investor;
+use App\Modules\Asset\Models\Asset;
 use App\Modules\Lead\Http\Requests\LeadRequest;
 use App\Modules\Lead\Models\Lead;
 use App\Utilities\ServiceResponse;
@@ -61,11 +64,16 @@ class LeadController extends BaseController
     {
         try {
             $this->baseData['routes'] = [
-                'create' => route('lead.lead.create'),
-                'create_data' => route('lead.lead.create_data'),
-                'save' => route('lead.lead.store'),
-                'edit' => route('lead.lead.edit', []),
+                'create' => route('lead.create'),
+                'create_data' => route('lead.create_data'),
+                'save' => route('lead.store'),
+                'edit' => route('lead.edit', []),
             ];
+            if ($request->get('id')) {
+                $lead = Lead::findOrFail($request->get('id'));
+                $this->baseData['item'] = $lead;
+            }
+//            $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
@@ -88,7 +96,44 @@ class LeadController extends BaseController
             ]);
         $this->baseData['item'] = $lead;
 
-        return ServiceResponse::jsonNotification('Investment Added successfully', 200, $this->baseData);
+        return ServiceResponse::jsonNotification('Lead Added successfully', 200, $this->baseData);
+    }
+
+    /**
+     * @param LeadRequest $request
+     * @return JsonResponse
+     */
+    public function storeApi(LeadRequest $request)
+    {
+        $lead = Lead::updateOrCreate(['email' => $request->email],
+            [
+                'name' => $request->name,
+                'surname' => $request->surname,
+                'phone' => $request->phone
+            ]);
+
+
+        return ServiceResponse::jsonNotification('Lead Added successfully', 200, $lead);
+    }
+
+    /**
+     * @param LeadRequest $request
+     * @return JsonResponse
+     */
+    public function storeWeb(LeadRequest $request)
+    {
+        $lead = Lead::updateOrCreate(['email' => $request->email],
+            [
+                'name' => $request->name,
+                'surname' => $request->surname,
+                'phone' => $request->phone
+            ]);
+
+
+        return ServiceResponse::jsonNotification('Lead Added successfully', 200, [
+            'name' => 'demo@keyassets.ge',
+            'password' => 'DAaAanw0IL'
+        ]);
     }
 
     /**
@@ -98,7 +143,7 @@ class LeadController extends BaseController
     public function edit($id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('lead.lead.create_data');
+            $this->baseData['routes']['create_form_data'] = route('lead.create_data');
 
             $this->baseData['id'] = $id;
 
@@ -116,7 +161,7 @@ class LeadController extends BaseController
     public function view($id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('lead.lead.create_data');
+            $this->baseData['routes']['create_form_data'] = route('lead.create_data');
 
             $this->baseData['id'] = $id;
 
@@ -141,5 +186,16 @@ class LeadController extends BaseController
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
+    }
+
+    public function statistics()
+    {
+        $assetsCount = Asset::count();
+        $investorsCount = Investor::count();
+
+        return ServiceResponse::jsonNotification('Statistics', 200, [
+            'assets' => $assetsCount,
+            'investors' => $investorsCount,
+        ]);
     }
 }

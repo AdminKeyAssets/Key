@@ -45,6 +45,7 @@
                                 <td>{!! $item->surname !!}</td>
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->phone !!}</td>
+                                <td>{!! $item->created_at->toDateString() !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))

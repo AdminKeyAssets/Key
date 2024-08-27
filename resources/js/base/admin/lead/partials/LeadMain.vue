@@ -8,75 +8,40 @@
                      ref="form" :model="form" class="form-horizontal form-bordered">
 
                 <el-row>
-
-
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Investment Status:</label>
-                        <div class="col-md-3 uppercase-medium">
-                            <el-select
-                                v-model="form.status"
-                                placeholder="Select Status">
-                                <el-option label="Renovation" value="Renovation"></el-option>
-                                <el-option label="Maintenance" value="Maintenance"></el-option>
-                                <el-option label="Legal Services" value="Legal Services"></el-option>
-                                <el-option label="Administrative Costs" value="Administrative Costs"></el-option>
-                                <el-option label="Utilities" value="Utilities"></el-option>
-                                <el-option label="Other" value="Other"></el-option>
-                            </el-select>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Name: <span class="text-danger">*</span></label>
+                        <div class="col-md-6">
+                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                      v-model="form.name" @input="capitalizeFirstLetter('name')"></el-input>
                         </div>
                     </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Price:</label>
-                        <div class="col-md-7 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.amount"></input>
-                        </div>
-                        <div class="col-md-3 uppercase-medium">
-                            <el-select v-model="form.currency" :value="form.currency" filterable placeholder="Select">
-                                <el-option
-                                    v-for="(currency, index) in currencies"
-                                    :key="index"
-                                    :label="currency"
-                                    :value="index">
-                                </el-option>
-                            </el-select>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Surname: <span class="text-danger">*</span></label>
+                        <div class="col-md-6">
+                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                      v-model="form.surname" @input="capitalizeFirstLetter('surname')"></el-input>
                         </div>
                     </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Payment Date:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <el-date-picker
-                                v-model="form.date"
-                                format="yyyy/MM/dd"
-                                value-format="yyyy/MM/dd"
-                                type="date"
-                                placeholder="Pick a investment date from">
-                            </el-date-picker>
+                    <div class="form-group">
+
+                        <label class="col-md-2 control-label">Email: <span class="text-danger">*</span></label>
+                        <div class="col-md-6">
+                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                      v-model="form.email"></el-input>
                         </div>
+
                     </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Description:</label>
-                        <div class="col-md-10 uppercase-medium">
-                            <el-input type="textarea" v-model="form.description"></el-input>
+                    <div class="form-group phone">
+                        <label class="col-md-2 control-label">Phone: <span class="text-danger">*</span></label>
+                        <div class="col-md-6">
+                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                      v-model="form.phone"></el-input>
                         </div>
                     </div>
-
                 </el-row>
-
-                <div class="form-group dashed">
-                    <label class="col-md-1 control-label">Attachment:</label>
-                    <div class="col-md-10 uppercase-medium">
-                        <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
-                            Attachment</a>
-                            <el-button type="danger" icon="el-icon-delete" size="small"
-                                       @click="removeFile"
-                            ></el-button>
-                        </p>
-                        <input v-else type="file" class="form-control" @change="onFileChange">
-                    </div>
-                </div>
 
             </el-form>
         </div>
@@ -93,21 +58,13 @@ export default {
     props: [
         'routes',
         'updateData',
-        'item',
-        'assets'
+        'item'
     ],
     data() {
         return {
-            form: {
-                currency: 'USD'
-            },
+            form: {},
             loading: false,
             editor: ClassicEditor,
-            addDetailIsBtnDisabled: true,
-            currencies: {
-                "GEL": "GEL",
-                "USD": "USD",
-            },
         }
     },
     updated() {
@@ -121,11 +78,10 @@ export default {
         }
     },
     methods: {
-        onFileChange(e) {
-            this.form.attachment = e.target.files[0];
-        },
-        removeFile() {
-            this.form.attachment = null;
+        capitalizeFirstLetter(field) {
+            if (this.form[field]) {
+                this.form[field] = this.form[field].charAt(0).toUpperCase() + this.form[field].slice(1);
+            }
         },
     }
 }

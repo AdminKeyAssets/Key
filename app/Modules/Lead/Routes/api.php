@@ -1,6 +1,9 @@
 <?php
 
+use App\Modules\Lead\Http\Controllers\LeadController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +19,8 @@ use Illuminate\Http\Request;
 Route::get('/lead', function (Request $request) {
     // return $request->lead();
 })->middleware('auth:api');
+
+Route::post('/leads', [LeadController::class, 'storeApi'])->middleware('auth:api');
+
+Route::get('/statistics', [LeadController::class, 'statistics'])->middleware('auth:api');
+

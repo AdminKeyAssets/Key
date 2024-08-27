@@ -14,7 +14,8 @@ Route::prefix('lead')->name('lead.')->group(function () {
 //
 //    //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
+    Route::post('/add', $controller . '@storeWeb')->name('store.web');
 //    // Delete
-//    Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
+    Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 });
 

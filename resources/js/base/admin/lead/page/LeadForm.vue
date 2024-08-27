@@ -10,7 +10,6 @@
                 <LeadMain
                     :routes="routes"
                     :updateData="updateData"
-                    :assets="assets"
                     :item="this.form && this.form ? this.form : undefined"
                 ></LeadMain>
 
@@ -45,12 +44,10 @@ export default {
             data: {},
             loading: false,
             routes: {},
-            options: {},
             /** Form data*/
             form: {
                 id: this.id
             },
-            assets: {}
 
         }
     },
@@ -82,7 +79,6 @@ export default {
                     let data = response.data.data;
 
                     this.routes = data.routes;
-                    this.options = data.options;
 
                     if (data.item) {
                         this.form = data.item;
@@ -110,7 +106,7 @@ export default {
                     responseParse(response);
                     const data = response.data.data;
                     setTimeout(() => {
-                        window.location.href = `assets/${data.item.asset_id}/investment`;
+                        window.location.href = `/lead/list`;
                         // window.location.reload();
                     }, 1000);
 
