@@ -373,7 +373,9 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                            <a :href="scope.row.attachment"
+                                                               v-if="scope.row.attachment"
+                                                               style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
                                                                target="_blank">View
                                                                 {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
@@ -583,7 +585,9 @@
                                                         <el-table-column prop="attachment" label="Attachment">
                                                             <template slot-scope="scope">
                                                                 <a :href="scope.row.attachment"
-                                                                   v-if="scope.row.attachment" target="_blank">View
+                                                                   v-if="scope.row.attachment"
+                                                                   style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+                                                                   target="_blank">View
                                                                     {{ getFilename(scope.row.attachment) }}</a>
                                                             </template>
                                                         </el-table-column>
