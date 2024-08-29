@@ -2,36 +2,43 @@
     <div class="image-box">
         <CustomImagePreview :mainImage="mainImage" :images="srcList" @update-main-image="setMainImage" />
         <div class="thumbnail-carousel-container">
-            <span @click="prevImage" class="carousel-button prev-button">❮</span>
-            <div
+            <!-- Previous Button -->
+            <span @click="slidePrev" class="carousel-button prev-button">❮</span>
+
+            <!-- Swiper Element for Thumbnails -->
+            <swiper-container
+                ref="swiperRef"
                 class="thumbnail-carousel"
-                @mousedown="onMouseDown"
-                @mousemove="onMouseMove"
-                @mouseup="onMouseUp"
-                @mouseleave="onMouseUp"
-                @touchstart="onTouchStart"
-                @touchmove="onTouchMove"
-                @touchend="onTouchEnd"
+                slides-per-view="2"
+                space-between="10"
+                free-mode
+                loop
             >
-                <div
+                <swiper-slide
                     v-for="(imageItem, index) in srcList"
                     :key="imageItem.id"
-                    :class="['thumbnail-item',{ 'active': imageItem.image === mainImage }]"
+                    :class="['thumbnail-item', { 'active': imageItem.image === mainImage }]"
                 >
                     <img
                         :src="imageItem.image"
                         alt="Thumbnail"
-                        class="carouser-thumbnail-item"
+                        class="carousel-thumbnail-item"
                         @click="setMainImage(imageItem.image)"
                     />
-                </div>
-            </div>
-            <span @click="nextImage" class="carousel-button next-button">❯</span>
+                </swiper-slide>
+            </swiper-container>
+
+            <!-- Next Button -->
+            <span @click="slideNext" class="carousel-button next-button">❯</span>
         </div>
     </div>
 </template>
 
 <script>
+// Importing the Swiper Web Component
+import 'swiper/swiper-bundle.css';
+import 'swiper/swiper-element-bundle.min.js';
+
 import CustomImagePreview from './CustomImagePreview.vue';
 
 export default {
@@ -52,17 +59,7 @@ export default {
     data() {
         return {
             mainImage: this.initialMainImage,
-            srcList: [],
-            touchStartX: 0,
-            touchEndX: 0,
-            isDragging: false,
-            mouseStartX: 0,
-            mouseEndX: 0,
-            isMouseDragging: false,
-            currentTranslate: 0,
-            prevTranslate: 0,
-            startPos: 0,
-            animationFrameId: null
+            srcList: []
         };
     },
     created() {
@@ -74,74 +71,11 @@ export default {
         setMainImage(image) {
             this.mainImage = image;
         },
-        prevImage() {
-            const lastItem = this.srcList.pop();
-            this.srcList.unshift(lastItem);
-            this.currentTranslate = -100;
-            this.animateSlide(100);
+        slidePrev() {
+            this.$refs.swiperRef.swiper.slidePrev();
         },
-        nextImage() {
-            const firstItem = this.srcList.shift();
-            this.srcList.push(firstItem);
-            this.currentTranslate = 0;
-            this.animateSlide(-100);
-        },
-        animateSlide(offset) {
-            this.currentTranslate += offset;
-            this.prevTranslate = this.currentTranslate;
-        },
-        onTouchStart(event) {
-            this.touchStartX = event.changedTouches[0].screenX;
-            this.startPos = this.touchStartX;
-            this.isDragging = true;
-            this.prevTranslate = this.currentTranslate;
-        },
-        onTouchMove(event) {
-            if (this.isDragging) {
-                const currentPosition = event.changedTouches[0].screenX;
-                const delta = currentPosition - this.startPos;
-                this.currentTranslate = this.prevTranslate + delta;
-            }
-        },
-        onTouchEnd(event) {
-            if (this.isDragging) {
-                this.touchEndX = event.changedTouches[0].screenX;
-                const movedBy = this.touchStartX - this.touchEndX;
-                if (movedBy > 50) {
-                    this.nextImage();
-                } else if (movedBy < -50) {
-                    this.prevImage();
-                }
-                this.isDragging = false;
-                this.prevTranslate = this.currentTranslate;
-            }
-        },
-        onMouseDown(event) {
-            this.mouseStartX = event.clientX;
-            this.startPos = this.mouseStartX;
-            this.isMouseDragging = true;
-            this.prevTranslate = this.currentTranslate;
-            event.preventDefault(); // Prevent text selection while dragging
-        },
-        onMouseMove(event) {
-            if (this.isMouseDragging) {
-                const currentPosition = event.clientX;
-                const delta = currentPosition - this.startPos;
-                this.currentTranslate = this.prevTranslate + delta;
-            }
-        },
-        onMouseUp(event) {
-            if (this.isMouseDragging) {
-                this.mouseEndX = event.clientX;
-                const movedBy = this.mouseStartX - this.mouseEndX;
-                if (movedBy > 50) {
-                    this.nextImage();
-                } else if (movedBy < -50) {
-                    this.prevImage();
-                }
-                this.isMouseDragging = false;
-                this.prevTranslate = this.currentTranslate;
-            }
+        slideNext() {
+            this.$refs.swiperRef.swiper.slideNext();
         }
     }
 };
@@ -170,6 +104,7 @@ export default {
     cursor: pointer;
     padding: 10px;
     transition: background-color 0.3s;
+    z-index: 10;
 }
 
 .carousel-button:hover {
@@ -197,29 +132,25 @@ export default {
 }
 
 .thumbnail-carousel {
-    display: flex;
-    overflow: hidden;
     width: 100%;
-    cursor: grab; /* Indicate draggable area */
-}
-
-.thumbnail-carousel:active {
-    cursor: grabbing; /* Indicate active dragging */
+    overflow: hidden;
 }
 
 .thumbnail-item {
-    //min-width: 100px;
     height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.5s;
 }
 
-.carouser-thumbnail-item {
-    width: 165px;
-    height: auto; /* Fixed height for thumbnails */
+.carousel-thumbnail-item {
+    width: 100%;
+    height: auto;
     max-height: 100px;
-    object-fit: cover; /* Ensure thumbnails cover the fixed height */
-    cursor: pointer;
+    object-fit: cover;
     border-radius: 5px;
+    cursor: pointer;
     transition: border-color 0.3s;
 }
 
@@ -227,7 +158,7 @@ export default {
     border-color: #000;
 }
 
-.thumbnail-item{
+.thumbnail-item {
     border: 2px solid transparent;
     border-radius: 10px;
     transition: border-color 0.3s;
