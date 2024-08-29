@@ -77,7 +77,8 @@ export default {
                 "Black Frame": "Black Frame",
                 "White Frame": "White Frame",
                 "Green Frame": "Green Frame",
-                "Renovated": "Renovated"
+                "Renovated": "Renovated",
+                "None": "None"
             },
             agreementStatuses: {
                 "Complete": "Complete",
