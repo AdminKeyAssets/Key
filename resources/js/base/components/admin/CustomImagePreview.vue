@@ -88,19 +88,18 @@ export default {
     max-width: 600px;
     height: 280px; /* Fixed height */
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .main-image img {
     width: 100%;
     height: 100%;
+    object-fit: cover; /* Ensure the image covers the container without stretching */
     cursor: pointer;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-}
-
-.main-image img:hover {
-    transform: scale(1.05);
 }
 
 .overlay {
@@ -122,21 +121,36 @@ export default {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90vw;
+    max-width: 800px;
+    height: auto;
 }
 
 .image-preview img {
-    max-width: 90vw;
-    max-height: 90vh;
+    width: 100%; /* Make the image take up the full width */
+    height: auto;
+    max-height: 70vh; /* Adjust this value to control the height */
+    object-fit: contain; /* Ensure the image is fully visible without distortion */
     border-radius: 10px;
 }
 
 .close-button, .nav-button {
     position: absolute;
-    background: none;
+    background: rgba(0, 0, 0, 0.5); /* Matching the thumbnail slider button style */
     border: none;
-    font-size: 2em;
+    font-size: 1.5em;
+    color: white;
     cursor: pointer;
-    color: black;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover, .close-button:hover {
+    background: rgba(0, 0, 0, 0.8); /* Darker background on hover */
 }
 
 .close-button {
@@ -150,10 +164,10 @@ export default {
 }
 
 .prev-button {
-    left: 10px;
+    left: -20px;
 }
 
 .next-button {
-    right: 10px;
+    right: -20px;
 }
 </style>
