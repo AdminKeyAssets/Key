@@ -143,7 +143,8 @@ class AssetController extends BaseController
                 }
 
                 $this->baseData['item'] = $asset;
-                $this->baseData['item']['extraDetails'] = $asset->informations;
+                $this->baseData['item']['attachments'] = $asset->attachments;
+                $this->baseData['item']['informations'] = $asset->informations;
                 $this->baseData['item']['agreements'] = $asset->agreements;
                 $this->baseData['item']['gallery'] = $asset->gallery;
                 $this->baseData['item']['payments'] = $asset->payments;

@@ -13,7 +13,6 @@
         <!-- Login Container -->
         <div id="login-container">
             <!-- Login Title -->
-
             <div class="login-title text-center"
                  style="background-image: url('{{ config('admin.sidebar_background') }}')">
                 <div class="logo">
@@ -86,7 +85,8 @@
                 <!-- Modal Trigger -->
                 <div class="not-registered-wrapper">
                     <div class="col-xs-12">
-                        <span>Not registered yet? <span class="try-now" style="cursor: pointer" data-toggle="modal" data-target="#registrationModal">Try Demo User</span></span>
+                        <span>Not registered yet? <span class="try-now" style="cursor: pointer" data-toggle="modal"
+                                                        data-target="#registrationModal">Try Demo User</span></span>
                     </div>
                 </div>
                 <!-- END Login Form -->
@@ -95,47 +95,56 @@
         </div>
         <!-- END Login Container -->
         <!-- Registration Modal -->
-        <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel" aria-hidden="true">
+        <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog"
+             aria-labelledby="registrationModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="registrationModalLabel">For getting demo user and password please fill the data below</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!-- Custom Close Button -->
+                        <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
+                        <h5 class="modal-title text-center" id="registrationModalLabel">For getting demo user and password <br>please fill the data below</h5>
                     </div>
                     <div class="modal-body">
                         <!-- Registration Form -->
                         <form id="registration-form" method="POST" action="{{ route('lead.store.web') }}">
                             {{ csrf_field() }}
                             <div id="form-content">
-                                <div class="form-group">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="first_name" name="name"
+                                           placeholder="First name">
                                 </div>
-                                <div class="form-group">
-                                    <label for="surname">Surname</label>
-                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter Surname">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="last_name" name="surname"
+                                           placeholder="Last name">
                                 </div>
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" id="email" name="email"
+                                           placeholder="Email">
                                 </div>
-                                <div class="form-group">
-                                    <label for="phone">Phone</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone">
                                 </div>
                             </div>
 
                             <!-- Demo Credentials -->
-                            <div id="demo-credentials" class="alert alert-success" style="display: none;">
-                                <p><strong>Email:</strong> <span id="demo-email"></span></p>
-                                <p><strong>Password:</strong> <span id="demo-password"></span></p>
+                            <div id="demo-credentials" class="credentials-boxes" style="display: none;">
+                                <div class="credential-box col-md-5" style="margin-right: 15px">
+                                    <label>User</label>
+                                    <p id="demo-email"></p>
+                                </div>
+                                <div class="credential-box col-md-5">
+                                    <label>Password</label>
+                                    <p id="demo-password"></p>
+                                </div>
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                 <button type="submit" class="btn btn-primary" id="submit-form">Submit</button>
+                                <!-- New Login Button -->
+                                <button type="button" id="login-button" class="btn btn-primary" style="display: none;">Login</button>
                             </div>
                         </form>
                     </div>
@@ -169,10 +178,17 @@
                         // Hide the form
                         $('#form-content').hide();
                         $('#submit-form').hide();
+
+                        // Update the modal title
+                        $('#registrationModalLabel').text(`Demo User Details`);
+
                         // Display the returned email and password
-                        $('#demo-email').text(response.data.name);
+                        $('#demo-email').text(response.data.name); // Use 'email' to populate the login field
                         $('#demo-password').text(response.data.password);
+
+                        // Show the credentials and login button
                         $('#demo-credentials').show();
+                        $('#login-button').show();
                     },
                     error: function (response) {
                         let errors = response.responseJSON.errors;
@@ -187,6 +203,133 @@
                     }
                 });
             });
+
+            // Handle login button click
+            $('#login-button').on('click', function () {
+                // Fill in the login form with the demo user's credentials
+                $('#login-email').val($('#demo-email').text());
+                $('#login-password').val($('#demo-password').text());
+
+                // Submit the login form
+                $('#form-login').submit();
+            });
         });
     </script>
+
+    <style>
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            position: relative;
+        }
+
+        .modal-header h5 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .modal-header p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* Custom Close Button */
+        .custom-close {
+            opacity: 1;
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            background-color: #007bff !important;
+            border: none !important;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            color: #fff;
+            font-size: 18px;
+            line-height: 18px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            height: 45px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .modal-footer .btn {
+            width: 120px;
+            font-weight: 600;
+        }
+
+        #form-content div {
+            padding-bottom: 10px;
+        }
+
+        .credential-box {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            width: 48%;
+            text-align: center;
+        }
+
+        .credential-box label {
+            display: block;
+            font-weight: bold !important;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .credential-box p {
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        @media (max-width: 767px) {
+            .modal-dialog {
+                margin-top: 30%;
+            }
+
+            .credentials-boxes {
+                flex-direction: column;
+            }
+
+            .credential-box {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        #registrationModalLabel {
+            font-size: 20px;
+            font-weight: 500;
+        }
+    </style>
 @endsection
