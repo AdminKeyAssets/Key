@@ -544,7 +544,7 @@
                                                     </div>
                                                 </div>
                                             </el-col>
-                                            <el-col :span="12">
+                                            <el-col :span="12" v-if="form.agreement_status === 'Installments'">
                                                 <div v-if="form.period" class="form-group">
                                                     <label class="col-md-4 control-label">Period:</label>
                                                     <div class="col-md-8 uppercase-medium">
