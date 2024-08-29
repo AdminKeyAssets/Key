@@ -87,7 +87,7 @@ class AssetRequest extends FormRequest
             'type.required' => 'Please select Asset Type.',
             'floor.numeric' => 'Floor should be numeric.',
             'flat_number.numeric' => 'Flat Number should be numeric.',
-            'condition.required' => 'Please select Delivery Condition',
+//            'condition.required' => 'Please select Delivery Condition',
             'asset_status.required' => 'Please select Asset Status',
             'tenant.name.required_if' => 'The tenant Name is required when asset status is rented.',
             'tenant.surname.required_if' => 'The tenant Surname is required when asset status is rented.',
