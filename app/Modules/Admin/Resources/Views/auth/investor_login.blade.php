@@ -126,7 +126,7 @@
                                 <div class="col-md-6">
                                     <div class="input-group phone">
                                         <span class="input-group-addon">
-                                            <select id="phone_prefix" name="phone_prefix" class="form-control" style="width: auto; display: inline-block;">
+                                            <select id="phone_prefix" name="prefix" class="form-control" style="width: auto; display: inline-block;">
                                                 <!-- Prefixes will be dynamically added here -->
                                             </select>
                                         </span>
@@ -318,12 +318,14 @@
         }
 
         .credential-box p {
-            background-color: #f8f9fa;
+            background-color: #ffffff;
             border: 1px solid #ddd;
             padding: 15px;
             border-radius: 5px;
             text-align: center;
             margin-bottom: 20px;
+            font-size: 14px;
+            word-break: break-word;
         }
 
         .credential-box label {
@@ -335,11 +337,10 @@
             text-align: center;
         }
 
-        .credential-box p {
-            font-size: 14px;
-            word-break: break-word;
+        .credentials-boxes{
+            display: flex;
+            justify-content: center;
         }
-
         @media (max-width: 767px) {
             .modal-dialog {
                 margin-top: 30%;

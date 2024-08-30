@@ -127,7 +127,8 @@ class LeadController extends BaseController
             [
                 'name' => $request->name,
                 'surname' => $request->surname,
-                'phone' => $request->phone
+                'phone' => $request->phone,
+                'prefix' => $request->prefix
             ]);
 
 
