@@ -55,6 +55,11 @@
                                                     {{ form.delivery_date }}
                                                 </div>
                                             </div>
+                                            <div v-if="!form.delivery_date && !form.project_link && !form.project_description && form.location" class="form-group">
+                                                <div v-html="modifiedTextHeight">
+
+                                                </div>
+                                            </div>
                                         </el-col>
                                         <el-col class="project-gallery" :span="24" :md="8">
                                             <div v-if="form.gallery" class="form-group">
@@ -66,7 +71,7 @@
                                         </el-col>
                                     </el-row>
                                     <el-row>
-                                        <div v-if="form.location" class="form-group">
+                                        <div v-if="form.delivery_date && form.project_link && form.project_description &&form.location" class="form-group">
                                             <div v-html="modifiedText">
 
                                             </div>
@@ -850,6 +855,9 @@ export default {
         modifiedText() {
             return this.replaceWidth(this.form.location);
         },
+        modifiedTextHeight() {
+            return this.replaceWidthAndHeight(this.form.location);
+        },
         selectedInvestor() {
             return this.investors.find(investor => investor.id === this.form.investor_id);
         }
@@ -996,6 +1004,10 @@ export default {
 
         replaceWidth(text) {
             return text.replace(/width="600"/g, 'width="100%"');
+        },
+        replaceWidthAndHeight(text) {
+            text = text.replace(/width="600"/g, 'width="100%"');
+            return text.replace(/height="450"/g, 'height="300"');
         }
     }
 }
