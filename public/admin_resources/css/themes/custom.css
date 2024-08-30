@@ -967,7 +967,7 @@ padding: 60px;
     color: #ffffff;
 }
 
-.extra-details-card .el-table__header-wrapper {
+.extra-details-card .el-table__header-wrapper, .extra-attachments-card .el-table__header-wrapper {
     display: none;
 }
 
@@ -1004,11 +1004,11 @@ table thead th {
     margin-right: 0 !important;
 }
 
-.extra-details-card .el-card__header, .current-value-box .el-card__header {
+.extra-details-card .el-card__header, .extra-attachments-card .el-card__header, .current-value-box .el-card__header {
     border-bottom: 0 !important;
 }
 
-.extra-details-card .el-card__body, .current-value-box .el-card__body {
+.extra-details-card .el-card__body, .extra-attachments-card .el-card__body, .current-value-box .el-card__body {
     padding: 0 !important;
 }
 

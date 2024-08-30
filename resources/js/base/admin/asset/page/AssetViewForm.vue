@@ -55,9 +55,14 @@
                                                     {{ form.delivery_date }}
                                                 </div>
                                             </div>
+                                            <div v-if="!form.delivery_date && !form.project_link && !form.project_description && form.location" class="form-group">
+                                                <div v-html="modifiedTextHeight">
+
+                                                </div>
+                                            </div>
                                         </el-col>
                                         <el-col class="project-gallery" :span="24" :md="8">
-                                            <div v-if="form.gallery" class="form-group">
+                                            <div v-if="form.gallery && form.gallery[0]" class="form-group">
                                                 <div class="col-md-12 uppercase-medium">
                                                     <ImageBox :initial-main-image="form.gallery[0].image"
                                                               :images="form.gallery"></ImageBox>
@@ -66,7 +71,7 @@
                                         </el-col>
                                     </el-row>
                                     <el-row>
-                                        <div v-if="form.location" class="form-group">
+                                        <div v-if="form.delivery_date && form.project_link && form.project_description &&form.location" class="form-group">
                                             <div v-html="modifiedText">
 
                                             </div>
@@ -373,7 +378,9 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                            <a :href="scope.row.attachment"
+                                                               v-if="scope.row.attachment"
+                                                               style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
                                                                target="_blank">View
                                                                 {{ getFilename(scope.row.attachment) }}</a>
                                                         </template>
@@ -385,14 +392,14 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
+                            <el-row style="margin-bottom: 30px" v-if="form.informations && form.informations.length">
                                 <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Extra Details</span>
                                     </div>
                                     <el-row class="row-item">
                                         <div>
-                                            <el-table border :data="form.extraDetails"
+                                            <el-table border :data="form.informations"
                                                       style="width: 100%">
                                                 <el-table-column prop="key"/>
                                                 <el-table-column prop="value"/>
@@ -401,6 +408,37 @@
                                                         <a :href="scope.row.attachment" v-if="scope.row.attachment"
                                                            target="_blank">View
                                                             {{ getFilename(scope.row.attachment) }}</a>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
+
+                            <el-row style="margin-bottom: 30px" v-if="form.attachments && form.attachments.length">
+                                <el-card class="box-card extra-attachments-card"
+                                         :class="{ 'hidden-body': !showExtraAttachments }">
+                                    <div slot="header" class="clearfix main-header" @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Extra Attachments</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showExtraAttachments" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+                                    <el-row class="row-item">
+                                        <div>
+                                            <el-table border :data="form.attachments"
+                                                      style="width: 100%">
+                                                <el-table-column prop="name"/>
+                                                <el-table-column prop="path">
+                                                    <template slot-scope="scope">
+                                                        <a :href="scope.row.path" v-if="scope.row.path"
+                                                           target="_blank">View
+                                                            {{ scope.row.name }}</a>
                                                     </template>
                                                 </el-table-column>
                                             </el-table>
@@ -511,7 +549,7 @@
                                                     </div>
                                                 </div>
                                             </el-col>
-                                            <el-col :span="12">
+                                            <el-col :span="12" v-if="form.agreement_status === 'Installments'">
                                                 <div v-if="form.period" class="form-group">
                                                     <label class="col-md-4 control-label">Period:</label>
                                                     <div class="col-md-8 uppercase-medium">
@@ -583,7 +621,9 @@
                                                         <el-table-column prop="attachment" label="Attachment">
                                                             <template slot-scope="scope">
                                                                 <a :href="scope.row.attachment"
-                                                                   v-if="scope.row.attachment" target="_blank">View
+                                                                   v-if="scope.row.attachment"
+                                                                   style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+                                                                   target="_blank">View
                                                                     {{ getFilename(scope.row.attachment) }}</a>
                                                             </template>
                                                         </el-table-column>
@@ -795,7 +835,8 @@ export default {
             investors: {},
             salesManager: {},
             nextPayment: {},
-            showAgreementDetails: true
+            showAgreementDetails: true,
+            showExtraAttachments: false
         }
     },
     created() {
@@ -813,6 +854,9 @@ export default {
         },
         modifiedText() {
             return this.replaceWidth(this.form.location);
+        },
+        modifiedTextHeight() {
+            return this.replaceWidthAndHeight(this.form.location);
         },
         selectedInvestor() {
             return this.investors.find(investor => investor.id === this.form.investor_id);
@@ -960,6 +1004,10 @@ export default {
 
         replaceWidth(text) {
             return text.replace(/width="600"/g, 'width="100%"');
+        },
+        replaceWidthAndHeight(text) {
+            text = text.replace(/width="600"/g, 'width="100%"');
+            return text.replace(/height="450"/g, 'height="300"');
         }
     }
 }
@@ -968,7 +1016,7 @@ export default {
 
 <style>
 
-.agreement-details-card .clearfix.main-header {
+.agreement-details-card .clearfix.main-header, .extra-attachments-card .clearfix.main-header {
     padding-left: 15px;
     font-size: 16px;
     font-weight: bold;

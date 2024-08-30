@@ -145,13 +145,13 @@ class RevenueController extends BaseController
         foreach ($allAssets as $asset) {
             $totalRent += $asset->rentalPaymentsHistories()->sum('amount');
             $totalCapitalGain += $asset->current_value - $asset->total_price;
-            $totalInvestment += $asset->paymentsHistories()->sum('amount');
+            $totalInvestment += $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
         }
 
         foreach ($paginatedAssets as $asset) {
             $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
             $asset->capital_gain = $asset->current_value - $asset->total_price;
-            $asset->total_investment = $asset->paymentsHistories()->sum('amount');
+            $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
         }
 
         $this->baseData['allData'] = $paginatedAssets;

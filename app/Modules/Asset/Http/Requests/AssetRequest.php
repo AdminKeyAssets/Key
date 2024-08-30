@@ -16,13 +16,14 @@ class AssetRequest extends FormRequest
         return true;
     }
 
-//    protected function prepareForValidation()
-//    {
-//        // Decode the tenant JSON
-//        $this->merge([
-//            'tenant' => json_decode($this->input('tenant'), true),
-//        ]);
-//    }
+    protected function prepareForValidation()
+    {
+        $this->merge(
+            array_map(function ($value) {
+                return $value === 'null' ? null : $value;
+            }, $this->all())
+        );
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -43,10 +44,10 @@ class AssetRequest extends FormRequest
             'total_price' => ['required', 'numeric'],
 
             'type' => 'required',
-            'floor' => 'integer',
-            'flat_number' => 'integer',
+//            'floor' => 'integer',
+//            'flat_number' => 'integer',
             'price' => 'required|numeric',
-            'condition' => 'required',
+//            'condition' => 'required',
             'asset_status' => 'required',
 
             'tenant.name' => 'required_if:asset_status,Rented',
@@ -84,9 +85,9 @@ class AssetRequest extends FormRequest
             'price.numeric' => 'Price should be numeric.',
             'price.required' => 'Price can not be empty.',
             'type.required' => 'Please select Asset Type.',
-            'floor.numeric' => 'Floor should be numeric.',
-            'flat_number.numeric' => 'Flat Number should be numeric.',
-            'condition.required' => 'Please select Delivery Condition',
+//            'floor.numeric' => 'Floor should be numeric.',
+//            'flat_number.numeric' => 'Flat Number should be numeric.',
+//            'condition.required' => 'Please select Delivery Condition',
             'asset_status.required' => 'Please select Asset Status',
             'tenant.name.required_if' => 'The tenant Name is required when asset status is rented.',
             'tenant.surname.required_if' => 'The tenant Surname is required when asset status is rented.',

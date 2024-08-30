@@ -52,4 +52,12 @@
                 <span class="sidebar-nav-mini-hide">Revenues</span></a>
         </li>
     @endif
+
+    @can ( getPermissionKey('lead', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'lead.index') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('lead.index')}}"><i class="el-icon-attract sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Leads</span></a>
+        </li>
+    @endif
 </ul>

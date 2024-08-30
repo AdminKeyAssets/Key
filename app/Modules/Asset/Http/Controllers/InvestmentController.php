@@ -150,10 +150,10 @@ class InvestmentController extends BaseController
      * @param $id
      * @return Application|Factory|View
      */
-    public function edit($id = '')
+    public function edit($assetId, $id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('asset.investment.create_data');
+            $this->baseData['routes']['create_form_data'] = route('asset.investment.create_data', [$assetId]);
 
             $this->baseData['id'] = $id;
 
