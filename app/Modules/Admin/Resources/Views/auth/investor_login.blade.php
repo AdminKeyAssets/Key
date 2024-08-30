@@ -124,7 +124,14 @@
                                            placeholder="Email">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone">
+                                    <div class="input-group phone">
+                                        <span class="input-group-addon">
+                                            <select id="phone_prefix" name="phone_prefix" class="form-control" style="width: auto; display: inline-block;">
+                                                <!-- Prefixes will be dynamically added here -->
+                                            </select>
+                                        </span>
+                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone">
+                                    </div>
                                 </div>
                             </div>
 
@@ -159,6 +166,25 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         $(document).ready(function () {
+            // Fetch prefixes when the modal is shown
+            $('#registrationModal').on('show.bs.modal', function () {
+                $.ajax({
+                    url: '/lead/prefixes',
+                    method: 'GET',
+                    success: function (response) {
+                        let prefixSelect = $('#phone_prefix');
+                        prefixSelect.empty(); // Clear existing options
+
+                        response.forEach(function (item) {
+                            prefixSelect.append(new Option(item.prefix, item.prefix));
+                        });
+                    },
+                    error: function () {
+                        alert('Failed to load phone prefixes.');
+                    }
+                });
+            });
+
             // Handle form submission via AJAX
             $('#registration-form').on('submit', function (e) {
                 e.preventDefault();
@@ -291,13 +317,13 @@
             padding-bottom: 10px;
         }
 
-        .credential-box {
+        .credential-box p {
             background-color: #f8f9fa;
             border: 1px solid #ddd;
             padding: 15px;
             border-radius: 5px;
-            width: 48%;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .credential-box label {
@@ -305,6 +331,8 @@
             font-weight: bold !important;
             margin-bottom: 5px;
             font-size: 14px;
+            width: 100%;
+            text-align: center;
         }
 
         .credential-box p {
@@ -331,5 +359,27 @@
             font-size: 20px;
             font-weight: 500;
         }
+
+        .input-group-addon {
+            padding: 0;
+        }
+
+        .phone.input-group {
+            display: flex;
+            padding: 0 !important;
+            border: none;
+            border-radius: 5px !important;
+        }
+        .phone.input-group .input-group-addon{
+            width: 50%;
+            border-color: #ccc;
+        }
+        #phone_prefix{
+            height: 100%;
+            width: 100%;
+            display: inline-block;
+            border-color: #ccc;
+        }
+
     </style>
 @endsection
