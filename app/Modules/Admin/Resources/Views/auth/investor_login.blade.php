@@ -126,7 +126,7 @@
                                 <div class="col-md-6">
                                     <div class="input-group phone">
                                         <span class="input-group-addon">
-                                            <select id="phone_prefix" name="prefix" class="form-control" style="width: auto; display: inline-block;">
+                                            <select data-live-search="true" id="phone_prefix" name="prefix" class="form-control selectpicker" style="width: auto; display: inline-block;">
                                                 <!-- Prefixes will be dynamically added here -->
                                             </select>
                                         </span>

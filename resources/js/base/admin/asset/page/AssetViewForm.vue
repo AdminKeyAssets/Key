@@ -62,7 +62,7 @@
                                             </div>
                                         </el-col>
                                         <el-col class="project-gallery" :span="24" :md="8">
-                                            <div v-if="form.gallery" class="form-group">
+                                            <div v-if="form.gallery && form.gallery[0]" class="form-group">
                                                 <div class="col-md-12 uppercase-medium">
                                                     <ImageBox :initial-main-image="form.gallery[0].image"
                                                               :images="form.gallery"></ImageBox>
