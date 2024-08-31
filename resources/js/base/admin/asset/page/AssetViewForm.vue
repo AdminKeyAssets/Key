@@ -210,6 +210,62 @@
                                 </el-card>
                             </el-row>
 
+                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
+                                <el-card class="box-card extra-details-card">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Extra Details</span>
+                                    </div>
+                                    <el-row class="row-item">
+                                        <div>
+                                            <el-table border :data="form.extraDetails"
+                                                      style="width: 100%">
+                                                <el-table-column prop="key"/>
+                                                <el-table-column prop="value"/>
+                                                <el-table-column prop="attachment">
+                                                    <template slot-scope="scope">
+                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                           target="_blank">View
+                                                            {{ getFilename(scope.row.attachment) }}</a>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
+
+                            <el-row style="margin-bottom: 30px" v-if="form.attachments && form.attachments.length">
+                                <el-card class="box-card extra-attachments-card"
+                                         :class="{ 'hidden-body': !showExtraAttachments }">
+                                    <div slot="header" class="clearfix main-header" @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Extra Attachments</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showExtraAttachments" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+                                    <el-row class="row-item">
+                                        <div>
+                                            <el-table border :data="form.attachments"
+                                                      style="width: 100%">
+                                                <el-table-column prop="name"/>
+                                                <el-table-column prop="path">
+                                                    <template slot-scope="scope">
+                                                        <a :href="scope.row.path" v-if="scope.row.path"
+                                                           target="_blank">View
+                                                            {{ scope.row.name }}</a>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </div>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
+
                             <el-row style="margin-bottom: 30px" v-if="form.tenant">
                                 <el-card class="box-card" v-if="form.asset_status === 'Rented'">
                                     <div slot="header" class="clearfix main-header">
@@ -388,61 +444,6 @@
                                                 </el-table>
                                             </div>
                                         </el-col>
-                                    </el-row>
-                                </el-card>
-                            </el-row>
-
-                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
-                                <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>Extra Details</span>
-                                    </div>
-                                    <el-row class="row-item">
-                                        <div>
-                                            <el-table border :data="form.extraDetails"
-                                                      style="width: 100%">
-                                                <el-table-column prop="key"/>
-                                                <el-table-column prop="value"/>
-                                                <el-table-column prop="attachment">
-                                                    <template slot-scope="scope">
-                                                        <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                           target="_blank">View
-                                                            {{ getFilename(scope.row.attachment) }}</a>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
-                                        </div>
-                                    </el-row>
-                                </el-card>
-                            </el-row>
-
-
-                            <el-row style="margin-bottom: 30px" v-if="form.attachments && form.attachments.length">
-                                <el-card class="box-card extra-attachments-card"
-                                         :class="{ 'hidden-body': !showExtraAttachments }">
-                                    <div slot="header" class="clearfix main-header" @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
-                                        <div style="width: 98%">
-                                            <span>Extra Attachments</span>
-                                        </div>
-                                        <div style="width: 2%">
-                                            <i v-if="!showExtraAttachments" class="el-icon-caret-right"></i>
-                                            <i v-else class="el-icon-caret-bottom"></i>
-                                        </div>
-                                    </div>
-                                    <el-row class="row-item">
-                                        <div>
-                                            <el-table border :data="form.attachments"
-                                                      style="width: 100%">
-                                                <el-table-column prop="name"/>
-                                                <el-table-column prop="path">
-                                                    <template slot-scope="scope">
-                                                        <a :href="scope.row.path" v-if="scope.row.path"
-                                                           target="_blank">View
-                                                            {{ scope.row.name }}</a>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
-                                        </div>
                                     </el-row>
                                 </el-card>
                             </el-row>
