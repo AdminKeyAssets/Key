@@ -11,6 +11,7 @@ use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAttachment;
+use App\Modules\Asset\Models\AssetInformation;
 use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\Rental;
@@ -144,7 +145,7 @@ class AssetController extends BaseController
 
                 $this->baseData['item'] = $asset;
                 $this->baseData['item']['attachments'] = $asset->attachments;
-                $this->baseData['item']['informations'] = $asset->informations;
+                $this->baseData['item']['extraDetails'] = AssetInformation::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['agreements'] = $asset->agreements;
                 $this->baseData['item']['gallery'] = $asset->gallery;
                 $this->baseData['item']['payments'] = $asset->payments;
