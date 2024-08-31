@@ -392,14 +392,14 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.informations && form.informations.length">
+                            <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
                                 <el-card class="box-card extra-details-card" v-if="form.asset_status === 'Rented'">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Extra Details</span>
                                     </div>
                                     <el-row class="row-item">
                                         <div>
-                                            <el-table border :data="form.informations"
+                                            <el-table border :data="form.extraDetails"
                                                       style="width: 100%">
                                                 <el-table-column prop="key"/>
                                                 <el-table-column prop="value"/>
