@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Investment extends Model
 {
-    protected $fillable = ['asset_id', 'date', 'status', 'amount', 'attachment', 'currency'];
+    protected $fillable = ['asset_id', 'date', 'status', 'amount', 'attachment', 'currency', 'description'];
 
     public function asset()
     {
