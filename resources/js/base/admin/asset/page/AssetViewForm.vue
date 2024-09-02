@@ -55,7 +55,7 @@
                                                     {{ form.delivery_date }}
                                                 </div>
                                             </div>
-                                            <div v-if="(!form.delivery_date && !form.project_link && !form.project_description) && form.location" class="form-group">
+                                            <div v-if="!form.delivery_date && !form.project_link && !form.project_description && form.location" class="form-group">
                                                 <div v-html="modifiedTextHeight">
 
                                                 </div>
