@@ -119,6 +119,7 @@ class InvestmentController extends BaseController
                 'date' => $request->date,
                 'status' => $request->status,
                 'amount' => $request->amount,
+                'description' => $request->description,
                 'currency' => $request->currency,
                 'attachment' => $path
             ]);
@@ -137,6 +138,7 @@ class InvestmentController extends BaseController
                 'status' => $request->status,
                 'amount' => $request->amount,
                 'currency' => $request->currency,
+                'description' => $request->description,
                 'attachment' => $path,
             ]);
 

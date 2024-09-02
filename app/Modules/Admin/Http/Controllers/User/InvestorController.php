@@ -188,6 +188,7 @@ class InvestorController extends BaseController
 
             if (isset($request->id)) {
                 $investor = Investor::where('id', $request->id)->first();
+
                 if ($request->hasFile('profile_picture')) {
                     if ($investor->profile_picture && Storage::disk('public')->exists($investor->profile_picture)) {
                         Storage::disk('public')->delete($investor->profile_picture);
@@ -207,7 +208,7 @@ class InvestorController extends BaseController
 
                 if ($request->hasFile('passport')) {
                     if ($investor->passport && Storage::disk('public')->exists($investor->passport)) {
-                        Storage::disk('public')->delete($investor->profile_picture);
+                        Storage::disk('public')->delete($investor->passport);
                     }
                     $passportFile = $request->file('passport');
                     $passport = $passportFile->store('uploads', 'public');
@@ -233,26 +234,32 @@ class InvestorController extends BaseController
                 }
             }
 
+            $data = [
+                'name' => $request->name,
+                'surname' => $request->surname,
+                'email' => $request->email,
+                'prefix' => $request->prefix,
+                'phone' => $request->phone,
+                'is_demo' => $request->is_demo === 'true',
+                'pid' => $request->pid,
+                'citizenship' => $request->citizenship,
+                'address' => $request->address,
+                'passport' => $passport,
+                'profile_picture' => $profilePicture,
+                'admin_id' => $request->admin_id ?? Auth::user()->getAuthIdentifier(),
+            ];
+
+            // Only hash and update password if a new password is provided
+            if ($request->filled('password')) {
+                $data['password'] = $request->password;
+            }
+
             Investor::updateOrCreate(
                 ['id' => $request->id],
-                [
-                    'name' => $request->name,
-                    'surname' => $request->surname,
-                    'email' => $request->email,
-                    'prefix' => $request->prefix,
-                    'phone' => $request->phone,
-                    'is_demo' => $request->is_demo === 'true',
-                    'pid' => $request->pid,
-                    'citizenship' => $request->citizenship,
-                    'address' => $request->address,
-                    'password' => $request->password,
-                    'passport' => $passport,
-                    'profile_picture' => $profilePicture,
-                    'admin_id' => $request->admin_id ?? Auth::user()->getAuthIdentifier()
-                ]
+                $data
             );
         } catch (\Exception $ex) {
-            Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);
+            Log::error('Error during investor save', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
 

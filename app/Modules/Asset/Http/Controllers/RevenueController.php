@@ -62,6 +62,7 @@ class RevenueController extends BaseController
 
         $userId = $user->getAuthIdentifier();
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
+
         if (Auth::guard('investor')->check()) {
             $paginatedAssets = Asset::where('investor_id', $userId)->orderByDesc('id');
             $allAssets = Asset::where('investor_id', $userId);
@@ -74,15 +75,60 @@ class RevenueController extends BaseController
             $allAssets = Asset::orderByDesc('id');
         }
 
+        // Apply filters based on the related entities
         if ($request->agreement_date) {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
-                $paginatedAssets->where('created_at', '>=', $createdDates[0]);
-                $allAssets->where('created_at', '>=', $createdDates[0]);
+                $paginatedAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '>=', $createdDates[0])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        });
+                });
+                $allAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '>=', $createdDates[0])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        });
+                });
             }
             if (isset($createdDates[1])) {
-                $paginatedAssets->where('created_at', '<=', $createdDates[1]);
-                $allAssets->where('created_at', '<=', $createdDates[1]);
+                $paginatedAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '<=', $createdDates[1])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        });
+                });
+                $allAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '<=', $createdDates[1])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        });
+                });
             }
         }
 
@@ -93,6 +139,7 @@ class RevenueController extends BaseController
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
+
 
     /**
      * @param Request $request
@@ -112,12 +159,56 @@ class RevenueController extends BaseController
         if ($request->agreement_date) {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
-                $paginatedAssets->where('created_at', '>=', $createdDates[0]);
-                $allAssets->where('created_at', '>=', $createdDates[0]);
+                $paginatedAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '>=', $createdDates[0])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        });
+                });
+                $allAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '>=', $createdDates[0])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '>=', $createdDates[0]);
+                        });
+                });
             }
             if (isset($createdDates[1])) {
-                $paginatedAssets->where('created_at', '<=', $createdDates[1]);
-                $allAssets->where('created_at', '<=', $createdDates[1]);
+                $paginatedAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '<=', $createdDates[1])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        });
+                });
+                $allAssets->where(function ($query) use ($createdDates) {
+                    $query->where('created_at', '<=', $createdDates[1])
+                        ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        })
+                        ->orWhereHas('Investments', function ($q) use ($createdDates) {
+                            $q->where('created_at', '<=', $createdDates[1]);
+                        });
+                });
             }
         }
 
