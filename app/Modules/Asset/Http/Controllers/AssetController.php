@@ -10,10 +10,13 @@ use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
 use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
 use App\Modules\Asset\Http\Requests\AssetRequest;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\AssetAgreement;
 use App\Modules\Asset\Models\AssetAttachment;
+use App\Modules\Asset\Models\AssetGallery;
 use App\Modules\Asset\Models\AssetInformation;
 use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
+use App\Modules\Asset\Models\PaymentsHistory;
 use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
@@ -144,12 +147,12 @@ class AssetController extends BaseController
                 }
 
                 $this->baseData['item'] = $asset;
-                $this->baseData['item']['attachments'] = $asset->attachments;
+                $this->baseData['item']['attachments'] = AssetAttachment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['extraDetails'] = AssetInformation::where('asset_id', $asset->id)->get();
-                $this->baseData['item']['agreements'] = $asset->agreements;
-                $this->baseData['item']['gallery'] = $asset->gallery;
-                $this->baseData['item']['payments'] = $asset->payments;
-                $this->baseData['item']['payments_histories'] = $asset->paymentsHistories;
+                $this->baseData['item']['agreements'] = AssetAgreement::where('asset_id', $asset->id)->get();
+                $this->baseData['item']['gallery'] = AssetGallery::where('asset_id', $asset->id)->get();
+                $this->baseData['item']['payments'] = Payment::where('asset_id', $asset->id)->get();
+                $this->baseData['item']['payments_histories'] = PaymentsHistory::where('asset_id', $asset->id)->get();
                 $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->orderByDesc('id')->first();
                 $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
                 if ($tenant) {
@@ -157,8 +160,8 @@ class AssetController extends BaseController
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
 //                    dd([$asset->id, $tenant->id, $this->baseData['item']['rental_payments_histories']]);
                 }
-                $this->baseData['item']['rentals'] = $asset->rentals;
-                $this->baseData['item']['currentValues'] = $asset->currentValues;
+                $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
+                $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->get();
                 $this->baseData['salesManager'] = $salesManager;
                 $this->baseData['nextPayment'] = $nextPayment;
 
