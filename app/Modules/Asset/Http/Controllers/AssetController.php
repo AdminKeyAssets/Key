@@ -530,9 +530,10 @@ class AssetController extends BaseController
                     $path = Storage::url($path);
                 }
 
-                $asset->gallery()->create([
+                AssetGallery::create([
                     'name' => $originalFileName,
-                    'image' => $path
+                    'image' => $path,
+                    'asset_id' => $asset->id
                 ]);
                 if ($key == 0) {
                     $asset->icon = $path;
@@ -567,10 +568,11 @@ class AssetController extends BaseController
                     }
                 }
 
-                $asset->informations()->create([
+                AssetInformation::create([
                     'key' => $detail['key'],
                     'value' => $detail['value'],
-                    'attachment' => $extraDetailAttachmentPath
+                    'attachment' => $extraDetailAttachmentPath,
+                    'asset_id' => $asset->id
                 ]);
             }
         }
@@ -591,9 +593,10 @@ class AssetController extends BaseController
                     $agreementAttachmentPath = $agreement['attachment'] ?? null;
                 }
 
-                $asset->agreements()->create([
+                AssetAgreement::create([
                     'name' => $agreement['name'],
-                    'attachment' => $agreementAttachmentPath
+                    'attachment' => $agreementAttachmentPath,
+                    'asset_id' => $asset->id
                 ]);
             }
         }
