@@ -57,7 +57,7 @@ export default {
                 iconPreview: null,
                 payments: [],
                 currency: 'USD',
-                current_value: 0,
+                current_value: '',
             },
             loading: false,
             addDetailIsBtnDisabled: true,

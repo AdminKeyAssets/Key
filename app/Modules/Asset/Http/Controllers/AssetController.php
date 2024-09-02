@@ -327,7 +327,7 @@ class AssetController extends BaseController
             'asset_status' => $request->asset_status,
             'first_payment_date' => $request->first_payment_date ?? null,
             'period' => $request->period ?? null,
-            'current_value' => $request->current_value ?? 0,
+            'current_value' => $request->current_value ?? null,
             'current_value_currency' => $request->current_value_currency ?? 'USD'
         ];
 
