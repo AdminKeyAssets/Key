@@ -33,7 +33,7 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th> Project Name</th>
+                            <th> Name</th>
                             @if(Auth::guard('admin')->check())
                                 <th> Investor</th>
                             @endif
