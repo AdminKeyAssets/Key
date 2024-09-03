@@ -59,7 +59,7 @@
                                 @if(Auth::guard('admin')->check())
                                     <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
                                 @endif
-                                <td>{!! $item->type !!} - {!! $item->area !!}sq.m</td>
+                                <td>{!! $item->type !!} - {!! $item->area !!} sq.m</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") . ' ' . $item->payments->where('status', 0)->first()->currency : '' !!}</td>
                                 <td>{!! $item->asset_status == 'Rented' && count($item->rentals) && count($item->rentals->where('status', 0)) ? $item->rentals->where('status', 0)->first()->payment_date . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount,0,".",",") . ' ' . $item->rentals->where('status', 0)->first()->currency : '' !!}</td>
