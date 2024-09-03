@@ -231,6 +231,7 @@ class RevenueController extends BaseController
         $totalRent = 0;
         $totalCapitalGain = 0;
         $totalInvestment = 0;
+        $otherInvestment = 0;
 
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
@@ -241,6 +242,7 @@ class RevenueController extends BaseController
                 $totalInvestment += $asset->total_price + $asset->investments()->sum('amount');
             }
             $totalCapitalGain += $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
+            $otherInvestment += $asset->investments()->sum('amount');
         }
 
         foreach ($paginatedAssets as $asset) {
@@ -251,6 +253,7 @@ class RevenueController extends BaseController
                 $asset->total_investment = $asset->total_price + $asset->investments()->sum('amount');
             }
             $asset->capital_gain = $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
+            $asset->other_investment = $asset->investments()->sum('amount');
         }
 
         $this->baseData['allData'] = $paginatedAssets;
@@ -258,6 +261,7 @@ class RevenueController extends BaseController
             'total_rent' => $totalRent,
             'total_capital_gain' => $totalCapitalGain,
             'total_investment' => $totalInvestment,
+            'other_investment' => $otherInvestment,
         ];
     }
 
