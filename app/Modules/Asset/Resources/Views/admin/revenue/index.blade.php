@@ -39,10 +39,10 @@
                             @endif
                             <th> Purchase Date</th>
                             <th> Purchase Price</th>
-                            <th> Total Investment ({!! $totals['total_rent'] !!})</th>
+                            <th> Total Investment ({!! number_format($totals['total_rent']) !!})</th>
                             <th> Current Value</th>
-                            <th> Capital Gain ({!! $totals['total_capital_gain'] !!})</th>
-                            <th> Rent ({!! $totals['total_rent'] !!})</th>
+                            <th> Capital Gain ({!! number_format($totals['total_capital_gain']) !!})</th>
+                            <th> Rent ({!! number_format($totals['total_rent'])  !!})</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
