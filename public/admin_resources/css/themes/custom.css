@@ -1155,3 +1155,18 @@ table thead th {
     background-size: 200% 200%;
     animation: waveEffect 12s ease-in-out infinite !important;
 }
+
+.header-section.flex-header-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-section.flex-header-row H1{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-section.flex-header-row .asset-info{
+    text-align: left;
+    font-weight: 400;
+}

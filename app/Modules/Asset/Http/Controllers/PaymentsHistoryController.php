@@ -6,8 +6,10 @@ use App\Modules\Admin\Exports\PaymentHistoryExport;
 use App\Modules\Admin\Exports\PaymentScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
+use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
 use App\Modules\Asset\Http\Requests\PaymentRequest;
+use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
 use App\Utilities\ServiceResponse;
@@ -62,6 +64,14 @@ class PaymentsHistoryController extends BaseController
     {
         $this->baseData['allData'] = PaymentsHistory::where('asset_id', $assetId)->paginate(25);
         $this->baseData['assetId'] = $assetId;
+
+        $asset = Asset::where('id', $assetId)->first();
+        $investor = Investor::where('id', $asset->investor_id)->first();
+        $this->baseData['extra'] = [
+            'asset_name' => $asset->project_name,
+            'investor_name' => $investor->name . ' ' . $investor->surname,
+        ];
+
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
@@ -72,6 +82,14 @@ class PaymentsHistoryController extends BaseController
     public function create($assetId)
     {
         $this->baseData['assetId'] = $assetId;
+
+        $asset = Asset::where('id', $assetId)->first();
+        $investor = Investor::where('id', $asset->investor_id)->first();
+        $this->baseData['extra'] = [
+            'asset_name' => $asset->project_name,
+            'investor_name' => $investor->name . ' ' . $investor->surname,
+        ];
+
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
     }
 
@@ -180,6 +198,14 @@ class PaymentsHistoryController extends BaseController
             $this->baseData['assetId'] = $assetId;
             $this->baseData['id'] = $id;
 
+            $asset = Asset::where('id', $assetId)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
+
+
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
         }
@@ -199,6 +225,14 @@ class PaymentsHistoryController extends BaseController
 
             $this->baseData['assetId'] = $assetId;
             $this->baseData['id'] = $id;
+
+            $asset = Asset::where('id', $assetId)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
+
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
         }
