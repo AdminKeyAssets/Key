@@ -67,13 +67,17 @@
                                 <td class="text-center">
 
                                     @can(getPermissionKey('payment', 'index', true))
-                                        @include('admin::includes.actions.payment',['title' => 'Payments','route' => route($moduleKey . '.payments.list', [ $item->id ]), ])
+                                        @if($item->agreement_status == 'Installments')
+                                            @include('admin::includes.actions.payment',['title' => 'Payments','route' => route($moduleKey . '.payments.list', [ $item->id ]), ])
+                                        @endif
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['title' => 'Update','route' => route($moduleKey . '.edit', [ $item->id ])])
                                     @endcan
                                     @can(getPermissionKey('rental', 'index', true))
-                                        @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                        @if($item->asset_status == 'Rented')
+                                            @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                        @endif
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
