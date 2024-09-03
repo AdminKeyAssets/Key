@@ -36,7 +36,7 @@ class CurrentValueController extends BaseController
             }
             else{
                 Storage::disk('public')->delete($currentValue->attachment);
-                $originalFileName = $request->attachment->getClientOriginalName();
+                $originalFileName = time() . '_' . $request->attachment->getClientOriginalName();
                 $path = $request->attachment->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
             }

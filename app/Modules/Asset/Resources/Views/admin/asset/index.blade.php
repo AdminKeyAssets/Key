@@ -59,7 +59,7 @@
                                 @if(Auth::guard('admin')->check())
                                     <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
                                 @endif
-                                <td>{!! $item->type !!} - {!! $item->area !!}sq.m</td>
+                                <td>{!! $item->type !!} - {!! $item->area !!} sq.m</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") . ' ' . $item->payments->where('status', 0)->first()->currency : '' !!}</td>
                                 <td>{!! $item->asset_status == 'Rented' && count($item->rentals) && count($item->rentals->where('status', 0)) ? $item->rentals->where('status', 0)->first()->payment_date . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount,0,".",",") . ' ' . $item->rentals->where('status', 0)->first()->currency : '' !!}</td>
@@ -67,19 +67,23 @@
                                 <td class="text-center">
 
                                     @can(getPermissionKey('payment', 'index', true))
-                                        @include('admin::includes.actions.payment',['route' => route($moduleKey . '.payments.list', [ $item->id ])])
+                                        @if($item->agreement_status == 'Installments')
+                                            @include('admin::includes.actions.payment',['title' => 'Payments','route' => route($moduleKey . '.payments.list', [ $item->id ]), ])
+                                        @endif
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.edit',['route' => route($moduleKey . '.edit', [ $item->id ])])
+                                        @include('admin::includes.actions.edit',['title' => 'Update','route' => route($moduleKey . '.edit', [ $item->id ])])
+                                    @endcan
+                                    @can(getPermissionKey('rental', 'index', true))
+                                        @if($item->asset_status == 'Rented')
+                                            @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                        @endif
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
                                             :url="'{{ route($moduleKey . '.delete') }}'"
                                             :id="{{ $item->id }}"
                                         ></delete-component>
-                                    @endcan
-                                    @can(getPermissionKey('rental', 'index', true))
-                                        @include('admin::includes.actions.rental',['route' => route($moduleKey . '.rental.index', [ $item->id ])])
                                     @endcan
                                 </td>
                             </tr>

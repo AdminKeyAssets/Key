@@ -231,20 +231,29 @@ class RevenueController extends BaseController
         $totalRent = 0;
         $totalCapitalGain = 0;
         $totalInvestment = 0;
+        $otherInvestment = 0;
 
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
             $totalRent += $asset->rentalPaymentsHistories()->sum('amount');
-//            $totalInvestment += $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
-            $totalInvestment += $asset->total_price + $asset->investments()->sum('amount');
-            $totalCapitalGain += $asset->current_value - $asset->total_investment;
+            if ($asset->agreement_status === "Investments") {
+                $totalInvestment += $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
+            } else {
+                $totalInvestment += $asset->total_price + $asset->investments()->sum('amount');
+            }
+            $totalCapitalGain += $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
+            $otherInvestment += $asset->investments()->sum('amount');
         }
 
         foreach ($paginatedAssets as $asset) {
             $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
-//            $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
-            $asset->total_investment = $asset->total_price + $asset->investments()->sum('amount');
-            $asset->capital_gain = $asset->current_value - $asset->total_investment;
+            if ($asset->agreement_status === "Investments") {
+                $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
+            } else {
+                $asset->total_investment = $asset->total_price + $asset->investments()->sum('amount');
+            }
+            $asset->capital_gain = $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
+            $asset->other_investment = $asset->investments()->sum('amount');
         }
 
         $this->baseData['allData'] = $paginatedAssets;
@@ -252,6 +261,7 @@ class RevenueController extends BaseController
             'total_rent' => $totalRent,
             'total_capital_gain' => $totalCapitalGain,
             'total_investment' => $totalInvestment,
+            'other_investment' => $otherInvestment,
         ];
     }
 
@@ -319,9 +329,9 @@ class RevenueController extends BaseController
 
                 $tenantData = [];
 
-                if($asset->tenant){
+                if ($asset->tenant) {
                     $tenants = Tenant::where('asset_id', $asset->id)->orderByDesc('id')->get();
-                    foreach ($tenants as $tenant){
+                    foreach ($tenants as $tenant) {
                         $tenantRentalPayments = RentalPaymentsHistory::where('tenant_id', $tenant->id)->orderByDesc('id');
                         $tenant = $tenant->toArray();
                         $tenant['rental_payments'] = $tenantRentalPayments->get();
@@ -330,7 +340,7 @@ class RevenueController extends BaseController
                     }
                 }
                 $investments = [];
-                if($asset->investments){
+                if ($asset->investments) {
                     $investments = $asset->investments()->orderByDesc('id')->get();
                 }
 

@@ -55,7 +55,7 @@ class CommentController extends BaseController
         $path = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            $originalFilename = $file->getClientOriginalName();
+            $originalFilename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('uploads', $originalFilename,'public');
         }
 
@@ -90,7 +90,7 @@ class CommentController extends BaseController
         $path = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            $originalFilename = $file->getClientOriginalName();
+            $originalFilename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('uploads', $originalFilename,'public');
         }
 

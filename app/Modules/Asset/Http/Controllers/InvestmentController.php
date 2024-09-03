@@ -102,7 +102,7 @@ class InvestmentController extends BaseController
                 }
 
                 $file = $request->file('attachment');
-                $originalFileName = $file->getClientOriginalName();
+                $originalFileName = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
 
@@ -127,7 +127,7 @@ class InvestmentController extends BaseController
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
-                $originalFileName = $file->getClientOriginalName();
+                $originalFileName = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
             }
