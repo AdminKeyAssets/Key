@@ -1,6 +1,22 @@
 <template>
     <div>
 
+        <!-- Copy From Button -->
+        <div class="form-group">
+            <div @click="openModal" class="btn btn-primary">Copy From</div>
+        </div>
+
+        <!-- Modal for Selecting Asset -->
+        <el-dialog title="Select Asset" :visible.sync="isModalVisible" width="30%">
+            <el-select v-model="selectedAsset" placeholder="Select an asset">
+                <el-option v-for="asset in assets" :key="asset.id" :label="asset.project_name" :value="asset.project_name"></el-option>
+            </el-select>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="isModalVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="copyAsset">Confirm</el-button>
+            </span>
+        </el-dialog>
+
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Icon:</label>
             <div class="col-md-10 uppercase-medium">
@@ -104,15 +120,19 @@
 </template>
 
 <script>
+import axios from 'axios'; // Assuming you're using axios for HTTP requests
 import MapMarker from "../../../../components/admin/MapMarker.vue";
 import ImageModal from "../../../../components/admin/ImageModal.vue";
 
 export default {
-    components: { ImageModal, MapMarker },
+    components: {ImageModal, MapMarker},
     props: ['form', 'loading', 'updateData', 'item'],
     data() {
         return {
-            files: []
+            files: [],
+            isModalVisible: false,
+            assets: [],
+            selectedAsset: null
         };
     },
     watch: {
@@ -123,21 +143,55 @@ export default {
         }
     },
     methods: {
-        onIconChange(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.$emit('update-form', { ...this.form, icon: file, iconPreview: e.target.result });
-                };
-                reader.onerror = (error) => {
-                    console.error('Error loading file:', error);
-                };
-                reader.readAsDataURL(file);
-            }
+        openModal() {
+            this.isModalVisible = true;
+            this.fetchAssets();
         },
-        removeIcon() {
-            this.$emit('update-form', { ...this.form, icon: null, iconPreview: null });
+        fetchAssets() {
+            axios.get('/assets/names')
+                .then(response => {
+                    this.assets = response.data.data.assets; // Assuming the API returns an array of asset names
+                })
+                .catch(error => {
+                    console.error('Error fetching assets:', error);
+                });
+        },
+        copyAsset() {
+            if (this.selectedAsset) {
+                axios.post(`/assets/clone/${this.selectedAsset}`)
+                    .then(response => {
+                        const data = response.data.data;
+                        const asset = data.asset;
+                        const gallery = data.gallery;
+
+                        // Assign values to the existing form fields
+                        if (asset.project_name) this.form.project_name = asset.project_name;
+                        if (asset.project_description) this.form.project_description = asset.project_description;
+                        if (asset.project_link) this.form.project_link = asset.project_link;
+                        if (asset.city) this.form.city = asset.city;
+                        if (asset.address) this.form.address = asset.address;
+                        if (asset.total_floors) this.form.total_floors = asset.total_floors;
+                        if (asset.location) this.form.location = asset.location;
+                        if (asset.delivery_date) this.form.delivery_date = asset.delivery_date;
+                        // if (gallery) this.files = gallery;
+                        if (gallery) {
+                            this.form.gallery = gallery;
+                            this.files = gallery.map(file => ({
+                                file: file,
+                                preview: file.preview || file.image || '',
+                                name: file.name || file.fileName || ''
+                            }));
+                        }
+
+                        this.$emit('update-form', {...this.form});
+
+                        this.$emit('update-form', this.form);
+                        this.isModalVisible = false;
+                    })
+                    .catch(error => {
+                        console.error('Error cloning asset:', error);
+                    });
+            }
         },
 
         triggerInput() {
@@ -191,7 +245,7 @@ export default {
         },
         removeFile(index) {
             this.files.splice(index, 1);
-            this.$emit('update-form', { ...this.form });
+            this.$emit('update-form', {...this.form});
         }
     }
 }
@@ -243,4 +297,3 @@ export default {
     cursor: pointer;
 }
 </style>
-
