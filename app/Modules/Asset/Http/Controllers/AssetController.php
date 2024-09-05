@@ -408,8 +408,9 @@ class AssetController extends BaseController
             if ($asset->rentals) {
                 $asset->rentals()->delete();
             }
-            if ($request->rentals) {
 
+
+            if ($request->rentals) {
                 foreach (json_decode($request->rentals) as $rental) {
                     Rental::create([
                         'number' => $rental->number,
@@ -426,7 +427,11 @@ class AssetController extends BaseController
                     if ($activeTenant->id) {
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
                     }
-                    $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
+                    $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
+                    foreach ($paymentHistories as $paymentsHistory){
+//                        dd($paymentsHistory->month);
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    }
 
                 }
             } else {
@@ -443,9 +448,15 @@ class AssetController extends BaseController
                 }
 
                 if ($asset->rentalPaymentsHistories) {
-                    $totalPaid = $asset->rentalPaymentsHistories()->sum('amount');
-
-                    $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
+                    $activeTenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
+                    $totalPaid = 0;
+                    if ($activeTenant->id) {
+                        $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
+                    }
+                    $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
+                    foreach ($paymentHistories as $paymentsHistory){
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    }
                 }
             }
         }

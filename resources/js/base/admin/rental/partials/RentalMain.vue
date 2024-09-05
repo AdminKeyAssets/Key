@@ -26,9 +26,9 @@
                         </div>
                     </div>
 
-                    <div class="form-group dashed">
-                        <label class="col-md-1 control-label">Payment Date:</label>
-                        <div class="col-md-10 uppercase-medium">
+                    <div class="form-group dashed col-md-6">
+                        <label class="col-md-2 control-label">Payment Date:</label>
+                        <div class="col-md-6 uppercase-medium">
                             <el-date-picker
                                 v-model="form.date"
                                 format="yyyy/MM/dd"
@@ -39,20 +39,34 @@
                         </div>
                     </div>
 
-                </el-row>
-
-                <div class="form-group dashed">
-                    <label class="col-md-1 control-label">Attachment:</label>
-                    <div class="col-md-10 uppercase-medium">
-                        <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
-                            Attachment</a>
-                            <el-button type="danger" icon="el-icon-delete" size="small"
-                                       @click="removeFile"
-                            ></el-button>
-                        </p>
-                        <input v-else type="file" class="form-control" @change="onFileChange">
+                    <div class="form-group dashed col-md-6">
+                        <label class="col-md-2 control-label">Select Rent Month:</label>
+                        <div class="col-md-6 uppercase-medium">
+                            <el-select v-model="form.month" :value="form.month" filterable placeholder="Select">
+                                <el-option
+                                    v-for="(rental, index) in rentals"
+                                    :key="index"
+                                    :label="rental.number"
+                                    :value="rental.number">
+                                </el-option>
+                            </el-select>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Attachment:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
+                                Attachment</a>
+                                <el-button type="danger" icon="el-icon-delete" size="small"
+                                           @click="removeFile"
+                                ></el-button>
+                            </p>
+                            <input v-else type="file" class="form-control" @change="onFileChange">
+                        </div>
+                    </div>
+
+                </el-row>
 
             </el-form>
         </div>
@@ -70,7 +84,7 @@ export default {
         'routes',
         'updateData',
         'item',
-        'assets'
+        'rentals'
     ],
     data() {
         return {

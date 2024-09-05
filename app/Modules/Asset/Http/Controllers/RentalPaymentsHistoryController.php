@@ -100,10 +100,12 @@ class RentalPaymentsHistoryController extends BaseController
                 'save' => route('asset.rental.store', $assetId),
                 'edit' => route('asset.rental.edit', $assetId, []),
             ];
-            $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->get();
+
+            $rentalsToPay = Rental::where('asset_id', $assetId)->where('status', 0)->get('number');
+            $this->baseData['rentals'] = $rentalsToPay;
+
             if ($request->get('id')) {
                 $rental = RentalPaymentsHistory::findOrFail($request->get('id'));
-
                 $this->baseData['item'] = $rental;
             }
         } catch (\Exception $ex) {
@@ -148,10 +150,14 @@ class RentalPaymentsHistoryController extends BaseController
                 'date' => $request->date,
                 'amount' => $request->amount,
                 'currency' => $request->currency,
-                'attachment' => $path
+                'attachment' => $path,
+                'month' => $request->month ?? null
             ]);
 
-            $this->paymentsHelper->recalculateRentalPaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
+            $startMonth = $request->month ?? Rental::where('asset_id', $assetId)
+                ->where('status', 0)->first()->number;
+
+            $this->paymentsHelper->recalculateRentalPaymentsAfterEdit($paymentHistory->asset, $paymentHistory, $oldAmount, $request->amount, $startMonth);
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
@@ -168,10 +174,14 @@ class RentalPaymentsHistoryController extends BaseController
                 'amount' => $request->amount,
                 'currency' => $request->currency,
                 'attachment' => $path,
-                'tenant_id' => $tenant->id
+                'tenant_id' => $tenant->id,
+                'month' => $request->month ?? null
             ]);
 
-            $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount);
+            $startMonth = $request->month ?? Rental::where('asset_id', $assetId)
+                ->where('status', 0)->first()->number;
+
+            $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount, $paymentHistory, $startMonth);
         }
         $this->baseData['item'] = $paymentHistory;
 
@@ -238,7 +248,7 @@ class RentalPaymentsHistoryController extends BaseController
             $asset = $paymentHistory->asset;
             $paymentHistory->delete();
 
-            $this->paymentsHelper->recalculateRentalPaymentsAfterDeletion($asset, $amount);
+            $this->paymentsHelper->recalculateRentalPaymentsAfterDeletion($asset, $paymentHistory);
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
