@@ -236,7 +236,7 @@ class RevenueController extends BaseController
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
             $totalRent += $asset->rentalPaymentsHistories()->sum('amount');
-            if ($asset->agreement_status === "Investments") {
+            if ($asset->agreement_status === "Installments") {
                 $totalInvestment += $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
             } else {
                 $totalInvestment += $asset->total_price + $asset->investments()->sum('amount');
@@ -247,7 +247,7 @@ class RevenueController extends BaseController
 
         foreach ($paginatedAssets as $asset) {
             $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
-            if ($asset->agreement_status === "Investments") {
+            if ($asset->agreement_status === "Installments") {
                 $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
             } else {
                 $asset->total_investment = $asset->total_price + $asset->investments()->sum('amount');
