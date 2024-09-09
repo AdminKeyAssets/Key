@@ -408,8 +408,9 @@ class AssetController extends BaseController
             if ($asset->rentals) {
                 $asset->rentals()->delete();
             }
-            if ($request->rentals) {
 
+
+            if ($request->rentals) {
                 foreach (json_decode($request->rentals) as $rental) {
                     Rental::create([
                         'number' => $rental->number,
@@ -426,7 +427,11 @@ class AssetController extends BaseController
                     if ($activeTenant->id) {
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
                     }
-                    $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
+                    $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
+                    foreach ($paymentHistories as $paymentsHistory){
+//                        dd($paymentsHistory->month);
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    }
 
                 }
             } else {
@@ -443,9 +448,15 @@ class AssetController extends BaseController
                 }
 
                 if ($asset->rentalPaymentsHistories) {
-                    $totalPaid = $asset->rentalPaymentsHistories()->sum('amount');
-
-                    $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $totalPaid);
+                    $activeTenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
+                    $totalPaid = 0;
+                    if ($activeTenant->id) {
+                        $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
+                    }
+                    $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
+                    foreach ($paymentHistories as $paymentsHistory){
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    }
                 }
             }
         }
@@ -692,5 +703,26 @@ class AssetController extends BaseController
         $payments[$period - 1]['amount'] = round($totalAmount - ($amountPerPeriod * ($period - 1)), 2);
 
         return $payments;
+    }
+
+    public function getAssetsToClone()
+    {
+        $assets = DB::table('assets')
+            ->select('project_name', DB::raw('MAX(id) as id'))
+            ->groupBy('project_name')
+            ->get();
+
+        $this->baseData['assets'] = $assets;
+
+        return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
+    }
+
+    public function clone($name)
+    {
+        $asset = Asset::where('project_name', $name)->first();
+        $this->baseData['asset'] = $asset;
+        $this->baseData['gallery'] = AssetGallery::where('asset_id', $asset->id)->get();
+
+        return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
     }
 }

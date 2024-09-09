@@ -21,6 +21,7 @@
                                 <el-option label="Legal Services" value="Legal Services"></el-option>
                                 <el-option label="Administrative Costs" value="Administrative Costs"></el-option>
                                 <el-option label="Utilities" value="Utilities"></el-option>
+                                <el-option label="Brokerage Fee" value="Brokerage Fee"></el-option>
                                 <el-option label="Other" value="Other"></el-option>
                             </el-select>
                         </div>

@@ -5,6 +5,7 @@ namespace App\Modules\Asset\Http\Controllers;
 use App\Modules\Admin\Exports\RentsPaymentsExport;
 use App\Modules\Admin\Exports\RentsScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
 use App\Modules\Asset\Http\Requests\LeaseRequest;
 use App\Modules\Asset\Models\Asset;
@@ -61,6 +62,12 @@ class RentalPaymentsHistoryController extends BaseController
     {
         $this->baseData['allData'] = RentalPaymentsHistory::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
+        $asset = Asset::where('id', $assetId)->first();
+        $investor = Investor::where('id', $asset->investor_id)->first();
+        $this->baseData['extra'] = [
+            'asset_name' => $asset->project_name,
+            'investor_name' => $investor->name . ' ' . $investor->surname,
+        ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
@@ -71,6 +78,12 @@ class RentalPaymentsHistoryController extends BaseController
     public function create($assetId)
     {
         $this->baseData['assetId'] = $assetId;
+        $asset = Asset::where('id', $assetId)->first();
+        $investor = Investor::where('id', $asset->investor_id)->first();
+        $this->baseData['extra'] = [
+            'asset_name' => $asset->project_name,
+            'investor_name' => $investor->name . ' ' . $investor->surname,
+        ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
     }
 
@@ -87,10 +100,12 @@ class RentalPaymentsHistoryController extends BaseController
                 'save' => route('asset.rental.store', $assetId),
                 'edit' => route('asset.rental.edit', $assetId, []),
             ];
-            $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->get();
+
+            $rentalsToPay = Rental::where('asset_id', $assetId)->where('status', 0)->get('number');
+            $this->baseData['rentals'] = $rentalsToPay;
+
             if ($request->get('id')) {
                 $rental = RentalPaymentsHistory::findOrFail($request->get('id'));
-
                 $this->baseData['item'] = $rental;
             }
         } catch (\Exception $ex) {
@@ -135,10 +150,14 @@ class RentalPaymentsHistoryController extends BaseController
                 'date' => $request->date,
                 'amount' => $request->amount,
                 'currency' => $request->currency,
-                'attachment' => $path
+                'attachment' => $path,
+                'month' => $request->month ?? null
             ]);
 
-            $this->paymentsHelper->recalculateRentalPaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
+            $startMonth = $request->month ?? Rental::where('asset_id', $assetId)
+                ->where('status', 0)->first()->number;
+
+            $this->paymentsHelper->recalculateRentalPaymentsAfterEdit($paymentHistory->asset, $paymentHistory, $oldAmount, $request->amount, $startMonth);
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
@@ -155,10 +174,14 @@ class RentalPaymentsHistoryController extends BaseController
                 'amount' => $request->amount,
                 'currency' => $request->currency,
                 'attachment' => $path,
-                'tenant_id' => $tenant->id
+                'tenant_id' => $tenant->id,
+                'month' => $request->month ?? null
             ]);
 
-            $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount);
+            $startMonth = $request->month ?? Rental::where('asset_id', $assetId)
+                ->where('status', 0)->first()->number;
+
+            $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount, $paymentHistory, $startMonth);
         }
         $this->baseData['item'] = $paymentHistory;
 
@@ -169,13 +192,19 @@ class RentalPaymentsHistoryController extends BaseController
      * @param $id
      * @return Application|Factory|View
      */
-    public function edit($id = '')
+    public function edit($assetId, $id = '')
     {
         try {
-            $this->baseData['routes']['create_form_data'] = route('asset.rental.create_data');
+            $this->baseData['routes']['create_form_data'] = route('asset.rental.create_data', $assetId);
 
             $this->baseData['id'] = $id;
 
+            $asset = Asset::where('id', $assetId)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
         }
@@ -194,6 +223,12 @@ class RentalPaymentsHistoryController extends BaseController
 
             $this->baseData['id'] = $id;
 
+            $asset = Asset::where('id', $assetId)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
         }
@@ -213,7 +248,7 @@ class RentalPaymentsHistoryController extends BaseController
             $asset = $paymentHistory->asset;
             $paymentHistory->delete();
 
-            $this->paymentsHelper->recalculateRentalPaymentsAfterDeletion($asset, $amount);
+            $this->paymentsHelper->recalculateRentalPaymentsAfterDeletion($asset, $paymentHistory);
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
