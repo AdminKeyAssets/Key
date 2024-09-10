@@ -52,7 +52,7 @@ class AssetRequest extends FormRequest
 
             'tenant.name' => 'required_if:asset_status,Rented',
             'tenant.surname' => 'required_if:asset_status,Rented',
-            'tenant.id_number' => 'required_if:asset_status,Rented|numeric',
+            'tenant.id_number' => 'required_if:asset_status,Rented',
             'tenant.citizenship' => 'required_if:asset_status,Rented',
             'tenant.email' => 'required_if:asset_status,Rented|email',
             'tenant.prefix' => 'required_if:asset_status,Rented',
