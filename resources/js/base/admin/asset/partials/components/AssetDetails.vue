@@ -462,19 +462,19 @@ export default {
             this.updateFinalRentalAmount(this.rentals);
         },
         updateFinalRentalAmount(rentals) {
-            const totalAmount =
-                parseFloat(this.tenant.monthly_rent) *
-                parseInt(this.tenant.agreement_term, 10);
-            let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
-                return sum + parseFloat(rental.amount);
-            }, 0);
-
-            const finalAmount = totalAmount - amountSum;
-
-            this.$set(rentals, rentals.length - 1, {
-                ...rentals[rentals.length - 1],
-                amount: finalAmount.toFixed(2),
-            });
+            // const totalAmount =
+            //     parseFloat(this.tenant.monthly_rent) *
+            //     parseInt(this.tenant.agreement_term, 10);
+            // let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
+            //     return sum + parseFloat(rental.amount);
+            // }, 0);
+            //
+            // const finalAmount = totalAmount - amountSum;
+            //
+            // this.$set(rentals, rentals.length - 1, {
+            //     ...rentals[rentals.length - 1],
+            //     amount: finalAmount.toFixed(2),
+            // });
         },
         onExtraDetailFileChange(e, index) {
             const file = e.target.files[0];

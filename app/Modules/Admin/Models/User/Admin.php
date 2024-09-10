@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Models\User;
 
+use App\Modules\Admin\Models\Reminder;
 use App\Modules\Asset\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -59,6 +60,11 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
     public function investors()
     {
         return $this->hasMany(Investor::class);
+    }
+
+    public function reminder()
+    {
+        return $this->hasMany(Reminder::class);
     }
 
 }

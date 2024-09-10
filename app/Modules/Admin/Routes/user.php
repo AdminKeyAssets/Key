@@ -1,6 +1,6 @@
 <?php
-Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function () {
-    Route::name('admin.user.')->prefix('users')->group(function(){
+Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () {
+    Route::name('admin.user.')->prefix('users')->group(function () {
 
         $userController = 'User\UserController';
         $moduleName = 'user';
@@ -10,21 +10,21 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
          */
         Route::get('', $userController . '@index')
             ->name('index')
-            ->middleware(['permission:'.getPermissionKey($moduleName, 'index', true)]);
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
 
         /*
          * Create Form.
          */
         Route::get('create/{id?}', $userController . '@create')
             ->name('create_form')
-            ->middleware(['permission:'.getPermissionKey($moduleName, 'create', true)]);
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
 
         /**
          * Get Create/Update form data.
          */
         Route::post('create-form-data', $userController . '@getCreateData')
             ->name('create_form_data')
-            ->middleware(['permission:'.getPermissionKey($moduleName, 'create', true)]);
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
 
 
         /*
@@ -32,30 +32,38 @@ Route::group([ 'prefix' => 'admin', 'middleware' => ['auth:admin'] ], function (
          */
         Route::post('save', $userController . '@save')
             ->name('save')
-            ->middleware(['permission:'.getPermissionKey($moduleName, 'create', true)]);
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
 
         /**
          * Delete user.
          */
         Route::post('delete', $userController . '@delete')
             ->name('delete')
-            ->middleware(['permission:'.getPermissionKey($moduleName, 'delete', true)]);
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
         /**
          * Export users.
          */
         Route::get('export', $userController . '@export')
             ->name('export')
-            ->middleware(['permission:'.getPermissionKey($moduleName, 'export', false)]);
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
 
         Route::get('filter-options', $userController . '@filterOptions')
             ->name('filters');
+
+        $reminderController = 'Reminder\ReminderController';
+        $reminderModuleName = 'reminder';
+
+        Route::get('/reminders', $reminderController . '@index')->name('reminder.index');
+        Route::post('/reminders', $reminderController . '@store')->name('reminder.create');
+        Route::patch('/reminders/{id}/done', $reminderController . '@markDone')->name('reminder.patch');
+
     });
 
     /**
      * Profile manage.
      */
-    Route::name('admin.profile.')->prefix('profile')->group(function() {
+    Route::name('admin.profile.')->prefix('profile')->group(function () {
 
         /**
          * Profile edit page

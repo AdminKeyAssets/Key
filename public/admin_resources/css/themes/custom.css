@@ -920,7 +920,10 @@ padding: 60px;
     flex-direction: row
 }
 
-.comments-container .el-badge.item, .payments-container .el-badge.item, .rentals-container .el-badge.item {
+.comments-container .el-badge.item,
+.payments-container .el-badge.item,
+.rentals-container .el-badge.item,
+.reminders-container .el-badge.item {
     margin-bottom: 0 !important;
     margin-top: 18px;
     margin-right: 10px;

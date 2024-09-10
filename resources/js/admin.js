@@ -71,6 +71,7 @@ Vue.component('investment-view-page-form', require('./base/admin/investment/page
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 Vue.component('pending-payments', require('./base/admin/notification/PaymentNotification').default);
 Vue.component('pending-rentals', require('./base/admin/notification/RentalNotification').default);
+Vue.component('upcoming-reminders', require('./base/admin/notification/ReminderNotification').default);
 
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
