@@ -15,6 +15,7 @@
 
                 <lead-view-page-form
                     :id="{{ $data['id'] }}"
+                    :user-id="{{ auth()->user()->getAuthIdentifier() }}"
                     :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                 </lead-view-page-form>
 

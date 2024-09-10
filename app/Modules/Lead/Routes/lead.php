@@ -18,5 +18,16 @@ Route::prefix('lead')->name('lead.')->group(function () {
     Route::get('/prefixes', $controller . '@prefixes')->name('prefixes');
 //    // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
+
+
+    $commentController = 'LeadCommentController';
+    $commentModuleName = 'lead_comment';
+
+    Route::get('/{lead}/comments', $commentController . '@index')->name('comments.list');
+    //Save
+    Route::post('/{lead}/comments', $commentController . '@store')->name('comments.store');
+    // Delete
+    Route::post('/{lead}/comments/delete/{id?}', $commentController . '@destroy')->name('lead.comments.delete');
+
 });
 

@@ -34,6 +34,7 @@
                         <thead>
                         <tr>
                             <th> Name</th>
+                            <th> Photo</th>
                             @if(Auth::guard('admin')->check())
                                 <th> Investor</th>
                             @endif
@@ -57,6 +58,15 @@
                                         <a href="{{route('asset.revenue.details', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @else
                                         <a href="{{route('asset.revenue.view', [ $item->id ])}}">{!! $item->project_name !!}</a>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->icon && !is_null($item->icon) && $item->icon !== 'null')
+                                        <image-modal thumbnail="{!! $item->icon !!}"
+                                                     image-path="{!! $item->icon !!}"
+                                                     :rounded="true"
+                                                     :width="{{50}}"
+                                                     :height="{{50}}"></image-modal>
                                     @endif
                                 </td>
                                 @if(Auth::guard('admin')->check())

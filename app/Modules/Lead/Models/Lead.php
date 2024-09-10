@@ -2,6 +2,7 @@
 
 namespace App\Modules\Lead\Models;
 
+use App\Modules\Admin\Models\User\Admin;
 use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
@@ -12,5 +13,7 @@ class Lead extends Model
         'email',
         'phone',
         'prefix',
+        'admin_id',
+        'status'
     ];
 }

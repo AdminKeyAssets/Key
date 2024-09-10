@@ -54,7 +54,7 @@ class AssetRequest extends FormRequest
             'tenant.surname' => 'required_if:asset_status,Rented',
             'tenant.id_number' => 'required_if:asset_status,Rented',
             'tenant.citizenship' => 'required_if:asset_status,Rented',
-            'tenant.email' => 'required_if:asset_status,Rented|email',
+//            'tenant.email' => 'required_if:asset_status,Rented|email',
             'tenant.prefix' => 'required_if:asset_status,Rented',
             'tenant.phone' => 'required_if:asset_status,Rented|numeric',
             'tenant.agreement_date' => 'required_if:asset_status,Rented',

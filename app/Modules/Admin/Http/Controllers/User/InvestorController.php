@@ -166,7 +166,7 @@ class InvestorController extends BaseController
             $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
 
             $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
-                $query->where('name', 'like', '%manager%');
+                $query->where('name', 'like', '%asset%manager%');
             })->get();
         } catch (\Exception $ex) {
             Log::error('Error during roles index page', ['message' => $ex->getMessage(), 'data' => $request->all()]);

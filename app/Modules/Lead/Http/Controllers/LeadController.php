@@ -4,6 +4,7 @@ namespace App\Modules\Lead\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Lead\Http\Requests\LeadRequest;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Mockery\Exception;
 
@@ -44,7 +46,13 @@ class LeadController extends BaseController
      */
     public function index(Request $request)
     {
-        $this->baseData['allData'] = Lead::orderByDesc('id')->paginate(25);
+        $query = Lead::query();
+        $query->orderByDesc('id');
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        $this->baseData['allData'] = $query->paginate(50);;
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
@@ -73,7 +81,11 @@ class LeadController extends BaseController
                 $lead = Lead::findOrFail($request->get('id'));
                 $this->baseData['item'] = $lead;
             }
-//            $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
+            $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
+
+            $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                $query->where('name', 'like', '%sale%manager%');
+            })->get();
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
@@ -92,7 +104,10 @@ class LeadController extends BaseController
             [
                 'name' => $request->name,
                 'surname' => $request->surname,
-                'phone' => $request->phone
+                'phone' => $request->phone,
+                'prefix' => $request->prefix,
+                'status' => $request->status,
+                'admin_id' => $request->admin_id,
             ]);
         $this->baseData['item'] = $lead;
 

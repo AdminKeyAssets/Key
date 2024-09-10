@@ -112,15 +112,16 @@ class AdminRepository extends BaseRepository implements IAdminRepository
                         Storage::disk('public')->delete($this->admin->profile_picture);
                     }
                 }
-
+                $this->admin->profile_picture = $profilePicture;
                 $this->admin->update($data);
 
             } else {
                 if ($request->hasFile('profile_picture')) {
                     $profilePictureFile = $request->file('profile_picture');
                     $profilePicture = $profilePictureFile->store('uploads', 'public');
+                    $profilePicture = Storage::url($profilePicture);
                 }
-                $data['profile_picture'] = Storage::url($profilePicture);
+                $data['profile_picture'] = $profilePicture;
                 $this->admin = $this->create($data);
                 $this->mailService->sendEmail(
                     $data['email'],
