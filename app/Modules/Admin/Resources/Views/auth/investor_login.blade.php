@@ -123,16 +123,7 @@
                                     <input type="email" class="form-control" id="email" name="email"
                                            placeholder="Email">
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group phone">
-                                        <span class="input-group-addon">
-                                            <select data-live-search="true" id="phone_prefix" name="prefix" class="form-control selectpicker" style="width: auto; display: inline-block;">
-                                                <!-- Prefixes will be dynamically added here -->
-                                            </select>
-                                        </span>
-                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone">
-                                    </div>
-                                </div>
+                                @include('admin::includes.prefixes')
                             </div>
 
                             <!-- Demo Credentials -->
@@ -166,24 +157,6 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         $(document).ready(function () {
-            // Fetch prefixes when the modal is shown
-            $('#registrationModal').on('show.bs.modal', function () {
-                $.ajax({
-                    url: '/lead/prefixes',
-                    method: 'GET',
-                    success: function (response) {
-                        let prefixSelect = $('#phone_prefix');
-                        prefixSelect.empty(); // Clear existing options
-
-                        response.forEach(function (item) {
-                            prefixSelect.append(new Option(item.prefix, item.prefix));
-                        });
-                    },
-                    error: function () {
-                        alert('Failed to load phone prefixes.');
-                    }
-                });
-            });
 
             // Handle form submission via AJAX
             $('#registration-form').on('submit', function (e) {
