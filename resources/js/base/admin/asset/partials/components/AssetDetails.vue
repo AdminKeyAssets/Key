@@ -36,7 +36,6 @@
             <div class="col-md-10 uppercase-medium">
                 <input
                     class="form-control"
-                    type="number"
                     :disabled="loading"
                     v-model="form.flat_number"
                 />
@@ -178,14 +177,21 @@
                         <el-input
                             class="col-md-12"
                             v-model="extraDetail.key"
-                            placeholder="Name for extra detail"
+                            placeholder="Name"
+                        ></el-input>
+                    </div>
+                    <div class="col-md-3 uppercase-medium">
+                        <el-input
+                            class="col-md-12"
+                            v-model="extraDetail.provider"
+                            placeholder="Provider"
                         ></el-input>
                     </div>
                     <div class="col-md-3 uppercase-medium">
                         <el-input
                             class="col-md-12"
                             v-model="extraDetail.value"
-                            placeholder="Value for extra detail"
+                            placeholder="Value"
                         ></el-input>
                     </div>
                     <div class="col-md-3 uppercase-medium">
@@ -522,6 +528,7 @@ export default {
                     {
                         id: Date.now(),
                         key: "",
+                        provider: "",
                         value: "",
                         attachment: null,
                     },

@@ -8,6 +8,7 @@ class AssetAttachment extends Model
 {
     protected $fillable = [
         'path',
+        'image',
         'asset_id',
         'name',
         'type',

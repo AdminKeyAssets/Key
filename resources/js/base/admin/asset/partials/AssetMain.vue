@@ -14,7 +14,7 @@
                         <el-tab-pane label="Asset Details" name="2">
                             <AssetDetails :form="form" :item="item" :loading="loading" :types="types" :currencies="currencies" :conditions="conditions" :investors="investors" @update-form="updateForm"/>
                         </el-tab-pane>
-                        <el-tab-pane label="Extra" name="3">
+                        <el-tab-pane label="Asset Photos" name="3">
                             <ExtraDetails :form="form" :loading="loading" @update-form="updateForm"/>
                         </el-tab-pane>
                         <el-tab-pane label="Agreement Details" name="4">
@@ -52,7 +52,6 @@ export default {
                 extraDetails: [],
                 attachments: [],
                 existingAttachments: [],
-                attachmentsToRemove: [],
                 icon: null,
                 iconPreview: null,
                 payments: [],

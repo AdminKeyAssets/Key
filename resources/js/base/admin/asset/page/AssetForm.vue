@@ -107,8 +107,18 @@ export default {
             for (let key in this.form) {
                 if (key === 'attachments') {
                     // Append each attachment to the formData
-                    this.form.attachments.forEach(fileObj => {
-                        formData.append('attachments[]', fileObj.file);
+                    // this.form.attachments.forEach(fileObj => {
+                    //     formData.append('attachments[]', fileObj.file);
+                    // });
+
+                    this.form.attachments.forEach((image, index) => {
+                        if (image) {
+                            if (image.file) {
+                                formData.append(`attachments[${index}]`, image.file);
+                            } else {
+                                formData.append(`attachments[${index}]`, image.image);
+                            }
+                        }
                     });
                 } else if (key === 'attachmentsToRemove') {
                     formData.append(key, JSON.stringify(this.form.attachmentsToRemove));
@@ -121,6 +131,7 @@ export default {
                 } else if (key === 'extraDetails') {
                     this.form.extraDetails.forEach((detail, index) => {
                         formData.append(`extraDetails[${index}][key]`, detail.key);
+                        formData.append(`extraDetails[${index}][provider]`, detail.provider);
                         formData.append(`extraDetails[${index}][value]`, detail.value);
                         if (detail.attachment) {
                             if (detail.attachment.file) {

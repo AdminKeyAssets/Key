@@ -158,7 +158,6 @@ class AssetController extends BaseController
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
-//                    dd([$asset->id, $tenant->id, $this->baseData['item']['rental_payments_histories']]);
                 }
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->get();
@@ -170,7 +169,7 @@ class AssetController extends BaseController
                     foreach ($asset->attachments as $item) {
                         $files[] = [
                             'name' => $item->name,
-                            'path' => Storage::url($item->path),
+                            'image' => $item->image,
                             'type' => substr($item->type, 0, 5) == 'image' ? 'image' : null
                         ];
                     }
@@ -194,7 +193,7 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
-//        dd($request->id);
+
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
             if ($request->hasFile('icon')) {
@@ -429,7 +428,6 @@ class AssetController extends BaseController
                     }
                     $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
                     foreach ($paymentHistories as $paymentsHistory){
-//                        dd($paymentsHistory->month);
                         $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
                     }
 
@@ -503,31 +501,32 @@ class AssetController extends BaseController
             }
         }
 
-        if ($request->has('attachmentsToRemove')) {
-            $attachmentsToRemove = json_decode($request->attachmentsToRemove, true);
-            foreach ($attachmentsToRemove as $attachmentId) {
-                $attachment = AssetAttachment::find($attachmentId);
-                if ($attachment) {
-                    Storage::disk('public')->delete($attachment->path);
-                    $attachment->delete();
-                }
-            }
-        }
+        $asset->attachments()->delete();
+        if ($request->has('attachments')) {
+            foreach ($request->attachments as $key => $file) {
 
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('uploads', 'public');
+                if (gettype($file) == 'string') {
+                    $path = $file;
+                    $explodedFile = explode('/', $path);
+                    $explodedFile = array_reverse($explodedFile);
+                    $originalFileName = $explodedFile[0];
+                } else {
+                    $originalFileName = time() . '_' . $file->getClientOriginalName();
+                    $path = $file->storeAs('uploads', $originalFileName, 'public');
+                    $path = Storage::url($path);
+                }
+
                 AssetAttachment::create([
                     'asset_id' => $asset->id,
-                    'path' => $path,
-                    'name' => time() . '_' . $file->getClientOriginalName(),
-                    'type' => $file->getMimeType()
+                    'image' => $path,
+                    'name' => $originalFileName,
                 ]);
             }
         }
 
+
+        $asset->gallery()->delete();
         if ($request->has('gallery')) {
-            $asset->gallery()->delete();
             foreach ($request->gallery as $key => $file) {
 
                 if (gettype($file) == 'string') {
@@ -581,6 +580,7 @@ class AssetController extends BaseController
 
                 AssetInformation::create([
                     'key' => $detail['key'],
+                    'provider' => $detail['provider'],
                     'value' => $detail['value'],
                     'attachment' => $extraDetailAttachmentPath,
                     'asset_id' => $asset->id

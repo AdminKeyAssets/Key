@@ -64,8 +64,10 @@
                                         <el-col class="project-gallery" :span="24" :md="8">
                                             <div v-if="form.gallery && form.gallery[0]" class="form-group">
                                                 <div class="col-md-12 uppercase-medium">
-                                                    <ImageBox :initial-main-image="form.gallery[0].image"
-                                                              :images="form.gallery"></ImageBox>
+                                                    <ImageBox
+                                                        :slides-count="2"
+                                                        :initial-main-image="form.gallery[0].image"
+                                                        :images="form.gallery"></ImageBox>
                                                 </div>
                                             </div>
                                         </el-col>
@@ -220,6 +222,7 @@
                                             <el-table border :data="form.extraDetails"
                                                       style="width: 100%">
                                                 <el-table-column prop="key"/>
+                                                <el-table-column prop="provider"/>
                                                 <el-table-column prop="value"/>
                                                 <el-table-column prop="attachment">
                                                     <template slot-scope="scope">
@@ -240,7 +243,7 @@
                                          :class="{ 'hidden-body': !showExtraAttachments }">
                                     <div slot="header" class="clearfix main-header" @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
                                         <div style="width: 98%">
-                                            <span>Extra Attachments</span>
+                                            <span>Asset Photos</span>
                                         </div>
                                         <div style="width: 2%">
                                             <i v-if="!showExtraAttachments" class="el-icon-caret-right"></i>
@@ -249,25 +252,21 @@
                                     </div>
                                     <el-row class="row-item">
                                         <div>
-                                            <el-table border :data="form.attachments"
-                                                      style="width: 100%">
-                                                <el-table-column prop="name"/>
-                                                <el-table-column prop="path">
-                                                    <template slot-scope="scope">
-                                                        <a :href="scope.row.path" v-if="scope.row.path"
-                                                           target="_blank">View
-                                                            {{ scope.row.name }}</a>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
+                                            <div v-if="form.attachments && form.attachments[0]" class="form-group">
+                                                <div class="col-md-12 uppercase-medium">
+                                                    <ImageBox
+                                                        :slides-count="3"
+                                                        :initial-main-image="form.attachments[0].image"
+                                                        :images="form.attachments"></ImageBox>
+                                                </div>
+                                            </div>
                                         </div>
                                     </el-row>
                                 </el-card>
                             </el-row>
 
-
-                            <el-row style="margin-bottom: 30px" v-if="form.tenant">
-                                <el-card class="box-card" v-if="form.asset_status === 'Rented'">
+                            <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
+                                <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Tenant Details</span>
                                     </div>
