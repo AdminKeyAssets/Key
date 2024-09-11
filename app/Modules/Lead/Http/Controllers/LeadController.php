@@ -52,8 +52,27 @@ class LeadController extends BaseController
             ->orderByDesc('leads.id');
 
         $query->orderByDesc('id');
+
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        if ($request->create_date) {
+            $createdDates = explode(',', $request->create_date);
+
+            if (isset($createdDates[0])) {
+                $query->where('leads.created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('leads.created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        if ($request->manager) {
+            $managerNamesArray = explode(' ', $request->manager);
+            $managerUser = Admin::where('name', $managerNamesArray[0])
+                ->where('surname', $managerNamesArray[1])->first();
+            $query->where('leads.admin_id', '=', $managerUser->id);
         }
 
         $this->baseData['allData'] = $query->paginate(50);;
@@ -223,5 +242,14 @@ class LeadController extends BaseController
     public function prefixes()
     {
         return Country::groupBy('prefix')->get('prefix');
+    }
+
+    public function filterOptions()
+    {
+        $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+            $query->where('name', 'like', '%sale%manager%');
+        })->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
 }

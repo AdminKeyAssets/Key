@@ -302,7 +302,7 @@ class InvestorController extends BaseController
     {
         $this->baseData['countries'] = Country::get('country');
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
-            $query->where('name', 'like', '%manager%');
+            $query->where('name', 'like', '%asset%manager%');
         })->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);

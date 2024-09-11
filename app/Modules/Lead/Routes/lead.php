@@ -19,6 +19,8 @@ Route::prefix('lead')->name('lead.')->group(function () {
 //    // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
+    Route::get('filter-options', $controller . '@filterOptions')
+        ->name('filters');
 
     $commentController = 'LeadCommentController';
     $commentModuleName = 'lead_comment';

@@ -82,6 +82,7 @@ Vue.component('investor-profile-save-component', require('./base/admin/investor/
 //Lead
 Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').default);
 Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewForm').default);
+Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
 
 
 /**

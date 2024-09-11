@@ -18,6 +18,11 @@
 
         </div>
         <br>
+        <div class="row">
+            <lead-filter-component>
+            </lead-filter-component>
+        </div>
+        <br>
         <div class="block">
 
             @include('admin::includes.success')
