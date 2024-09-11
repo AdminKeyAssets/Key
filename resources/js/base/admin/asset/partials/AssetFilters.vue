@@ -13,7 +13,7 @@
             <el-row>
                 <div class="form-group">
                     <el-date-picker
-                        v-model="form.agreement_date"
+                        v-model="form.create_date"
                         type="daterange"
                         format="yyyy/MM/dd"
                         value-format="yyyy/MM/dd"
@@ -33,6 +33,17 @@
                     </el-select>
                 </div>
 
+                <div class="form-group">
+                    <el-select v-model="form.asset" filterable placeholder="Asset Name">
+                        <el-option
+                            v-for="asset in this.assets"
+                            :key="asset.project_name"
+                            :label="asset.project_name"
+                            :value="asset.project_name"
+                        ></el-option>
+                    </el-select>
+                </div>
+
                 <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
             </el-row>
         </el-form>
@@ -48,9 +59,11 @@ export default {
             form: {
                 agreement_date: '',
                 investor: '',
+                asset: '',
             },
             showFilters: false,
-            investors: []
+            investors: [],
+            assets: []
         };
     },
     mounted() {
@@ -62,6 +75,7 @@ export default {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
+            this.form.asset = urlParams.get('asset') || '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -69,7 +83,7 @@ export default {
         },
 
         fetchRevenueFilters() {
-            axios.get('/assets/revenues/filter-options')
+            axios.get('/assets/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
@@ -78,6 +92,9 @@ export default {
 
                         if (data.investors) {
                             this.investors = data.investors;
+                        }
+                        if (data.assets) {
+                            this.assets = data.assets;
                         }
                     }
                 })

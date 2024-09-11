@@ -49,6 +49,7 @@ Vue.component('image-modal', require('./base/components/admin/ImageModal').defau
 Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').default);
 Vue.component('manager-page-form', require('./base/admin/asset/page/ManagerForm').default);
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
+Vue.component('asset-filter-component', require('./base/admin/asset/partials/AssetFilters').default);
 
 //Revenue
 Vue.component('revenue-filter-component', require('./base/admin/revenue/partials/RevenueFilters').default);

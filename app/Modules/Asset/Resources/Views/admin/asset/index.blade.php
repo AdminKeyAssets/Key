@@ -8,17 +8,25 @@
         <!-- END Statistics Widgets Header -->
 
         <!-- Responsive Full Block -->
-        <div class="row">
-            @can(getPermissionKey($moduleKey, 'create', true))
-                <div class="col-md-6">
-                    <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i class="el-icon-plus"></i>
-                        Create Asset</a>
-                </div>
-            @endcan
 
-        </div>
-        <br>
         <div class="block">
+
+            <div class="row">
+                @can(getPermissionKey($moduleKey, 'create', true))
+                    <div class="col-md-6">
+                        <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i class="el-icon-plus"></i>
+                            Create Asset</a>
+                    </div>
+                @endcan
+
+            </div>
+
+            @if(\Auth::guard('admin')->check())
+                <div class="row">
+                    <asset-filter-component>
+                    </asset-filter-component>
+                </div>
+            @endif
 
             @include('admin::includes.success')
 

@@ -16,14 +16,17 @@
 
             @include('admin::includes.success')
 
-            <div class="row">
-                <revenue-export-component>
-                </revenue-export-component>
-            </div>
-            <div class="row">
-                <revenue-filter-component>
-                </revenue-filter-component>
-            </div>
+            @if(\Auth::guard('admin')->check())
+                <div class="row">
+                    <revenue-export-component>
+                    </revenue-export-component>
+                </div>
+
+                <div class="row">
+                    <revenue-filter-component>
+                    </revenue-filter-component>
+                </div>
+            @endif
 
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)

@@ -84,15 +84,41 @@ class AssetController extends BaseController
 
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
-        if (in_array($user->getRolesNameAttribute(), $managers)) {
-            $investors = Investor::where('admin_id', $userId)->pluck('id');
-            $this->baseData['allData'] = Asset::whereIn('investor_id', $investors)->orderByDesc('id')->paginate(25);
-        } else {
-            $this->baseData['allData'] = Asset::orderByDesc('id')->paginate(25);
+        $query = Asset::query();
+
+        // Apply filters if provided in the request
+        if ($request->investor) {
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $investorNamesArray[0])
+                ->where('surname', $investorNamesArray[1])->first();
+            if (isset($investorUser->id)) {
+                $query->where(function ($query) use ($investorUser) {
+                    $query->where('investor_id', '=', $investorUser->id);
+                });
+            }
         }
 
+        if ($request->asset) {
+            $query->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
+        if ($request->create_date) {
+            $createdDates = explode(',', $request->create_date);
+            if (isset($createdDates[0])) {
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        // Order by descending asset ID
+        $this->baseData['allData'] = $query->orderByDesc('id')->paginate(25);
+
+        // Return view with filtered data
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
+
 
     /**
      * @param Request $request
@@ -735,4 +761,18 @@ class AssetController extends BaseController
 
         return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
     }
+
+    public function filterOptions()
+    {
+        $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+
+        // Group by project_name and get the latest asset (by max id) for each project
+        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderByDesc('max_id')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
 }

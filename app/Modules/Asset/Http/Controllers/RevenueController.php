@@ -133,15 +133,15 @@ class RevenueController extends BaseController
         }
 
         if ($request->investor) {
-            $managerNamesArray = explode(' ', $request->investor);
-            $managerUser = Investor::where('name', $managerNamesArray[0])
-                ->where('surname', $managerNamesArray[1])->first();
-            if (isset($managerUser->id)) {
-                $paginatedAssets->where(function ($query) use ($managerUser) {
-                    $query->where('investor_id', '=', $managerUser->id);
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $investorNamesArray[0])
+                ->where('surname', $investorNamesArray[1])->first();
+            if (isset($investorUser->id)) {
+                $paginatedAssets->where(function ($query) use ($investorUser) {
+                    $query->where('investor_id', '=', $investorUser->id);
                 });
-                $allAssets->where(function ($query) use ($managerUser) {
-                    $query->where('investor_id', '=', $managerUser->id);
+                $allAssets->where(function ($query) use ($investorUser) {
+                    $query->where('investor_id', '=', $investorUser->id);
                 });
             }
         }
