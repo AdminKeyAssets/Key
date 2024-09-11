@@ -46,7 +46,11 @@ class LeadController extends BaseController
      */
     public function index(Request $request)
     {
-        $query = Lead::query();
+        $query = Lead::query()
+            ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id') // Use leftJoin to include leads even if admin_id is null
+            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname') // Select lead fields and admin's name, surname
+            ->orderByDesc('leads.id');
+
         $query->orderByDesc('id');
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', auth()->user()->getAuthIdentifier());

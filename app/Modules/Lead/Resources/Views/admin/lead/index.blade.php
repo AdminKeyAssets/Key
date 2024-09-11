@@ -34,6 +34,9 @@
                             <th> Surname</th>
                             <th> Email</th>
                             <th> Cell</th>
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                <th> Sales Manager</th>
+                            @endif
                             <th> Status</th>
                             <th> Created At</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
@@ -54,6 +57,9 @@
                                 </td>
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                    <td>{!! $item->manager_name !!} {!! $item->manager_surname !!}</td>
+                                @endif
                                 <td>{!! $item->status !!}</td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
 
