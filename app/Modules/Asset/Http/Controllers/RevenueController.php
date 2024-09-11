@@ -132,6 +132,20 @@ class RevenueController extends BaseController
             }
         }
 
+        if ($request->investor) {
+            $managerNamesArray = explode(' ', $request->investor);
+            $managerUser = Investor::where('name', $managerNamesArray[0])
+                ->where('surname', $managerNamesArray[1])->first();
+            if (isset($managerUser->id)) {
+                $paginatedAssets->where(function ($query) use ($managerUser) {
+                    $query->where('investor_id', '=', $managerUser->id);
+                });
+                $allAssets->where(function ($query) use ($managerUser) {
+                    $query->where('investor_id', '=', $managerUser->id);
+                });
+            }
+        }
+
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
@@ -355,4 +369,10 @@ class RevenueController extends BaseController
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
     }
 
+    public function filterOptions()
+    {
+        $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
 }

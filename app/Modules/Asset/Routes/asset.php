@@ -86,7 +86,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/revenues/view/{id?}', $revenueController . '@view')->name('revenue.view');
     Route::get('/revenues/details/{id?}', $revenueController . '@investorView')->name('revenue.details')->middleware(['auth:investor']);
     Route::post('/revenues/create-data', $revenueController . '@createData')->name('revenue_create_form_data');
-
+    Route::get('/revenues/filter-options', $revenueController . '@filterOptions')
+        ->name('revenuesfilters');
 
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';
