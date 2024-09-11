@@ -105,6 +105,19 @@
                 </el-select>
             </div>
         </div>
+
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Rent Agreement:</label>
+            <div class="col-md-10 uppercase-medium">
+                <input type="file" @change="onRentAgreementChange">
+                <div v-if="tenant.rent_agreement">
+                    <p v-if="tenant.rent_agreement">File: <a :href="tenant.rent_agreement" target="_blank">View Attachment</a></p>
+                    <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                               @click="removeRentAgreement"></el-button>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group dashed">
             <el-button type="primary" size="medium" @click="generateRentalList">Generate Rent Schedule</el-button>
         </div>
@@ -159,6 +172,22 @@ export default {
         },
         removePassport() {
             this.tenant.passport = null;
+            this.$emit('update-tenant', this.tenant);
+        },
+
+        onRentAgreementChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.tenant.rent_agreement = { file: file, preview: e.target.result };
+                    this.$emit('update-tenant', this.tenant);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeRentAgreement() {
+            this.tenant.rent_agreement = null;
             this.$emit('update-tenant', this.tenant);
         },
     }

@@ -403,6 +403,16 @@ class AssetController extends BaseController
                     $tenant->passport = $path;
                     $tenant->save();
                 }
+
+                if ($request->hasFile('tenant.rent_agreement')) {
+                    $rentAgreementFile = $request->file('tenant.rent_agreement');
+                    $filename = time() . '_' . $rentAgreementFile->getClientOriginalName();
+                    $path = $rentAgreementFile->storeAs('uploads', $filename, 'public');
+                    $path = Storage::url($path);
+
+                    $tenant->rent_agreement = $path;
+                    $tenant->save();
+                }
             }
             if ($asset->rentals) {
                 $asset->rentals()->delete();

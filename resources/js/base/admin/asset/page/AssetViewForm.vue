@@ -333,8 +333,8 @@
                                         </el-row>
 
                                         <el-row class="row-item"
-                                                v-if="form.tenant.passport">
-                                            <el-col :span="12">
+                                                v-if="form.tenant.passport || form.tenant.rent_agreement">
+                                            <el-col :span="12" v-if="form.tenant.passport">
                                                 <div class="form-group">
                                                     <label class="col-md-4 control-label">Passport:</label>
                                                     <div class="col-md-6 uppercase-medium">
@@ -343,6 +343,21 @@
                                                                         :width="100"
                                                                         :height="100"
                                                                         :thumbnail="form.tenant.passport"></ImageModal>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+
+                                            <el-col :span="12" v-if="form.tenant.rent_agreement">
+                                                <div class="form-group">
+                                                    <label class="col-md-4 control-label">Rent Agreement:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-if="form.tenant.rent_agreement">
+                                                            <p v-if="form.tenant.rent_agreement">
+                                                                <a :href="form.tenant.rent_agreement" target="_blank">
+                                                                    {{ getFilename(form.tenant.rent_agreement) }}
+                                                                </a>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
