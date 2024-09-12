@@ -15,7 +15,16 @@ class CreateSalesTable extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->
+            $table->string('project');
+            $table->string('investor');
+            $table->string('type');
+            $table->string('size');
+            $table->string('price');
+            $table->string('currency')->default('USD');
+            $table->string('total_price');
+            $table->string('agreement_status');
+            $table->string('down_payment')->nullable();
+            $table->string('period')->nullable();
             $table->timestamps();
         });
     }

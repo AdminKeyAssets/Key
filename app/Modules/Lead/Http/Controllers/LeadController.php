@@ -75,7 +75,7 @@ class LeadController extends BaseController
             $query->where('leads.admin_id', '=', $managerUser->id);
         }
 
-        $this->baseData['allData'] = $query->paginate(50);;
+        $this->baseData['allData'] = $query->paginate(50);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 

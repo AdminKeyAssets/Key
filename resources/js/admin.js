@@ -85,6 +85,10 @@ Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').defau
 Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewForm').default);
 Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
 
+//Sale
+Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);
+Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

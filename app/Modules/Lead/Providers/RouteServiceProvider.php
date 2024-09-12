@@ -41,6 +41,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapLeadsRoutes();
 
+        $this->mapSalesRoutes();
+
         //
     }
 
@@ -86,6 +88,16 @@ class RouteServiceProvider extends ServiceProvider
             'namespace'  => $this->namespace,
         ], function ($router) {
             require module_path('lead', 'Routes/lead.php', 'app');
+        });
+    }
+
+    protected function mapSalesRoutes()
+    {
+        Route::group([
+            'middleware' => 'web',
+            'namespace'  => $this->namespace,
+        ], function ($router) {
+            require module_path('lead', 'Routes/sale.php', 'app');
         });
     }
 }
