@@ -79,6 +79,7 @@ Vue.component('admin-investor-save-component', require('./base/admin/investor/pa
 Vue.component('admin-investor-component', require('./base/admin/investor/partials/Investor').default);
 Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 Vue.component('investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
+Vue.component('demo-investor-component', require('./base/admin/investor/partials/DemoInvestor').default);
 
 //Lead
 Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').default);

@@ -7,7 +7,6 @@ if (!$user) {
 }
 ?>
 @section('content')
-    <div id="admin">
         <div id="page-wrapper">
             <div id="page-container" class="sidebar-partial sidebar-visible-lg sidebar-no-animations">
 
@@ -142,7 +141,6 @@ if (!$user) {
             <!-- END Page Container -->
         </div>
         <!-- END Page Wrapper -->
-    </div>
 @endsection
 
 <script>

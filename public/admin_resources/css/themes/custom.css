@@ -1108,6 +1108,9 @@ table thead th {
 
 .not-registered-wrapper {
     background-color: transparent !important;
+}
+
+.not-registered-wrapper .title-wrapper{
     text-align: center;
     margin-top: 15%;
     margin-bottom: 15px;
@@ -1172,4 +1175,11 @@ table thead th {
 .header-section.flex-header-row .asset-info{
     text-align: left;
     font-weight: 400;
+}
+
+.form-group.phone.login-phone .el-input-group__prepend, .form-group.phone.login-phone .el-select, .form-group.phone.login-phone .el-select .el-input{
+    padding-bottom: 0 !important;
+}
+.form-group.phone.login-phone .el-select .el-input{
+    max-width: 80px;
 }
