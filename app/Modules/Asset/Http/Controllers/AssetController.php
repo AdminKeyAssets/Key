@@ -86,6 +86,10 @@ class AssetController extends BaseController
 
         $query = Asset::query();
 
+        if (auth()->user()->getRolesNameAttribute() != 'administrator'){
+            $query->where('admin_id', '=', $userId);
+        }
+
         // Apply filters if provided in the request
         if ($request->investor) {
             $investorNamesArray = explode(' ', $request->investor);
@@ -204,7 +208,11 @@ class AssetController extends BaseController
             }
             $this->baseData['item']['countries'] = Country::get('country');
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
-            $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+            if (auth()->user()->getRolesNameAttribute() == 'administrator'){
+                $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+            }else{
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'id']);
+            }
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
