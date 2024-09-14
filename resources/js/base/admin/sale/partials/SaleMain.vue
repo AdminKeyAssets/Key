@@ -9,7 +9,7 @@
 
                 <el-row>
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Project: <span class="text-danger">*</span></label>
+                        <label class="col-md-2 control-label">Project: </label>
                         <div class="col-md-6">
                             <el-autocomplete
                                 class="inline-input"
@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Investor: <span class="text-danger">*</span></label>
+                        <label class="col-md-2 control-label">Investor: </label>
                         <div class="col-md-6">
                             <el-autocomplete
                                 class="inline-input"
@@ -86,16 +86,29 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-1 control-label">Total Price:</label>
-                        <div class="col-md-10 uppercase-medium">
+                        <label class="col-md-2 control-label">Total Price:</label>
+                        <div class="col-md-6 uppercase-medium">
                             <input class="form-control" type="number" :disabled="loading"
                                    v-model="form.total_price"></input>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-1 control-label">Agreement Status:</label>
-                        <div class="col-md-3 uppercase-medium">
+                        <label class="col-md-2 control-label">Agreement Date:</label>
+                        <div class="col-md-6 uppercase-medium">
+                            <el-date-picker
+                                v-model="form.agreement_date"
+                                format="yyyy/MM/dd"
+                                type="date"
+                                value-format="yyyy/MM/dd"
+                                placeholder="Pick an agreement date">
+                            </el-date-picker>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Agreement Status:</label>
+                        <div class="col-md-6 uppercase-medium">
                             <el-select v-model="form.agreement_status"
                                        :value="form.agreement_status"
                                        filterable
@@ -113,15 +126,15 @@
                     <template v-if="form.agreement_status === 'Installments'">
 
                         <div class="form-group dashed">
-                            <label class="col-md-1 control-label">Down Payment:</label>
-                            <div class="col-md-10 uppercase-medium">
+                            <label class="col-md-2 control-label">Down Payment:</label>
+                            <div class="col-md-6 uppercase-medium">
                                 <input class="form-control" :disabled="loading" v-model="form.down_payment"></input>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-1 control-label">Period:</label>
-                            <div class="col-md-3 uppercase-medium">
+                            <label class="col-md-2 control-label">Period:</label>
+                            <div class="col-md-6 uppercase-medium">
                                 <el-select v-model="form.period"
                                            :value="form.period"
                                            filterable

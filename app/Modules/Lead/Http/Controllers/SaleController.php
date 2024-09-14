@@ -43,7 +43,7 @@ class SaleController extends BaseController
      */
     public function index(Request $request)
     {
-        $this->baseData['allData'] = Sale::paginate(25);
+        $this->baseData['allData'] = Sale::orderByDesc('agreement_date')->paginate(25);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
@@ -73,11 +73,11 @@ class SaleController extends BaseController
                 $this->baseData['item'] = $sale;
             }
 
-            $this->baseData['investors'] = Investor::get()->map(function($investor) {
+            $this->baseData['investors'] = Investor::get()->map(function ($investor) {
                 return ['value' => $investor->name . ' ' . $investor->surname];
             });
 
-            $this->baseData['projects'] = Asset::get()->map(function($project) {
+            $this->baseData['projects'] = Asset::get()->map(function ($project) {
                 return ['value' => $project->project_name];
             });
 
@@ -94,31 +94,33 @@ class SaleController extends BaseController
      */
     public function store(SaleRequest $request)
     {
-        if($request->id){
+        if ($request->id) {
             $sale = Sale::where('id', $request->id)->first();
             $sale->update([
-                    'project' => $request->project,
-                    'investor' => $request->investor,
-                    'type' => $request->type,
-                    'size' => $request->size,
-                    'price' => $request->price,
-                    'total_price' => $request->total_price,
-                    'agreement_status' => $request->agreement_status,
-                    'down_payment' => $request->down_payment,
-                    'period' => $request->period,
-                ]);
-        }else{
+                'project' => $request->project,
+                'investor' => $request->investor,
+                'type' => $request->type,
+                'size' => $request->size,
+                'price' => $request->price,
+                'total_price' => $request->total_price,
+                'agreement_status' => $request->agreement_status,
+                'agreement_date' => $request->agreement_date,
+                'down_payment' => $request->down_payment,
+                'period' => $request->period,
+            ]);
+        } else {
             $sale = Sale::Create([
-                    'project' => $request->project,
-                    'investor' => $request->investor,
-                    'type' => $request->type,
-                    'size' => $request->size,
-                    'price' => $request->price,
-                    'total_price' => $request->total_price,
-                    'agreement_status' => $request->agreement_status,
-                    'down_payment' => $request->down_payment,
-                    'period' => $request->period,
-                ]);
+                'project' => $request->project,
+                'investor' => $request->investor,
+                'type' => $request->type,
+                'size' => $request->size,
+                'price' => $request->price,
+                'total_price' => $request->total_price,
+                'agreement_status' => $request->agreement_status,
+                'agreement_date' => $request->agreement_date,
+                'down_payment' => $request->down_payment,
+                'period' => $request->period,
+            ]);
         }
 
         $this->baseData['item'] = $sale;

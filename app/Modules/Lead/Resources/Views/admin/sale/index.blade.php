@@ -39,6 +39,7 @@
                             <th> Price</th>
                             <th> Total Price</th>
                             <th> Agreement Status</th>
+                            <th> Agreement Date</th>
                             <th> Down Payment</th>
                             <th> Period</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
@@ -55,6 +56,7 @@
                                 <td>{!! $item->price !!} {!! $item->currency !!}</td>
                                 <td>{!! $item->total_price !!} {!! $item->currency !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
+                                <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! $item->down_payment !!}</td>
                                 <td>{!! $item->period !!}</td>
 
