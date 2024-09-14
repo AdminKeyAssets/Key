@@ -20,6 +20,7 @@ use App\Modules\Asset\Models\PaymentsHistory;
 use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
+use App\Modules\Asset\Services\AssetCompareService;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
 use DB;
@@ -56,14 +57,20 @@ class AssetController extends BaseController
      * @var UpdateRentalPaymentsHelper
      */
     protected $updateRentalPaymentsHelper;
+    /**
+     * @var AssetCompareService
+     */
+    protected $assetCompareService;
 
     /**
      * @param UpdatePaymentsHelper $updatePaymentsHelper
      * @param UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
+     * @param AssetCompareService $assetCompareService
      */
     public function __construct(
         UpdatePaymentsHelper       $updatePaymentsHelper,
-        UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
+        UpdateRentalPaymentsHelper $updateRentalPaymentsHelper,
+        AssetCompareService $assetCompareService
     )
     {
         parent::__construct();
@@ -71,6 +78,7 @@ class AssetController extends BaseController
         $this->baseData['baseRouteName'] = $this->baseData['baseRouteName'] . '.' . $this->baseData['moduleKey'] . '.';
         $this->updatePaymentsHelper = $updatePaymentsHelper;
         $this->updateRentalPaymentsHelper = $updateRentalPaymentsHelper;
+        $this->assetCompareService = $assetCompareService;
     }
 
     /**
@@ -230,6 +238,17 @@ class AssetController extends BaseController
 
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
+            $adminId = Auth::user()->getAuthIdentifier();
+
+            $originalData = $asset ? $asset->getOriginal() : null;
+            $originalAttachments = $asset ? $asset->attachments()->get()->toArray() : [];
+            $originalInformations = $asset ? $asset->informations()->get()->toArray() : [];
+            $originalAgreements = $asset ? $asset->agreements()->get()->toArray() : [];
+            $originalGallery = $asset ? $asset->gallery()->get()->toArray() : [];
+            $originalRentals = $asset ? $asset->rentals()->get()->toArray() : [];
+            $originalPayments = $asset ? $asset->payments()->get()->toArray() : [];
+
+
             if ($request->hasFile('icon')) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
                     Storage::disk('public')->delete($asset->icon);
@@ -653,6 +672,32 @@ class AssetController extends BaseController
                     'attachment' => $agreementAttachmentPath,
                     'asset_id' => $asset->id
                 ]);
+            }
+        }
+
+        if($request->id){
+            if($originalData){
+                $this->assetCompareService->logAssetChanges($originalData, $asset, $adminId);
+            }
+            if($originalAttachments){
+                $this->assetCompareService->logAttachmentChanges($originalAttachments, $asset->attachments, $asset, $adminId);
+            }
+            if($originalInformations){
+                $this->assetCompareService->logInformationsChanges($originalInformations, $asset->informations()->get()->toArray(), $asset, $adminId);
+            }
+            if($originalAgreements){
+                $this->assetCompareService->logAgreementChanges($originalAgreements, $asset->agreements()->get()->toArray(), $asset, $adminId);
+            }
+            if($originalGallery){
+                $this->assetCompareService->logGalleryChanges($originalGallery, $asset->gallery, $asset, $adminId);
+            }
+
+            if($originalRentals){
+                $this->assetCompareService->logRentalPaymentChanges($originalRentals, $asset->rentals()->get()->toArray(), $asset, $adminId);
+            }
+
+            if($originalPayments){
+                $this->assetCompareService->logPaymentChanges($originalPayments, $asset->payments()->get()->toArray(), $asset, $adminId);
             }
         }
 
