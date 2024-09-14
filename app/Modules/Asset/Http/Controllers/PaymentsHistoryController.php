@@ -69,6 +69,7 @@ class PaymentsHistoryController extends BaseController
         $investor = Investor::where('id', $asset->investor_id)->first();
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
+            'asset_route' => route('asset.view', [ $asset->id ]),
             'investor_name' => $investor->name . ' ' . $investor->surname,
         ];
 
@@ -87,6 +88,7 @@ class PaymentsHistoryController extends BaseController
         $investor = Investor::where('id', $asset->investor_id)->first();
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
+            'asset_route' => route('asset.view', [ $asset->id ]),
             'investor_name' => $investor->name . ' ' . $investor->surname,
         ];
 
@@ -202,6 +204,7 @@ class PaymentsHistoryController extends BaseController
             $investor = Investor::where('id', $asset->investor_id)->first();
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [ $asset->id ]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,
             ];
 
@@ -230,6 +233,7 @@ class PaymentsHistoryController extends BaseController
             $investor = Investor::where('id', $asset->investor_id)->first();
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [ $asset->id ]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,
             ];
 
