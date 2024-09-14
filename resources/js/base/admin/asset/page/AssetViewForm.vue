@@ -851,7 +851,7 @@ export default {
             salesManager: {},
             nextPayment: {},
             showAgreementDetails: true,
-            showExtraAttachments: false
+            showExtraAttachments: true
         }
     },
     created() {
