@@ -98,12 +98,6 @@
             <div class="col-md-7 uppercase-medium">
                 <el-input type="number" v-model="tenant.monthly_rent" placeholder="Monthly Rent"></el-input>
             </div>
-            <div class="col-md-3 uppercase-medium">
-                <el-select v-model="tenant.currency" placeholder="Currency">
-                    <el-option label="USD" value="USD"></el-option>
-                    <el-option label="GEL" value="GEL"></el-option>
-                </el-select>
-            </div>
         </div>
 
         <div class="form-group dashed">

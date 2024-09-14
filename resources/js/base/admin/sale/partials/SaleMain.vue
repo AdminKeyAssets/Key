@@ -70,19 +70,6 @@
                         <div class="col-md-6 uppercase-medium">
                             <input class="form-control" type="number" :disabled="loading" v-model="form.price"></input>
                         </div>
-                        <div class="col-md-3 uppercase-medium">
-                            <el-select v-model="form.currency"
-                                       :value="form.currency"
-                                       filterable
-                                       placeholder="Select">
-                                <el-option
-                                    v-for="(currency, index) in currencies"
-                                    :key="index"
-                                    :label="currency"
-                                    :value="index">
-                                </el-option>
-                            </el-select>
-                        </div>
                     </div>
 
                     <div class="form-group">

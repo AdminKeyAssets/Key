@@ -14,16 +14,6 @@
                         <div class="col-md-7 uppercase-medium">
                             <input class="form-control" :disabled="loading" v-model="form.amount"></input>
                         </div>
-                        <div class="col-md-3 uppercase-medium">
-                            <el-select v-model="form.currency" :value="form.currency" filterable placeholder="Select">
-                                <el-option
-                                    v-for="(currency, index) in currencies"
-                                    :key="index"
-                                    :label="currency"
-                                    :value="index">
-                                </el-option>
-                            </el-select>
-                        </div>
                     </div>
 
                     <div class="form-group dashed col-md-6">
