@@ -53,7 +53,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group dashed">
+                    <div class="form-group">
                         <label class="col-md-2 control-label">Area (m2):</label>
                         <div class="col-md-6 uppercase-medium">
                             <input
@@ -112,7 +112,7 @@
 
                     <template v-if="form.agreement_status === 'Installments'">
 
-                        <div class="form-group dashed">
+                        <div class="form-group">
                             <label class="col-md-2 control-label">Down Payment:</label>
                             <div class="col-md-6 uppercase-medium">
                                 <input class="form-control" :disabled="loading" v-model="form.down_payment"></input>

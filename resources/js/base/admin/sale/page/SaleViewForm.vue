@@ -12,13 +12,84 @@
 
                             <el-row>
 
-                                <div class="form-group dashed">
-                                    <label class="col-md-1 control-label">Email:</label>
-                                    <div class="col-md-10 uppercase-medium">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Project: </label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.project }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Investor: </label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.investor }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Asset Type: </label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.type }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Email:</label>
+                                    <div class="col-md-6 uppercase-medium">
                                         {{ form.email }}
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Email:</label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.email }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Area (m2):</label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.size }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">M2 Price:</label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.price }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Agreement Date:</label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.agreement_date }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Agreement Status:</label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.agreement_status }}
+                                    </div>
+                                </div>
+
+                                <template v-if="form.agreement_status === 'Installments'">
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Down Payment:</label>
+                                        <div class="col-md-6 uppercase-medium">
+                                            {{ form.down_payment }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Period:</label>
+                                        <div class="col-md-6 uppercase-medium">
+                                            {{ form.period }}
+                                        </div>
+                                    </div>
+                                </template>
                             </el-row>
                         </el-form>
                     </div>
