@@ -4,7 +4,7 @@
         @if(isset($extra))
             <div class="asset-info">
                 <div>
-                    <a href="{{$extra['asset_route']}}">
+                    <a target="_blank" href="{{$extra['asset_route']}}">
                         <i class="el-icon-house"></i> {{ $extra['asset_name'] }}
                     </a>
                 </div>

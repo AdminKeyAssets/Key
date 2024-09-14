@@ -715,6 +715,14 @@ class AssetController extends BaseController
 
             $this->baseData['id'] = $id;
 
+            $asset = Asset::where('id', $id)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [ $asset->id ]),
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
+
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
         }
