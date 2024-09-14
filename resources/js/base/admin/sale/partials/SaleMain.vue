@@ -158,8 +158,6 @@
 
 
 <script>
-import {responseParse} from '../../../mixins/responseParse'
-import {getData} from '../../../mixins/getData'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
@@ -193,12 +191,17 @@ export default {
                 "GEL": "GEL",
             },
             numbers: this.getNumbersInRange(2, 50),
+            updatingTotalPrice: false, // Flag to prevent recursion
+            updatingSqmPrice: false,
         }
     },
     updated() {
         this.updateData(this.form);
     },
     watch: {
+        'form.price': 'updateTotalPrice',
+        'form.size': 'updateTotalPrice',
+        'form.total_price': 'updateSqmPrice',
         'item'() {
             if (this.item) {
                 this.form = this.item;
@@ -229,6 +232,30 @@ export default {
                 numbers.push(i);
             }
             return numbers;
+        },
+
+        updateTotalPrice() {
+            console.log(123);
+            if (this.updatingSqmPrice) return; // Prevent recursion when sqm price is being updated
+            this.updatingTotalPrice = true;
+
+            const price = parseFloat(this.form.price) || 0;
+            const area = parseFloat(this.form.size) || 0;
+            this.form.total_price = price * area;
+            // this.$emit('update-form', {...this.form, total_price: totalPrice});
+
+            this.updatingTotalPrice = false;
+        },
+
+        updateSqmPrice() {
+            if (this.updatingTotalPrice) return; // Prevent recursion when total price is being updated
+            this.updatingSqmPrice = true;
+
+            const totalPrice = parseFloat(this.form.total_price) || 0;
+            const area = parseFloat(this.form.size) || 0;
+            this.form.price = totalPrice / area;
+
+            this.updatingSqmPrice = false;
         },
     },
 }
