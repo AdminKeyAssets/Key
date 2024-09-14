@@ -11,18 +11,21 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @param string|null $guard
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check() && request()->route()->getName() != 'admin.logout') {
-            if(auth()->user()){
-                if(auth()->user()->getRolesNameAttribute() == 'administrator'){
+            if (auth()->user()) {
+                if (auth()->user()->getRolesNameAttribute() == 'administrator') {
                     return redirect()->route('admin.user.index');
-                }else{
+                } elseif (auth()->user()->getRolesNameAttribute() == 'Sale Manager'||
+                    auth()->user()->getRolesNameAttribute() == 'Sales Manager') {
+                    return redirect()->route('lead.index');
+                } else {
                     return redirect()->route('admin.investor.index');
                 }
             }
