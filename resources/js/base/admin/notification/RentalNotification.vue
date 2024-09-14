@@ -1,40 +1,47 @@
 <template>
-        <div class="rentals-container">
-            <el-popover
-                placement="bottom"
-                title="Pending Rent"
-                width="400"
-                trigger="click">
-                <div class="items-wrapper">
-                    <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index" :class="getItemClass(index)">
-                        <el-card class="box-card">
-                            <div slot="header" class="clearfix">
-                                <a :href="rental.project_route"><i class="el-icon-house"> {{ rental.project_name }}</i></a> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
+    <div class="rentals-container">
+        <el-popover
+            placement="bottom"
+            title="Pending Rent"
+            width="400"
+            trigger="click">
+            <div class="items-wrapper">
+                <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index"
+                     :class="getItemClass(index)">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <a :href="rental.project_route"><i class="el-icon-house"> {{ rental.project_name }}</i></a>
+                            <span v-if="!investorView"> - <i
+                                class="el-icon-user">{{ rental.investor_name }} {{ rental.investor_surname }}</i></span>
+                        </div>
+                        <div class="text item">
+                            <div style="padding-bottom: 5px">
+                                <i class="el-icon-money" style="color:green"> {{ formatPrice(rental.amount) }}</i>
                             </div>
-                            <div class="text item">
-                                <div style="padding-bottom: 5px">
-                                    <i class="el-icon-money" style="color:green"> {{ formatPrice(rental.amount) }}</i>
-                                </div>
-                                <div>
-                                    <i class="el-icon-date" style="color:gray"> {{ rental.payment_date }}</i>
-                                </div>
+                            <div>
+                                <i class="el-icon-date" style="color:gray"> {{ rental.payment_date }}</i>
                             </div>
-                            <div class="text item">
-                                <i class="el-icon-user-solid"> {{ rental.tenant_name }} {{ rental.tenant_surname }}</i>
-                            </div>
-                        </el-card>
-                    </div>
+                        </div>
+                        <div class="text item">
+                            <i class="el-icon-user-solid"> {{ rental.tenant_name }} {{ rental.tenant_surname }}</i>
+                        </div>
+                    </el-card>
                 </div>
-                <el-badge slot="reference" v-if="pendingRentalsCount" class="item" style="cursor: pointer" type="warning">
+            </div>
+            <el-badge slot="reference" v-if="pendingRentalsCount" class="item" style="cursor: pointer" type="warning">
+                <el-tooltip content="Rental Notifications" placement="top" effect="light">
                     <i class="el-icon-message-solid" @click="togglePendingRentalsList" style="color: #E6A23C"></i>
-                </el-badge>
+                </el-tooltip>
+            </el-badge>
 
-                <el-badge slot="reference" v-else class="item" style="cursor: pointer" type="warning">
+            <el-badge slot="reference" v-else class="item" style="cursor: pointer" type="warning">
+                <el-tooltip content="Rental Notifications" placement="top" effect="light">
                     <i class="el-icon-bell" @click="togglePendingRentalsList" style="color:white"></i>
-                </el-badge>
-            </el-popover>
+                </el-tooltip>
+            </el-badge>
+        </el-popover>
 
-        </div>
+    </div>
 </template>
 
 <script>
@@ -121,26 +128,31 @@ export default {
     overflow: hidden;
     white-space: nowrap;
 }
-.even-item .box-card{
+
+.even-item .box-card {
     border-left: 5px solid #807f7f;
 }
-.odd-item .box-card{
+
+.odd-item .box-card {
     border-left: 5px solid #646262;
 }
-.text.item{
+
+.text.item {
     margin-bottom: 7px;
 }
-.el-card__header{
+
+.el-card__header {
     padding: 10px 20px;
 }
 
 .items-wrapper::-webkit-scrollbar {
     display: none;
 }
-.items-wrapper{
+
+.items-wrapper {
     max-height: 70vh;
     overflow-y: scroll;
-    -ms-overflow-style: none;  /* IE and Edge */
+    -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
 }
 </style>
