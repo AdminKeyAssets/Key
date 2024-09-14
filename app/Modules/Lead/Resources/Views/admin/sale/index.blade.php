@@ -49,7 +49,11 @@
                         @foreach($allData as $item)
                             <tr>
 
-                                <td>{!! $item->project !!}</td>
+                                <td>
+                                    <a href="{{route($moduleKey . '.view', [ $item->id ])}}">
+                                        {!! $item->project !!}
+                                    </a>
+                                </td>
                                 <td>{!! $item->investor !!}</td>
                                 <td>{!! $item->type !!}</td>
                                 <td>{!! $item->size !!}</td>

@@ -34,20 +34,6 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-2 control-label">Email:</label>
-                                    <div class="col-md-6 uppercase-medium">
-                                        {{ form.email }}
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">Email:</label>
-                                    <div class="col-md-6 uppercase-medium">
-                                        {{ form.email }}
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
                                     <label class="col-md-2 control-label">Area (m2):</label>
                                     <div class="col-md-6 uppercase-medium">
                                         {{ form.size }}
@@ -58,6 +44,13 @@
                                     <label class="col-md-2 control-label">M2 Price:</label>
                                     <div class="col-md-6 uppercase-medium">
                                         {{ form.price }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Total Price:</label>
+                                    <div class="col-md-6 uppercase-medium">
+                                        {{ form.total_price }}
                                     </div>
                                 </div>
 
