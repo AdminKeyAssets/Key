@@ -9,7 +9,7 @@
                     <div class="rental-notification-wrapper" v-for="(rental, index) in pendingRentals" :key="index" :class="getItemClass(index)">
                         <el-card class="box-card">
                             <div slot="header" class="clearfix">
-                                <i class="el-icon-house"> {{ rental.project_name }}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
+                                <a :href="rental.project_route"><i class="el-icon-house"> {{ rental.project_name }}</i></a> <span v-if="!investorView"> - <i class="el-icon-user">{{rental.investor_name}} {{rental.investor_surname}}</i></span>
                             </div>
                             <div class="text item">
                                 <div style="padding-bottom: 5px">
