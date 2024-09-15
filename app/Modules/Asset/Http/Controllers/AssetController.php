@@ -390,7 +390,7 @@ class AssetController extends BaseController
             if ($asset->payments) {
                 $asset->payments()->delete();
             }
-            if ($request->payments) {
+            if (json_decode($request->payments)) {
                 foreach (json_decode($request->payments) as $payment) {
                     Payment::create([
                         'number' => $payment->number,
@@ -412,11 +412,12 @@ class AssetController extends BaseController
 
                 foreach ($payments as $payment) {
                     Payment::create([
-                        'month' => $payment['number'],
+                        'number' => $payment['number'],
                         'payment_date' => $payment['date'],
                         'amount' => $payment['amount'],
                         'left_amount' => $payment['amount'],
-                        'asset_id' => $asset->id
+                        'asset_id' => $asset->id,
+                        'status' => 0
                     ]);
                 }
                 if ($asset->paymentsHistories) {
@@ -472,7 +473,7 @@ class AssetController extends BaseController
             }
 
 
-            if ($request->rentals) {
+            if (json_decode($request->rentals)) {
                 foreach (json_decode($request->rentals) as $rental) {
                     Rental::create([
                         'number' => $rental->number,
@@ -501,7 +502,8 @@ class AssetController extends BaseController
 
                 for ($i = 1; $i <= $period; $i++) {
                     Rental::create([
-                        'month' => $i,
+                        'number' => $i,
+                        'amount' => $tenantData['monthly_rent'],
                         'payment_date' => $firstPaymentDate->copy()->addMonths($i),
                         'left_amount' => $tenantData['monthly_rent'],
                         'asset_id' => $asset->id
