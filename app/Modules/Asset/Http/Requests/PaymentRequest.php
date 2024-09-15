@@ -42,4 +42,13 @@ class PaymentRequest extends FormRequest
             'currency.required' => 'Currency can not be empty.',
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        $this->merge(
+            array_map(function ($value) {
+                return $value === 'null' ? null : $value;
+            }, $this->all())
+        );
+    }
 }
