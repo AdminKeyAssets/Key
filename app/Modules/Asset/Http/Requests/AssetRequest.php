@@ -67,7 +67,7 @@ class AssetRequest extends FormRequest
             'first_payment_date' => 'required_if:agreement_status,Installments',
             'period' => 'required_if:agreement_status,Installments',
 
-            'current_value' => 'required|numeric|digits_between:4,10|min:1000',
+            'current_value' => 'required|numeric|min:1000',
         ];
     }
 
@@ -115,7 +115,7 @@ class AssetRequest extends FormRequest
             'period.numeric_if' => 'The Period must be numeric.',
             'current_value.required' => 'The Current Value is required.',
             'current_value.numeric' => 'The Current Value must be numeric.',
-            'current_value.digits_between' => 'The Current Value must be at least 1000.',
+            'current_value.min' => 'The Current Value must be at least 1000.',
         ];
     }
 }
