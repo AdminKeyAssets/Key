@@ -70,7 +70,7 @@ class AssetController extends BaseController
     public function __construct(
         UpdatePaymentsHelper       $updatePaymentsHelper,
         UpdateRentalPaymentsHelper $updateRentalPaymentsHelper,
-        AssetCompareService $assetCompareService
+        AssetCompareService        $assetCompareService
     )
     {
         parent::__construct();
@@ -94,7 +94,7 @@ class AssetController extends BaseController
 
         $query = Asset::query();
 
-        if (auth()->user()->getRolesNameAttribute() != 'administrator'){
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
         }
 
@@ -216,10 +216,12 @@ class AssetController extends BaseController
             }
             $this->baseData['item']['countries'] = Country::get('country');
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
-            if (auth()->user()->getRolesNameAttribute() == 'administrator'){
-                $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
-            }else{
-                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'id']);
+            if (\Auth::guard('admin')->check()) {
+                if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+                    $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+                } else {
+                    $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'id']);
+                }
             }
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
@@ -361,7 +363,6 @@ class AssetController extends BaseController
             'flat_plan' => $flatPlanPath && $flatPlanPath !== 'null' ? $flatPlanPath : null,
             'agreement' => null,
             'ownership_certificate' => $ownershipCertificatePath && $ownershipCertificatePath !== 'null' ? $ownershipCertificatePath : null,
-            'admin_id' => Auth::user()->getAuthIdentifier(),
             'currency' => $request->currency,
             'project_name' => $request->project_name,
             'project_description' => $request->project_description,
@@ -383,6 +384,9 @@ class AssetController extends BaseController
             'current_value_currency' => $request->current_value_currency ?? 'USD'
         ];
 
+        if(!$request->id){
+            $assetData['admin_id'] = Auth::user()->getAuthIdentifier();
+        }
 
         $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
 
@@ -491,8 +495,8 @@ class AssetController extends BaseController
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
                     }
                     $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
-                    foreach ($paymentHistories as $paymentsHistory){
-                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    foreach ($paymentHistories as $paymentsHistory) {
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory, $paymentsHistory->month ?? 1);
                     }
 
                 }
@@ -517,8 +521,8 @@ class AssetController extends BaseController
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
                     }
                     $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
-                    foreach ($paymentHistories as $paymentsHistory){
-                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    foreach ($paymentHistories as $paymentsHistory) {
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory, $paymentsHistory->month ?? 1);
                     }
                 }
             }
@@ -677,28 +681,28 @@ class AssetController extends BaseController
             }
         }
 
-        if($request->id){
-            if($originalData){
+        if ($request->id) {
+            if ($originalData) {
                 $this->assetCompareService->logAssetChanges($originalData, $asset, $adminId);
             }
-            if($originalAttachments){
+            if ($originalAttachments) {
                 $this->assetCompareService->logAttachmentChanges($originalAttachments, $asset->attachments, $asset, $adminId);
             }
-            if($originalInformations){
+            if ($originalInformations) {
                 $this->assetCompareService->logInformationsChanges($originalInformations, $asset->informations()->get()->toArray(), $asset, $adminId);
             }
-            if($originalAgreements){
+            if ($originalAgreements) {
                 $this->assetCompareService->logAgreementChanges($originalAgreements, $asset->agreements()->get()->toArray(), $asset, $adminId);
             }
-            if($originalGallery){
+            if ($originalGallery) {
                 $this->assetCompareService->logGalleryChanges($originalGallery, $asset->gallery, $asset, $adminId);
             }
 
-            if($originalRentals){
+            if ($originalRentals) {
                 $this->assetCompareService->logRentalPaymentChanges($originalRentals, $asset->rentals()->get()->toArray(), $asset, $adminId);
             }
 
-            if($originalPayments){
+            if ($originalPayments) {
                 $this->assetCompareService->logPaymentChanges($originalPayments, $asset->payments()->get()->toArray(), $asset, $adminId);
             }
         }
@@ -721,7 +725,7 @@ class AssetController extends BaseController
             $investor = Investor::where('id', $asset->investor_id)->first();
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,
             ];
 
