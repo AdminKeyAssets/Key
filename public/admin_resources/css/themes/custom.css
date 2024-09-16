@@ -930,6 +930,16 @@ padding: 60px;
     padding-right: 10px;
 }
 
+.el-popover.el-popper .items-wrapper,
+.el-popover.el-popper .items-wrapper,
+.el-popover.el-popper .items-wrapper,
+.el-popover.el-popper .items-wrapper{
+    max-height: 85vh;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
+}
+
 /*.comments-container, .payments-container, .rentals-container {*/
 /*    margin-right: 10px;*/
 /*}*/
