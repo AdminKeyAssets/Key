@@ -143,7 +143,6 @@
     </div>
 </template>
 
-
 <script>
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
@@ -159,6 +158,9 @@ export default {
         return {
             form: {
                 currency: "USD",
+                size: 0,
+                price: 0,
+                total_price: 0
             },
             loading: false,
             editor: ClassicEditor,
@@ -182,16 +184,25 @@ export default {
             updatingSqmPrice: false,
         }
     },
-    updated() {
-        this.updateData(this.form);
-    },
     watch: {
-        'form.price': 'updateTotalPrice',
-        'form.size': 'updateTotalPrice',
-        'form.total_price': 'updateSqmPrice',
         'item'() {
             if (this.item) {
                 this.form = this.item;
+            }
+        },
+        'form.size'(newSize) {
+            if (!this.updatingTotalPrice && !this.updatingSqmPrice) {
+                this.calculateTotalPrice();
+            }
+        },
+        'form.price'(newPrice) {
+            if (!this.updatingTotalPrice && !this.updatingSqmPrice) {
+                this.calculateTotalPrice();
+            }
+        },
+        'form.total_price'(newTotalPrice) {
+            if (!this.updatingTotalPrice && !this.updatingSqmPrice) {
+                this.calculatePriceFromTotal();
             }
         }
     },
@@ -220,31 +231,21 @@ export default {
             }
             return numbers;
         },
-
-        updateTotalPrice() {
-            console.log(123);
-            if (this.updatingSqmPrice) return; // Prevent recursion when sqm price is being updated
-            this.updatingTotalPrice = true;
-
-            const price = parseFloat(this.form.price) || 0;
-            const area = parseFloat(this.form.size) || 0;
-            this.form.total_price = price * area;
-            // this.$emit('update-form', {...this.form, total_price: totalPrice});
-
-            this.updatingTotalPrice = false;
+        calculateTotalPrice() {
+            if (this.form.size && this.form.price) {
+                this.updatingTotalPrice = true;
+                this.form.total_price = this.form.size * this.form.price;
+                this.updatingTotalPrice = false;
+            }
         },
-
-        updateSqmPrice() {
-            if (this.updatingTotalPrice) return; // Prevent recursion when total price is being updated
-            this.updatingSqmPrice = true;
-
-            const totalPrice = parseFloat(this.form.total_price) || 0;
-            const area = parseFloat(this.form.size) || 0;
-            this.form.price = totalPrice / area;
-
-            this.updatingSqmPrice = false;
-        },
-    },
+        calculatePriceFromTotal() {
+            if (this.form.size && this.form.total_price) {
+                this.updatingSqmPrice = true;
+                this.form.price = this.form.total_price / this.form.size;
+                this.updatingSqmPrice = false;
+            }
+        }
+    }
 }
-
 </script>
+
