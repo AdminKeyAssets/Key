@@ -37,11 +37,15 @@
             </div>
 
             <el-badge v-if="unreadCommentsCount" slot="reference" class="item" style="cursor: pointer">
-                <i class="el-icon-message-solid" @click="toggleUnreadCommentsList" style="color:#F56C6C"></i>
+                <el-tooltip content="Comments" placement="top" effect="light">
+                    <i class="el-icon-message-solid" @click="toggleUnreadCommentsList" style="color:#F56C6C"></i>
+                </el-tooltip>
             </el-badge>
 
             <el-badge v-else :hidden="true" slot="reference" class="item" style="cursor: pointer">
-                <i class="el-icon-bell" @click="toggleUnreadCommentsList" style="color:white"></i>
+                <el-tooltip content="Comments" placement="top" effect="light">
+                    <i class="el-icon-bell" @click="toggleUnreadCommentsList" style="color:white"></i>
+                </el-tooltip>
             </el-badge>
 
         </el-popover>

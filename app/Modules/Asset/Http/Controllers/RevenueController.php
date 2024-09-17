@@ -132,6 +132,20 @@ class RevenueController extends BaseController
             }
         }
 
+        if ($request->investor) {
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $investorNamesArray[0])
+                ->where('surname', $investorNamesArray[1])->first();
+            if (isset($investorUser->id)) {
+                $paginatedAssets->where(function ($query) use ($investorUser) {
+                    $query->where('investor_id', '=', $investorUser->id);
+                });
+                $allAssets->where(function ($query) use ($investorUser) {
+                    $query->where('investor_id', '=', $investorUser->id);
+                });
+            }
+        }
+
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
@@ -232,6 +246,8 @@ class RevenueController extends BaseController
         $totalCapitalGain = 0;
         $totalInvestment = 0;
         $otherInvestment = 0;
+        $totalPurchasePrice = 0;
+        $totalCurrentValue = 0;
 
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
@@ -243,6 +259,8 @@ class RevenueController extends BaseController
             }
             $totalCapitalGain += $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
             $otherInvestment += $asset->investments()->sum('amount');
+            $totalPurchasePrice += $asset->total_price;
+            $totalCurrentValue += $asset->current_value;
         }
 
         foreach ($paginatedAssets as $asset) {
@@ -262,6 +280,8 @@ class RevenueController extends BaseController
             'total_capital_gain' => $totalCapitalGain,
             'total_investment' => $totalInvestment,
             'other_investment' => $otherInvestment,
+            'total_current_value' => $totalCurrentValue,
+            'total_purchase_price' => $totalPurchasePrice,
         ];
     }
 
@@ -355,4 +375,10 @@ class RevenueController extends BaseController
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
     }
 
+    public function filterOptions()
+    {
+        $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
 }

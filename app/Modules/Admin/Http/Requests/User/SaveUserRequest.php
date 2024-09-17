@@ -18,6 +18,18 @@ class SaveUserRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge(
+            array_map(function ($value) {
+                return $value === 'null' ? null : $value;
+            }, $this->all())
+        );
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -35,7 +47,7 @@ class SaveUserRequest extends FormRequest
             'name' => 'required',
             'surname' => 'required',
             'email' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,email', 'email'],
-            'pid' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,pid', 'numeric'],
+            'pid' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,pid'],
             'phone' => 'required',
             'prefix' => 'required',
             'roles' => 'required',
@@ -56,7 +68,6 @@ class SaveUserRequest extends FormRequest
             'email.required' => 'Email can not be empty.',
             'email.email' => 'Missing @ in Email.',
             'pid.required' => 'ID/Passport Number can not be empty.',
-            'pid.numeric' => 'ID/Passport Number should numeric.',
             'phone.required' => 'Phone Number can not be empty.',
             'prefix.required' => 'Prefix Number can not be empty.',
             'email.unique' => 'The email has already been taken.',

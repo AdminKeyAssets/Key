@@ -70,4 +70,7 @@ return [
     'lead' => [
         'default' => $default_permissions
     ],
+    'sale' => [
+        'default' => $default_permissions
+    ],
 ];

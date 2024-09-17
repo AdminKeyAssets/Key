@@ -35,11 +35,52 @@
                     </div>
 
                     <div class="form-group phone">
-                        <label class="col-md-2 control-label">Phone: <span class="text-danger">*</span></label>
+                        <label class="col-md-2 control-label">Phone: </label>
                         <div class="col-md-6">
-                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                      v-model="form.phone"></el-input>
+                            <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
+                                <el-select v-model="form.prefix" slot="prepend" filterable
+                                           placeholder="Prefix">
+                                    <el-option
+                                        v-for="prefix in this.prefixes"
+                                        :key="prefix.prefix"
+                                        :label="prefix.prefix"
+                                        :value="prefix.prefix"
+                                    ></el-option>
+                                </el-select>
+                            </el-input>
                         </div>
+                    </div>
+
+                    <div class="form-group dashed">
+                        <label class="col-md-2 control-label">Status:</label>
+                        <div class="col-md-6 uppercase-medium">
+                            <el-select
+                                v-model="form.status"
+                                placeholder="Select Status">
+                                <el-option label="Not Responding" value="Not Responding"></el-option>
+                                <el-option label="Communication" value="Communication"></el-option>
+                                <el-option label="Proposal Sent" value="Proposal Sent"></el-option>
+                                <el-option label="Refused" value="Refused"></el-option>
+                                <el-option label="Signed" value="Signed"></el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="col-md-2 control-label">Select Manager: <span class="text-danger">*</span>:</label>
+                        <div class="col-md-6">
+                            <el-select v-model="form.admin_id" filterable
+                                       placeholder="Manager">
+                                <el-option
+                                    v-for="manager in this.managers"
+                                    :key="manager.id"
+                                    :label="manager.name + ' ' + manager.surname"
+                                    :value="manager.id"
+                                ></el-option>
+                            </el-select>
+                        </div>
+
                     </div>
                 </el-row>
 
@@ -58,7 +99,9 @@ export default {
     props: [
         'routes',
         'updateData',
-        'item'
+        'item',
+        'prefixes',
+        'managers'
     ],
     data() {
         return {

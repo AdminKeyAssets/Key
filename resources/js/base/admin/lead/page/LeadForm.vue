@@ -10,6 +10,8 @@
                 <LeadMain
                     :routes="routes"
                     :updateData="updateData"
+                    :prefixes="prefixes"
+                    :managers="managers"
                     :item="this.form && this.form ? this.form : undefined"
                 ></LeadMain>
 
@@ -44,6 +46,8 @@ export default {
             data: {},
             loading: false,
             routes: {},
+            prefixes: {},
+            managers: {},
             /** Form data*/
             form: {
                 id: this.id
@@ -82,6 +86,12 @@ export default {
 
                     if (data.item) {
                         this.form = data.item;
+                    }
+                    if (data.prefixes) {
+                        this.prefixes = data.prefixes;
+                    }
+                    if (data.managers) {
+                        this.managers = data.managers;
                     }
                     this.form.id = this.id;
                 }

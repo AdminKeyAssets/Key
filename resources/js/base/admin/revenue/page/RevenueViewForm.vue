@@ -89,7 +89,6 @@
                                                     <label class="col-md-4 control-label">Monthly Rent:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ formatPrice(tenant.monthly_rent) }}
-                                                        {{ tenant.currency }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -137,7 +136,7 @@
                                                     <el-table-column prop="payment_date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }} {{ tenant.currency }}
+                                                            {{ formatPrice(scope.row.amount) }}
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -155,7 +154,7 @@
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }} {{ scope.row.currency }}
+                                                            {{ formatPrice(scope.row.amount) }}
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
@@ -190,7 +189,7 @@
                                                     <el-table-column prop="status" label="Status"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }} {{ scope.row.currency }}
+                                                            {{ formatPrice(scope.row.amount) }}
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="description" label="Description">

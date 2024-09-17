@@ -49,6 +49,7 @@ Vue.component('image-modal', require('./base/components/admin/ImageModal').defau
 Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').default);
 Vue.component('manager-page-form', require('./base/admin/asset/page/ManagerForm').default);
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
+Vue.component('asset-filter-component', require('./base/admin/asset/partials/AssetFilters').default);
 
 //Revenue
 Vue.component('revenue-filter-component', require('./base/admin/revenue/partials/RevenueFilters').default);
@@ -71,6 +72,7 @@ Vue.component('investment-view-page-form', require('./base/admin/investment/page
 Vue.component('unread-comments', require('./base/admin/asset/partials/AssetUnreadComments').default);
 Vue.component('pending-payments', require('./base/admin/notification/PaymentNotification').default);
 Vue.component('pending-rentals', require('./base/admin/notification/RentalNotification').default);
+Vue.component('upcoming-reminders', require('./base/admin/notification/ReminderNotification').default);
 
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
@@ -81,6 +83,11 @@ Vue.component('investor-profile-save-component', require('./base/admin/investor/
 //Lead
 Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').default);
 Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewForm').default);
+Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
+
+//Sale
+Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);
+Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
 
 
 /**

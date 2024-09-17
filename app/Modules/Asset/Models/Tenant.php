@@ -20,7 +20,8 @@ class Tenant extends Model
         'monthly_rent',
         'currency',
         'status',
-        'passport'
+        'passport',
+        'rent_agreement'
     ];
 
     public function asset()

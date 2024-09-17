@@ -64,8 +64,10 @@
                                         <el-col class="project-gallery" :span="24" :md="8">
                                             <div v-if="form.gallery && form.gallery[0]" class="form-group">
                                                 <div class="col-md-12 uppercase-medium">
-                                                    <ImageBox :initial-main-image="form.gallery[0].image"
-                                                              :images="form.gallery"></ImageBox>
+                                                    <ImageBox
+                                                        :slides-count="2"
+                                                        :initial-main-image="form.gallery[0].image"
+                                                        :images="form.gallery"></ImageBox>
                                                 </div>
                                             </div>
                                         </el-col>
@@ -220,6 +222,7 @@
                                             <el-table border :data="form.extraDetails"
                                                       style="width: 100%">
                                                 <el-table-column prop="key"/>
+                                                <el-table-column prop="provider"/>
                                                 <el-table-column prop="value"/>
                                                 <el-table-column prop="attachment">
                                                     <template slot-scope="scope">
@@ -240,7 +243,7 @@
                                          :class="{ 'hidden-body': !showExtraAttachments }">
                                     <div slot="header" class="clearfix main-header" @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
                                         <div style="width: 98%">
-                                            <span>Extra Attachments</span>
+                                            <span>Asset Photos</span>
                                         </div>
                                         <div style="width: 2%">
                                             <i v-if="!showExtraAttachments" class="el-icon-caret-right"></i>
@@ -249,25 +252,21 @@
                                     </div>
                                     <el-row class="row-item">
                                         <div>
-                                            <el-table border :data="form.attachments"
-                                                      style="width: 100%">
-                                                <el-table-column prop="name"/>
-                                                <el-table-column prop="path">
-                                                    <template slot-scope="scope">
-                                                        <a :href="scope.row.path" v-if="scope.row.path"
-                                                           target="_blank">View
-                                                            {{ scope.row.name }}</a>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
+                                            <div v-if="form.attachments && form.attachments[0]" class="form-group">
+                                                <div class="col-md-12 uppercase-medium">
+                                                    <ImageBox
+                                                        :slides-count="3"
+                                                        :initial-main-image="form.attachments[0].image"
+                                                        :images="form.attachments"></ImageBox>
+                                                </div>
+                                            </div>
                                         </div>
                                     </el-row>
                                 </el-card>
                             </el-row>
 
-
-                            <el-row style="margin-bottom: 30px" v-if="form.tenant">
-                                <el-card class="box-card" v-if="form.asset_status === 'Rented'">
+                            <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
+                                <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
                                         <span>Tenant Details</span>
                                     </div>
@@ -334,8 +333,8 @@
                                         </el-row>
 
                                         <el-row class="row-item"
-                                                v-if="form.tenant.passport">
-                                            <el-col :span="12">
+                                                v-if="form.tenant.passport || form.tenant.rent_agreement">
+                                            <el-col :span="12" v-if="form.tenant.passport">
                                                 <div class="form-group">
                                                     <label class="col-md-4 control-label">Passport:</label>
                                                     <div class="col-md-6 uppercase-medium">
@@ -344,6 +343,21 @@
                                                                         :width="100"
                                                                         :height="100"
                                                                         :thumbnail="form.tenant.passport"></ImageModal>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+
+                                            <el-col :span="12" v-if="form.tenant.rent_agreement">
+                                                <div class="form-group">
+                                                    <label class="col-md-4 control-label">Rent Agreement:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-if="form.tenant.rent_agreement">
+                                                            <p v-if="form.tenant.rent_agreement">
+                                                                <a :href="form.tenant.rent_agreement" target="_blank">
+                                                                    {{ getFilename(form.tenant.rent_agreement) }}
+                                                                </a>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -365,7 +379,6 @@
                                                     <label class="col-md-4 control-label">Monthly Rent:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ formatPrice(form.tenant.monthly_rent) }}
-                                                        {{ form.tenant.currency }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -395,7 +408,7 @@
                                                         <template slot-scope="scope">
                                                             {{
                                                                 scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
-                                                            }} {{ form.currency }}
+                                                            }}
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="status" label="Status">
@@ -429,7 +442,7 @@
                                                     <el-table-column prop="date" label="Payment Date"/>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }} {{ form.currency }}
+                                                            {{ formatPrice(scope.row.amount) }}
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
@@ -496,7 +509,7 @@
                                                 <div v-if="form.price" class="form-group">
                                                     <label class="col-md-4 control-label">M2 Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.price) }} {{ form.currency }}
+                                                        {{ formatPrice(form.price) }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -504,7 +517,7 @@
                                                 <div v-if="form.total_price" class="form-group">
                                                     <label class="col-md-4 control-label">Total Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.total_price) }} {{ form.currency }}
+                                                        {{ formatPrice(form.total_price) }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -582,7 +595,7 @@
                                                             <template slot-scope="scope">
                                                                 {{
                                                                     scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
-                                                                }} {{ form.currency }}
+                                                                }}
                                                             </template>
                                                         </el-table-column>
                                                         <el-table-column prop="status" label="Status">
@@ -616,7 +629,7 @@
                                                         <el-table-column prop="date" label="Payment Date"/>
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
-                                                                {{ formatPrice(scope.row.amount) }} {{ form.currency }}
+                                                                {{ formatPrice(scope.row.amount) }}
                                                             </template>
                                                         </el-table-column>
                                                         <el-table-column prop="attachment" label="Attachment">
@@ -649,7 +662,7 @@
                                                 <el-table :data="form.currentValues" style="width: 100%">
                                                     <el-table-column prop="value" label="Value">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.value) }} {{ scope.row.currency }}
+                                                            {{ formatPrice(scope.row.value) }}
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="date" label="Date"/>
@@ -837,7 +850,7 @@ export default {
             salesManager: {},
             nextPayment: {},
             showAgreementDetails: true,
-            showExtraAttachments: false
+            showExtraAttachments: true
         }
     },
     created() {

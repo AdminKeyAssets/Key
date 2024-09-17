@@ -66,6 +66,7 @@ class RentalPaymentsHistoryController extends BaseController
         $investor = Investor::where('id', $asset->investor_id)->first();
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
+            'asset_route' => route('asset.view', [ $asset->id ]),
             'investor_name' => $investor->name . ' ' . $investor->surname,
         ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -82,6 +83,7 @@ class RentalPaymentsHistoryController extends BaseController
         $investor = Investor::where('id', $asset->investor_id)->first();
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
+            'asset_route' => route('asset.view', [ $asset->id ]),
             'investor_name' => $investor->name . ' ' . $investor->surname,
         ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
@@ -203,6 +205,7 @@ class RentalPaymentsHistoryController extends BaseController
             $investor = Investor::where('id', $asset->investor_id)->first();
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [ $asset->id ]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,
             ];
         } catch (\Exception $ex) {
@@ -227,6 +230,7 @@ class RentalPaymentsHistoryController extends BaseController
             $investor = Investor::where('id', $asset->investor_id)->first();
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [ $asset->id ]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,
             ];
         } catch (\Exception $ex) {

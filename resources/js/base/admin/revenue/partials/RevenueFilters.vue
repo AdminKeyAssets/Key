@@ -22,6 +22,17 @@
                     </el-date-picker>
                 </div>
 
+                <div class="form-group">
+                    <el-select v-model="form.investor" filterable placeholder="Investor">
+                        <el-option
+                            v-for="investor in this.investors"
+                            :key="investor.name + ' ' + investor.surname"
+                            :label="investor.name + ' ' + investor.surname"
+                            :value="investor.name + ' ' + investor.surname"
+                        ></el-option>
+                    </el-select>
+                </div>
+
                 <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
             </el-row>
         </el-form>
@@ -36,22 +47,44 @@ export default {
         return {
             form: {
                 agreement_date: '',
+                investor: '',
             },
-            showFilters: false, // Controls the visibility of the filters, initially hidden
+            showFilters: false,
+            investors: []
         };
     },
     mounted() {
         this.loadFiltersFromQueryParams();
+        this.fetchRevenueFilters();
     },
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
+            this.form.investor = urlParams.get('investor') || '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
             window.location.search = queryParams;
         },
+
+        fetchRevenueFilters() {
+            axios.get('/assets/revenues/filter-options')
+                .then(response => {
+                    responseParse(response, false);
+                    if (response.status === 200) {
+                        // Response data.
+                        let data = response.data.data;
+
+                        if (data.investors) {
+                            this.investors = data.investors;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching managers:', error);
+                });
+        }
     }
 };
 </script>

@@ -18,6 +18,14 @@
 
         </div>
         <br>
+
+        <div class="row">
+            <lead-filter-component>
+            </lead-filter-component>
+        </div>
+        <br>
+
+
         <div class="block">
 
             @include('admin::includes.success')
@@ -33,7 +41,11 @@
                             <th> Name</th>
                             <th> Surname</th>
                             <th> Email</th>
-                            <th> Phone</th>
+                            <th> Cell</th>
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                <th> Sales Manager</th>
+                            @endif
+                            <th> Status</th>
                             <th> Created At</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
@@ -41,10 +53,22 @@
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->name !!}</td>
-                                <td>{!! $item->surname !!}</td>
+                                <td>
+                                    <a href="{{route($moduleKey . '.view', [ $item->id ])}}">
+                                        {!! $item->name !!}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{route($moduleKey . '.view', [ $item->id ])}}">
+                                        {!! $item->surname !!}
+                                    </a>
+                                </td>
                                 <td>{!! $item->email !!}</td>
-                                <td>{!! $item->phone !!}</td>
+                                <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                    <td>{!! $item->manager_name !!} {!! $item->manager_surname !!}</td>
+                                @endif
+                                <td>{!! $item->status !!}</td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
 
                                 <td class="text-center">
@@ -80,7 +104,7 @@
 @endsection
 
 <style>
-    th, td{
+    th, td {
         text-align: center !important;
     }
 </style>

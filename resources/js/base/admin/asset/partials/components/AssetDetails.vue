@@ -36,7 +36,6 @@
             <div class="col-md-10 uppercase-medium">
                 <input
                     class="form-control"
-                    type="number"
                     :disabled="loading"
                     v-model="form.flat_number"
                 />
@@ -178,14 +177,21 @@
                         <el-input
                             class="col-md-12"
                             v-model="extraDetail.key"
-                            placeholder="Name for extra detail"
+                            placeholder="Name"
+                        ></el-input>
+                    </div>
+                    <div class="col-md-3 uppercase-medium">
+                        <el-input
+                            class="col-md-12"
+                            v-model="extraDetail.provider"
+                            placeholder="Provider"
                         ></el-input>
                     </div>
                     <div class="col-md-3 uppercase-medium">
                         <el-input
                             class="col-md-12"
                             v-model="extraDetail.value"
-                            placeholder="Value for extra detail"
+                            placeholder="Value"
                         ></el-input>
                     </div>
                     <div class="col-md-3 uppercase-medium">
@@ -327,11 +333,14 @@ export default {
                 currency: "USD",
             },
             rentals: [],
+            updatingTotalPrice: false, // Flag to prevent recursion
+            updatingSqmPrice: false,
         };
     },
     watch: {
         "form.price": "updateTotalPrice",
         "form.area": "updateTotalPrice",
+        "form.total_price": "updateSqmPrice",
         form() {
             if (this.form) {
                 if (!this.form.currency) {
@@ -434,10 +443,27 @@ export default {
             return `${year}/${month}/${day}`;
         },
         updateTotalPrice() {
+            if (this.updatingSqmPrice) return; // Prevent recursion when sqm price is being updated
+            this.updatingTotalPrice = true;
+
             const price = parseFloat(this.form.price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
-            this.$emit("update-form", {...this.form, total_price: totalPrice});
+            this.$emit('update-form', {...this.form, total_price: totalPrice});
+
+            this.updatingTotalPrice = false;
+        },
+
+        updateSqmPrice() {
+            if (this.updatingTotalPrice) return; // Prevent recursion when total price is being updated
+            this.updatingSqmPrice = true;
+
+            const totalPrice = parseFloat(this.form.total_price) || 0;
+            const area = parseFloat(this.form.area) || 0;
+            const price = totalPrice / area;
+            this.$emit("update-form", {...this.form, price: price});
+
+            this.updatingSqmPrice = false;
         },
         updateRentalDate(index, date) {
             this.$set(this.rentals, index, {
@@ -462,19 +488,19 @@ export default {
             this.updateFinalRentalAmount(this.rentals);
         },
         updateFinalRentalAmount(rentals) {
-            const totalAmount =
-                parseFloat(this.tenant.monthly_rent) *
-                parseInt(this.tenant.agreement_term, 10);
-            let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
-                return sum + parseFloat(rental.amount);
-            }, 0);
-
-            const finalAmount = totalAmount - amountSum;
-
-            this.$set(rentals, rentals.length - 1, {
-                ...rentals[rentals.length - 1],
-                amount: finalAmount.toFixed(2),
-            });
+            // const totalAmount =
+            //     parseFloat(this.tenant.monthly_rent) *
+            //     parseInt(this.tenant.agreement_term, 10);
+            // let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
+            //     return sum + parseFloat(rental.amount);
+            // }, 0);
+            //
+            // const finalAmount = totalAmount - amountSum;
+            //
+            // this.$set(rentals, rentals.length - 1, {
+            //     ...rentals[rentals.length - 1],
+            //     amount: finalAmount.toFixed(2),
+            // });
         },
         onExtraDetailFileChange(e, index) {
             const file = e.target.files[0];
@@ -502,6 +528,7 @@ export default {
                     {
                         id: Date.now(),
                         key: "",
+                        provider: "",
                         value: "",
                         attachment: null,
                     },

@@ -4,6 +4,7 @@ namespace App\Modules\Lead\Http\Controllers;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Lead\Http\Requests\LeadRequest;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Mockery\Exception;
 
@@ -44,7 +46,36 @@ class LeadController extends BaseController
      */
     public function index(Request $request)
     {
-        $this->baseData['allData'] = Lead::orderByDesc('id')->paginate(25);
+        $query = Lead::query()
+            ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id') // Use leftJoin to include leads even if admin_id is null
+            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname') // Select lead fields and admin's name, surname
+            ->orderByDesc('leads.id');
+
+        $query->orderByDesc('id');
+
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        if ($request->create_date) {
+            $createdDates = explode(',', $request->create_date);
+
+            if (isset($createdDates[0])) {
+                $query->where('leads.created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('leads.created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        if ($request->manager) {
+            $managerNamesArray = explode(' ', $request->manager);
+            $managerUser = Admin::where('name', $managerNamesArray[0])
+                ->where('surname', $managerNamesArray[1])->first();
+            $query->where('leads.admin_id', '=', $managerUser->id);
+        }
+
+        $this->baseData['allData'] = $query->paginate(50);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
@@ -73,7 +104,11 @@ class LeadController extends BaseController
                 $lead = Lead::findOrFail($request->get('id'));
                 $this->baseData['item'] = $lead;
             }
-//            $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
+            $this->baseData['prefixes'] = Country::groupBy('prefix')->get('prefix');
+
+            $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                $query->where('name', 'like', '%sale%manager%');
+            })->get();
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
@@ -92,7 +127,10 @@ class LeadController extends BaseController
             [
                 'name' => $request->name,
                 'surname' => $request->surname,
-                'phone' => $request->phone
+                'phone' => $request->phone,
+                'prefix' => $request->prefix,
+                'status' => $request->status,
+                'admin_id' => $request->admin_id,
             ]);
         $this->baseData['item'] = $lead;
 
@@ -204,5 +242,14 @@ class LeadController extends BaseController
     public function prefixes()
     {
         return Country::groupBy('prefix')->get('prefix');
+    }
+
+    public function filterOptions()
+    {
+        $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+            $query->where('name', 'like', '%sale%manager%');
+        })->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
 }

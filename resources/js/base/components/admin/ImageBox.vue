@@ -9,7 +9,7 @@
             <swiper-container
                 ref="swiperRef"
                 class="thumbnail-carousel"
-                slides-per-view="2"
+                :slides-per-view="slidesCount"
                 space-between="10"
                 free-mode
                 loop
@@ -54,7 +54,11 @@ export default {
         initialMainImage: {
             type: String,
             required: true
-        }
+        },
+        slidesCount: {
+            type: [Number, String],
+            required: true
+        },
     },
     data() {
         return {

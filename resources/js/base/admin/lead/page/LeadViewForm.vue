@@ -15,23 +15,47 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.name}} {{form.surname}}
+                                        {{ form.name }} {{ form.surname }}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Email:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.email}}
+                                        {{ form.email }}
                                     </div>
                                 </div>
 
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Phone:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{form.phone}}
+                                        {{ form.prefix }}{{ form.phone }}
                                     </div>
                                 </div>
+                                <div class="form-group dashed" v-if="form.status">
+                                    <label class="col-md-1 control-label">Status:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ form.status }}
+                                    </div>
+                                </div>
+                                <div v-if="form.admin_id" class="form-group dashed">
+                                    <label class="col-md-1 control-label">Sales Manager: </label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ selectedManager.name }} {{ selectedManager.surname }}
+                                    </div>
+                                </div>
+                            </el-row>
+
+                            <el-row style="margin-bottom: 30px">
+                                <el-card class="box-card">
+                                    <div slot="header" class="clearfix main-header">
+                                        <span>Comments</span>
+                                    </div>
+                                    <LeadComments
+                                        :id="this.form.id"
+                                        :user-id="this.userId"
+                                    ></LeadComments>
+                                </el-card>
                             </el-row>
                         </el-form>
                     </div>
@@ -45,11 +69,15 @@
 
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
+import AssetComments from "../../asset/partials/AssetComments.vue";
+import LeadComments from "../partials/LeadComments.vue";
 
 export default {
+    components: {LeadComments},
     props: [
         'getSaveDataRoute',
-        'id'
+        'id',
+        'userId'
     ],
     data() {
         return {
@@ -58,6 +86,7 @@ export default {
             loading: false,
             routes: {},
             options: {},
+            managers: {},
             /** Form data*/
             form: {
                 id: this.id
@@ -67,6 +96,11 @@ export default {
     },
     created() {
         this.getSaveData();
+    },
+    computed: {
+        selectedManager() {
+            return this.managers.find(manager => manager.id === this.form.admin_id);
+        }
     },
     methods: {
         /**
@@ -95,6 +129,9 @@ export default {
 
                     if (data.item) {
                         this.form = data.item;
+                    }
+                    if (data.managers) {
+                        this.managers = data.managers;
                     }
                     this.form.id = this.id;
                 }

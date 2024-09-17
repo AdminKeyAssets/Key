@@ -11,12 +11,14 @@
                      :class="getItemClass(index)">
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
-                            <i class="el-icon-house"> {{ payment.project_name }}</i> <span v-if="!investorView"> - <i class="el-icon-user">{{payment.investor_name}} {{payment.investor_surname}}</i></span>
+                            <a :href="payment.project_route"><i class="el-icon-house"> {{
+                                    payment.project_name
+                                }}</i></a> <span v-if="!investorView"> - <i
+                            class="el-icon-user">{{ payment.investor_name }} {{ payment.investor_surname }}</i></span>
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
-                                <i class="el-icon-money" style="color:green"> {{ formatPrice(payment.amount) }}
-                                    {{ payment.currency }}</i>
+                                <i class="el-icon-money" style="color:green"> {{ formatPrice(payment.amount) }}</i>
                             </div>
                             <div>
                                 <i class="el-icon-date" style="color:gray"> {{ payment.payment_date }}</i>
@@ -27,12 +29,16 @@
             </div>
             <el-badge slot="reference" v-if="pendingPaymentsCount" class="item" style="cursor: pointer"
                       type="primary">
-                <i class="el-icon-message-solid" @click="togglePendingPaymentsList" style="color:#aad178"></i>
+                <el-tooltip content="Payment Notifications" placement="top" effect="light">
+                    <i class="el-icon-message-solid" @click="togglePendingPaymentsList" style="color:#aad178"></i>
+                </el-tooltip>
             </el-badge>
 
             <el-badge slot="reference" v-else class="item" style="cursor: pointer"
                       type="primary">
-                <i class="el-icon-bell" @click="togglePendingPaymentsList" style="color:white"></i>
+                <el-tooltip content="Payment Notifications" placement="top" effect="light">
+                    <i class="el-icon-bell" @click="togglePendingPaymentsList" style="color:white"></i>
+                </el-tooltip>
             </el-badge>
 
         </el-popover>
@@ -144,10 +150,11 @@ export default {
 .items-wrapper::-webkit-scrollbar {
     display: none;
 }
-.items-wrapper{
+
+.items-wrapper {
     max-height: 70vh;
     overflow-y: scroll;
-    -ms-overflow-style: none;  /* IE and Edge */
+    -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
 }
 </style>

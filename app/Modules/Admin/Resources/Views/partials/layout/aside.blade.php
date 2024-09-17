@@ -31,7 +31,7 @@
         </li>
     @endif
 
-    @if(Auth::guard('admin')->check())
+    @can ( getPermissionKey('role', 'index', true))
         <li
             {!! strpos(request()->route()->getName(), 'asset.revenue.index') !== false ? ' class="active"' : '' !!}>
             <a href="{{route('asset.revenue.index')}}"><i class="el-icon-house sidebar-nav-icon"></i>
@@ -60,4 +60,12 @@
                 <span class="sidebar-nav-mini-hide">Leads</span></a>
         </li>
     @endif
+
+        @can ( getPermissionKey('sale', 'index', true))
+            <li
+                {!! strpos(request()->route()->getName(), 'sale.index') !== false ? ' class="active"' : '' !!}>
+                <a href="{{route('sale.index')}}"><i class="el-icon-odometer sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-mini-hide">Sales</span></a>
+            </li>
+        @endif
 </ul>

@@ -21,6 +21,9 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
+    Route::get('/filter-options', $controller . '@filterOptions')
+        ->name('assets.filters');
+
 
     $paymentController = 'PaymentsHistoryController';
     $paymentModuleName = 'payment';
@@ -86,7 +89,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/revenues/view/{id?}', $revenueController . '@view')->name('revenue.view');
     Route::get('/revenues/details/{id?}', $revenueController . '@investorView')->name('revenue.details')->middleware(['auth:investor']);
     Route::post('/revenues/create-data', $revenueController . '@createData')->name('revenue_create_form_data');
-
+    Route::get('/revenues/filter-options', $revenueController . '@filterOptions')
+        ->name('revenues.filters');
 
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';

@@ -120,6 +120,7 @@ if (!$user) {
                             <!-- User Dropdown -->
                             <li>
                                 <div id="header">
+                                    @include('asset::admin.notifications.reminders')
                                     @include('asset::admin.notifications.rentals')
                                     @include('asset::admin.notifications.payments')
                                     @include('asset::admin.comment.unread')

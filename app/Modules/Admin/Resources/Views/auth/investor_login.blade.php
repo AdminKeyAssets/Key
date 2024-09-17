@@ -96,13 +96,13 @@
         <!-- END Login Container -->
         <!-- Registration Modal -->
         <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog"
-             aria-labelledby="registrationModalLabel" aria-hidden="true">
+             aria-labelledby="registrationModalLabel" >
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <!-- Custom Close Button -->
                         <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span>&times;</span>
                         </button>
                         <h5 class="modal-title text-center" id="registrationModalLabel">For getting demo user and password <br>please fill the data below</h5>
                     </div>

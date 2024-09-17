@@ -42,19 +42,6 @@
             <div class="col-md-7 uppercase-medium">
                 <input class="form-control" type="number" :disabled="loading" v-model="form.price"></input>
             </div>
-            <div class="col-md-3 uppercase-medium">
-                <el-select v-model="form.currency"
-                           :value="form.currency"
-                           filterable
-                           placeholder="Select">
-                    <el-option
-                        v-for="(currency, index) in currencies"
-                        :key="index"
-                        :label="currency"
-                        :value="index">
-                    </el-option>
-                </el-select>
-            </div>
         </div>
 
         <div class="form-group dashed">
@@ -169,12 +156,15 @@ export default {
     data() {
         return {
             previousAgreementStatus: '',
-            errorMessage: ''
+            errorMessage: '',
+            updatingTotalPrice: false, // Flag to prevent recursion
+            updatingSqmPrice: false,
         };
     },
     watch: {
         'form.price': 'updateTotalPrice',
         'form.area': 'updateTotalPrice',
+        'form.total_price': 'updateSqmPrice',
         'form'() {
             if (this.form) {
                 if (!this.form.currency) {
@@ -288,10 +278,27 @@ export default {
         },
 
         updateTotalPrice() {
+            if (this.updatingSqmPrice) return; // Prevent recursion when sqm price is being updated
+            this.updatingTotalPrice = true;
+
             const price = parseFloat(this.form.price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
             this.$emit('update-form', {...this.form, total_price: totalPrice});
+
+            this.updatingTotalPrice = false;
+        },
+
+        updateSqmPrice() {
+            if (this.updatingTotalPrice) return; // Prevent recursion when total price is being updated
+            this.updatingSqmPrice = true;
+
+            const totalPrice = parseFloat(this.form.total_price) || 0;
+            const area = parseFloat(this.form.area) || 0;
+            const price = totalPrice / area;
+            this.$emit("update-form", {...this.form, price: price});
+
+            this.updatingSqmPrice = false;
         },
 
         onAgreementFileChange(e, index) {

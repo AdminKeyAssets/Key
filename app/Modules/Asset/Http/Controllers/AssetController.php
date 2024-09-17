@@ -20,6 +20,7 @@ use App\Modules\Asset\Models\PaymentsHistory;
 use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
+use App\Modules\Asset\Services\AssetCompareService;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
 use DB;
@@ -56,14 +57,20 @@ class AssetController extends BaseController
      * @var UpdateRentalPaymentsHelper
      */
     protected $updateRentalPaymentsHelper;
+    /**
+     * @var AssetCompareService
+     */
+    protected $assetCompareService;
 
     /**
      * @param UpdatePaymentsHelper $updatePaymentsHelper
      * @param UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
+     * @param AssetCompareService $assetCompareService
      */
     public function __construct(
         UpdatePaymentsHelper       $updatePaymentsHelper,
-        UpdateRentalPaymentsHelper $updateRentalPaymentsHelper
+        UpdateRentalPaymentsHelper $updateRentalPaymentsHelper,
+        AssetCompareService        $assetCompareService
     )
     {
         parent::__construct();
@@ -71,6 +78,7 @@ class AssetController extends BaseController
         $this->baseData['baseRouteName'] = $this->baseData['baseRouteName'] . '.' . $this->baseData['moduleKey'] . '.';
         $this->updatePaymentsHelper = $updatePaymentsHelper;
         $this->updateRentalPaymentsHelper = $updateRentalPaymentsHelper;
+        $this->assetCompareService = $assetCompareService;
     }
 
     /**
@@ -84,15 +92,45 @@ class AssetController extends BaseController
 
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
-        if (in_array($user->getRolesNameAttribute(), $managers)) {
-            $investors = Investor::where('admin_id', $userId)->pluck('id');
-            $this->baseData['allData'] = Asset::whereIn('investor_id', $investors)->orderByDesc('id')->paginate(25);
-        } else {
-            $this->baseData['allData'] = Asset::orderByDesc('id')->paginate(25);
+        $query = Asset::query();
+
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', '=', $userId);
         }
 
+        // Apply filters if provided in the request
+        if ($request->investor) {
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $investorNamesArray[0])
+                ->where('surname', $investorNamesArray[1])->first();
+            if (isset($investorUser->id)) {
+                $query->where(function ($query) use ($investorUser) {
+                    $query->where('investor_id', '=', $investorUser->id);
+                });
+            }
+        }
+
+        if ($request->asset) {
+            $query->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
+        if ($request->create_date) {
+            $createdDates = explode(',', $request->create_date);
+            if (isset($createdDates[0])) {
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        // Order by descending asset ID
+        $this->baseData['allData'] = $query->orderByDesc('id')->paginate(25);
+
+        // Return view with filtered data
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
+
 
     /**
      * @param Request $request
@@ -158,7 +196,6 @@ class AssetController extends BaseController
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
-//                    dd([$asset->id, $tenant->id, $this->baseData['item']['rental_payments_histories']]);
                 }
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->get();
@@ -170,7 +207,7 @@ class AssetController extends BaseController
                     foreach ($asset->attachments as $item) {
                         $files[] = [
                             'name' => $item->name,
-                            'path' => Storage::url($item->path),
+                            'image' => $item->image,
                             'type' => substr($item->type, 0, 5) == 'image' ? 'image' : null
                         ];
                     }
@@ -179,7 +216,13 @@ class AssetController extends BaseController
             }
             $this->baseData['item']['countries'] = Country::get('country');
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
-            $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+            if (\Auth::guard('admin')->check()) {
+                if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+                    $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+                } else {
+                    $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'id']);
+                }
+            }
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
         }
@@ -194,9 +237,20 @@ class AssetController extends BaseController
     public function store(AssetRequest $request)
     {
         $path = $floorPlanPath = $flatPlanPath = $agreementPath = $ownershipCertificatePath = null;
-//        dd($request->id);
+
         if (isset($request->id)) {
             $asset = Asset::where('id', $request->id)->first();
+            $adminId = Auth::user()->getAuthIdentifier();
+
+            $originalData = $asset ? $asset->getOriginal() : null;
+            $originalAttachments = $asset ? $asset->attachments()->get()->toArray() : [];
+            $originalInformations = $asset ? $asset->informations()->get()->toArray() : [];
+            $originalAgreements = $asset ? $asset->agreements()->get()->toArray() : [];
+            $originalGallery = $asset ? $asset->gallery()->get()->toArray() : [];
+            $originalRentals = $asset ? $asset->rentals()->get()->toArray() : [];
+            $originalPayments = $asset ? $asset->payments()->get()->toArray() : [];
+
+
             if ($request->hasFile('icon')) {
                 if ($asset->icon && Storage::disk('public')->exists($asset->icon)) {
                     Storage::disk('public')->delete($asset->icon);
@@ -309,7 +363,6 @@ class AssetController extends BaseController
             'flat_plan' => $flatPlanPath && $flatPlanPath !== 'null' ? $flatPlanPath : null,
             'agreement' => null,
             'ownership_certificate' => $ownershipCertificatePath && $ownershipCertificatePath !== 'null' ? $ownershipCertificatePath : null,
-            'admin_id' => Auth::user()->getAuthIdentifier(),
             'currency' => $request->currency,
             'project_name' => $request->project_name,
             'project_description' => $request->project_description,
@@ -331,6 +384,9 @@ class AssetController extends BaseController
             'current_value_currency' => $request->current_value_currency ?? 'USD'
         ];
 
+        if(!$request->id){
+            $assetData['admin_id'] = Auth::user()->getAuthIdentifier();
+        }
 
         $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
 
@@ -338,7 +394,7 @@ class AssetController extends BaseController
             if ($asset->payments) {
                 $asset->payments()->delete();
             }
-            if ($request->payments) {
+            if (json_decode($request->payments)) {
                 foreach (json_decode($request->payments) as $payment) {
                     Payment::create([
                         'number' => $payment->number,
@@ -360,11 +416,12 @@ class AssetController extends BaseController
 
                 foreach ($payments as $payment) {
                     Payment::create([
-                        'month' => $payment['number'],
+                        'number' => $payment['number'],
                         'payment_date' => $payment['date'],
                         'amount' => $payment['amount'],
                         'left_amount' => $payment['amount'],
-                        'asset_id' => $asset->id
+                        'asset_id' => $asset->id,
+                        'status' => 0
                     ]);
                 }
                 if ($asset->paymentsHistories) {
@@ -404,13 +461,23 @@ class AssetController extends BaseController
                     $tenant->passport = $path;
                     $tenant->save();
                 }
+
+                if ($request->hasFile('tenant.rent_agreement')) {
+                    $rentAgreementFile = $request->file('tenant.rent_agreement');
+                    $filename = time() . '_' . $rentAgreementFile->getClientOriginalName();
+                    $path = $rentAgreementFile->storeAs('uploads', $filename, 'public');
+                    $path = Storage::url($path);
+
+                    $tenant->rent_agreement = $path;
+                    $tenant->save();
+                }
             }
             if ($asset->rentals) {
                 $asset->rentals()->delete();
             }
 
 
-            if ($request->rentals) {
+            if (json_decode($request->rentals)) {
                 foreach (json_decode($request->rentals) as $rental) {
                     Rental::create([
                         'number' => $rental->number,
@@ -428,9 +495,8 @@ class AssetController extends BaseController
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
                     }
                     $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
-                    foreach ($paymentHistories as $paymentsHistory){
-//                        dd($paymentsHistory->month);
-                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    foreach ($paymentHistories as $paymentsHistory) {
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory, $paymentsHistory->month ?? 1);
                     }
 
                 }
@@ -440,7 +506,8 @@ class AssetController extends BaseController
 
                 for ($i = 1; $i <= $period; $i++) {
                     Rental::create([
-                        'month' => $i,
+                        'number' => $i,
+                        'amount' => $tenantData['monthly_rent'],
                         'payment_date' => $firstPaymentDate->copy()->addMonths($i),
                         'left_amount' => $tenantData['monthly_rent'],
                         'asset_id' => $asset->id
@@ -454,8 +521,8 @@ class AssetController extends BaseController
                         $totalPaid = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->sum('amount');
                     }
                     $paymentHistories = $asset->rentalPaymentsHistories()->where('tenant_id', $activeTenant->id)->get();
-                    foreach ($paymentHistories as $paymentsHistory){
-                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory,$paymentsHistory->month ?? 1);
+                    foreach ($paymentHistories as $paymentsHistory) {
+                        $this->updateRentalPaymentsHelper->updateRentalPayments($asset, $paymentsHistory->amount, $paymentsHistory, $paymentsHistory->month ?? 1);
                     }
                 }
             }
@@ -503,31 +570,32 @@ class AssetController extends BaseController
             }
         }
 
-        if ($request->has('attachmentsToRemove')) {
-            $attachmentsToRemove = json_decode($request->attachmentsToRemove, true);
-            foreach ($attachmentsToRemove as $attachmentId) {
-                $attachment = AssetAttachment::find($attachmentId);
-                if ($attachment) {
-                    Storage::disk('public')->delete($attachment->path);
-                    $attachment->delete();
-                }
-            }
-        }
+        $asset->attachments()->delete();
+        if ($request->has('attachments')) {
+            foreach ($request->attachments as $key => $file) {
 
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('uploads', 'public');
+                if (gettype($file) == 'string') {
+                    $path = $file;
+                    $explodedFile = explode('/', $path);
+                    $explodedFile = array_reverse($explodedFile);
+                    $originalFileName = $explodedFile[0];
+                } else {
+                    $originalFileName = time() . '_' . $file->getClientOriginalName();
+                    $path = $file->storeAs('uploads', $originalFileName, 'public');
+                    $path = Storage::url($path);
+                }
+
                 AssetAttachment::create([
                     'asset_id' => $asset->id,
-                    'path' => $path,
-                    'name' => time() . '_' . $file->getClientOriginalName(),
-                    'type' => $file->getMimeType()
+                    'image' => $path,
+                    'name' => $originalFileName,
                 ]);
             }
         }
 
+
+        $asset->gallery()->delete();
         if ($request->has('gallery')) {
-            $asset->gallery()->delete();
             foreach ($request->gallery as $key => $file) {
 
                 if (gettype($file) == 'string') {
@@ -581,6 +649,7 @@ class AssetController extends BaseController
 
                 AssetInformation::create([
                     'key' => $detail['key'],
+                    'provider' => $detail['provider'],
                     'value' => $detail['value'],
                     'attachment' => $extraDetailAttachmentPath,
                     'asset_id' => $asset->id
@@ -612,6 +681,32 @@ class AssetController extends BaseController
             }
         }
 
+        if ($request->id) {
+            if ($originalData) {
+                $this->assetCompareService->logAssetChanges($originalData, $asset, $adminId);
+            }
+            if ($originalAttachments) {
+                $this->assetCompareService->logAttachmentChanges($originalAttachments, $asset->attachments, $asset, $adminId);
+            }
+            if ($originalInformations) {
+                $this->assetCompareService->logInformationsChanges($originalInformations, $asset->informations()->get()->toArray(), $asset, $adminId);
+            }
+            if ($originalAgreements) {
+                $this->assetCompareService->logAgreementChanges($originalAgreements, $asset->agreements()->get()->toArray(), $asset, $adminId);
+            }
+            if ($originalGallery) {
+                $this->assetCompareService->logGalleryChanges($originalGallery, $asset->gallery, $asset, $adminId);
+            }
+
+            if ($originalRentals) {
+                $this->assetCompareService->logRentalPaymentChanges($originalRentals, $asset->rentals()->get()->toArray(), $asset, $adminId);
+            }
+
+            if ($originalPayments) {
+                $this->assetCompareService->logPaymentChanges($originalPayments, $asset->payments()->get()->toArray(), $asset, $adminId);
+            }
+        }
+
         return ServiceResponse::jsonNotification('Asset Added successfully', 200, $this->baseData);
     }
 
@@ -625,6 +720,14 @@ class AssetController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('asset.create_data');
 
             $this->baseData['id'] = $id;
+
+            $asset = Asset::where('id', $id)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [$asset->id]),
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
 
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
@@ -725,4 +828,18 @@ class AssetController extends BaseController
 
         return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
     }
+
+    public function filterOptions()
+    {
+        $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+
+        // Group by project_name and get the latest asset (by max id) for each project
+        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderByDesc('max_id')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
 }

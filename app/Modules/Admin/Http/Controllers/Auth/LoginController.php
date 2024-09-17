@@ -89,6 +89,9 @@ class LoginController extends \App\Http\Controllers\Auth\LoginController
 
         if ($user->hasRole('administrator')) {
             return redirect()->route('admin.user.index');
+        }elseif ($user->getRolesNameAttribute() == 'Sale Manager'||
+            $user->getRolesNameAttribute() == 'Sales Manager') {
+            return redirect()->route('lead.index');
         } else {
             return redirect()->route('admin.investor.index');
         }
