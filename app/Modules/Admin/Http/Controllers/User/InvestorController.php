@@ -10,6 +10,7 @@ use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Admin\Repositories\Contracts\IPermissionRepository;
 use App\Modules\Admin\Repositories\Contracts\IRoleRepository;
+use App\Modules\Asset\Models\Asset;
 use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -189,6 +190,8 @@ class InvestorController extends BaseController
             if (isset($request->id)) {
                 $investor = Investor::where('id', $request->id)->first();
 
+                $oldAdminId = $investor ? $investor->admin_id : null;
+
                 if ($request->hasFile('profile_picture')) {
                     if ($investor->profile_picture && Storage::disk('public')->exists($investor->profile_picture)) {
                         Storage::disk('public')->delete($investor->profile_picture);
@@ -234,6 +237,8 @@ class InvestorController extends BaseController
                 }
             }
 
+            $newAdminId = $request->admin_id ?? Auth::user()->getAuthIdentifier();
+
             $data = [
                 'name' => $request->name,
                 'surname' => $request->surname,
@@ -246,7 +251,7 @@ class InvestorController extends BaseController
                 'address' => $request->address,
                 'passport' => $passport,
                 'profile_picture' => $profilePicture,
-                'admin_id' => $request->admin_id ?? Auth::user()->getAuthIdentifier(),
+                'admin_id' => $newAdminId,
             ];
 
             // Only hash and update password if a new password is provided
@@ -258,6 +263,13 @@ class InvestorController extends BaseController
                 ['id' => $request->id],
                 $data
             );
+
+            if ($investor && $oldAdminId && $oldAdminId != $newAdminId) {
+                Asset::where('admin_id', $oldAdminId)
+                    ->where('investor_id', $investor->id)
+                    ->update(['admin_id' => $newAdminId]);
+            }
+
         } catch (\Exception $ex) {
             Log::error('Error during investor save', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
