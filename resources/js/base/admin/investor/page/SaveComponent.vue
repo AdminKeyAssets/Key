@@ -156,7 +156,7 @@
                     <div class="col-md-10 uppercase-medium">
                         <input type="file" @change="onServiceAgreementChange">
                         <div v-if="form.service_agreement">
-                            <p v-if="form.service_agreement">File: <a :href="form.service_agreement" target="_blank">View Agreement</a></p>
+                            <p v-if="form.service_agreement"><a :href="form.service_agreement" target="_blank">View Agreement</a></p>
                             <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                        @click="removeServiceAgreement"></el-button>
                         </div>
