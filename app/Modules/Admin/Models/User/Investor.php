@@ -23,7 +23,8 @@ class Investor  extends Authenticatable
         'profile_picture',
         'passport',
         'admin_id',
-        'is_demo'
+        'is_demo',
+        'service_agreement',
     ];
 
     protected $hidden = [

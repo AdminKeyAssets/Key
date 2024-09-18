@@ -109,6 +109,15 @@
 
                 </div>
 
+                <div class="form-group">
+                    <label class="col-md-1 control-label">Service Agreement:</label>
+                    <div class="col-md-10 uppercase-medium">
+                        <div v-if="form.service_agreement">
+                            <p v-if="form.service_agreement">File: <a :href="form.service_agreement" target="_blank">View Agreement</a></p>
+                        </div>
+                    </div>
+                </div>
+
             </el-row>
 
 

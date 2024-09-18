@@ -187,6 +187,7 @@ class InvestorController extends BaseController
         try {
             $passport = null;
             $profilePicture = null;
+            $serviceAgreement = null;
 
             if (isset($request->id)) {
                 $investor = Investor::where('id', $request->id)->first();
@@ -225,6 +226,21 @@ class InvestorController extends BaseController
                     $passport = $request->input('passport');
                 }
 
+                if ($request->hasFile('service_agreement')) {
+                    if ($investor->service_agreement && Storage::disk('public')->exists($investor->service_agreement)) {
+                        Storage::disk('public')->delete($investor->service_agreement);
+                    }
+                    $serviceAgreementFile = $request->file('service_agreement');
+                    $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
+                    $serviceAgreement = Storage::url($serviceAgreement);
+                } else if ($request->input('passport') === null) {
+                    if ($investor->service_agreement && Storage::disk('public')->exists($investor->service_agreement)) {
+                        Storage::disk('public')->delete($investor->service_agreement);
+                    }
+                } else {
+                    $serviceAgreement = $request->input('service_agreement');
+                }
+
             } else {
                 if ($request->hasFile('profile_picture')) {
                     $profilePictureFile = $request->file('profile_picture');
@@ -235,6 +251,11 @@ class InvestorController extends BaseController
                     $passportFile = $request->file('passport');
                     $passport = $passportFile->store('uploads', 'public');
                     $passport = Storage::url($passport);
+                }
+                if ($request->hasFile('service_agreement')) {
+                    $serviceAgreementFile = $request->file('service_agreement');
+                    $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
+                    $serviceAgreement = Storage::url($serviceAgreement);
                 }
             }
 
@@ -252,6 +273,7 @@ class InvestorController extends BaseController
                 'address' => $request->address,
                 'passport' => $passport,
                 'profile_picture' => $profilePicture,
+                'service_agreement' => $serviceAgreement,
                 'admin_id' => $newAdminId,
             ];
 
