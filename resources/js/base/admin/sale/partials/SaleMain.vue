@@ -135,6 +135,14 @@
                                 </el-select>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Marketing Channel: </label>
+                            <div class="col-md-6">
+                                <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                          v-model="form.marketing_channel"></el-input>
+                            </div>
+                        </div>
                     </template>
                 </el-row>
 

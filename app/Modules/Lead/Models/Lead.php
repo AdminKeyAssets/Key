@@ -14,6 +14,7 @@ class Lead extends Model
         'phone',
         'prefix',
         'admin_id',
-        'status'
+        'status',
+        'marketing_channel',
     ];
 }

@@ -107,6 +107,7 @@ class SaleController extends BaseController
                 'agreement_date' => $request->agreement_date,
                 'down_payment' => $request->down_payment,
                 'period' => $request->period,
+                'marketing_channel' => $request->marketing_channel,
             ]);
         } else {
             $sale = Sale::Create([
@@ -120,6 +121,7 @@ class SaleController extends BaseController
                 'agreement_date' => $request->agreement_date,
                 'down_payment' => $request->down_payment,
                 'period' => $request->period,
+                'marketing_channel' => $request->marketing_channel,
             ]);
         }
 

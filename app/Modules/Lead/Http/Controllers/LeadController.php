@@ -131,6 +131,7 @@ class LeadController extends BaseController
                 'prefix' => $request->prefix,
                 'status' => $request->status,
                 'admin_id' => $request->admin_id,
+                'marketing_channel' => $request->marketing_channel,
             ]);
         $this->baseData['item'] = $lead;
 

@@ -9,7 +9,7 @@
 
                 <el-row>
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Name: <span class="text-danger">*</span></label>
+                        <label class="col-md-2 control-label">Name: </label>
                         <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
                                       v-model="form.name" @input="capitalizeFirstLetter('name')"></el-input>
@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Surname: <span class="text-danger">*</span></label>
+                        <label class="col-md-2 control-label">Surname: </label>
                         <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
                                       v-model="form.surname" @input="capitalizeFirstLetter('surname')"></el-input>
@@ -26,7 +26,7 @@
 
                     <div class="form-group">
 
-                        <label class="col-md-2 control-label">Email: <span class="text-danger">*</span></label>
+                        <label class="col-md-2 control-label">Email: </label>
                         <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
                                       v-model="form.email"></el-input>
@@ -67,8 +67,7 @@
                     </div>
 
                     <div class="form-group">
-
-                        <label class="col-md-2 control-label">Select Manager: <span class="text-danger">*</span>:</label>
+                        <label class="col-md-2 control-label">Select Manager: </label>
                         <div class="col-md-6">
                             <el-select v-model="form.admin_id" filterable
                                        placeholder="Manager">
@@ -80,7 +79,14 @@
                                 ></el-option>
                             </el-select>
                         </div>
+                    </div>
 
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Marketing Channel: </label>
+                        <div class="col-md-6">
+                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                      v-model="form.marketing_channel"></el-input>
+                        </div>
                     </div>
                 </el-row>
 

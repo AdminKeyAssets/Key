@@ -47,6 +47,7 @@
                             @endif
                             <th> Status</th>
                             <th> Created At</th>
+                            <th> Marketing Channel</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -70,6 +71,7 @@
                                 @endif
                                 <td>{!! $item->status !!}</td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
+                                <td>{!! $item->marketing_channel !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))

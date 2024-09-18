@@ -43,6 +43,7 @@ class SaleRequest extends FormRequest
             'price' => 'required',
             'total_price' => 'required',
             'agreement_status' => 'required',
+            'marketing_channel' => 'required',
             'agreement_date' => 'required',
             'down_payment' => 'required_if:agreement_status,Installments',
             'period' => 'required_if:agreement_status,Installments',
@@ -60,6 +61,7 @@ class SaleRequest extends FormRequest
             'total_price.required' => 'Total Price can not be empty.',
             'agreement_status.required' => 'Agreements Status can not be empty.',
             'agreement_date.required' => 'Agreements Date can not be empty.',
+            'marketing_channel.required' => 'Marketing Channel can not be empty.',
             'down_payment.required_if' => 'The Donw Payment is required when agreement status is Installments.',
             'period.required_if' => 'The Period is required when agreement status is Installments.',
         ];
