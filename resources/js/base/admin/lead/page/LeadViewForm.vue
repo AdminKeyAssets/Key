@@ -44,6 +44,12 @@
                                         {{ selectedManager.name }} {{ selectedManager.surname }}
                                     </div>
                                 </div>
+                                <div class="form-group dashed" v-if="form.marketing_channel">
+                                    <label class="col-md-1 control-label">Marketing Channel:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ form.marketing_channel }}
+                                    </div>
+                                </div>
                             </el-row>
 
                             <el-row style="margin-bottom: 30px">
