@@ -384,7 +384,7 @@ class AssetController extends BaseController
             'current_value_currency' => $request->current_value_currency ?? 'USD'
         ];
 
-        if(!$request->id){
+        if (!$request->id) {
             $assetData['admin_id'] = Auth::user()->getAuthIdentifier();
         }
 
@@ -748,6 +748,15 @@ class AssetController extends BaseController
             $this->baseData['id'] = $id;
             $asset = Asset::where('id', $id)->first();
             $this->baseData['name'] = $asset->project_name ?? '';
+
+            $asset = Asset::where('id', $id)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_edit_route' => route('asset.view', [$asset->id]),
+                'payments_route' => route('asset.payments.list', [$asset->id]),
+                'rentals_route' => route('asset.rental.index', [$asset->id]),
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
 
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
