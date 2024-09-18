@@ -68,7 +68,6 @@
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
                                 @if(auth()->user()->getRolesNameAttribute() == 'administrator')
                                     <td>
-                                        {{--                                        {!! $item->manager_name !!} {!! $item->manager_surname !!}--}}
                                         <update-lead-manager
                                             :manager-name="'{{ $item->manager_name && $item->manager_surname ? $item->manager_name . ' ' . $item->manager_surname : 'Assign Manager' }}'"
                                             :lead-id="{{ $item->id }}">

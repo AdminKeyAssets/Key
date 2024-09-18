@@ -71,7 +71,12 @@
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
                                 <td>{!! count($item->assets) !!}</td>
-                                <td>{!! $item->admin->name !!} {!! $item->admin->surname !!}</td>
+                                <td>
+                                    <update-investor-manager
+                                        :manager-name="'{{ $item->admin->name && $item->admin->surname ? $item->admin->name . ' ' . $item->admin->surname : 'Assign Manager' }}'"
+                                        :investor-id="{{ $item->id }}">
+                                    </update-investor-manager>
+                                </td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
                                 <td class="text-center">
 
@@ -108,7 +113,7 @@
 @endsection
 
 <style>
-    th, td{
+    th, td {
         text-align: center !important;
     }
 </style>

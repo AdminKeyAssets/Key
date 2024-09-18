@@ -5,6 +5,7 @@ namespace App\Modules\Admin\Http\Controllers\User;
 use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\Investor\SaveInvestorRequest;
+use App\Modules\Admin\Http\Requests\UpdateManagerRequest;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
@@ -318,5 +319,15 @@ class InvestorController extends BaseController
         })->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function updateManager(UpdateManagerRequest $request)
+    {
+        Investor::where('id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
+        Asset::where('investor_id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
+
+        $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
+
+        return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
     }
 }
