@@ -29,14 +29,14 @@
             </div>
             <el-badge slot="reference" v-if="pendingPaymentsCount" class="item" style="cursor: pointer"
                       type="primary">
-                <el-tooltip content="Payment Notifications" placement="top" effect="light">
+                <el-tooltip content="Payments" placement="top" effect="light">
                     <i class="el-icon-message-solid" @click="togglePendingPaymentsList" style="color:#aad178"></i>
                 </el-tooltip>
             </el-badge>
 
             <el-badge slot="reference" v-else class="item" style="cursor: pointer"
                       type="primary">
-                <el-tooltip content="Payment Notifications" placement="top" effect="light">
+                <el-tooltip content="Payments" placement="top" effect="light">
                     <i class="el-icon-bell" @click="togglePendingPaymentsList" style="color:white"></i>
                 </el-tooltip>
             </el-badge>

@@ -29,13 +29,13 @@
                 </div>
             </div>
             <el-badge slot="reference" v-if="pendingRentalsCount" class="item" style="cursor: pointer" type="warning">
-                <el-tooltip content="Rental Notifications" placement="top" effect="light">
+                <el-tooltip content="Rentals" placement="top" effect="light">
                     <i class="el-icon-message-solid" @click="togglePendingRentalsList" style="color: #E6A23C"></i>
                 </el-tooltip>
             </el-badge>
 
             <el-badge slot="reference" v-else class="item" style="cursor: pointer" type="warning">
-                <el-tooltip content="Rental Notifications" placement="top" effect="light">
+                <el-tooltip content="Rentals" placement="top" effect="light">
                     <i class="el-icon-bell" @click="togglePendingRentalsList" style="color:white"></i>
                 </el-tooltip>
             </el-badge>
