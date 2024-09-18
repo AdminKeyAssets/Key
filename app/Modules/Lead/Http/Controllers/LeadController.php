@@ -8,6 +8,7 @@ use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Lead\Http\Requests\LeadRequest;
+use App\Modules\Lead\Http\Requests\UpdateManagerRequest;
 use App\Modules\Lead\Models\Lead;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -252,5 +253,14 @@ class LeadController extends BaseController
         })->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function updateManager(UpdateManagerRequest $request)
+    {
+        Lead::where('id', $request->lead_id)->update(['admin_id' => $request->manager_id]);
+
+        $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
+
+        return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
     }
 }

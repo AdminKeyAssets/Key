@@ -22,6 +22,8 @@ Route::prefix('lead')->name('lead.')->group(function () {
     Route::get('filter-options', $controller . '@filterOptions')
         ->name('filters');
 
+    Route::post('update-manager', $controller . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
     $commentController = 'LeadCommentController';
     $commentModuleName = 'lead_comment';
 
