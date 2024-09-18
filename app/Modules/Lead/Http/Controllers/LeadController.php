@@ -69,7 +69,7 @@ class LeadController extends BaseController
             }
         }
 
-        if ($request->manager) {
+        if ($request->manager && $request->manager != 'all') {
             $managerNamesArray = explode(' ', $request->manager);
             $managerUser = Admin::where('name', $managerNamesArray[0])
                 ->where('surname', $managerNamesArray[1])->first();

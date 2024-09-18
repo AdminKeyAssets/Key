@@ -99,7 +99,7 @@ class AssetController extends BaseController
         }
 
         // Apply filters if provided in the request
-        if ($request->investor) {
+        if ($request->investor && $request->investor != 'all') {
             $investorNamesArray = explode(' ', $request->investor);
             $investorUser = Investor::where('name', $investorNamesArray[0])
                 ->where('surname', $investorNamesArray[1])->first();
@@ -110,7 +110,7 @@ class AssetController extends BaseController
             }
         }
 
-        if ($request->asset) {
+        if ($request->asset && $request->asset != 'all') {
             $query->where('project_name', 'like', '%' . $request->asset . '%');
         }
 
