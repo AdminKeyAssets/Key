@@ -94,6 +94,9 @@ Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').defau
 Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
 Vue.component('sales-export-component', require('./base/admin/sale/partials/ExportSales').default);
 
+//Email Templates
+Vue.component('email-page-form', require('./base/admin/template/page/EmailForm').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

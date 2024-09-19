@@ -75,4 +75,7 @@ return [
         'default' => $default_permissions,
         'custom' => $custom_permissions
     ],
+    'template' => [
+        'default' => $default_permissions,
+    ],
 ];

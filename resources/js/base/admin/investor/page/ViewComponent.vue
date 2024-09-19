@@ -1,5 +1,10 @@
 <template>
     <div class="block">
+
+        <NotifyInvestorByEmail
+        :investor-id="id">
+        </NotifyInvestorByEmail>
+
         <el-form v-loading="loading"
                  element-loading-text="Loading..."
                  element-loading-spinner="el-icon-loading"
@@ -89,8 +94,8 @@
 
 
                 <div class="form-group dashed" v-if="form.profile_picture">
-                    <label class="col-md-1 control-label">Profile Picture:</label>
-                    <div class="col-md-10 uppercase-medium">
+                    <label class="col-md-2 control-label">Profile Picture:</label>
+                    <div class="col-md-6 uppercase-medium">
                         <div>
                             <ImageModal :thumbnail="form.profile_picture"
                                         :image-path="form.profile_picture"
@@ -101,8 +106,8 @@
                 </div>
 
                 <div class="form-group dashed" v-if="form.passport">
-                    <label class="col-md-1 control-label">Upload Passport:</label>
-                    <div class="col-md-10 uppercase-medium">
+                    <label class="col-md-2 control-label">Upload Passport:</label>
+                    <div class="col-md-6 uppercase-medium">
                         <div>
                             <ImageModal :thumbnail="form.passport"
                                         :image-path="form.passport"
@@ -113,8 +118,8 @@
                 </div>
 
                 <div class="form-group dashed" v-if="form.service_agreement">
-                    <label class="col-md-1 control-label">Service Agreement:</label>
-                    <div class="col-md-10 uppercase-medium">
+                    <label class="col-md-2 control-label">Service Agreement:</label>
+                    <div class="col-md-6 uppercase-medium">
                         <div>
                             <p><a :href="form.service_agreement" target="_blank">View Agreement</a></p>
                         </div>
@@ -122,11 +127,6 @@
                 </div>
             </el-row>
 
-            <div class="el-form-item registration-btn">
-                <el-button type="primary" @click="save" :disabled="loading"
-                           style="margin: 0 1rem">Save
-                </el-button>
-            </div>
         </el-form>
     </div>
 </template>
@@ -144,10 +144,11 @@
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import ImageModal from "../../../components/admin/ImageModal.vue";
+import NotifyInvestorByEmail from "../partials/NotifyInvestorByEmail.vue";
 
 export default {
     components: {
-        ImageModal
+        ImageModal, NotifyInvestorByEmail
     },
 
     props: [
@@ -221,114 +222,6 @@ export default {
                 }
                 this.loading = false
             });
-        },
-        async save() {
-            this.loading = true;
-            let formData = new FormData();
-
-            for (let key in this.form) {
-                if ((key === 'passport' || key === 'profile_picture') && this.form[key]) {
-                    formData.append(key, this.form[key]);
-                } else {
-                    formData.append(key, this.form[key]);
-                }
-            }
-
-            await axios.post(this.routes.save, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then(response => {
-                this.loading = false;
-                responseParse(response);
-                setTimeout(() => {
-                    window.location.href = '/admin/investors';
-                }, 1000);
-            }).catch(error => {
-                this.loading = false;
-                responseParse(error.response);
-            });
-        },
-        generatePassword() {
-            let charactersArray = 'a-z,A-Z,0-9,#'.split(',');
-            let CharacterSet = '';
-            let password = '';
-
-            if (charactersArray.indexOf('a-z') >= 0) {
-                CharacterSet += 'abcdefghijklmnopqrstuvwxyz';
-            }
-            if (charactersArray.indexOf('A-Z') >= 0) {
-                CharacterSet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            }
-            if (charactersArray.indexOf('0-9') >= 0) {
-                CharacterSet += '0123456789';
-            }
-
-            for (let i = 0; i < 10; i++) {
-                password += CharacterSet.charAt(Math.floor(Math.random() * CharacterSet.length));
-            }
-
-            this.form.password = password;
-        },
-        onProfilePictureChange(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.form.profile_picture = file;
-                    this.form.profilePicturePreview = e.target.result;
-                };
-                reader.onerror = (error) => {
-                    console.error('Error loading file:', error);
-                };
-                reader.readAsDataURL(file);
-            }
-        },
-        removeProfilePicture() {
-            this.form.profile_picture = null;
-            this.form.profilePicturePreview = null;
-        },
-        onServiceAgreementChange(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.form.service_agreement = file;
-                };
-                reader.onerror = (error) => {
-                    console.error('Error loading file:', error);
-                };
-                reader.readAsDataURL(file);
-            }
-        },
-
-        onPassportChange(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.form.passport = file;
-                    this.form.passportPreview = e.target.result;
-                };
-                reader.onerror = (error) => {
-                    console.error('Error loading file:', error);
-                };
-                reader.readAsDataURL(file);
-            }
-        },
-
-        removePassport() {
-            this.form.passport = null;
-            this.form.passportPreview = null;
-        },
-
-        removeServiceAgreement() {
-            this.form.service_agreement = null;
-        },
-        capitalizeFirstLetter(field) {
-            if (this.form[field]) {
-                this.form[field] = this.form[field].charAt(0).toUpperCase() + this.form[field].slice(1);
-            }
         },
     }
 }

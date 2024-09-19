@@ -46,7 +46,7 @@
                             <th> Agreement Date</th>
                             <th> Down Payment</th>
                             <th> Period</th>
-                            <th> Marketin Channel</th>
+                            <th> Marketing Channel</th>
                             @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
                                 <th> Commission</th>
                             @endif

@@ -2,8 +2,10 @@
 
 namespace App\Modules\Admin\Http\Controllers\User;
 
+use App\Mail\SendInvestorEmail;
 use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Http\Requests\Investor\NotifyInvestorRequest;
 use App\Modules\Admin\Http\Requests\Investor\SaveInvestorRequest;
 use App\Modules\Admin\Http\Requests\UpdateManagerRequest;
 use App\Modules\Admin\Models\Country;
@@ -16,6 +18,7 @@ use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -358,6 +361,15 @@ class InvestorController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
         })->get();
+
+        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function notify(NotifyInvestorRequest $request)
+    {
+        $investor = Investor::where('id', $request->investor_id)->first();
+
+        Mail::to('maqandarashvili@gmail.com')->send(new SendInvestorEmail($request->body));
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
