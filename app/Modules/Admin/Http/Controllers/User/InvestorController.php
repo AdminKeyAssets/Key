@@ -311,9 +311,10 @@ class InvestorController extends BaseController
             if (auth()->user()->id == $request->get('id')) {
                 throw new \Exception('You are not allowed to delete this user!');
             }
+            $investor = Investor::where('id',$request->id)->first();
+            $investorAssets = Asset::where('investor_id', $investor->id)->get();
 
-            $investor = Investor::find($request->get('id'));
-            if ($investor->assets) {
+            if ($investorAssets->count()) {
                 throw new \Exception('You are not allowed to delete user, while having assets attached on it!!');
             }
             $investor->delete();
@@ -323,7 +324,7 @@ class InvestorController extends BaseController
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
 
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['delete_successfully'], 200, $this->baseData);
+        return ServiceResponse::jsonNotification('Investor Deleted Successfully!!!', 200, $this->baseData);
 
     }
 
