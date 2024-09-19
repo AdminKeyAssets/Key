@@ -55,7 +55,11 @@
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->name !!} {!! $item->surname !!}</td>
+                                <td>
+                                    <a href="{{ route('admin.investor.view', $item->id) }}">
+                                        {!! $item->name !!} {!! $item->surname !!}
+                                    </a>
+                                </td>
                                 <td>
                                     @if($item->profile_picture && !is_null($item->profile_picture) && $item->profile_picture !== 'null')
                                         <image-modal thumbnail="{!! $item->profile_picture !!}"

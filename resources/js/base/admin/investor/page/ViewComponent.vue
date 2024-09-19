@@ -74,6 +74,7 @@
                     <label class="col-md-2 control-label">Select Manager: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-select v-model="form.admin_id" filterable
+                                   disabled
                                    placeholder="Manager">
                             <el-option
                                 v-for="manager in this.managers"
