@@ -147,6 +147,24 @@ class InvestorController extends BaseController
     }
 
     /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function view($id = '')
+    {
+        try {
+            $this->baseData['routes']['create_form_data'] = route('admin.investor.create_form_data');
+
+            $this->baseData['id'] = $id;
+
+        } catch (\Exception $ex) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::success($this->baseData));
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
