@@ -43,12 +43,15 @@
                             <th> Down Payment</th>
                             <th> Period</th>
                             <th> Marketin Channel</th>
+                            @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                                <th> Commission</th>
+                            @endif
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
-                            <tr>
+                            <tr class="{{ $item->complete ? 'table-row-colored' : '' }}">
 
                                 <td>
                                     <a href="{{route($moduleKey . '.view', [ $item->id ])}}">
@@ -65,7 +68,9 @@
                                 <td>{!! $item->down_payment !!}</td>
                                 <td>{!! $item->period !!}</td>
                                 <td>{!! $item->marketing_channel !!}</td>
-
+                                @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                                    <td>{!! $item->commission !!}</td>
+                                @endif
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.view',  [$item->id, ])])

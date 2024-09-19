@@ -1183,3 +1183,7 @@ table thead th {
     text-align: left;
     font-weight: 400;
 }
+
+.table-row-colored{
+    background: #f0f9eb !important;
+}

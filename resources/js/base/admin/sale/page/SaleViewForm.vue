@@ -90,6 +90,33 @@
                                         </div>
                                     </div>
                                 </template>
+
+                                <template v-if="this.canSeeComplete">
+                                    <div class="form-group" v-if="form.commission">
+                                        <label class="col-md-2 control-label">Commission:</label>
+                                        <div class="col-md-6 uppercase-medium">
+                                            {{ form.commission }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Is Completed: </label>
+                                        <div class="col-md-6">
+                                            <el-switch v-model="form.complete" disabled="">
+                                            </el-switch>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group dashed" v-if="form.attachment">
+                                        <label class="col-md-2 control-label">Attachment:</label>
+                                        <div class="col-md-6 uppercase-medium">
+                                            <div>
+                                                <p v-if="form.attachment"><a :href="form.attachment" target="_blank">View
+                                                    Attachment</a></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
                             </el-row>
                         </el-form>
                     </div>
@@ -108,7 +135,8 @@ export default {
     props: [
         'getSaveDataRoute',
         'id',
-        'userId'
+        'userId',
+        'canSeeComplete'
     ],
     data() {
         return {
@@ -119,7 +147,8 @@ export default {
             options: {},
             /** Form data*/
             form: {
-                id: this.id
+                id: this.id,
+                complete: false
             },
 
         }
@@ -155,6 +184,7 @@ export default {
 
                     if (data.item) {
                         this.form = data.item;
+                        this.form.complete = Boolean(data.item.complete === true || data.item.complete === "true" || data.item.complete === 1);
                     }
 
                     this.form.id = this.id;

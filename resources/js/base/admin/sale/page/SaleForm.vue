@@ -12,6 +12,8 @@
                     :updateData="updateData"
                     :investors="investors"
                     :projects="projects"
+                    :can-complete="canComplete"
+                    :user-id="this.id"
                     :item="this.form && this.form ? this.form : undefined"
                 ></SaleMain>
 
@@ -38,7 +40,8 @@ export default {
     components: {SaleMain},
     props: [
         'getSaveDataRoute',
-        'id'
+        'id',
+        'canComplete'
     ],
     data() {
         return {
@@ -105,9 +108,13 @@ export default {
 
             let formData = new FormData();
             for (let key in this.form) {
-                formData.append(key, this.form[key]);
+                if ((key === 'attachment') && this.form[key]) {
+                    formData.append(key, this.form[key]);
+                }
+                else {
+                    formData.append(key, this.form[key]);
+                }
             }
-            console.log(this.form)
             axios.post(this.routes.save, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'

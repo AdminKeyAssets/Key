@@ -13,6 +13,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Mockery\Exception;
 
@@ -94,8 +95,29 @@ class SaleController extends BaseController
      */
     public function store(SaleRequest $request)
     {
+        $attachment = null;
+
         if ($request->id) {
             $sale = Sale::where('id', $request->id)->first();
+
+            if ($request->hasFile('attachment')) {
+                if ($sale->attachment && Storage::disk('public')->exists($sale->attachment)) {
+                    Storage::disk('public')->delete($sale->attachment);
+                }
+
+                $attachmentFile = $request->file('attachment');
+                $attachment = $attachmentFile->store('uploads', 'public');
+                $attachment = Storage::url($attachment);
+
+            } else if ($request->input('attachment') === null) {
+                if ($sale->attachment && Storage::disk('public')->exists($sale->attachment)) {
+                    Storage::disk('public')->delete($sale->attachment);
+                }
+            } else {
+                $attachment = $request->input('attachment');
+            }
+
+
             $sale->update([
                 'project' => $request->project,
                 'investor' => $request->investor,
@@ -108,8 +130,18 @@ class SaleController extends BaseController
                 'down_payment' => $request->down_payment,
                 'period' => $request->period,
                 'marketing_channel' => $request->marketing_channel,
+                'attachment' => $attachment,
+                'commission' => $request->commission,
+                'complete' => $request->complete === 'true',
             ]);
         } else {
+
+            if ($request->hasFile('attachment')) {
+                $attachmentFile = $request->file('attachment');
+                $attachment = $attachmentFile->store('uploads', 'public');
+                $attachment = Storage::url($attachment);
+            }
+
             $sale = Sale::Create([
                 'project' => $request->project,
                 'investor' => $request->investor,
@@ -122,6 +154,9 @@ class SaleController extends BaseController
                 'down_payment' => $request->down_payment,
                 'period' => $request->period,
                 'marketing_channel' => $request->marketing_channel,
+                'attachment' => $attachment,
+                'commission' => $request->commission,
+                'complete' => $request->complete === 'true',
             ]);
         }
 

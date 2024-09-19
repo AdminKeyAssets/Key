@@ -362,7 +362,7 @@ export default {
         },
 
         removeServiceAgreement() {
-            this.form.passport = null;
+            this.form.service_agreement = null;
         },
         capitalizeFirstLetter(field) {
             if (this.form[field]) {
