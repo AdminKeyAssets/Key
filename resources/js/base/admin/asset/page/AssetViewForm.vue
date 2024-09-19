@@ -55,7 +55,9 @@
                                                     {{ form.delivery_date }}
                                                 </div>
                                             </div>
-                                            <div v-if="!form.delivery_date && !form.project_link && !form.project_description && form.location" class="form-group">
+                                            <div
+                                                v-if="!form.delivery_date && !form.project_link && !form.project_description && form.location"
+                                                class="form-group">
                                                 <div v-html="modifiedTextHeight">
 
                                                 </div>
@@ -73,7 +75,9 @@
                                         </el-col>
                                     </el-row>
                                     <el-row>
-                                        <div v-if="(form.delivery_date || form.project_link || form.project_description) && form.location" class="form-group">
+                                        <div
+                                            v-if="(form.delivery_date || form.project_link || form.project_description) && form.location"
+                                            class="form-group">
                                             <div v-html="modifiedText">
 
                                             </div>
@@ -241,7 +245,8 @@
                             <el-row style="margin-bottom: 30px" v-if="form.attachments && form.attachments.length">
                                 <el-card class="box-card extra-attachments-card"
                                          :class="{ 'hidden-body': !showExtraAttachments }">
-                                    <div slot="header" class="clearfix main-header" @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
+                                    <div slot="header" class="clearfix main-header"
+                                         @click="showExtraAttachments = !showExtraAttachments" style="cursor: pointer;">
                                         <div style="width: 98%">
                                             <span>Asset Photos</span>
                                         </div>
@@ -403,7 +408,11 @@
                                                     </el-button>
                                                 </div>
                                                 <el-table border :data="form.rentals" style="width: 100%">
-                                                    <el-table-column prop="payment_date" label="Payment Date"/>
+                                                    <el-table-column label="Payment Date">
+                                                        <template slot-scope="scope">
+                                                            {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
+                                                        </template>
+                                                    </el-table-column>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
                                                             {{
@@ -439,7 +448,11 @@
                                                 </div>
                                                 <el-table border :data="form.rental_payments_histories"
                                                           style="width: 100%">
-                                                    <el-table-column prop="date" label="Payment Date"/>
+                                                    <el-table-column label="Payment Date">
+                                                        <template slot-scope="scope">
+                                                            {{ scope.$index + 1 }}. {{ scope.row.date }}
+                                                        </template>
+                                                    </el-table-column>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
                                                             {{ formatPrice(scope.row.amount) }}
@@ -590,7 +603,11 @@
                                                         </el-button>
                                                     </div>
                                                     <el-table border :data="form.payments" style="width: 100%">
-                                                        <el-table-column prop="payment_date" label="Payment Date"/>
+                                                        <el-table-column label="Payment Date">
+                                                            <template slot-scope="scope">
+                                                                {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
+                                                            </template>
+                                                        </el-table-column>
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{
@@ -626,7 +643,11 @@
                                                     </div>
                                                     <el-table border :data="form.payments_histories"
                                                               style="width: 100%">
-                                                        <el-table-column prop="date" label="Payment Date"/>
+                                                        <el-table-column label="Payment Date">
+                                                            <template slot-scope="scope">
+                                                                {{ scope.$index + 1 }}. {{ scope.row.date }}
+                                                            </template>
+                                                        </el-table-column>
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{ formatPrice(scope.row.amount) }}
@@ -908,7 +929,7 @@ export default {
                         if (data.item.files) {
                             this.form.attachments = data.item.files;
                         }
-                        if (this.form.agreement_status === 'Complete'){
+                        if (this.form.agreement_status === 'Complete') {
                             this.showAgreementDetails = false;
                         }
                     }
@@ -1082,13 +1103,16 @@ export default {
     font-size: 16px;
     font-weight: bold;
 }
-.block.col-md-3.asset-manager-details{
+
+.block.col-md-3.asset-manager-details {
     padding: 0;
     border: none;
 }
-.block.col-md-3.asset-manager-details .el-card.asset-manager{
+
+.block.col-md-3.asset-manager-details .el-card.asset-manager {
     border: none;
 }
+
 @media (min-width: 769px) {
     .payments-wrapper {
         display: flex;
@@ -1144,7 +1168,8 @@ export default {
 .el-table .cell {
     padding-right: 0 !important;
 }
-.project-description-div{
+
+.project-description-div {
     white-space: pre-line;
     padding-left: 15px;
     margin-top: -20px;
