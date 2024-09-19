@@ -132,7 +132,7 @@ class RevenueController extends BaseController
             }
         }
 
-        if ($request->investor) {
+        if ($request->investor && $request->investor != 'all') {
             $investorNamesArray = explode(' ', $request->investor);
             $investorUser = Investor::where('name', $investorNamesArray[0])
                 ->where('surname', $investorNamesArray[1])->first();

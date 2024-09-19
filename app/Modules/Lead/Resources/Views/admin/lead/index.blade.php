@@ -12,7 +12,7 @@
             @can(getPermissionKey($moduleKey, 'create', true))
                 <div class="col-md-6">
                     <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i
-                            class="el-icon-plus"></i> Add Lead</a>
+                                class="el-icon-plus"></i> Add Lead</a>
                 </div>
             @endcan
 
@@ -47,6 +47,7 @@
                             @endif
                             <th> Status</th>
                             <th> Created At</th>
+                            <th> Marketing Channel</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -66,10 +67,16 @@
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
                                 @if(auth()->user()->getRolesNameAttribute() == 'administrator')
-                                    <td>{!! $item->manager_name !!} {!! $item->manager_surname !!}</td>
+                                    <td>
+                                        <update-lead-manager
+                                            :manager-name="'{{ $item->manager_name && $item->manager_surname ? $item->manager_name . ' ' . $item->manager_surname : 'Assign Manager' }}'"
+                                            :lead-id="{{ $item->id }}">
+                                        </update-lead-manager>
+                                    </td>
                                 @endif
                                 <td>{!! $item->status !!}</td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
+                                <td>{!! $item->marketing_channel !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
@@ -80,8 +87,8 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                            :url="'{{ route($moduleKey . '.delete', [$item->id ]) }}'"
-                                            :id="{{ $item->id }}"
+                                                :url="'{{ route($moduleKey . '.delete', [$item->id ]) }}'"
+                                                :id="{{ $item->id }}"
                                         ></delete-component>
                                     @endcan
                                 </td>

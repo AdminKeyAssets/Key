@@ -8,12 +8,16 @@
         <!-- Filters form, shown only if showFilters is true -->
         <el-form
             v-if="showFilters"
-            ref="form" :model="form" class="form-inline form-bordered"
-            @submit.prevent="applyFilters">
+            ref="form"
+            :model="form"
+            class="form-inline form-bordered"
+            @submit.prevent="applyFilters"
+        >
             <el-row>
+                <!-- Date Range Filter -->
                 <div class="form-group">
                     <el-date-picker
-                        v-model="form.create_date"
+                        v-model="form.agreement_date"
                         type="daterange"
                         format="yyyy/MM/dd"
                         value-format="yyyy/MM/dd"
@@ -22,10 +26,15 @@
                     </el-date-picker>
                 </div>
 
+                <!-- Investor Filter -->
                 <div class="form-group">
                     <el-select v-model="form.investor" filterable placeholder="Investor">
                         <el-option
-                            v-for="investor in this.investors"
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="investor in investors"
                             :key="investor.name + ' ' + investor.surname"
                             :label="investor.name + ' ' + investor.surname"
                             :value="investor.name + ' ' + investor.surname"
@@ -33,10 +42,15 @@
                     </el-select>
                 </div>
 
+                <!-- Asset Filter -->
                 <div class="form-group">
                     <el-select v-model="form.asset" filterable placeholder="Asset Name">
                         <el-option
-                            v-for="asset in this.assets"
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="asset in assets"
                             :key="asset.project_name"
                             :label="asset.project_name"
                             :value="asset.project_name"
@@ -44,7 +58,11 @@
                     </el-select>
                 </div>
 
-                <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <!-- Apply Filters Button -->
+                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+
+                <!-- Clear Filters Button -->
+                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
         </el-form>
     </div>
@@ -82,12 +100,19 @@ export default {
             window.location.search = queryParams;
         },
 
+        // Method to clear filters
+        clearFilters() {
+            this.form.agreement_date = '';
+            this.form.investor = '';
+            this.form.asset = '';
+            this.applyFilters(); // Optionally, automatically apply the cleared filters
+        },
+
         fetchRevenueFilters() {
             axios.get('/assets/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
-                        // Response data.
                         let data = response.data.data;
 
                         if (data.investors) {

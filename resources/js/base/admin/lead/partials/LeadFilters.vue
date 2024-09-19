@@ -25,7 +25,11 @@
                 <div class="form-group">
                     <el-select v-model="form.manager" filterable placeholder="Manager">
                         <el-option
-                            v-for="manager in this.managers"
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="manager in managers"
                             :key="manager.name + ' ' + manager.surname"
                             :label="manager.name + ' ' + manager.surname"
                             :value="manager.name + ' ' + manager.surname"
@@ -33,14 +37,15 @@
                     </el-select>
                 </div>
 
-                <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
         </el-form>
     </div>
 </template>
 
 <script>
-import {responseParse} from "../../../mixins/responseParse";
+import { responseParse } from "../../../mixins/responseParse";
 
 export default {
     data() {
@@ -68,13 +73,19 @@ export default {
             window.location.search = queryParams;
         },
 
+        // Method to clear the filters
+        clearFilters() {
+            this.form.create_date = '';
+            this.form.manager = '';
+            this.applyFilters(); // Optionally apply cleared filters
+        },
+
         fetchLeadFilters() {
             axios.get('/lead/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
-                        // Response data.
-                        let data = response.data.data;
+                        const data = response.data.data;
 
                         if (data.managers) {
                             this.managers = data.managers;

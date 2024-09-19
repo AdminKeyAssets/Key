@@ -151,6 +151,17 @@
                     </div>
                 </div>
 
+                <div class="form-group dashed">
+                    <label class="col-md-1 control-label">Service Agreement:</label>
+                    <div class="col-md-10 uppercase-medium">
+                        <input type="file" @change="onServiceAgreementChange">
+                        <div v-if="form.service_agreement">
+                            <p v-if="form.service_agreement"><a :href="form.service_agreement" target="_blank">View Agreement</a></p>
+                            <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                       @click="removeServiceAgreement"></el-button>
+                        </div>
+                    </div>
+                </div>
             </el-row>
 
             <div class="el-form-item registration-btn">
@@ -316,6 +327,20 @@ export default {
             this.form.profile_picture = null;
             this.form.profilePicturePreview = null;
         },
+        onServiceAgreementChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.service_agreement = file;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+
         onPassportChange(e) {
             const file = e.target.files[0];
             if (file) {
@@ -330,9 +355,14 @@ export default {
                 reader.readAsDataURL(file);
             }
         },
+
         removePassport() {
             this.form.passport = null;
             this.form.passportPreview = null;
+        },
+
+        removeServiceAgreement() {
+            this.form.passport = null;
         },
         capitalizeFirstLetter(field) {
             if (this.form[field]) {

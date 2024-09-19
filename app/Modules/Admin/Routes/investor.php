@@ -53,6 +53,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
         Route::get('filter-options', $investorController . '@filterOptions')
             ->name('filters');
+
+        Route::post('update-manager', $investorController . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
     });
 
 

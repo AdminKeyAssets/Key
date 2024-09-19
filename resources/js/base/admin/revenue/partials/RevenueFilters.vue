@@ -25,7 +25,11 @@
                 <div class="form-group">
                     <el-select v-model="form.investor" filterable placeholder="Investor">
                         <el-option
-                            v-for="investor in this.investors"
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="investor in investors"
                             :key="investor.name + ' ' + investor.surname"
                             :label="investor.name + ' ' + investor.surname"
                             :value="investor.name + ' ' + investor.surname"
@@ -33,7 +37,8 @@
                     </el-select>
                 </div>
 
-                <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
         </el-form>
     </div>
@@ -68,12 +73,18 @@ export default {
             window.location.search = queryParams;
         },
 
+        // New method to clear filters
+        clearFilters() {
+            this.form.agreement_date = '';
+            this.form.investor = '';
+            this.applyFilters(); // Optionally apply empty filters after clearing
+        },
+
         fetchRevenueFilters() {
             axios.get('/assets/revenues/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
-                        // Response data.
                         let data = response.data.data;
 
                         if (data.investors) {

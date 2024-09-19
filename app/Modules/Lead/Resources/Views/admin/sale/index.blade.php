@@ -42,6 +42,7 @@
                             <th> Agreement Date</th>
                             <th> Down Payment</th>
                             <th> Period</th>
+                            <th> Marketin Channel</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -63,6 +64,7 @@
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! $item->down_payment !!}</td>
                                 <td>{!! $item->period !!}</td>
+                                <td>{!! $item->marketing_channel !!}</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))

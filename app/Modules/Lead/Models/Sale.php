@@ -18,5 +18,6 @@ class Sale extends Model
         'agreement_date',
         'down_payment',
         'period',
+        'marketing_channel',
     ];
 }

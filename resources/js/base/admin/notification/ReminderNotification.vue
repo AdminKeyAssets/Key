@@ -33,13 +33,13 @@
             </div>
             <el-badge slot="reference" v-if="UpcomingRemindersCount" class="item" style="cursor: pointer"
                       type="warning">
-                <el-tooltip content="Reminder Notifications" placement="top" effect="light">
+                <el-tooltip content="Reminders" placement="top" effect="light">
                     <i class="el-icon-message-solid" @click="toggleUpcomingRemindersList" style="color: #E6A23C"></i>
                 </el-tooltip>
             </el-badge>
 
             <el-badge slot="reference" v-else class="item" style="cursor: pointer" type="warning">
-                <el-tooltip content="Reminder Notifications" placement="top" effect="light">
+                <el-tooltip content="Reminders" placement="top" effect="light">
                     <i class="el-icon-bell" @click="toggleUpcomingRemindersList" style="color:white"></i>
                 </el-tooltip>
             </el-badge>

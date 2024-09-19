@@ -5,6 +5,7 @@ namespace App\Modules\Admin\Http\Controllers\User;
 use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\Investor\SaveInvestorRequest;
+use App\Modules\Admin\Http\Requests\UpdateManagerRequest;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
@@ -186,6 +187,7 @@ class InvestorController extends BaseController
         try {
             $passport = null;
             $profilePicture = null;
+            $serviceAgreement = null;
 
             if (isset($request->id)) {
                 $investor = Investor::where('id', $request->id)->first();
@@ -224,6 +226,21 @@ class InvestorController extends BaseController
                     $passport = $request->input('passport');
                 }
 
+                if ($request->hasFile('service_agreement')) {
+                    if ($investor->service_agreement && Storage::disk('public')->exists($investor->service_agreement)) {
+                        Storage::disk('public')->delete($investor->service_agreement);
+                    }
+                    $serviceAgreementFile = $request->file('service_agreement');
+                    $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
+                    $serviceAgreement = Storage::url($serviceAgreement);
+                } else if ($request->input('passport') === null) {
+                    if ($investor->service_agreement && Storage::disk('public')->exists($investor->service_agreement)) {
+                        Storage::disk('public')->delete($investor->service_agreement);
+                    }
+                } else {
+                    $serviceAgreement = $request->input('service_agreement');
+                }
+
             } else {
                 if ($request->hasFile('profile_picture')) {
                     $profilePictureFile = $request->file('profile_picture');
@@ -234,6 +251,11 @@ class InvestorController extends BaseController
                     $passportFile = $request->file('passport');
                     $passport = $passportFile->store('uploads', 'public');
                     $passport = Storage::url($passport);
+                }
+                if ($request->hasFile('service_agreement')) {
+                    $serviceAgreementFile = $request->file('service_agreement');
+                    $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
+                    $serviceAgreement = Storage::url($serviceAgreement);
                 }
             }
 
@@ -251,6 +273,7 @@ class InvestorController extends BaseController
                 'address' => $request->address,
                 'passport' => $passport,
                 'profile_picture' => $profilePicture,
+                'service_agreement' => $serviceAgreement,
                 'admin_id' => $newAdminId,
             ];
 
@@ -288,9 +311,10 @@ class InvestorController extends BaseController
             if (auth()->user()->id == $request->get('id')) {
                 throw new \Exception('You are not allowed to delete this user!');
             }
+            $investor = Investor::where('id',$request->id)->first();
+            $investorAssets = Asset::where('investor_id', $investor->id)->get();
 
-            $investor = Investor::find($request->get('id'));
-            if ($investor->assets) {
+            if ($investorAssets->count()) {
                 throw new \Exception('You are not allowed to delete user, while having assets attached on it!!');
             }
             $investor->delete();
@@ -300,7 +324,7 @@ class InvestorController extends BaseController
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
         }
 
-        return ServiceResponse::jsonNotification($this->baseData['trans_text']['delete_successfully'], 200, $this->baseData);
+        return ServiceResponse::jsonNotification('Investor Deleted Successfully!!!', 200, $this->baseData);
 
     }
 
@@ -318,5 +342,15 @@ class InvestorController extends BaseController
         })->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function updateManager(UpdateManagerRequest $request)
+    {
+        Investor::where('id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
+        Asset::where('investor_id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
+
+        $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
+
+        return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
     }
 }

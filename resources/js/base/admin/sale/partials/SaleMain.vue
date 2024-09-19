@@ -110,6 +110,14 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Marketing Channel: </label>
+                        <div class="col-md-6">
+                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
+                                      v-model="form.marketing_channel"></el-input>
+                        </div>
+                    </div>
+
                     <template v-if="form.agreement_status === 'Installments'">
 
                         <div class="form-group">
@@ -135,6 +143,8 @@
                                 </el-select>
                             </div>
                         </div>
+
+
                     </template>
                 </el-row>
 
@@ -183,6 +193,9 @@ export default {
             updatingTotalPrice: false, // Flag to prevent recursion
             updatingSqmPrice: false,
         }
+    },
+    updated() {
+        this.updateData(this.form);
     },
     watch: {
         'item'() {

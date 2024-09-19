@@ -109,6 +109,15 @@
 
                 </div>
 
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Service Agreement:</label>
+                    <div class="col-md-6 uppercase-medium">
+                        <div v-if="form.service_agreement">
+                            <p v-if="form.service_agreement"><a :href="form.service_agreement" target="_blank">View Agreement</a></p>
+                        </div>
+                    </div>
+                </div>
+
             </el-row>
 
 
@@ -174,6 +183,7 @@ export default {
                 citizenship: this.user ? this.user.citizenship : '',
                 manager: this.user ? this.user.manager : '',
                 profile_picture: this.user ? this.user.profile_picture : '',
+                service_agreement: this.user ? this.user.service_agreement : '',
                 password: ''
             }
         },

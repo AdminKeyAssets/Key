@@ -28,7 +28,7 @@ if (!$user) {
                                 <div class="sidebar-user-avatar">
                                     @if(\Auth::guard('investor')->check())
                                         @if(!$user->is_demo)
-                                            <a href="{{ !$user->is_demo ?? route('investor.profile.index') }}">
+                                            <a href="{{ route('investor.profile.index') }}">
                                                 @if( $user->profile_picture)
                                                     <img src="{{ $user->profile_picture }}" alt="avatar">
                                                 @else
