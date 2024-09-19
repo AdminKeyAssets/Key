@@ -61,11 +61,19 @@
         </li>
     @endif
 
-        @can ( getPermissionKey('sale', 'index', true))
-            <li
-                {!! strpos(request()->route()->getName(), 'sale.index') !== false ? ' class="active"' : '' !!}>
-                <a href="{{route('sale.index')}}"><i class="el-icon-odometer sidebar-nav-icon"></i>
-                    <span class="sidebar-nav-mini-hide">Sales</span></a>
-            </li>
-        @endif
+    @can ( getPermissionKey('sale', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'sale.index') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('sale.index')}}"><i class="el-icon-odometer sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Sales</span></a>
+        </li>
+    @endif
+
+    @can ( getPermissionKey('template', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'admin.template.') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('template.index')}}"><i class="el-icon-user sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Email Templates</span></a>
+        </li>
+    @endif
 </ul>

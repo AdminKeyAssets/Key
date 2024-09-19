@@ -21,7 +21,7 @@
                         <div class="col-md-6">
                             <el-input class="el-input--is-round"
                                       type="textarea" v-model="form.body"
-                                      autosize
+                                      :autosize="{minRows: 4}"
                                       :disabled="loading"></el-input>
                         </div>
                     </div>
