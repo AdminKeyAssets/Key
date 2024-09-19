@@ -107,7 +107,7 @@ export default {
             for (let key in this.form) {
                 formData.append(key, this.form[key]);
             }
-
+            console.log(this.form)
             axios.post(this.routes.save, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
