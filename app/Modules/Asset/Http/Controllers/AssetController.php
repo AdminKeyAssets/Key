@@ -752,7 +752,7 @@ class AssetController extends BaseController
             $asset = Asset::where('id', $id)->first();
             $investor = Investor::where('id', $asset->investor_id)->first();
             $this->baseData['extra'] = [
-                'asset_edit_route' => route('asset.view', [$asset->id]),
+                'asset_edit_route' => route('asset.edit', [$asset->id]),
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,

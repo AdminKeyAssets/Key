@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Display current manager's name -->
-        <a @click="openModal">{{ localManagerName }}</a>
+        <a @click="openModal" style="cursor: pointer">{{ localManagerName }}</a>
 
         <!-- Modal for selecting a new manager -->
         <el-dialog
