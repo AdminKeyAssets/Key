@@ -56,6 +56,11 @@ export default {
     mounted() {
         this.fetchUsersFilters();
         this.loadFiltersFromQueryParams();
+
+        if ((this.form.create_date && this.form.create_date.length > 0) ||
+            this.form.role) {
+            this.showFilters = true;
+        }
     },
     methods: {
         loadFiltersFromQueryParams() {

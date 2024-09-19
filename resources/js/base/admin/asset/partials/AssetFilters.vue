@@ -87,6 +87,10 @@ export default {
     mounted() {
         this.loadFiltersFromQueryParams();
         this.fetchRevenueFilters();
+
+        if (this.form.agreement_date || this.form.investor || this.form.asset) {
+            this.showFilters = true;
+        }
     },
     methods: {
         loadFiltersFromQueryParams() {

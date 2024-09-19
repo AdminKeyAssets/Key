@@ -61,6 +61,11 @@ export default {
     mounted() {
         this.fetchLeadFilters();
         this.loadFiltersFromQueryParams();
+
+        if ((this.form.create_date && this.form.create_date.length > 0) ||
+            this.form.manager) {
+            this.showFilters = true;
+        }
     },
     methods: {
         loadFiltersFromQueryParams() {
