@@ -38,6 +38,9 @@
                         <tr>
                             <th> Project</th>
                             <th> Investor</th>
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                <th> Sales Manager</th>
+                            @endif
                             <th> Type</th>
                             <th> Size (sq/m)</th>
                             <th> Price</th>
@@ -63,6 +66,14 @@
                                     </a>
                                 </td>
                                 <td>{!! $item->investor !!}</td>
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                    <td>
+                                        <update-sale-manager
+                                            :manager-name="'{{ $item->manager_name && $item->manager_surname ? $item->manager_name . ' ' . $item->manager_surname : 'Assign Manager' }}'"
+                                            :sale-id="{{ $item->id }}">
+                                        </update-sale-manager>
+                                    </td>
+                                @endif
                                 <td>{!! $item->type !!}</td>
                                 <td>{!! $item->size !!}</td>
                                 <td>{!! number_format($item->price,0,".",",") !!} {!! $item->currency !!}</td>

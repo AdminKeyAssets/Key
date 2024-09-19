@@ -22,5 +22,6 @@ class Sale extends Model
         'commission',
         'complete',
         'attachment',
+        'admin_id'
     ];
 }

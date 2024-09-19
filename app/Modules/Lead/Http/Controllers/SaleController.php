@@ -4,9 +4,11 @@ namespace App\Modules\Lead\Http\Controllers;
 
 use App\Modules\Admin\Exports\SalesExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Lead\Http\Requests\SaleRequest;
+use App\Modules\Lead\Http\Requests\UpdateSalesManagerRequest;
 use App\Modules\Lead\Models\Sale;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -46,7 +48,16 @@ class SaleController extends BaseController
      */
     public function index(Request $request)
     {
-        $this->baseData['allData'] = Sale::orderByDesc('agreement_date')->paginate(25);
+
+        $query = Sale::query()
+            ->leftJoin('admins', 'sales.admin_id', '=', 'admins.id')
+            ->select('sales.*', 'admins.name as manager_name', 'admins.surname as manager_surname')
+            ->orderByDesc('sales.agreement_date');
+
+        $query->orderByDesc('agreement_date');
+
+        $this->baseData['allData'] = $query->paginate(25);
+
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
 
@@ -83,6 +94,10 @@ class SaleController extends BaseController
             $this->baseData['projects'] = Asset::get()->map(function ($project) {
                 return ['value' => $project->project_name];
             });
+
+            $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                $query->where('name', 'like', '%sale%manager%');
+            })->get();
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
@@ -135,6 +150,7 @@ class SaleController extends BaseController
                 'attachment' => $attachment,
                 'commission' => $request->commission,
                 'complete' => $request->complete === 'true',
+                'admin_id' => $request->admin_id,
             ]);
         } else {
 
@@ -159,6 +175,7 @@ class SaleController extends BaseController
                 'attachment' => $attachment,
                 'commission' => $request->commission,
                 'complete' => $request->complete === 'true',
+                'admin_id' => $request->admin_id,
             ]);
         }
 
@@ -225,4 +242,23 @@ class SaleController extends BaseController
         $filters = [];
         return Excel::download(new SalesExport($filters), 'sales.xlsx');
     }
+
+    public function filterOptions()
+    {
+        $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+            $query->where('name', 'like', '%sale%manager%');
+        })->get();
+
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+    }
+
+    public function updateManager(UpdateSalesManagerRequest $request)
+    {
+        Sale::where('id', $request->sale_id)->update(['admin_id' => $request->manager_id]);
+
+        $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
+
+        return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
+    }
+
 }

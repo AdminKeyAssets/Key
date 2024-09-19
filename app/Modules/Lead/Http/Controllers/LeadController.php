@@ -50,8 +50,8 @@ class LeadController extends BaseController
     public function index(Request $request)
     {
         $query = Lead::query()
-            ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id') // Use leftJoin to include leads even if admin_id is null
-            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname') // Select lead fields and admin's name, surname
+            ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id')
+            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname')
             ->orderByDesc('leads.id');
 
         $query->orderByDesc('id');

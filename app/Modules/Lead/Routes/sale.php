@@ -18,6 +18,12 @@ Route::prefix('sale')->name('sale.')->group(function () {
 //    // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
+    Route::get('filter-options', $controller . '@filterOptions')
+        ->name('filters');
+
+    Route::post('update-manager', $controller . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
+
     /**
      * Export sales.
      */

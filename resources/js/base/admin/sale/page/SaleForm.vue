@@ -13,6 +13,7 @@
                     :investors="investors"
                     :projects="projects"
                     :can-complete="canComplete"
+                    :managers="managers"
                     :user-id="this.id"
                     :item="this.form && this.form ? this.form : undefined"
                 ></SaleMain>
@@ -35,9 +36,10 @@
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import SaleMain from "../partials/SaleMain.vue";
+import LeadMain from "../../lead/partials/LeadMain.vue";
 
 export default {
-    components: {SaleMain},
+    components: {LeadMain, SaleMain},
     props: [
         'getSaveDataRoute',
         'id',
@@ -54,7 +56,8 @@ export default {
                 id: this.id
             },
             investors: {},
-            projects: {}
+            projects: {},
+            managers: {}
 
         }
     },
@@ -95,6 +98,9 @@ export default {
                     }
                     if (data.investors) {
                         this.investors = data.investors;
+                    }
+                    if (data.managers) {
+                        this.managers = data.managers;
                     }
 
                     this.form.id = this.id;

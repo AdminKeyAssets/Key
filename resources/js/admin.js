@@ -93,6 +93,8 @@ Vue.component('leads-export-component', require('./base/admin/lead/partials/Expo
 Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);
 Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
 Vue.component('sales-export-component', require('./base/admin/sale/partials/ExportSales').default);
+Vue.component('update-sale-manager', require('./base/admin/sale/partials/UpdateSaleManager').default);
+
 
 //Email Templates
 Vue.component('email-page-form', require('./base/admin/template/page/EmailForm').default);

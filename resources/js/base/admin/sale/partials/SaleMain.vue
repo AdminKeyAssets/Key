@@ -111,6 +111,21 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Select Manager: </label>
+                        <div class="col-md-6">
+                            <el-select v-model="form.admin_id" filterable
+                                       placeholder="Manager">
+                                <el-option
+                                    v-for="manager in this.managers"
+                                    :key="manager.id"
+                                    :label="manager.name + ' ' + manager.surname"
+                                    :value="manager.id"
+                                ></el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-md-2 control-label">Marketing Channel: </label>
                         <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
@@ -198,7 +213,8 @@ export default {
         'investors',
         'projects',
         'canComplete',
-        'userId'
+        'userId',
+        'managers'
     ],
     data() {
         return {
