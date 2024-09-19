@@ -61,8 +61,8 @@
                                 <td>{!! $item->investor !!}</td>
                                 <td>{!! $item->type !!}</td>
                                 <td>{!! $item->size !!}</td>
-                                <td>{!! $item->price !!} {!! $item->currency !!}</td>
-                                <td>{!! $item->total_price !!} {!! $item->currency !!}</td>
+                                <td>{!! number_format($item->price,0,".",",") !!} {!! $item->currency !!}</td>
+                                <td>{!! number_format($item->total_price,0,".",",") !!} {!! $item->currency !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! $item->down_payment !!}</td>
