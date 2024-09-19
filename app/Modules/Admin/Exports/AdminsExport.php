@@ -4,12 +4,12 @@ namespace App\Modules\Admin\Exports;
 
 use App\Modules\Admin\Models\User\Admin;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use Illuminate\Support\Collection;
 
-
-class AdminsExport implements FromCollection, WithHeadings
+class AdminsExport implements FromCollection, WithHeadings, WithColumnFormatting
 {
     protected $filters;
 
@@ -33,20 +33,19 @@ class AdminsExport implements FromCollection, WithHeadings
             $query->where('phone', 'like', '%' . $this->filters['phone'] . '%');
         }
 
-        $investors = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'created_at')->get();
+        $admins = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'created_at')->get();
 
-        $investors->transform(function ($investor) {
+        $admins->transform(function ($admin) {
             return [
-                'name' => $investor->name . ' ' . $investor->surname,
-                'id' => '"' . $investor->pid . '"',
-                'email' => $investor->email,
-                'full_phone' => '"' . $investor->prefix . $investor->phone . '"',
-                'created_at' => $investor->created_at,
+                'name' => $admin->name . ' ' . $admin->surname,
+                'id' => $admin->pid,  // Keep the PID as a text value
+                'email' => $admin->email,
+                'full_phone' => $admin->prefix . $admin->phone, // Concatenate prefix and phone
+                'created_at' => $admin->created_at,
             ];
         });
 
-
-        return new Collection($investors->toArray());
+        return new Collection($admins->toArray());
     }
 
     public function headings(): array
@@ -60,14 +59,19 @@ class AdminsExport implements FromCollection, WithHeadings
         ];
     }
 
+    /**
+     * Format specific columns.
+     *
+     * @return array
+     */
     public function columnFormats(): array
     {
         return [
-            'A' => NumberFormat::FORMAT_TEXT,
-            'B' => NumberFormat::FORMAT_TEXT,
-            'C' => NumberFormat::FORMAT_TEXT,
-            'D' => NumberFormat::FORMAT_TEXT,
-            'E' => NumberFormat::FORMAT_TEXT,
+            'A' => NumberFormat::FORMAT_TEXT, // Name
+            'B' => NumberFormat::FORMAT_TEXT, // ID (PID)
+            'C' => NumberFormat::FORMAT_TEXT, // Email
+            'D' => NumberFormat::FORMAT_TEXT, // Phone
+            'E' => NumberFormat::FORMAT_DATE_DATETIME, // Created At
         ];
     }
 }

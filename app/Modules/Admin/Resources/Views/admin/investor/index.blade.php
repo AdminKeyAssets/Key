@@ -47,7 +47,9 @@
                             <th> Email</th>
                             <th> Phone</th>
                             <th> Assets</th>
-                            <th> Asset Manager</th>
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                <th> Asset Manager</th>
+                            @endif
                             <th> Created At</th>
                             <th width="10%" class="text-center">Actions</th>
                         </tr>
@@ -75,15 +77,19 @@
                                 <td>{!! $item->email !!}</td>
                                 <td>{!! $item->prefix !!}{!! $item->phone !!}</td>
                                 <td>{!! count($item->assets) !!}</td>
-                                <td>
-                                    <update-investor-manager
-                                        :manager-name="'{{ $item->admin->name && $item->admin->surname ? $item->admin->name . ' ' . $item->admin->surname : 'Assign Manager' }}'"
-                                        :investor-id="{{ $item->id }}">
-                                    </update-investor-manager>
-                                </td>
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                    <td>
+                                        <update-investor-manager
+                                            :manager-name="'{{ $item->admin->name && $item->admin->surname ? $item->admin->name . ' ' . $item->admin->surname : 'Assign Manager' }}'"
+                                            :investor-id="{{ $item->id }}">
+                                        </update-investor-manager>
+                                    </td>
+                                @endif
                                 <td>{!! $item->created_at->toDateString() !!}</td>
                                 <td class="text-center">
-
+                                    @can(getPermissionKey($moduleKey, 'view', true))
+                                        @include('admin::includes.actions.view',['route' => route($baseRouteName . 'view',  [$item->id, ])])
+                                    @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['route' => route($baseRouteName . 'edit', [ $item->id ])])
                                     @endcan

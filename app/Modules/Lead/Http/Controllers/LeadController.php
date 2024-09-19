@@ -2,6 +2,7 @@
 
 namespace App\Modules\Lead\Http\Controllers;
 
+use App\Modules\Admin\Exports\LeadsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -19,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Mockery\Exception;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LeadController extends BaseController
 {
@@ -262,5 +264,11 @@ class LeadController extends BaseController
         $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
 
         return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
+    }
+
+    public function export(Request $request)
+    {
+        $filters = [];
+        return Excel::download(new LeadsExport($filters), 'leads.xlsx');
     }
 }

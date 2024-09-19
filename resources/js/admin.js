@@ -87,11 +87,12 @@ Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').defau
 Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewForm').default);
 Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
 Vue.component('update-lead-manager', require('./base/admin/lead/partials/UpdateLeadManager').default);
+Vue.component('leads-export-component', require('./base/admin/lead/partials/ExportLeads').default);
 
 //Sale
 Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);
 Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
-
+Vue.component('sales-export-component', require('./base/admin/sale/partials/ExportSales').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

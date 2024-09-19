@@ -16,6 +16,10 @@
                 </div>
             @endcan
 
+                @can(getPermissionKey($moduleKey, 'export', false))
+                    <leads-export-component>
+                    </leads-export-component>
+                @endcan
         </div>
         <br>
 

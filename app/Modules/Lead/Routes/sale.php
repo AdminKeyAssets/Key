@@ -18,5 +18,12 @@ Route::prefix('sale')->name('sale.')->group(function () {
 //    // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
+    /**
+     * Export sales.
+     */
+    Route::get('export', $controller . '@export')
+        ->name('export')
+        ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
+
 });
 

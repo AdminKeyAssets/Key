@@ -2,6 +2,7 @@
 
 namespace App\Modules\Lead\Http\Controllers;
 
+use App\Modules\Admin\Exports\SalesExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Mockery\Exception;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends BaseController
 {
@@ -218,4 +220,9 @@ class SaleController extends BaseController
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 
+    public function export(Request $request)
+    {
+        $filters = [];
+        return Excel::download(new SalesExport($filters), 'sales.xlsx');
+    }
 }

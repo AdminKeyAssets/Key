@@ -16,6 +16,10 @@
                 </div>
             @endcan
 
+                @can(getPermissionKey($moduleKey, 'export', false))
+                    <sales-export-component>
+                    </sales-export-component>
+                @endcan
         </div>
         <br>
 

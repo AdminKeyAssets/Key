@@ -24,6 +24,14 @@ Route::prefix('lead')->name('lead.')->group(function () {
 
     Route::post('update-manager', $controller . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 
+    /**
+     * Export leads.
+     */
+    Route::get('export', $controller . '@export')
+        ->name('export')
+        ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
+
+
     $commentController = 'LeadCommentController';
     $commentModuleName = 'lead_comment';
 
