@@ -50,7 +50,7 @@
                             <th> Type</th>
                             <th> Size (sq/m)</th>
                             <th> Price</th>
-                            <th> Total Price</th>
+                            <th> Total Price ({{ $allData->sum('total_price') }})</th>
                             <th> Agreement Status</th>
                             <th> Agreement Date</th>
                             <th> Down Payment</th>
