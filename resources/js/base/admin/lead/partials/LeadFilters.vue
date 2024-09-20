@@ -37,6 +37,21 @@
                     </el-select>
                 </div>
 
+                <div class="form-group">
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="marketingChannel in marketingChannels"
+                            :key="marketingChannel.marketing_channel"
+                            :label="marketingChannel.marketing_channel"
+                            :value="marketingChannel.marketing_channel"
+                        ></el-option>
+                    </el-select>
+                </div>
+
                 <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
                 <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
@@ -45,7 +60,7 @@
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
     data() {
@@ -53,9 +68,11 @@ export default {
             form: {
                 create_date: '',
                 manager: '',
+                marketing_channel: ''
             },
             managers: [],
-            showFilters: false, // Controls the visibility of the filters, initially hidden
+            marketingChannels: [],
+            showFilters: false,
         };
     },
     mounted() {
@@ -63,7 +80,8 @@ export default {
         this.loadFiltersFromQueryParams();
 
         if ((this.form.create_date && this.form.create_date.length > 0) ||
-            this.form.manager) {
+            this.form.manager ||
+            this.form.marketing_channel) {
             this.showFilters = true;
         }
     },
@@ -72,6 +90,7 @@ export default {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.manager = urlParams.get('manager') || '';
+            this.form.marketing_channel = urlParams.get('marketing_channel') || '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -82,6 +101,7 @@ export default {
         clearFilters() {
             this.form.create_date = '';
             this.form.manager = '';
+            this.form.marketing_channel = '';
             this.applyFilters(); // Optionally apply cleared filters
         },
 
@@ -94,6 +114,9 @@ export default {
 
                         if (data.managers) {
                             this.managers = data.managers;
+                        }
+                        if (data.marketingChannels) {
+                            this.marketingChannels = data.marketingChannels;
                         }
                     }
                 })

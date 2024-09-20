@@ -78,6 +78,10 @@ class LeadController extends BaseController
             $query->where('leads.admin_id', '=', $managerUser->id);
         }
 
+        if ($request->marketing_channel && $request->marketing_channel != 'all') {
+            $query->where('leads.marketing_channel', '=', $request->marketing_channel);
+        }
+
         $this->baseData['allData'] = $query->paginate(50);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -253,6 +257,8 @@ class LeadController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%sale%manager%');
         })->get();
+
+        $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }

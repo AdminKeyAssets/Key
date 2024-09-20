@@ -23,6 +23,12 @@
         </div>
         <br>
 
+        <div class="row">
+            <sale-filter-component>
+            </sale-filter-component>
+        </div>
+        <br>
+
 
         <div class="block">
 

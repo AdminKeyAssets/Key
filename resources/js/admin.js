@@ -94,6 +94,7 @@ Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').defau
 Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
 Vue.component('sales-export-component', require('./base/admin/sale/partials/ExportSales').default);
 Vue.component('update-sale-manager', require('./base/admin/sale/partials/UpdateSaleManager').default);
+Vue.component('sale-filter-component', require('./base/admin/sale/partials/SaleFilters').default);
 
 
 //Email Templates

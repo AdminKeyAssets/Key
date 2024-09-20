@@ -56,6 +56,40 @@ class SaleController extends BaseController
 
         $query->orderByDesc('agreement_date');
 
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        if ($request->agreement_date) {
+            $agreementDates = explode(',', $request->agreement_date);
+
+            if (isset($agreementDates[0])) {
+                $query->where('sales.agreement_date', '>=', $agreementDates[0]);
+            }
+            if (isset($agreementDates[1])) {
+                $query->where('sales.agreement_date', '<=', $agreementDates[1]);
+            }
+        }
+
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+            $managerUser = Admin::where('name', $managerNamesArray[0])
+                ->where('surname', $managerNamesArray[1])->first();
+            $query->where('sales.admin_id', '=', $managerUser->id);
+        }
+
+        if ($request->marketing_channel && $request->marketing_channel != 'all') {
+            $query->where('sales.marketing_channel', '=', $request->marketing_channel);
+        }
+
+        if ($request->status && $request->status == 'Complete') {
+            $query->where('sales.complete', '=', 1);
+        }
+
+        if ($request->status && $request->status == 'Pending') {
+            $query->where('sales.complete', '!=', 1);
+        }
+
         $this->baseData['allData'] = $query->paginate(25);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -248,6 +282,8 @@ class SaleController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%sale%manager%');
         })->get();
+
+        $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
 
         return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
     }
