@@ -68,9 +68,14 @@ return [
         'default' => $default_permissions
     ],
     'lead' => [
-        'default' => $default_permissions
+        'default' => $default_permissions,
+        'custom' => $custom_permissions
     ],
     'sale' => [
-        'default' => $default_permissions
+        'default' => $default_permissions,
+        'custom' => $custom_permissions
+    ],
+    'template' => [
+        'default' => $default_permissions,
     ],
 ];

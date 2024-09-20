@@ -111,6 +111,21 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Select Manager: </label>
+                        <div class="col-md-6">
+                            <el-select v-model="form.admin_id" filterable
+                                       placeholder="Manager">
+                                <el-option
+                                    v-for="manager in this.managers"
+                                    :key="manager.id"
+                                    :label="manager.name + ' ' + manager.surname"
+                                    :value="manager.id"
+                                ></el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-md-2 control-label">Marketing Channel: </label>
                         <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
@@ -146,6 +161,40 @@
 
 
                     </template>
+
+                    <template v-if="this.canComplete">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Commission:</label>
+                            <div class="col-md-6 uppercase-medium">
+                                <input class="form-control" type="number" :disabled="loading"
+                                       v-model="form.commission"></input>
+                            </div>
+                        </div>
+
+                        <template v-if="this.userId">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Is Completed: </label>
+                                <div class="col-md-6">
+                                    <el-switch v-model="form.complete">
+                                    </el-switch>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group dashed">
+                                <label class="col-md-2 control-label">Attachment:</label>
+                                <div class="col-md-6 uppercase-medium">
+                                    <input type="file" @change="onAttachmentChange">
+                                    <div v-if="form.attachment">
+                                        <p v-if="form.attachment"><a :href="form.attachment" target="_blank">View
+                                            Attachment</a></p>
+                                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                                   @click="removeAttachment"></el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
                 </el-row>
 
             </el-form>
@@ -163,6 +212,9 @@ export default {
         'item',
         'investors',
         'projects',
+        'canComplete',
+        'userId',
+        'managers'
     ],
     data() {
         return {
@@ -170,7 +222,8 @@ export default {
                 currency: "USD",
                 size: 0,
                 price: 0,
-                total_price: 0
+                total_price: 0,
+                complete: false
             },
             loading: false,
             editor: ClassicEditor,
@@ -201,6 +254,7 @@ export default {
         'item'() {
             if (this.item) {
                 this.form = this.item;
+                this.form.complete = Boolean(this.item.complete === true || this.item.complete === "true" || this.item.complete === 1);
             }
         },
         'form.size'(newSize) {
@@ -257,7 +311,25 @@ export default {
                 this.form.price = this.form.total_price / this.form.size;
                 this.updatingSqmPrice = false;
             }
-        }
+        },
+
+        onAttachmentChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.form.attachment = file;
+                };
+                reader.onerror = (error) => {
+                    console.error('Error loading file:', error);
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        removeAttachment() {
+            this.form.attachment = null;
+        },
+
     }
 }
 </script>

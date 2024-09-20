@@ -16,6 +16,16 @@
                 </div>
             @endcan
 
+                @can(getPermissionKey($moduleKey, 'export', false))
+                    <sales-export-component>
+                    </sales-export-component>
+                @endcan
+        </div>
+        <br>
+
+        <div class="row">
+            <sale-filter-component>
+            </sale-filter-component>
         </div>
         <br>
 
@@ -34,21 +44,27 @@
                         <tr>
                             <th> Project</th>
                             <th> Investor</th>
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                <th> Sales Manager</th>
+                            @endif
                             <th> Type</th>
                             <th> Size (sq/m)</th>
                             <th> Price</th>
-                            <th> Total Price</th>
+                            <th> Total Price ({{ $allData->sum('total_price') }})</th>
                             <th> Agreement Status</th>
                             <th> Agreement Date</th>
                             <th> Down Payment</th>
                             <th> Period</th>
-                            <th> Marketin Channel</th>
+                            <th> Marketing Channel</th>
+                            @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                                <th> Commission</th>
+                            @endif
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
-                            <tr>
+                            <tr class="{{ $item->complete ? 'table-row-colored' : '' }}">
 
                                 <td>
                                     <a href="{{route($moduleKey . '.view', [ $item->id ])}}">
@@ -56,16 +72,26 @@
                                     </a>
                                 </td>
                                 <td>{!! $item->investor !!}</td>
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                    <td>
+                                        <update-sale-manager
+                                            :manager-name="'{{ $item->manager_name && $item->manager_surname ? $item->manager_name . ' ' . $item->manager_surname : 'Assign Manager' }}'"
+                                            :sale-id="{{ $item->id }}">
+                                        </update-sale-manager>
+                                    </td>
+                                @endif
                                 <td>{!! $item->type !!}</td>
                                 <td>{!! $item->size !!}</td>
-                                <td>{!! $item->price !!} {!! $item->currency !!}</td>
-                                <td>{!! $item->total_price !!} {!! $item->currency !!}</td>
+                                <td>{!! number_format($item->price,0,".",",") !!} {!! $item->currency !!}</td>
+                                <td>{!! number_format($item->total_price,0,".",",") !!} {!! $item->currency !!}</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! $item->down_payment !!}</td>
                                 <td>{!! $item->period !!}</td>
                                 <td>{!! $item->marketing_channel !!}</td>
-
+                                @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                                    <td>{!! $item->commission !!}</td>
+                                @endif
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.view',  [$item->id, ])])

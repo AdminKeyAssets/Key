@@ -2,6 +2,7 @@
 
 namespace App\Modules\Lead\Http\Controllers;
 
+use App\Modules\Admin\Exports\LeadsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -19,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Mockery\Exception;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LeadController extends BaseController
 {
@@ -48,8 +50,8 @@ class LeadController extends BaseController
     public function index(Request $request)
     {
         $query = Lead::query()
-            ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id') // Use leftJoin to include leads even if admin_id is null
-            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname') // Select lead fields and admin's name, surname
+            ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id')
+            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname')
             ->orderByDesc('leads.id');
 
         $query->orderByDesc('id');
@@ -74,6 +76,10 @@ class LeadController extends BaseController
             $managerUser = Admin::where('name', $managerNamesArray[0])
                 ->where('surname', $managerNamesArray[1])->first();
             $query->where('leads.admin_id', '=', $managerUser->id);
+        }
+
+        if ($request->marketing_channel && $request->marketing_channel != 'all') {
+            $query->where('leads.marketing_channel', '=', $request->marketing_channel);
         }
 
         $this->baseData['allData'] = $query->paginate(50);
@@ -252,6 +258,8 @@ class LeadController extends BaseController
             $query->where('name', 'like', '%sale%manager%');
         })->get();
 
+        $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
+
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
 
@@ -262,5 +270,11 @@ class LeadController extends BaseController
         $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
 
         return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
+    }
+
+    public function export(Request $request)
+    {
+        $filters = [];
+        return Excel::download(new LeadsExport($filters), 'leads.xlsx');
     }
 }

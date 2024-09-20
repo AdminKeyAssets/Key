@@ -101,8 +101,17 @@ class AssetController extends BaseController
         // Apply filters if provided in the request
         if ($request->investor && $request->investor != 'all') {
             $investorNamesArray = explode(' ', $request->investor);
-            $investorUser = Investor::where('name', $investorNamesArray[0])
-                ->where('surname', $investorNamesArray[1])->first();
+
+            // The first part is the name
+            $firstName = array_shift($investorNamesArray);
+
+            // The remaining parts are the surname
+            $surname = implode(' ', $investorNamesArray);
+
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $firstName)
+                ->where('surname', $surname)->first();
+
             if (isset($investorUser->id)) {
                 $query->where(function ($query) use ($investorUser) {
                     $query->where('investor_id', '=', $investorUser->id);

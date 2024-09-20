@@ -2,16 +2,14 @@
 
 namespace App\Modules\Admin\Exports;
 
-use App\Modules\Admin\Models\User\Investor;
-use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 
-class PaymentHistoryExport implements FromCollection, WithHeadings, WithColumnWidths
+class PaymentHistoryExport implements FromCollection, WithHeadings, WithEvents
 {
     protected $filters;
 
@@ -38,7 +36,6 @@ class PaymentHistoryExport implements FromCollection, WithHeadings, WithColumnWi
             ];
         });
 
-
         return new Collection($payments->toArray());
     }
 
@@ -50,17 +47,22 @@ class PaymentHistoryExport implements FromCollection, WithHeadings, WithColumnWi
         ];
     }
 
-    public function setColumnAutoSize(Worksheet $sheet)
-    {
-        foreach ($sheet->getColumnIterator() as $column) {
-            $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
-        }
-    }
-
-    public function columnWidths(): array
+    /**
+     * Automatically adjust column width after the sheet is generated.
+     *
+     * @return array
+     */
+    public function registerEvents(): array
     {
         return [
-            'A' => 20,
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+
+                // Set auto-size for all columns
+                foreach ($sheet->getColumnIterator() as $column) {
+                    $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+                }
+            },
         ];
     }
 }

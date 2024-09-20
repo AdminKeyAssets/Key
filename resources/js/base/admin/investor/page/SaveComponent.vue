@@ -1,5 +1,11 @@
 <template>
     <div class="block">
+
+        <NotifyInvestorByEmail
+            v-if="id"
+            :investor-id="id">
+        </NotifyInvestorByEmail>
+
         <el-form v-loading="loading"
                  element-loading-text="Loading..."
                  element-loading-spinner="el-icon-loading"
@@ -186,8 +192,10 @@ import { responseParse } from '../../../mixins/responseParse'
 import { getData } from '../../../mixins/getData'
 import { hasPermission } from '../../../mixins/hasPermission'
 import { Notification } from 'element-ui'
+import NotifyInvestorByEmail from "../partials/NotifyInvestorByEmail.vue";
 
 export default {
+    components: {NotifyInvestorByEmail},
     props: [
         'getSaveDataRoute',
         'id'
@@ -362,7 +370,7 @@ export default {
         },
 
         removeServiceAgreement() {
-            this.form.passport = null;
+            this.form.service_agreement = null;
         },
         capitalizeFirstLetter(field) {
             if (this.form[field]) {

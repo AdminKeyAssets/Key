@@ -19,5 +19,9 @@ class Sale extends Model
         'down_payment',
         'period',
         'marketing_channel',
+        'commission',
+        'complete',
+        'attachment',
+        'admin_id'
     ];
 }

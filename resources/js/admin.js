@@ -76,6 +76,7 @@ Vue.component('upcoming-reminders', require('./base/admin/notification/ReminderN
 
 // Investor
 Vue.component('admin-investor-save-component', require('./base/admin/investor/page/SaveComponent').default);
+Vue.component('admin-investor-view-component', require('./base/admin/investor/page/ViewComponent').default);
 Vue.component('admin-investor-component', require('./base/admin/investor/partials/Investor').default);
 Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 Vue.component('investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
@@ -86,11 +87,18 @@ Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').defau
 Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewForm').default);
 Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
 Vue.component('update-lead-manager', require('./base/admin/lead/partials/UpdateLeadManager').default);
+Vue.component('leads-export-component', require('./base/admin/lead/partials/ExportLeads').default);
 
 //Sale
 Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);
 Vue.component('sale-view-page-form', require('./base/admin/sale/page/SaleViewForm').default);
+Vue.component('sales-export-component', require('./base/admin/sale/partials/ExportSales').default);
+Vue.component('update-sale-manager', require('./base/admin/sale/partials/UpdateSaleManager').default);
+Vue.component('sale-filter-component', require('./base/admin/sale/partials/SaleFilters').default);
 
+
+//Email Templates
+Vue.component('email-page-form', require('./base/admin/template/page/EmailForm').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -42,6 +42,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapRoleRoutes();
         $this->mapFileRoutes();
         $this->mapInvestorRoutes();
+        $this->mapEmailTemplateRoutes();
     }
 
     /**
@@ -161,6 +162,23 @@ class RouteServiceProvider extends ServiceProvider
             'namespace'  => $this->namespace,
         ], function ($router) {
             require module_path('admin', 'Routes/investor.php', 'app');
+        });
+    }
+
+    /**
+     * Define the "web" routes for the module.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     *
+     * @return void
+     */
+    protected function mapEmailTemplateRoutes()
+    {
+        Route::group([
+            'middleware' => 'web',
+            'namespace'  => $this->namespace,
+        ], function ($router) {
+            require module_path('admin', 'Routes/email_template.php', 'app');
         });
     }
 }

@@ -76,6 +76,13 @@ export default {
     mounted() {
         this.fetchInvestorFilters();
         this.loadFiltersFromQueryParams();
+
+        if (this.form.assets ||
+            (this.form.create_date && this.form.create_date.length > 0) ||
+            this.form.citizenship ||
+            this.form.manager) {
+            this.showFilters = true;
+        }
     },
     methods: {
         loadFiltersFromQueryParams() {

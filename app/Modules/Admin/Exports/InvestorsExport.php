@@ -6,8 +6,10 @@ use App\Modules\Admin\Models\User\Investor;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 
-class InvestorsExport implements FromCollection, WithHeadings
+class InvestorsExport implements FromCollection, WithHeadings, WithEvents
 {
     protected $filters;
 
@@ -45,7 +47,6 @@ class InvestorsExport implements FromCollection, WithHeadings
             ];
         });
 
-
         return new Collection($investors->toArray());
     }
 
@@ -59,6 +60,25 @@ class InvestorsExport implements FromCollection, WithHeadings
             'Email',
             'Phone',
             'Created At',
+        ];
+    }
+
+    /**
+     * Automatically adjust column width after the sheet is generated.
+     *
+     * @return array
+     */
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+
+                // Set auto-size for all columns
+                foreach ($sheet->getColumnIterator() as $column) {
+                    $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+                }
+            },
         ];
     }
 }

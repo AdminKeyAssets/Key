@@ -23,6 +23,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
             ->name('edit')
             ->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 
+        Route::get('view/{id?}', $investorController . '@view')
+            ->name('view')
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
+
         /**
          * Get Create/Update form data.
          */
@@ -53,6 +57,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
         Route::get('filter-options', $investorController . '@filterOptions')
             ->name('filters');
+
+        Route::post('notify', $investorController . '@notify')
+            ->name('notify');
 
         Route::post('update-manager', $investorController . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 

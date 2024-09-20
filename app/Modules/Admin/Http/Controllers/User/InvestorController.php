@@ -2,8 +2,10 @@
 
 namespace App\Modules\Admin\Http\Controllers\User;
 
+use App\Mail\SendInvestorEmail;
 use App\Modules\Admin\Exports\InvestorsExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
+use App\Modules\Admin\Http\Requests\Investor\NotifyInvestorRequest;
 use App\Modules\Admin\Http\Requests\Investor\SaveInvestorRequest;
 use App\Modules\Admin\Http\Requests\UpdateManagerRequest;
 use App\Modules\Admin\Models\Country;
@@ -16,6 +18,7 @@ use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -144,6 +147,24 @@ class InvestorController extends BaseController
         }
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::success($this->baseData));
+    }
+
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function view($id = '')
+    {
+        try {
+            $this->baseData['routes']['create_form_data'] = route('admin.investor.create_form_data');
+
+            $this->baseData['id'] = $id;
+
+        } catch (\Exception $ex) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::success($this->baseData));
     }
 
     /**
@@ -342,6 +363,15 @@ class InvestorController extends BaseController
         })->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function notify(NotifyInvestorRequest $request)
+    {
+        $investor = Investor::where('id', $request->investor_id)->first();
+
+        Mail::to($investor->email)->send(new SendInvestorEmail($request->body));
+
+        return ServiceResponse::jsonNotification(__('Email Sent'), 200, $this->baseData);
     }
 
     public function updateManager(UpdateManagerRequest $request)
