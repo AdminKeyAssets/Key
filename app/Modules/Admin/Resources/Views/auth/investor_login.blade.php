@@ -96,7 +96,7 @@
         <!-- END Login Container -->
         <!-- Registration Modal -->
         <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog"
-             aria-labelledby="registrationModalLabel" >
+             aria-labelledby="registrationModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -104,7 +104,8 @@
                         <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>
-                        <h5 class="modal-title text-center" id="registrationModalLabel">For getting demo user and password <br>please fill the data below</h5>
+                        <h5 class="modal-title text-center" id="registrationModalLabel">For getting demo user and
+                            password <br>please fill the data below</h5>
                     </div>
                     <div class="modal-body">
                         <!-- Registration Form -->
@@ -123,7 +124,18 @@
                                     <input type="email" class="form-control" id="email" name="email"
                                            placeholder="Email">
                                 </div>
-                                @include('admin::includes.prefixes')
+
+                                <div class="col-md-6">
+                                    <div class="input-group phone">
+                                        <span class="input-group-addon">
+                                            <input type="text" class="form-control" id="phone_prefix" value="+" name="prefix"></input>
+                                        </span>
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                               placeholder="Phone">
+                                    </div>
+                                </div>
+
+                                {{--                                @include('admin::includes.prefixes')--}}
                             </div>
 
                             <!-- Demo Credentials -->
@@ -142,7 +154,9 @@
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                 <button type="submit" class="btn btn-primary" id="submit-form">Submit</button>
                                 <!-- New Login Button -->
-                                <button type="button" id="login-button" class="btn btn-primary" style="display: none;">Login</button>
+                                <button type="button" id="login-button" class="btn btn-primary" style="display: none;">
+                                    Login
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -310,10 +324,11 @@
             text-align: center;
         }
 
-        .credentials-boxes{
+        .credentials-boxes {
             display: flex;
             justify-content: center;
         }
+
         @media (max-width: 767px) {
             .modal-dialog {
                 margin-top: 30%;
@@ -344,11 +359,13 @@
             border: none;
             border-radius: 5px !important;
         }
-        .phone.input-group .input-group-addon{
+
+        .phone.input-group .input-group-addon {
             width: 50%;
             border-color: #ccc;
         }
-        #phone_prefix{
+
+        #phone_prefix {
             height: 100%;
             width: 100%;
             display: inline-block;
