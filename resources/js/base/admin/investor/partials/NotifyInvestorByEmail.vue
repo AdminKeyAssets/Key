@@ -26,6 +26,7 @@
                     <el-input
                         type="textarea"
                         v-model="form.body"
+                        :autosize="{minRaws: 20}"
                         :rows="6"
                     ></el-input>
                 </el-form-item>
