@@ -6,7 +6,7 @@
         <el-dialog
             title="Send Email"
             :visible.sync="showModal"
-            width="30%"
+            width="70%"
             :before-close="handleClose"
         >
             <el-form>
