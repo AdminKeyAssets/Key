@@ -19,10 +19,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Body: </label>
                         <div class="col-md-6">
-                            <el-input class="el-input--is-round"
-                                      type="textarea" v-model="form.body"
-                                      :autosize="{minRows: 4}"
-                                      :disabled="loading"></el-input>
+                            <ckeditor style="height: auto" :config="editorConfigData" :editor="editor" v-model="form.body"></ckeditor>
                         </div>
                     </div>
 
@@ -50,6 +47,23 @@ export default {
             form: {},
             loading: false,
             editor: ClassicEditor,
+            editorConfigData: {
+                toolbar: {
+                    items: [
+                        'insertTable',
+                        'preview',
+                        'bold',
+                        'italic',
+                        'link',
+                        'undo',
+                        'redo',
+                        'bulletedList',
+                        'numberedList',
+                        'blockQuote',
+                        'heading',
+                    ]
+                }
+            }
         }
     },
     updated() {

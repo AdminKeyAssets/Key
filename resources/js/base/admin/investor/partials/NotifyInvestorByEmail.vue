@@ -23,12 +23,7 @@
 
                 <!-- Textarea for the email body -->
                 <el-form-item label="Email Body" v-if="form.templateBody">
-                    <el-input
-                        type="textarea"
-                        v-model="form.body"
-                        :autosize="{minRaws: 20}"
-                        :rows="6"
-                    ></el-input>
+                    <ckeditor style="height: auto" :config="editorConfigData" :editor="editor" v-model="form.body"></ckeditor>
                 </el-form-item>
             </el-form>
 
@@ -42,7 +37,7 @@
 
 <script>
 import {responseParse} from "../../../mixins/responseParse";
-import {getData} from "../../../mixins/getData";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default {
     props: {
@@ -60,6 +55,24 @@ export default {
             },
             showModal: false,
             emailTemplates: [],
+            editor: ClassicEditor,
+            editorConfigData: {
+                toolbar: {
+                    items: [
+                        'insertTable',
+                        'preview',
+                        'bold',
+                        'italic',
+                        'link',
+                        'undo',
+                        'redo',
+                        'bulletedList',
+                        'numberedList',
+                        'blockQuote',
+                        'heading',
+                    ]
+                }
+            }
         };
     },
 

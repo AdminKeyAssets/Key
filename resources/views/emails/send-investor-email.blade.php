@@ -4,6 +4,6 @@
     <title>Email to Investor</title>
 </head>
 <body>
-<p>{!! nl2br(e($body)) !!}</p>
+<p>{!! $body !!}</p>
 </body>
 </html>
