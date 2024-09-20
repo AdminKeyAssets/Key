@@ -1,7 +1,8 @@
 <template>
     <div>
-        <a @click="openModal" style="cursor: pointer">Send Email</a>
-
+        <div style="margin-bottom: 20px">
+            <el-button @click="openModal" style="cursor: pointer">Send Email</el-button>
+        </div>
         <el-dialog
             title="Send Email"
             :visible.sync="showModal"
@@ -39,8 +40,8 @@
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
-import { getData } from "../../../mixins/getData";
+import {responseParse} from "../../../mixins/responseParse";
+import {getData} from "../../../mixins/getData";
 
 export default {
     props: {
