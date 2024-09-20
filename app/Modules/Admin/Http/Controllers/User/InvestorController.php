@@ -371,7 +371,7 @@ class InvestorController extends BaseController
 
         Mail::to($investor->email)->send(new SendInvestorEmail($request->body));
 
-        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+        return ServiceResponse::jsonNotification(__('Email Sent'), 200, $this->baseData);
     }
 
     public function updateManager(UpdateManagerRequest $request)
