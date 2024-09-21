@@ -50,21 +50,21 @@
                             <th> Type</th>
                             <th> Size (sq/m)</th>
                             <th> Price</th>
-                            <th> Total Price ({{ $allData->sum('total_price') }})</th>
+                            <th> Total Price ({!! number_format($allData->sum('total_price',0,".",",")) !!} USD)</th>
                             <th> Agreement Status</th>
                             <th> Agreement Date</th>
                             <th> Down Payment</th>
                             <th> Period</th>
                             <th> Marketing Channel</th>
                             @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
-                                <th> Commission</th>
+                                <th> Commission ({!! number_format($allData->sum('commission',0,".",",")) !!} USD)</th>
                             @endif
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($allData as $item)
-                            <tr class="{{ $item->complete ? 'table-row-colored' : '' }}">
+                            <tr class="{{ $item->complete && \Auth::user()->getRolesNameAttribute() == 'administrator' ? 'table-row-colored' : '' }}">
 
                                 <td>
                                     <a href="{{route($moduleKey . '.view', [ $item->id ])}}">
