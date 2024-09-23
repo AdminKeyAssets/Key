@@ -36,4 +36,16 @@ class UpdateManagerRequest extends FormRequest
             'lead_id.required' => 'Lead can not be empty.',
         ];
     }
+
+    /**
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge(
+            array_map(function ($value) {
+                return $value === 'null' ? null : $value;
+            }, $this->all())
+        );
+    }
 }
