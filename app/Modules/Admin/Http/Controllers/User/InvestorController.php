@@ -254,7 +254,7 @@ class InvestorController extends BaseController
                     $serviceAgreementFile = $request->file('service_agreement');
                     $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
                     $serviceAgreement = Storage::url($serviceAgreement);
-                } else if ($request->input('passport') === null) {
+                } else if ($request->input('service_agreement') === null) {
                     if ($investor->service_agreement && Storage::disk('public')->exists($investor->service_agreement)) {
                         Storage::disk('public')->delete($investor->service_agreement);
                     }

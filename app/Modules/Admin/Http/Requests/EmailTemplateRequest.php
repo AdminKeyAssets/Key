@@ -17,6 +17,18 @@ class EmailTemplateRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge(
+            array_map(function ($value) {
+                return $value === 'null' ? null : $value;
+            }, $this->all())
+        );
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
