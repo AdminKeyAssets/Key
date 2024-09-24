@@ -6,7 +6,7 @@ Route::prefix('templates')->name('template.')->group(function () {
     $moduleName = 'template';
 
     Route::get('/list', $controller . '@index')->name('index')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
-    Route::get('/filter', $controller . '@filter')->name('filter')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
+    Route::get('/filter', $controller . '@filter')->name('filter');
 
     //Create/Update view.
     Route::get('/create', $controller . '@create')->name('create')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
