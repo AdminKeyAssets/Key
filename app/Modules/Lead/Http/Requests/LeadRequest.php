@@ -36,7 +36,23 @@ class LeadRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'surname' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'prefix' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Name can not be empty.',
+            'surname.required' => 'Surname can not be empty.',
+            'email.required' => 'Email can not be empty.',
+            'phone.required' => 'Phone Number can not be empty.',
+            'prefix.required' => 'Prefix can not be empty.',
+            'email.email' => 'Email value is not Email.',
         ];
     }
 }
