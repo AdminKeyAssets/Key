@@ -12,20 +12,26 @@
             @can(getPermissionKey($moduleKey, 'create', true))
                 <div class="col-md-6">
                     <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i
-                                class="el-icon-plus"></i> Add Lead</a>
+                            class="el-icon-plus"></i> Add Lead</a>
                 </div>
             @endcan
 
-                @can(getPermissionKey($moduleKey, 'export', false))
-                    <leads-export-component>
-                    </leads-export-component>
-                @endcan
+            @can(getPermissionKey($moduleKey, 'export', false))
+                <leads-export-component>
+                </leads-export-component>
+            @endcan
         </div>
         <br>
 
         <div class="row">
-            <lead-filter-component>
-            </lead-filter-component>
+            @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                <lead-filter-component
+                    :is-admin="{{true}}">
+                </lead-filter-component>
+            @else
+                <lead-filter-component>
+                </lead-filter-component>
+            @endif
         </div>
         <br>
 
@@ -91,8 +97,8 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
-                                                :url="'{{ route($moduleKey . '.delete', [$item->id ]) }}'"
-                                                :id="{{ $item->id }}"
+                                            :url="'{{ route($moduleKey . '.delete', [$item->id ]) }}'"
+                                            :id="{{ $item->id }}"
                                         ></delete-component>
                                     @endcan
                                 </td>

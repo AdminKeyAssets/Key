@@ -16,16 +16,22 @@
                 </div>
             @endcan
 
-                @can(getPermissionKey($moduleKey, 'export', false))
-                    <sales-export-component>
-                    </sales-export-component>
-                @endcan
+            @can(getPermissionKey($moduleKey, 'export', false))
+                <sales-export-component>
+                </sales-export-component>
+            @endcan
         </div>
         <br>
 
         <div class="row">
-            <sale-filter-component>
-            </sale-filter-component>
+            @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                <sale-filter-component
+                    :is-admin="{{true}}">
+                </sale-filter-component>
+            @else
+                <sale-filter-component>
+                </sale-filter-component>
+            @endif
         </div>
         <br>
 

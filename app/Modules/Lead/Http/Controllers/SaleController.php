@@ -283,8 +283,13 @@ class SaleController extends BaseController
             $query->where('name', 'like', '%sale%manager%');
         })->get();
 
-        $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
-
+        if(\Auth::user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
+        }
+        else{
+            $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)
+                ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->get('marketing_channel');
+        }
         return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
     }
 
