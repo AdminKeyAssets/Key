@@ -14,11 +14,11 @@
                 @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
                     <sale-page-form
                         :can-complete="{{ true }}"
+                        :is-admin="{{true}}"
                         :get-save-data-route="'{{ route($moduleKey . '.create_data') }}'">
                     </sale-page-form>
                 @else
                     <sale-page-form
-                        :can-complete="{{ true }}"
                         :get-save-data-route="'{{ route($moduleKey . '.create_data') }}'">
                     </sale-page-form>
                 @endif

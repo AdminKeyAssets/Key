@@ -16,6 +16,7 @@
                     :managers="managers"
                     :user-id="this.id"
                     :item="this.form && this.form ? this.form : undefined"
+                    :is-admin="this.isAdmin"
                 ></SaleMain>
 
                 <div class="project-buttons">
@@ -43,7 +44,8 @@ export default {
     props: [
         'getSaveDataRoute',
         'id',
-        'canComplete'
+        'canComplete',
+        'isAdmin'
     ],
     data() {
         return {

@@ -209,7 +209,7 @@ class SaleController extends BaseController
                 'attachment' => $attachment,
                 'commission' => $request->commission,
                 'complete' => $request->complete === 'true',
-                'admin_id' => $request->admin_id,
+                'admin_id' => $request->admin_id ?? \Auth::user()->getAuthIdentifier(),
             ]);
         }
 

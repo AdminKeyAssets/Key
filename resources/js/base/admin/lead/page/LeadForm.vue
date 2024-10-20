@@ -11,6 +11,7 @@
                     :routes="routes"
                     :updateData="updateData"
                     :prefixes="prefixes"
+                    :is-admin="this.isAdmin"
                     :managers="managers"
                     :item="this.form && this.form ? this.form : undefined"
                 ></LeadMain>
@@ -38,7 +39,8 @@ export default {
     components: {LeadMain},
     props: [
         'getSaveDataRoute',
-        'id'
+        'id',
+        'isAdmin'
     ],
     data() {
         return {
