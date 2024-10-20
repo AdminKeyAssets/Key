@@ -15,6 +15,7 @@
                 @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
                     <sale-page-form
                         :id="{{ $data['id'] }}"
+                        :is-admin="{{true}}"
                         :can-complete="{{ true }}"
                         :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                     </sale-page-form>

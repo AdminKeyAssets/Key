@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" v-if="isAdmin">
                         <label class="col-md-2 control-label">Select Manager: </label>
                         <div class="col-md-6">
                             <el-select v-model="form.admin_id" filterable
@@ -107,7 +107,8 @@ export default {
         'updateData',
         'item',
         'prefixes',
-        'managers'
+        'managers',
+        'isAdmin'
     ],
     data() {
         return {
