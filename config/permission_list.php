@@ -78,4 +78,16 @@ return [
     'template' => [
         'default' => $default_permissions,
     ],
+    'revenue' => [
+        'default' => [
+            'index' => [
+                'key' => '{module_name}_list',
+                'label' => '{module_name} list'
+            ],
+            'view' => [
+                'key' => '{module_name}_view',
+                'label' => '{module_name} view'
+            ]
+        ],
+    ],
 ];

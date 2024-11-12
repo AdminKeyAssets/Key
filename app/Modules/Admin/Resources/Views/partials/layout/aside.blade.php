@@ -31,7 +31,7 @@
         </li>
     @endif
 
-    @can ( getPermissionKey('role', 'index', true))
+    @can ( getPermissionKey('revenue', 'index', true))
         <li
             {!! strpos(request()->route()->getName(), 'asset.revenue.index') !== false ? ' class="active"' : '' !!}>
             <a href="{{route('asset.revenue.index')}}"><i class="el-icon-house sidebar-nav-icon"></i>
