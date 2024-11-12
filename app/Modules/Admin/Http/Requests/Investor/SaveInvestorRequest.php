@@ -52,7 +52,7 @@ class SaveInvestorRequest extends FormRequest
             'prefix' => 'required',
             'citizenship' => 'required',
             'address' => 'required',
-            'admin_id' => 'required',
+//            'admin_id' => 'required',
             'password'  => [$passwordRequired,
 //                'min:8',
 //                'regex:/[a-z]/',

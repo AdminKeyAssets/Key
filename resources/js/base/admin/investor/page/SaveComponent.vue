@@ -101,7 +101,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="isAdmin">
 
                     <label class="col-md-2 control-label">Select Manager: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
@@ -198,7 +198,8 @@ export default {
     components: {NotifyInvestorByEmail},
     props: [
         'getSaveDataRoute',
-        'id'
+        'id',
+        'isAdmin'
     ],
 
     data() {

@@ -38,7 +38,6 @@ class LeadRequest extends FormRequest
         return [
             'name' => 'required',
             'surname' => 'required',
-            'email' => 'required|email',
             'phone' => 'required',
             'prefix' => 'required',
         ];

@@ -130,16 +130,32 @@ class LeadController extends BaseController
      */
     public function store(LeadRequest $request)
     {
-        $lead = Lead::updateOrCreate(['email' => $request->email],
-            [
-                'name' => $request->name,
-                'surname' => $request->surname,
-                'phone' => $request->phone,
-                'prefix' => $request->prefix,
-                'status' => $request->status,
-                'admin_id' => $request->admin_id ?? \Auth::user()->getAuthIdentifier(),
-                'marketing_channel' => $request->marketing_channel,
-            ]);
+        if ($request->id) {
+            $lead = Lead::where('id', $request->id)->first();
+            $lead->update(
+                [
+                    'name' => $request->name,
+                    'surname' => $request->surname,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'prefix' => $request->prefix,
+                    'status' => $request->status,
+                    'admin_id' => $request->admin_id ?? \Auth::user()->getAuthIdentifier(),
+                    'marketing_channel' => $request->marketing_channel,
+                ]);
+        } else {
+            $lead = Lead::create(
+                [
+                    'name' => $request->name,
+                    'surname' => $request->surname,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'prefix' => $request->prefix,
+                    'status' => $request->status,
+                    'admin_id' => $request->admin_id ?? \Auth::user()->getAuthIdentifier(),
+                    'marketing_channel' => $request->marketing_channel,
+                ]);
+        }
         $this->baseData['item'] = $lead;
 
         return ServiceResponse::jsonNotification('Lead Added successfully', 200, $this->baseData);
@@ -258,10 +274,9 @@ class LeadController extends BaseController
             $query->where('name', 'like', '%sale%manager%');
         })->get();
 
-        if(\Auth::user()->getRolesNameAttribute() == 'administrator'){
+        if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
-        }
-        else{
+        } else {
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)
                 ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->get('marketing_channel');
         }
