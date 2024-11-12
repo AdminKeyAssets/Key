@@ -18,7 +18,7 @@
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
-                                <i class="el-icon-money" style="color:green"> {{ formatPrice(payment.amount) }}</i>
+                                <i class="el-icon-money" style="color:green"> {{ formatPrice(payment.amount) }}$</i>
                             </div>
                             <div>
                                 <i class="el-icon-date" style="color:gray"> {{ payment.payment_date }}</i>
