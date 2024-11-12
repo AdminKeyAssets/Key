@@ -12,18 +12,24 @@
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">
-                <admin-investor-save-component
-                    :id="{{ $data['id'] }}"
-                    :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
-                </admin-investor-save-component>
-
+                @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                    <admin-investor-save-component
+                        :is-admin="{{true}}"
+                        :id="{{ $data['id'] }}"
+                        :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
+                    </admin-investor-save-component>
+                @else
+                    <admin-investor-save-component
+                        :id="{{ $data['id'] }}"
+                        :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
+                    </admin-investor-save-component>
+                @endif
             </div>
         </div>
         <!-- END Responsive Full Block -->
 
     </div>
     <!-- END Page Content -->
-
 
 @endsection
 
