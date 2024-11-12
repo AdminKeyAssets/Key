@@ -92,11 +92,11 @@
                                 <td>{!! number_format($item->total_price,0,".",",") !!}$</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_date !!}</td>
-                                <td>{!! $item->down_payment !!}</td>
+                                <td>{!! number_format($item->down_payment,0,".",",") !!}$</td>
                                 <td>{!! $item->period !!}</td>
                                 <td>{!! $item->marketing_channel !!}</td>
                                 @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
-                                    <td>{!! $item->commission !!}</td>
+                                    <td>{!! number_format($item->commission,0,".",",") !!}$</td>
                                 @endif
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))

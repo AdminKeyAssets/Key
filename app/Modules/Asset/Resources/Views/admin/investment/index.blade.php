@@ -41,7 +41,7 @@
                             <tr>
                                 <td>{!! $item->date !!}</td>
                                 <td>{!! $item->status !!}</td>
-                                <td>{!! number_format($item->amount,0,".",",") !!} $</td>
+                                <td>{!! number_format($item->amount,0,".",",") !!}$</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
