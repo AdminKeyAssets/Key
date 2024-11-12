@@ -383,7 +383,7 @@
                                                 <div v-if="form.tenant.monthly_rent" class="form-group">
                                                     <label class="col-md-4 control-label">Monthly Rent:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.tenant.monthly_rent) }}
+                                                        {{ formatPrice(form.tenant.monthly_rent) }}$
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -416,7 +416,7 @@
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
                                                             {{
-                                                                scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
+                                                                scope.row.status ? formatPrice(scope.row.amount)+'$' : formatPrice(scope.row.left_amount)+'$'
                                                             }}
                                                         </template>
                                                     </el-table-column>
@@ -455,7 +455,7 @@
                                                     </el-table-column>
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }}
+                                                            {{ formatPrice(scope.row.amount) }}$
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
@@ -522,7 +522,7 @@
                                                 <div v-if="form.price" class="form-group">
                                                     <label class="col-md-4 control-label">M2 Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.price) }}
+                                                        {{ formatPrice(form.price) }}$
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -530,7 +530,7 @@
                                                 <div v-if="form.total_price" class="form-group">
                                                     <label class="col-md-4 control-label">Total Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.total_price) }}
+                                                        {{ formatPrice(form.total_price) }}$
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -611,7 +611,7 @@
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{
-                                                                    scope.row.status ? formatPrice(scope.row.amount) : formatPrice(scope.row.left_amount)
+                                                                    scope.row.status ? formatPrice(scope.row.amount)+'$' : formatPrice(scope.row.left_amount)+'$'
                                                                 }}
                                                             </template>
                                                         </el-table-column>
@@ -650,7 +650,7 @@
                                                         </el-table-column>
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
-                                                                {{ formatPrice(scope.row.amount) }}
+                                                                {{ formatPrice(scope.row.amount) }}$
                                                             </template>
                                                         </el-table-column>
                                                         <el-table-column prop="attachment" label="Attachment">
@@ -683,7 +683,7 @@
                                                 <el-table :data="form.currentValues" style="width: 100%">
                                                     <el-table-column prop="value" label="Value">
                                                         <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.value) }}
+                                                            {{ formatPrice(scope.row.value) }}$
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="date" label="Date"/>

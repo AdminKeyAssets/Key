@@ -42,12 +42,12 @@
                                 <th> Investor</th>
                             @endif
                             <th> Purchase Date</th>
-                            <th> Purchase Price ({!! number_format($totals['total_purchase_price']) !!})</th>
-                            <th> Other Investment ({!! number_format($totals['other_investment']) !!})</th>
-                            <th> Total Investment ({!! number_format($totals['total_investment']) !!})</th>
-                            <th> Current Value ({!! number_format($totals['total_current_value']) !!})</th>
-                            <th> Capital Gain ({!! number_format($totals['total_capital_gain']) !!})</th>
-                            <th> Rent ({!! number_format($totals['total_rent'])  !!})</th>
+                            <th> Purchase Price ({!! number_format($totals['total_purchase_price']) !!}$)</th>
+                            <th> Other Investment ({!! number_format($totals['other_investment']) !!}$)</th>
+                            <th> Total Investment ({!! number_format($totals['total_investment']) !!}$)</th>
+                            <th> Current Value ({!! number_format($totals['total_current_value']) !!}$)</th>
+                            <th> Capital Gain ({!! number_format($totals['total_capital_gain']) !!}$)</th>
+                            <th> Rent ({!! number_format($totals['total_rent'])  !!}$)</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
@@ -76,12 +76,12 @@
                                     <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
                                 @endif
                                 <td>{!! $item->agreement_date !!}</td>
-                                <td>{!! number_format($item->total_price,0,".",",") !!}</td>
-                                <td>{!! number_format($item->other_investment,0,".",",") !!}</td>
-                                <td>{!! number_format($item->total_investment,0,".",",") !!}</td>
-                                <td>{!! number_format($item->current_value,0,".",",") !!}</td>
-                                <td>{!! number_format($item->capital_gain,0,".",",") !!}</td>
-                                <td>{!! number_format($item->rent,0,".",",") !!}</td>
+                                <td>{!! number_format($item->total_price,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->other_investment,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->total_investment,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->current_value,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->capital_gain,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->rent,0,".",",") !!}$</td>
                                 <td>
                                     @can(getPermissionKey('investment', 'index', true))
                                         @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])

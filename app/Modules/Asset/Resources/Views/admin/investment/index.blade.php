@@ -33,7 +33,6 @@
                             <th> Payment Date</th>
                             <th> Status</th>
                             <th> Amount</th>
-                            <th> Currency</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -42,8 +41,7 @@
                             <tr>
                                 <td>{!! $item->date !!}</td>
                                 <td>{!! $item->status !!}</td>
-                                <td>{!! number_format($item->amount,0,".",",") !!}</td>
-                                <td>{!! $item->currency !!}</td>
+                                <td>{!! number_format($item->amount,0,".",",") !!} $</td>
 
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))

@@ -32,7 +32,6 @@
                         <tr>
                             <th> Payment Date</th>
                             <th> Amount</th>
-                            <th> Currency</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -40,8 +39,7 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{!! $item->date !!}</td>
-                                <td>{!! number_format($item->amount,0,".",",") !!}</td>
-                                <td>{!! $item->currency !!}</td>
+                                <td>{!! number_format($item->amount,0,".",",") !!} $</td>
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.payments.view', [$assetId, $item->id, ])])

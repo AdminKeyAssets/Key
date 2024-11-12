@@ -56,14 +56,14 @@
                             <th> Type</th>
                             <th> Size (sq/m)</th>
                             <th> Price</th>
-                            <th> Total Price ({!! number_format($allData->sum('total_price',0,".",",")) !!} USD)</th>
+                            <th> Total Price ({!! number_format($allData->sum('total_price',0,".",",")) !!}$)</th>
                             <th> Agreement Status</th>
                             <th> Agreement Date</th>
                             <th> Down Payment</th>
                             <th> Period</th>
                             <th> Marketing Channel</th>
                             @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
-                                <th> Commission ({!! number_format($allData->sum('commission',0,".",",")) !!} USD)</th>
+                                <th> Commission ({!! number_format($allData->sum('commission',0,".",",")) !!}$)</th>
                             @endif
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
@@ -88,8 +88,8 @@
                                 @endif
                                 <td>{!! $item->type !!}</td>
                                 <td>{!! $item->size !!}</td>
-                                <td>{!! number_format($item->price,0,".",",") !!} {!! $item->currency !!}</td>
-                                <td>{!! number_format($item->total_price,0,".",",") !!} {!! $item->currency !!}</td>
+                                <td>{!! number_format($item->price,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->total_price,0,".",",") !!}$</td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! $item->down_payment !!}</td>
