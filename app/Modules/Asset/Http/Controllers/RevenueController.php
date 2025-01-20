@@ -257,6 +257,7 @@ class RevenueController extends BaseController
         $otherInvestment = 0;
         $totalPurchasePrice = 0;
         $totalCurrentValue = 0;
+        $totalRenovationPrice = 0;
 
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
@@ -268,19 +269,24 @@ class RevenueController extends BaseController
             }
             $totalCapitalGain += $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
             $otherInvestment += $asset->investments()->sum('amount');
+            $totalRenovationPrice += $asset->investments()->where('status', 'Renovation')->sum('amount');
             $totalPurchasePrice += $asset->total_price;
             $totalCurrentValue += $asset->current_value;
         }
 
         foreach ($paginatedAssets as $asset) {
             $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
+            $asset->net_cache_balance = $asset->rent - $asset->investments()->where('status', 'Other')->sum('amount');
             if ($asset->agreement_status === "Installments") {
                 $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
+                $asset->paid = $asset->paymentsHistories()->sum('amount');
             } else {
                 $asset->total_investment = $asset->total_price + $asset->investments()->sum('amount');
+                $asset->paid = $asset->total_price;
             }
             $asset->capital_gain = $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
             $asset->other_investment = $asset->investments()->sum('amount');
+            $asset->renovation = $asset->investments()->where('status', 'Renovation')->sum('amount');
         }
 
         $this->baseData['allData'] = $paginatedAssets;
@@ -291,6 +297,7 @@ class RevenueController extends BaseController
             'other_investment' => $otherInvestment,
             'total_current_value' => $totalCurrentValue,
             'total_purchase_price' => $totalPurchasePrice,
+            'total_renovation_price' => $totalRenovationPrice,
         ];
     }
 
