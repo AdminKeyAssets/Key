@@ -70,7 +70,8 @@ export default {
                 "Land": "Land",
                 "Office": "Office",
                 "Commercial Space": "Commercial Space",
-                "Villa": "Villa"
+                "Villa": "Villa",
+                "Parking": "Parking"
             },
             conditions: {
                 "Black Frame": "Black Frame",
