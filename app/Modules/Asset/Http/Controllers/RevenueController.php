@@ -271,17 +271,17 @@ class RevenueController extends BaseController
                 $totalInvestment += $asset->total_price + $asset->investments()->sum('amount');
             }
             $totalCapitalGain += $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
-            $otherInvestment += $asset->investments()->sum('amount');
+            $otherInvestment += $asset->investments()->where('status', '!=', 'Renovation')->sum('amount');
             $totalRenovationPrice += $asset->investments()->where('status', 'Renovation')->sum('amount');
             $totalPurchasePrice += $asset->total_price;
             $totalCurrentValue += $asset->current_value;
             $totalPaid += $asset->paymentsHistories()->sum('amount');
-            $totalNetCashBalance += $asset->rentalPaymentsHistories()->sum('amount') - $asset->investments()->where('status', 'Other')->sum('amount');
+            $totalNetCashBalance += $asset->rentalPaymentsHistories()->sum('amount') - $asset->investments()->where('status', '!=', 'Renovation')->sum('amount');
         }
 
         foreach ($paginatedAssets as $asset) {
             $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
-            $asset->net_cache_balance = $asset->rent - $asset->investments()->where('status', 'Other')->sum('amount');
+            $asset->net_cache_balance = $asset->rent - $asset->investments()->where('status', '!=','Renovation')->sum('amount');
             if ($asset->agreement_status === "Installments") {
                 $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
                 $asset->paid = $asset->paymentsHistories()->sum('amount');
@@ -290,7 +290,7 @@ class RevenueController extends BaseController
                 $asset->paid = $asset->total_price;
             }
             $asset->capital_gain = $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
-            $asset->other_investment = $asset->investments()->sum('amount');
+            $asset->other_investment = $asset->investments()->where('status', '!=','Renovation')->sum('amount');
             $asset->renovation = $asset->investments()->where('status', 'Renovation')->sum('amount');
         }
 
