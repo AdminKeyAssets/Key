@@ -43,14 +43,14 @@
                             @endif
                             <th> Purchase Date</th>
                             <th> Purchase Price <br>({!! number_format($totals['total_purchase_price']) !!}$)</th>
-                            <th> Paid</th>
+                            <th> Paid <br>({!! number_format($totals['total_paid'])  !!}$)</th>
                             <th> Renovation <br>({!! number_format($totals['total_renovation_price']) !!}$)</th>
                             <th> Other Investment <br>({!! number_format($totals['other_investment']) !!}$)</th>
                             <th> Total Investment <br>({!! number_format($totals['total_investment']) !!}$)</th>
                             <th> Current Value <br>({!! number_format($totals['total_current_value']) !!}$)</th>
                             <th> Capital Gain <br>({!! number_format($totals['total_capital_gain']) !!}$)</th>
                             <th> Rent <br>({!! number_format($totals['total_rent'])  !!}$)</th>
-                            <th> Net Cash Balance</th>
+                            <th> Net Cash Balance <br>({!! number_format($totals['total_net_cash_balance'])  !!}$)</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
@@ -80,9 +80,7 @@
                                 @endif
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! number_format($item->total_price,0,".",",") !!}$</td>
-                                <td>{!! number_format($item->paid,0,".",",") !!}$
-                                    - {{ number_format(($item->paid/$item->total_price)*100, 2) }}%
-                                </td>
+                                <td class="paid-col">{!! number_format($item->paid,0,".",",") !!}$ - {{ fmod(($item->paid/$item->total_price)*100, 1) == 0 ? number_format(($item->paid/$item->total_price)*100, 0) : number_format(($item->paid/$item->total_price)*100, 2) }}%</td>
                                 <td>{!! number_format($item->renovation,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->other_investment,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->total_investment,0,".",",") !!}$</td>

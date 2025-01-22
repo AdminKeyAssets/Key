@@ -251,13 +251,16 @@ class RevenueController extends BaseController
     private function calculateRevenue($paginatedAssets, $allAssets): void
     {
         // Initialize totals
-        $totalRent = 0;
-        $totalCapitalGain = 0;
-        $totalInvestment = 0;
-        $otherInvestment = 0;
-        $totalPurchasePrice = 0;
-        $totalCurrentValue = 0;
-        $totalRenovationPrice = 0;
+        $totalRent =
+        $totalCapitalGain =
+        $totalInvestment =
+        $otherInvestment =
+        $totalPurchasePrice =
+        $totalCurrentValue =
+        $totalRenovationPrice =
+        $totalNetCashBalance =
+        $totalPaid = 0;
+
 
         // Calculate totals for all assets
         foreach ($allAssets as $asset) {
@@ -272,6 +275,8 @@ class RevenueController extends BaseController
             $totalRenovationPrice += $asset->investments()->where('status', 'Renovation')->sum('amount');
             $totalPurchasePrice += $asset->total_price;
             $totalCurrentValue += $asset->current_value;
+            $totalPaid += $asset->paymentsHistories()->sum('amount');
+            $totalNetCashBalance += $asset->rentalPaymentsHistories()->sum('amount') - $asset->investments()->where('status', 'Other')->sum('amount');
         }
 
         foreach ($paginatedAssets as $asset) {
@@ -298,6 +303,8 @@ class RevenueController extends BaseController
             'total_current_value' => $totalCurrentValue,
             'total_purchase_price' => $totalPurchasePrice,
             'total_renovation_price' => $totalRenovationPrice,
+            'total_paid' => $totalPaid,
+            'total_net_cash_balance' => $totalNetCashBalance,
         ];
     }
 
