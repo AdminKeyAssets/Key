@@ -26,6 +26,13 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group dashed" v-if="form.description">
+                                    <label class="col-md-1 control-label">Description:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{ form.description }}
+                                    </div>
+                                </div>
+
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Status:</label>
                                     <div class="col-md-10 uppercase-medium">
@@ -33,11 +40,11 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group dashed">
+                                <div class="form-group dashed" v-if="form.attachment">
                                     <label class="col-md-1 control-label">Attachment:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         <a target="_blank" :href="form.attachment">
-                                            {{form.attachment}}
+                                            Click Here to see attachment
                                         </a>
                                     </div>
                                 </div>
