@@ -39,7 +39,9 @@ class CommentController extends BaseController
             ->with(['investor' => function ($query) {
                 $query->select('id', 'name', 'surname');
             }])
-            ->where('asset_id', $assetId)->get();
+            ->where('asset_id', $assetId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('', 200, $comments);
     }
@@ -74,7 +76,9 @@ class CommentController extends BaseController
             ->with(['investor' => function ($query) {
                 $query->select('id', 'name', 'surname');
             }])
-            ->where('asset_id', $assetId)->get();
+            ->where('asset_id', $assetId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('Comment Added successfully', 200, $comments);
     }
@@ -109,7 +113,9 @@ class CommentController extends BaseController
             ->with(['investor' => function ($query) {
                 $query->select('id', 'name', 'surname');
             }])
-            ->where('asset_id', $assetId)->get();
+            ->where('asset_id', $assetId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('Comment Added successfully', 200, $comments);
     }
@@ -136,7 +142,9 @@ class CommentController extends BaseController
             ->with(['investor' => function ($query) {
                 $query->select('id', 'name', 'surname');
             }])
-            ->where('asset_id', $assetId)->get();
+            ->where('asset_id', $assetId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $comments);
     }
@@ -217,15 +225,16 @@ class CommentController extends BaseController
             $comments = $comments->where(function ($query) use ($user) {
                 $query->where('admin_id', '!=', $user->getAuthIdentifier())
                     ->orWhereNull('admin_id');
-            })->get();
+            });
         } else if (Auth::guard('investor')->check()) {
             $comments = $comments->where(function ($query) use ($user) {
                 $query->where('investor_id', '!=', $user->getAuthIdentifier())
                     ->orWhereNull('investor_id');
-            })->get();
+            });
 
         }
 
+        $comments->orderBy('id', 'desc')->get();
         return ServiceResponse::jsonNotification('', 200, $comments);
     }
 }

@@ -151,7 +151,7 @@ class LeadController extends BaseController
                     'phone' => $request->phone,
                     'email' => $request->email,
                     'prefix' => $request->prefix,
-                    'status' => $request->status,
+                    'status' => 'New',
                     'admin_id' => $request->admin_id ?? \Auth::user()->getAuthIdentifier(),
                     'marketing_channel' => $request->marketing_channel,
                 ]);

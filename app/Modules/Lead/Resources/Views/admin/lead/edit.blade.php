@@ -16,11 +16,13 @@
                 @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
                     <lead-page-form
                         :is-admin="{{true}}"
+                        :is-update="{{true}}"
                         :id="{{ $data['id'] }}"
                         :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                     </lead-page-form>
                 @else
                     <lead-page-form
+                        :is-update="{{true}}"
                         :id="{{ $data['id'] }}"
                         :get-save-data-route="'{{ $data['routes']['create_form_data'] }}'">
                     </lead-page-form>

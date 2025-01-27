@@ -51,12 +51,13 @@
                         </div>
                     </div>
 
-                    <div class="form-group dashed">
+                    <div class="form-group dashed" v-if="isUpdate">
                         <label class="col-md-2 control-label">Status:</label>
                         <div class="col-md-6 uppercase-medium">
                             <el-select
                                 v-model="form.status"
                                 placeholder="Select Status">
+                                <el-option label="New" value="New"></el-option>
                                 <el-option label="Not Responding" value="Not Responding"></el-option>
                                 <el-option label="Communication" value="Communication"></el-option>
                                 <el-option label="Proposal Sent" value="Proposal Sent"></el-option>
@@ -108,7 +109,8 @@ export default {
         'item',
         'prefixes',
         'managers',
-        'isAdmin'
+        'isAdmin',
+        'isUpdate'
     ],
     data() {
         return {
