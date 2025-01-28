@@ -70,13 +70,15 @@ export default {
                 "Land": "Land",
                 "Office": "Office",
                 "Commercial Space": "Commercial Space",
-                "Villa": "Villa"
+                "Villa": "Villa",
+                "Parking": "Parking"
             },
             conditions: {
                 "Black Frame": "Black Frame",
                 "White Frame": "White Frame",
                 "Green Frame": "Green Frame",
                 "Renovated": "Renovated",
+                "Turn Key": "Turn Key",
                 "None": "None"
             },
             agreementStatuses: {
@@ -84,7 +86,7 @@ export default {
                 "Installments": "Installments"
             },
             activeNames: '1',
-            numbers: this.getNumbersInRange(2, 50),
+            numbers: this.getNumbersInRange(2, 120),
         }
     },
     updated() {

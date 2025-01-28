@@ -31,7 +31,9 @@ class LeadCommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->where('lead_id', $assetId)->get();
+            ->where('lead_id', $assetId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('', 200, $comments);
     }
@@ -61,7 +63,9 @@ class LeadCommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->where('lead_id', $leadId)->get();
+            ->where('lead_id', $leadId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('Comment Added successfully', 200, $comments);
     }
@@ -83,7 +87,9 @@ class LeadCommentController extends BaseController
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->where('lead_id', $leadId)->get();
+            ->where('lead_id', $leadId)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $comments);
     }

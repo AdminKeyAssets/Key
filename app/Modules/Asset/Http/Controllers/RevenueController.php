@@ -158,7 +158,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -238,7 +238,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -248,41 +248,121 @@ class RevenueController extends BaseController
      * @param $allAssets
      * @return void
      */
-    private function calculateRevenue($paginatedAssets, $allAssets): void
+    private function calculateRevenue($paginatedAssets, $allAssets, $startDate = null, $endDate = null): void
     {
-        // Initialize totals
+        // 1. Eager load the relationships to avoid repeated queries
+        $allAssets->load(['rentalPaymentsHistories', 'paymentsHistories', 'investments']);
+        $paginatedAssets->load(['rentalPaymentsHistories', 'paymentsHistories', 'investments']);
+
+        // 2. Initialize totals
         $totalRent = 0;
         $totalCapitalGain = 0;
         $totalInvestment = 0;
         $otherInvestment = 0;
         $totalPurchasePrice = 0;
         $totalCurrentValue = 0;
+        $totalRenovationPrice = 0;
+        $totalNetCashBalance = 0;
+        $totalPaid = 0;
 
-        // Calculate totals for all assets
+        // 3. Calculate totals for all assets
         foreach ($allAssets as $asset) {
-            $totalRent += $asset->rentalPaymentsHistories()->sum('amount');
-            if ($asset->agreement_status === "Installments") {
-                $totalInvestment += $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
-            } else {
-                $totalInvestment += $asset->total_price + $asset->investments()->sum('amount');
+            // Calculate sums once per asset
+            $rent = $asset->rentalPaymentsHistories;
+            $paid = $asset->paymentsHistories;
+            $allInvestments = $asset->investments;
+            $renovationInvestment = $asset->investments->where('status', 'Renovation');
+            if ($startDate) {
+                $rent = $rent->where('date', '>=', $startDate);
+                $paid = $paid->where('date', '>=', $startDate);
+                $allInvestments = $allInvestments->where('date', '>=', $startDate);
+                $renovationInvestment = $renovationInvestment->where('date', '>=', $startDate);
             }
-            $totalCapitalGain += $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
-            $otherInvestment += $asset->investments()->sum('amount');
+
+            if ($endDate) {
+                $rent = $rent->where('date', '<=', $endDate);
+                $paid = $paid->where('date', '<=', $endDate);
+                $allInvestments = $allInvestments->where('date', '<=', $endDate);
+                $renovationInvestment = $renovationInvestment->where('date', '<=', $endDate);
+            }
+
+            $rent = $rent->sum('amount');
+            $paid = $paid->sum('amount');
+            $allInvestments = $allInvestments->sum('amount');
+            $renovationInvestment = $renovationInvestment->sum('amount');
+            $otherInvestments = $allInvestments - $renovationInvestment;  // everything that's not Renovation
+
+            $totalRent += $rent;
+
+            // Determine total investment based on agreement_status
+            if ($asset->agreement_status === 'Installments') {
+                $investmentAmount = $paid + $allInvestments;
+            } else {
+                $investmentAmount = $asset->total_price + $allInvestments;
+            }
+            $totalInvestment += $investmentAmount;
+
+            // Calculate capital gain
+            $capitalGain = $asset->current_value - ($asset->total_price + $renovationInvestment);
+            $totalCapitalGain += $capitalGain;
+
+            // Other totals
+            $otherInvestment += $otherInvestments;
+            $totalRenovationPrice += $renovationInvestment;
             $totalPurchasePrice += $asset->total_price;
             $totalCurrentValue += $asset->current_value;
+            $totalPaid += $paid;
+
+            // Net cash balance
+            $netCashBalance = $rent - $otherInvestments;
+            $totalNetCashBalance += $netCashBalance;
         }
 
+        // 4. Populate detailed fields on each paginated asset
         foreach ($paginatedAssets as $asset) {
-            $asset->rent = $asset->rentalPaymentsHistories()->sum('amount');
-            if ($asset->agreement_status === "Installments") {
-                $asset->total_investment = $asset->paymentsHistories()->sum('amount') + $asset->investments()->sum('amount');
-            } else {
-                $asset->total_investment = $asset->total_price + $asset->investments()->sum('amount');
+            // Again, compute these sums once
+            $rent = $asset->rentalPaymentsHistories;
+            $paid = $asset->paymentsHistories;
+            $allInvestments = $asset->investments;
+            $renovationInvestment = $asset->investments->where('status', 'Renovation');
+            if ($startDate) {
+                $rent = $rent->where('date', '>=', $startDate);
+                $paid = $paid->where('date', '>=', $startDate);
+                $allInvestments = $allInvestments->where('date', '>=', $startDate);
+                $renovationInvestment = $renovationInvestment->where('date', '>=', $startDate);
+
             }
-            $asset->capital_gain = $asset->current_value - ($asset->total_price + $asset->investments()->sum('amount'));
-            $asset->other_investment = $asset->investments()->sum('amount');
+            if ($endDate) {
+                $rent = $rent->where('date', '<=', $endDate);
+                $paid = $paid->where('date', '<=', $endDate);
+                $allInvestments = $allInvestments->where('date', '<=', $endDate);
+                $renovationInvestment = $renovationInvestment->where('date', '<=', $endDate);
+            }
+
+            $rent = $rent->sum('amount');
+            $paid = $paid->sum('amount');
+            $allInvestments = $allInvestments->sum('amount');
+            $renovationInvestment = $renovationInvestment->sum('amount');
+            $otherInvestments = $allInvestments - $renovationInvestment;  // everything that's not Renovation
+
+            // Set per-asset fields
+            $asset->rent = $rent;
+            $asset->net_cache_balance = $rent - $otherInvestments;
+
+            if ($asset->agreement_status === 'Installments') {
+                $asset->total_investment = $paid + $allInvestments;
+                $asset->paid = $paid;
+            } else {
+                $asset->total_investment = $asset->total_price + $allInvestments;
+                $asset->paid = $asset->total_price;
+            }
+
+            $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
+            $asset->other_investment = $otherInvestments;
+            $asset->renovation = $renovationInvestment;
         }
 
+        // 5. Provide the results
         $this->baseData['allData'] = $paginatedAssets;
         $this->baseData['totals'] = [
             'total_rent' => $totalRent,
@@ -291,6 +371,9 @@ class RevenueController extends BaseController
             'other_investment' => $otherInvestment,
             'total_current_value' => $totalCurrentValue,
             'total_purchase_price' => $totalPurchasePrice,
+            'total_renovation_price' => $totalRenovationPrice,
+            'total_paid' => $totalPaid,
+            'total_net_cash_balance' => $totalNetCashBalance,
         ];
     }
 
