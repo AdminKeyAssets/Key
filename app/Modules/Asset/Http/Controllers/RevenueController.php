@@ -158,7 +158,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y-m-d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y-m-d', strtotime($createdDates[1])) : null);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -238,7 +238,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y-m-d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y-m-d', strtotime($createdDates[1])) : null);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -273,17 +273,17 @@ class RevenueController extends BaseController
             $allInvestments = $asset->investments;
             $renovationInvestment = $asset->investments->where('status', 'Renovation');
             if ($startDate) {
-                $rent = $rent->where('created_at', '>=', $startDate);
-                $paid = $paid->where('created_at', '>=', $startDate);
-                $allInvestments = $allInvestments->where('created_at', '>=', $startDate);
-                $renovationInvestment = $renovationInvestment->where('created_at', '>=', $startDate);
+                $rent = $rent->where('date', '>=', $startDate);
+                $paid = $paid->where('date', '>=', $startDate);
+                $allInvestments = $allInvestments->where('date', '>=', $startDate);
+                $renovationInvestment = $renovationInvestment->where('date', '>=', $startDate);
             }
 
             if ($endDate) {
-                $rent = $rent->where('created_at', '<=', $endDate);
-                $paid = $paid->where('created_at', '<=', $endDate);
-                $allInvestments = $allInvestments->where('created_at', '<=', $endDate);
-                $renovationInvestment = $renovationInvestment->where('created_at', '<=', $endDate);
+                $rent = $rent->where('date', '<=', $endDate);
+                $paid = $paid->where('date', '<=', $endDate);
+                $allInvestments = $allInvestments->where('date', '<=', $endDate);
+                $renovationInvestment = $renovationInvestment->where('date', '<=', $endDate);
             }
 
             $rent = $rent->sum('amount');
@@ -326,17 +326,17 @@ class RevenueController extends BaseController
             $allInvestments = $asset->investments;
             $renovationInvestment = $asset->investments->where('status', 'Renovation');
             if ($startDate) {
-                $rent = $rent->where('created_at', '>=', $startDate);
-                $paid = $paid->where('created_at', '>=', $startDate);
-                $allInvestments = $allInvestments->where('created_at', '>=', $startDate);
-                $renovationInvestment = $renovationInvestment->where('created_at', '>=', $startDate);
+                $rent = $rent->where('date', '>=', $startDate);
+                $paid = $paid->where('date', '>=', $startDate);
+                $allInvestments = $allInvestments->where('date', '>=', $startDate);
+                $renovationInvestment = $renovationInvestment->where('date', '>=', $startDate);
 
             }
             if ($endDate) {
-                $rent = $rent->where('created_at', '<=', $endDate);
-                $paid = $paid->where('created_at', '<=', $endDate);
-                $allInvestments = $allInvestments->where('created_at', '<=', $endDate);
-                $renovationInvestment = $renovationInvestment->where('created_at', '<=', $endDate);
+                $rent = $rent->where('date', '<=', $endDate);
+                $paid = $paid->where('date', '<=', $endDate);
+                $allInvestments = $allInvestments->where('date', '<=', $endDate);
+                $renovationInvestment = $renovationInvestment->where('date', '<=', $endDate);
             }
 
             $rent = $rent->sum('amount');
