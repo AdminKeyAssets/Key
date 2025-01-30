@@ -76,7 +76,8 @@ class RevenueController extends BaseController
         }
 
         // Apply filters based on the related entities
-        if ($request->agreement_date) {
+
+        if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
@@ -158,7 +159,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[1]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -179,7 +180,7 @@ class RevenueController extends BaseController
         // Fetch all assets for totals calculation
         $allAssets = Asset::where('investor_id', $userId);
 
-        if ($request->agreement_date) {
+        if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
@@ -238,7 +239,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[1]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }

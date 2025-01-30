@@ -27,7 +27,7 @@
                    class="show-all-comments-button">Show All Comments
         </el-button>
         <el-form @submit.prevent="submitComment" class="comment-form">
-            <el-input v-model="newComment" placeholder="Add a comment" class="comment-input"></el-input>
+            <el-input type="textarea" v-model="newComment" placeholder="Add a comment" class="comment-input"></el-input>
             <div class="end-comments-form">
                 <div>
                     <label for="comment-file-input" class="custom-file-label">

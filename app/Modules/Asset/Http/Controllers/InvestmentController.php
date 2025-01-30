@@ -6,6 +6,7 @@ use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Http\Requests\InvestmentRequest;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Investment;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -112,6 +113,16 @@ class InvestmentController extends BaseController
     {
         $path = null;
 
+        $currentValue = CurrentValue::where('asset_id', $assetId)->orderBy('id', 'desc')->first();
+
+        if($currentValue){
+            $currentValueAmount = (float)$currentValue->value;
+        }
+        else{
+            $asset = Asset::where('id', $assetId)->first();
+            $currentValueAmount = $asset->total_price;
+        }
+
         if (isset($request->id)) {
             $investment = Investment::where('id', $request->id)->first();
 
@@ -133,6 +144,14 @@ class InvestmentController extends BaseController
                 $path = $investment->attachment;
             }
 
+            if($request->status === 'Renovation' && $investment->status !== 'Renovation'){
+                CurrentValue::create([
+                    'asset_id' => $assetId,
+                    'value' => $currentValueAmount + $request->amount,
+                    'date' => $request->date
+                ]);
+            }
+
             $investment->update([
                 'asset_id' => $assetId,
                 'date' => $request->date,
@@ -149,6 +168,14 @@ class InvestmentController extends BaseController
                 $originalFileName = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
+            }
+
+            if($request->status === 'Renovation'){
+                CurrentValue::create([
+                    'asset_id' => $assetId,
+                    'value' => $currentValueAmount + $request->amount,
+                    'date' => $request->date
+                ]);
             }
 
             $investment = Investment::create([
@@ -223,10 +250,21 @@ class InvestmentController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function destroy(Request $request, $assetId)
+    public function destroy(Request $request)
     {
         try {
-            Investment::findOrFail($request->get('id'))->delete();
+            $investment = Investment::findOrFail($request->get('id'));
+
+            if($investment->status == 'Renovation'){
+                $currentValue = CurrentValue::where('asset_id', $investment->asset_id)->orderBy('id', 'desc')->first();
+                if($currentValue){
+                    $currentValue->update([
+                        'value' => (float)$currentValue->value - (float)$investment->amount,
+                    ]);
+                }
+            }
+
+            $investment->delete();
 
         } catch (\Exception $ex) {
             throw new Exception($ex->getMessage(), $ex->getCode());
