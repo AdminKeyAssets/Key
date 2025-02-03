@@ -150,6 +150,7 @@ class InvestmentController extends BaseController
                     'value' => $currentValueAmount + $request->amount,
                     'date' => $request->date
                 ]);
+                Asset::where('id', $assetId)->update(['current_value' => $currentValueAmount + $request->amount]);
             }
 
             $investment->update([
@@ -176,6 +177,8 @@ class InvestmentController extends BaseController
                     'value' => $currentValueAmount + $request->amount,
                     'date' => $request->date
                 ]);
+
+                Asset::where('id', $assetId)->update(['current_value' => $currentValueAmount + $request->amount]);
             }
 
             $investment = Investment::create([
@@ -258,6 +261,10 @@ class InvestmentController extends BaseController
             if($investment->status == 'Renovation'){
                 $currentValue = CurrentValue::where('asset_id', $investment->asset_id)->orderBy('id', 'desc')->first();
                 if($currentValue){
+                    Asset::where('id', $investment->asset_id)->first()->update([
+                        'current_value' => (float)$currentValue->value - (float)$investment->amount
+                    ]);
+
                     $currentValue->update([
                         'value' => (float)$currentValue->value - (float)$investment->amount,
                     ]);
