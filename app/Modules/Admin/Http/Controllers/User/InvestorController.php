@@ -309,8 +309,8 @@ class InvestorController extends BaseController
             );
 
             if (isset($investor) && $oldAdminId && $oldAdminId != $newAdminId) {
-                Asset::where('admin_id', $oldAdminId)
-                    ->where('investor_id', $investor->id)
+//                dd($oldAdminId);
+                Asset::where('investor_id', $investor->id)
                     ->update(['admin_id' => $newAdminId]);
             }
 
