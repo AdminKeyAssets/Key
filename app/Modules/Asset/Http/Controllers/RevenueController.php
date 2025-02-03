@@ -8,6 +8,7 @@ use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
@@ -303,16 +304,17 @@ class RevenueController extends BaseController
                 $investmentAmount = $asset->total_price + $allInvestments;
             }
             $totalInvestment += $investmentAmount;
+            $currentValueObj = CurrentValue::where('asset_id', $asset->id)->orderBy('id', 'desc')->first();
 
+            $currentValue = $currentValueObj ? $currentValueObj->value : 0;
             // Calculate capital gain
-            $capitalGain = $asset->current_value - ($asset->total_price + $renovationInvestment);
+            $capitalGain = $currentValue - ($asset->total_price + $renovationInvestment);
             $totalCapitalGain += $capitalGain;
-
             // Other totals
             $otherInvestment += $otherInvestments;
             $totalRenovationPrice += $renovationInvestment;
             $totalPurchasePrice += $asset->total_price;
-            $totalCurrentValue += $asset->current_value;
+            $totalCurrentValue += $currentValue;
             $totalPaid += $paid;
 
             // Net cash balance
@@ -359,11 +361,13 @@ class RevenueController extends BaseController
                 $asset->paid = $asset->total_price;
             }
 
-            $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
+            $asset->capital_gain = $currentValue - ($asset->total_price + $renovationInvestment);
             $asset->other_investment = $otherInvestments;
             $asset->renovation = $renovationInvestment;
         }
 
+
+        $asset->current_value = $currentValue;
         // 5. Provide the results
         $this->baseData['allData'] = $paginatedAssets;
         $this->baseData['totals'] = [
