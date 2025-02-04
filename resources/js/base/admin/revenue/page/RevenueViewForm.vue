@@ -12,9 +12,11 @@
 
                             <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
                                     v-bind:key="tenant.id">
-                                <el-card class="box-card" :class="{ 'hidden-body': !tenant.showDetails && !tenant.status }">
+                                <el-card class="box-card"
+                                         :class="{ 'hidden-body': !tenant.showDetails && !tenant.status }">
                                     <!-- Card Header - Toggles visibility on click -->
-                                    <div slot="header" class="clearfix main-header" @click="tenant.showDetails = !tenant.showDetails" style="cursor: pointer;">
+                                    <div slot="header" class="clearfix main-header"
+                                         @click="tenant.showDetails = !tenant.showDetails" style="cursor: pointer;">
                                         <div style="width: 98%">
                                             <span>{{ tenant.name }} {{ tenant.surname }}</span>
                                             <span>
@@ -124,11 +126,13 @@
                                         </el-row>
                                     </el-row>
 
-                                    <el-row v-if="tenant.showDetails" style="margin-top: 20px;" class="payments-wrapper row-item">
+                                    <el-row v-if="tenant.showDetails" style="margin-top: 20px;"
+                                            class="payments-wrapper row-item">
                                         <el-col :span="24" :md="11">
                                             <div>
                                                 <div class="payments-schedule-title-wrapper">
-                                                    <div class="rentals-schedule-heading" style="text-align: center; max-width: 500px">
+                                                    <div class="rentals-schedule-heading"
+                                                         style="text-align: center; max-width: 500px">
                                                         <h4>Rentals Schedule</h4>
                                                     </div>
                                                 </div>
@@ -146,7 +150,8 @@
                                         <el-col :span="24" :md="11" class="payments-history-wrapper-col">
                                             <div v-if="tenant.rental_payments">
                                                 <div class="payments-schedule-title-wrapper">
-                                                    <div class="payments-history-heading" style="text-align: center; max-width: 500px">
+                                                    <div class="payments-history-heading"
+                                                         style="text-align: center; max-width: 500px">
                                                         <h4>Payments History</h4>
                                                     </div>
                                                 </div>
@@ -159,29 +164,42 @@
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                               target="_blank">View {{
+                                                                    getFilename(scope.row.attachment)
+                                                                }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
                                             </div>
                                         </el-col>
                                     </el-row>
+
+                                    <el-row v-if="isAdmin">
+                                        <div class="rental-actions">
+                                            <span class="rental-delete" @click="deleteRental(tenant.id)">
+                                                Delete
+                                            </span>
+                                        </div>
+                                    </el-row>
                                 </el-card>
                             </el-row>
 
                             <el-row style="margin-bottom: 30px" v-if="investments">
                                 <el-card class="box-card" :class="{ 'hidden-body': !showInvestments }">
-                                    <div slot="header" class="clearfix main-header"  @click="showInvestments = !showInvestments" style="cursor: pointer;">
-                                       <div style="width: 98%">
-                                           <span>Investments</span>
-                                       </div>
+                                    <div slot="header" class="clearfix main-header"
+                                         @click="showInvestments = !showInvestments" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Investments</span>
+                                        </div>
                                         <div style="width: 2%">
                                             <i v-if="!showInvestments" class="el-icon-caret-right"></i>
                                             <i v-else class="el-icon-caret-bottom"></i>
                                         </div>
                                     </div>
 
-                                    <el-row v-if="showInvestments" style="margin-top: 20px;" class="payments-wrapper row-item">
+                                    <el-row v-if="showInvestments" style="margin-top: 20px;"
+                                            class="payments-wrapper row-item">
                                         <el-col :span="24" class="payments-history-wrapper-col">
                                             <div>
                                                 <el-table border :data="investments" style="width: 100%">
@@ -195,14 +213,22 @@
                                                     <el-table-column prop="description" label="Description">
                                                         <template slot-scope="scope">
                                                             <el-popover placement="bottom" width="300" trigger="hover">
-                                                                <div style="word-break: break-word; text-align: left">{{ scope.row.description }}</div>
-                                                                <div slot="reference" style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ scope.row.description }}</div>
+                                                                <div style="word-break: break-word; text-align: left">
+                                                                    {{ scope.row.description }}
+                                                                </div>
+                                                                <div slot="reference"
+                                                                     style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                    {{ scope.row.description }}
+                                                                </div>
                                                             </el-popover>
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="attachment" label="Attachment">
                                                         <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment" target="_blank">View {{ getFilename(scope.row.attachment) }}</a>
+                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
+                                                               target="_blank">View {{
+                                                                    getFilename(scope.row.attachment)
+                                                                }}</a>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -371,8 +397,21 @@ export default {
             }
 
             return rentals;
-        }
-        ,
+        },
+        async deleteRental(tenantId) {
+            this.$confirm('Are you sure?', 'You are deleting a rental', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                type: 'warning'
+            }).then(async () => {
+                await axios.post(`/assets/revenues/rental/delete/${tenantId}`).then(response => {
+                    responseParse(response);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                });
+            });
+        },
     }
 }
 </script>
@@ -389,7 +428,15 @@ export default {
 }
 
 
-.box-card.hidden-body .el-card__body{
+.box-card.hidden-body .el-card__body {
     display: none;
+}
+
+.rental-actions{
+    padding: 10px 0 0;
+}
+.rental-delete {
+    text-decoration: underline;
+    cursor: pointer;
 }
 </style>

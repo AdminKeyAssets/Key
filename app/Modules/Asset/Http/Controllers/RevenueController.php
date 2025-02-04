@@ -475,4 +475,12 @@ class RevenueController extends BaseController
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
+
+    public function deleteRental(Request $request, $tenantId)
+    {
+        Tenant::where('id', $tenantId)->delete();
+        RentalPaymentsHistory::where('tenant_id', $tenantId)->delete();
+
+        return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
+    }
 }

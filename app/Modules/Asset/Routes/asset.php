@@ -91,6 +91,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/revenues/create-data', $revenueController . '@createData')->name('revenue_create_form_data');
     Route::get('/revenues/filter-options', $revenueController . '@filterOptions')
         ->name('revenues.filters');
+    Route::post('/revenues/rental/delete/{id?}', $revenueController . '@deleteRental');
 
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';
