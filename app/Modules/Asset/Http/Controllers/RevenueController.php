@@ -8,6 +8,7 @@ use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
@@ -458,8 +459,14 @@ class RevenueController extends BaseController
                     $investments = $asset->investments()->orderByDesc('id')->get();
                 }
 
+                $currentValues = [];
+                if($asset->currentValues){
+                    $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();;
+                }
+
                 $this->baseData['tenants'] = $tenantData;
                 $this->baseData['investments'] = $investments;
+                $this->baseData['current_values'] = $currentValues;
             }
 
         } catch (\Exception $ex) {

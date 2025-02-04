@@ -184,7 +184,6 @@
                                     </el-row>
                                 </el-card>
                             </el-row>
-
                             <el-row style="margin-bottom: 30px" v-if="investments">
                                 <el-card class="box-card" :class="{ 'hidden-body': !showInvestments }">
                                     <div slot="header" class="clearfix main-header"
@@ -237,6 +236,47 @@
                                     </el-row>
                                 </el-card>
                             </el-row>
+
+                            <el-row style="margin-bottom: 30px" v-if="currentValues">
+                                <el-card class="box-card" :class="{ 'hidden-body': !showCurrentValues }">
+                                    <div slot="header" class="clearfix main-header"
+                                         @click="showCurrentValues = !showCurrentValues" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Current Values</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showCurrentValues" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+
+                                    <el-row v-if="showCurrentValues" style="margin-top: 20px;"
+                                            class="payments-wrapper row-item">
+                                        <el-col :span="24">
+                                            <div>
+                                                <el-table :data="currentValues" style="width: 100%">
+                                                    <el-table-column prop="value" label="Value">
+                                                        <template slot-scope="scope">
+                                                            {{ formatPrice(scope.row.value) }}$
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="date" label="Date"/>
+                                                    <el-table-column prop="attachment" label="Attachment"
+                                                                     width="fit-content">
+                                                        <template slot-scope="scope">
+                                                            <a v-if="scope.row.attachment" :href="scope.row.attachment"
+                                                               target="_blank">{{
+                                                                    getFilename(scope.row.attachment)
+                                                                }}</a>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                </el-card>
+                            </el-row>
+
                         </el-form>
                     </div>
                 </div>
@@ -294,7 +334,9 @@ export default {
             tenants: {},
             rentals: {},
             investments: [],
+            currentValues: [],
             showInvestments: false,
+            showCurrentValues: false,
         }
     },
     created() {
@@ -326,6 +368,7 @@ export default {
                     this.options = data.options;
                     this.tenants = data.tenants;
                     this.investments = data.investments;
+                    this.currentValues = data.current_values;
 
                     this.tenants.forEach(tenant => {
                         tenant.rentals = this.generateRentals(
