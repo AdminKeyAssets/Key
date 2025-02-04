@@ -175,7 +175,7 @@
                                         </el-col>
                                     </el-row>
 
-                                    <el-row v-if="isAdmin">
+                                    <el-row v-if="isAdmin && !tenant.status">
                                         <div class="rental-actions">
                                             <span class="rental-delete" @click="deleteRental(tenant.id)">
                                                 Delete
