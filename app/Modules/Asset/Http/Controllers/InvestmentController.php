@@ -177,7 +177,7 @@ class InvestmentController extends BaseController
             }
 
             if($request->status === 'Renovation'){
-                $currentValue = CurrentValue::where('asset_id', $assetId)->orderByDesc('id');
+//                $currentValue = CurrentValue::where('asset_id', $assetId)->orderByDesc('id')->first();
                 $currentValue->update([
                     'value' => $currentValueAmount + $request->amount,
                 ]);
