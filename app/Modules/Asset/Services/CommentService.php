@@ -23,6 +23,7 @@ class CommentService
             'admin_id' => $adminId,
             'asset_id' => $assetId,
             'investor_id' => null,
+            'status' => 2,
         ]);
     }
 }
