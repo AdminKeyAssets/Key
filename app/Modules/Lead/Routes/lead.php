@@ -14,6 +14,7 @@ Route::prefix('lead')->name('lead.')->group(function () {
 //
 //    //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
+    Route::post('/status-update/{id?}', $controller . '@storeStatus')->name('store.status')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/add', $controller . '@storeWeb')->name('store.web');
     Route::get('/prefixes', $controller . '@prefixes')->name('prefixes');
 //    // Delete

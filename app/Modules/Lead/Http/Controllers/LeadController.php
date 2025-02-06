@@ -298,4 +298,13 @@ class LeadController extends BaseController
         $filters = [];
         return Excel::download(new LeadsExport($filters), 'leads.xlsx');
     }
+
+    public function storeStatus(Request $request)
+    {
+        $lead = Lead::where('id', $request->get('id'))->first()->update([
+            'status' => $request->get('status')
+        ]);
+
+        return ServiceResponse::jsonNotification(__('Status changed successfully'), 200, $this->baseData);
+    }
 }
