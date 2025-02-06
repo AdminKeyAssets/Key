@@ -242,7 +242,7 @@
                                     <div slot="header" class="clearfix main-header"
                                          @click="showCurrentValues = !showCurrentValues" style="cursor: pointer;">
                                         <div style="width: 98%">
-                                            <span>Current Values</span>
+                                            <span>Asset Value History</span>
                                         </div>
                                         <div style="width: 2%">
                                             <i v-if="!showCurrentValues" class="el-icon-caret-right"></i>
