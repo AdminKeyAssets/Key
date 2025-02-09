@@ -9,12 +9,13 @@
 
                 <el-row>
 
-
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Investment Status:</label>
                         <div class="col-md-3 uppercase-medium">
+                            <!-- Disable the select if the status is 'Renovation' -->
                             <el-select
                                 v-model="form.status"
+                                :disabled="!canUpdate"
                                 placeholder="Select Status">
                                 <el-option label="Renovation" value="Renovation"></el-option>
                                 <el-option label="Maintenance" value="Maintenance"></el-option>
@@ -31,7 +32,10 @@
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Price:</label>
                         <div class="col-md-7 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.amount"></input>
+                            <!-- Disable the input if the status is 'Renovation' or if the form is loading -->
+                            <input class="form-control"
+                                   :disabled="loading || !canUpdate"
+                                   v-model="form.amount">
                         </div>
                     </div>
 
@@ -60,13 +64,19 @@
                 <div class="form-group dashed">
                     <label class="col-md-1 control-label">Attachment:</label>
                     <div class="col-md-10 uppercase-medium">
-                        <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
-                            Attachment</a>
-                            <el-button type="danger" icon="el-icon-delete" size="small"
-                                       @click="removeFile"
-                            ></el-button>
+                        <p v-if="form.attachment">
+                            File: <a :href="form.attachment" target="_blank">View Attachment</a>
+                            <el-button type="danger"
+                                       icon="el-icon-delete"
+                                       size="small"
+                                       @click="removeFile">
+                                Remove
+                            </el-button>
                         </p>
-                        <input v-else type="file" class="form-control" @change="onFileChange">
+                        <input v-else
+                               type="file"
+                               class="form-control"
+                               @change="onFileChange">
                     </div>
                 </div>
 
@@ -75,10 +85,9 @@
     </div>
 </template>
 
-
 <script>
-import {responseParse} from '../../../mixins/responseParse'
-import {getData} from '../../../mixins/getData'
+import { responseParse } from '../../../mixins/responseParse'
+import { getData } from '../../../mixins/getData'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
@@ -100,15 +109,20 @@ export default {
                 "GEL": "GEL",
                 "USD": "USD",
             },
+            canUpdate: true,
         }
     },
+
     updated() {
         this.updateData(this.form);
     },
     watch: {
-        'item'() {
+        item() {
             if (this.item) {
                 this.form = this.item;
+                if(this.form.status === 'Renovation' && this.form.id){
+                    this.canUpdate = false;
+                }
             }
         }
     },
@@ -121,5 +135,4 @@ export default {
         },
     }
 }
-
 </script>

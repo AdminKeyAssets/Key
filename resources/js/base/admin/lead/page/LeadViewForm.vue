@@ -33,10 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group dashed" v-if="form.status">
-                                    <label class="col-md-1 control-label">Status:</label>
-                                    <div class="col-md-10 uppercase-medium">
-                                        {{ form.status }}
-                                    </div>
+                                    <LeadStatusComponent :item="form"></LeadStatusComponent>
                                 </div>
                                 <div v-if="form.admin_id" class="form-group dashed">
                                     <label class="col-md-1 control-label">Sales Manager: </label>
@@ -77,9 +74,10 @@ import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import AssetComments from "../../asset/partials/AssetComments.vue";
 import LeadComments from "../partials/LeadComments.vue";
+import LeadStatusComponent from "../partials/LeadStatusComponent.vue";
 
 export default {
-    components: {LeadComments},
+    components: {LeadStatusComponent, LeadComments},
     props: [
         'getSaveDataRoute',
         'id',

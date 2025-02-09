@@ -43,7 +43,7 @@
                             @endif
                             <th> Purchase Date</th>
                             <th> Purchase Price <br>({!! number_format($totals['total_purchase_price']) !!}$)</th>
-                            <th> Paid <br>({!! number_format($totals['total_paid'])  !!}$)</th>
+                            <th class="paid-col"> Paid <br>({!! number_format($totals['total_paid'])  !!}$)</th>
                             <th> Renovation <br>({!! number_format($totals['total_renovation_price']) !!}$)</th>
                             <th> Other Investment <br>({!! number_format($totals['other_investment']) !!}$)</th>
                             <th> Total Investment <br>({!! number_format($totals['total_investment']) !!}$)</th>

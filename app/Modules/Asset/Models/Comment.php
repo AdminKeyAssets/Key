@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     protected $fillable = [
-        'comment', 'read', 'attachment', 'admin_id', 'asset_id', 'investor_id'
+        'comment', 'read', 'attachment', 'admin_id', 'asset_id', 'investor_id', 'status'
     ];
 
     public function asset()

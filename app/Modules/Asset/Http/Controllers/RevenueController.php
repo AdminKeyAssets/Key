@@ -8,6 +8,7 @@ use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
@@ -76,7 +77,8 @@ class RevenueController extends BaseController
         }
 
         // Apply filters based on the related entities
-        if ($request->agreement_date) {
+
+        if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
@@ -158,7 +160,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[1]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -179,7 +181,7 @@ class RevenueController extends BaseController
         // Fetch all assets for totals calculation
         $allAssets = Asset::where('investor_id', $userId);
 
-        if ($request->agreement_date) {
+        if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
@@ -238,7 +240,7 @@ class RevenueController extends BaseController
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
-        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
+        $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[1]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -457,8 +459,14 @@ class RevenueController extends BaseController
                     $investments = $asset->investments()->orderByDesc('id')->get();
                 }
 
+                $currentValues = [];
+                if($asset->currentValues){
+                    $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();;
+                }
+
                 $this->baseData['tenants'] = $tenantData;
                 $this->baseData['investments'] = $investments;
+                $this->baseData['current_values'] = $currentValues;
             }
 
         } catch (\Exception $ex) {
@@ -473,5 +481,13 @@ class RevenueController extends BaseController
         $this->baseData['investors'] = Investor::orderByDesc('id')->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function deleteRental(Request $request, $tenantId)
+    {
+        Tenant::where('id', $tenantId)->delete();
+        RentalPaymentsHistory::where('tenant_id', $tenantId)->delete();
+
+        return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 }

@@ -51,22 +51,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group dashed" v-if="isUpdate">
-                        <label class="col-md-2 control-label">Status:</label>
-                        <div class="col-md-6 uppercase-medium">
-                            <el-select
-                                v-model="form.status"
-                                placeholder="Select Status">
-                                <el-option label="New" value="New"></el-option>
-                                <el-option label="Not Responding" value="Not Responding"></el-option>
-                                <el-option label="Communication" value="Communication"></el-option>
-                                <el-option label="Proposal Sent" value="Proposal Sent"></el-option>
-                                <el-option label="Refused" value="Refused"></el-option>
-                                <el-option label="Signed" value="Signed"></el-option>
-                            </el-select>
-                        </div>
-                    </div>
-
                     <div class="form-group" v-if="isAdmin">
                         <label class="col-md-2 control-label">Select Manager: </label>
                         <div class="col-md-6">

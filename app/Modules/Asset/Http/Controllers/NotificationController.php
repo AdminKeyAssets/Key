@@ -53,7 +53,7 @@ class NotificationController extends BaseController
                     'amount' => $payment->amount,
                     'currency' => $payment->currency,
                     'project_name' => $payment->asset->project_name,
-                    'project_route' => route('asset.view', [ $payment->asset->id ]),
+                    'project_route' => route('asset.view', [$payment->asset->id]),
                     'investor_name' => $investor->name,
                     'investor_surname' => $investor->surname,
                     'payment_date' => $payment->payment_date,
@@ -93,19 +93,22 @@ class NotificationController extends BaseController
             ->get()
             ->map(function ($rental) {
                 $investor = Investor::where('id', $rental->asset->investor_id)->first();
-                $tenant = $rental->asset->tenant->first();
-
-                return [
-                    'amount' => $rental->amount,
-                    'currency' => $rental->currency,
-                    'project_name' => $rental->asset->project_name,
-                    'project_route' => route('asset.view', [ $rental->asset->id ]),
-                    'tenant_name' => $tenant->name,
-                    'tenant_surname' => $tenant->surname,
-                    'investor_name' => $investor->name,
-                    'investor_surname' => $investor->surname,
-                    'payment_date' => $rental->payment_date,
-                ];
+                $tenant = $rental->asset->tenant;
+                if ($tenant) {
+                    $tenant = $tenant->first();
+                    return [
+                        'amount' => $rental->amount,
+                        'currency' => $rental->currency,
+                        'project_name' => $rental->asset->project_name,
+                        'project_route' => route('asset.view', [$rental->asset->id]),
+                        'tenant_name' => $tenant->name,
+                        'tenant_surname' => $tenant->surname,
+                        'investor_name' => $investor->name,
+                        'investor_surname' => $investor->surname,
+                        'payment_date' => $rental->payment_date,
+                    ];
+                }
+                return [];
             });
 
         return ServiceResponse::jsonNotification('', 200, $rentals);

@@ -40,6 +40,8 @@ class LeadRequest extends FormRequest
             'surname' => 'required',
             'phone' => 'required',
             'prefix' => 'required',
+            'admin_id' => 'required',
+            'marketing_channel' => 'required',
         ];
     }
 
@@ -51,6 +53,8 @@ class LeadRequest extends FormRequest
             'email.required' => 'Email can not be empty.',
             'phone.required' => 'Phone Number can not be empty.',
             'prefix.required' => 'Prefix can not be empty.',
+            'admin_id.required' => 'Please select a Manager.',
+            'marketing_channel.required' => 'Marketing Chanel can not be empty.',
             'email.email' => 'Email value is not Email.',
         ];
     }

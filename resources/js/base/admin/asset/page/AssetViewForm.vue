@@ -671,38 +671,6 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.currentValues && form.currentValues.length">
-                                <el-card class="box-card current-value-box">
-                                    <div slot="header" class="clearfix main-header">
-                                        <span>Current Value</span>
-                                    </div>
-
-                                    <el-row v-if="form.current_value">
-                                        <el-col :span="24">
-                                            <div>
-                                                <el-table :data="form.currentValues" style="width: 100%">
-                                                    <el-table-column prop="value" label="Value">
-                                                        <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.value) }}$
-                                                        </template>
-                                                    </el-table-column>
-                                                    <el-table-column prop="date" label="Date"/>
-                                                    <el-table-column prop="attachment" label="Attachment"
-                                                                     width="fit-content">
-                                                        <template slot-scope="scope">
-                                                            <a v-if="scope.row.attachment" :href="scope.row.attachment"
-                                                               target="_blank">{{
-                                                                    getFilename(scope.row.attachment)
-                                                                }}</a>
-                                                        </template>
-                                                    </el-table-column>
-                                                </el-table>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
-                                </el-card>
-                            </el-row>
-
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">

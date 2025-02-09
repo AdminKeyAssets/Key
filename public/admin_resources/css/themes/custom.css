@@ -1025,7 +1025,7 @@ table thead th {
     padding: 0 !important;
 }
 
-.comment-input input {
+.comment-input input, .comment-input textarea {
     height: 50px;
     background-color: #EFF0F1;
     border-radius: 20px;
@@ -1186,4 +1186,8 @@ table thead th {
 
 .table-row-colored{
     background: #ccddc3 !important;
+}
+
+.paid-col{
+    white-space: nowrap;
 }
