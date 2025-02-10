@@ -478,7 +478,14 @@ class RevenueController extends BaseController
 
     public function filterOptions()
     {
-        $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+        $this->baseData['investors'] = [];
+        if (\Auth::guard('admin')->check()) {
+            if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+                $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+            } else {
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+            }
+        }
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }

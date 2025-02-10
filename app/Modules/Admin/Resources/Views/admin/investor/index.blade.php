@@ -28,8 +28,14 @@
             <br>
 
             <div class="row">
-                <admin-investor-filter-component>
+                @if(\Auth::user()->getRolesNameAttribute() == 'administrator')
+                <admin-investor-filter-component
+                :is-admin="{{ true }}">
                 </admin-investor-filter-component>
+                @else
+                    <admin-investor-filter-component>
+                    </admin-investor-filter-component>
+                @endif
             </div>
             <br>
 
