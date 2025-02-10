@@ -94,6 +94,24 @@ export default {
         },
 
         async save() {
+
+            if (this.form.status === 'Renovation') {
+                try {
+                    await this.$confirm(
+                        'Are you sure you want to save this investment with Renovation status?',
+                        'Confirmation',
+                        {
+                            confirmButtonText: 'Yes',
+                            cancelButtonText: 'Cancel',
+                            type: 'warning'
+                        }
+                    );
+                } catch (err) {
+                    // User canceled the confirmation, so do not proceed with save.
+                    return;
+                }
+            }
+
             this.loading = true;
 
             let formData = new FormData();
