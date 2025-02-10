@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Exports;
 
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Lead\Models\Lead;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -29,16 +30,25 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             'phone',
             'prefix',
             'status',
-            'marketing_channel'
+            'marketing_channel',
+            'admin_id',
         )->get();
 
         $leads->transform(function ($lead) {
+            $manager = '';
+            if($lead->admin_id){
+                $managerObj = Admin::where('id', $lead->admin_id)->first();
+                if($managerObj){
+                    $manager = $managerObj->name . ' ' . $managerObj->surname;
+                }
+            }
             return [
                 'name' => $lead->name . ' ' . $lead->surname,
                 'status' => $lead->status,
                 'email' => $lead->email,
                 'phone' => '"' . $lead->prefix . $lead->phone . '"',
                 'marketing_channel' => $lead->marketing_channel,
+                'manager' => $manager,
             ];
         });
 
@@ -53,6 +63,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             'Email',
             'Phone',
             'Marketing Channel',
+            'Manager',
         ];
     }
 
