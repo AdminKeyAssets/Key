@@ -403,6 +403,14 @@ class RevenueController extends BaseController
             $asset = Asset::where('id', $id)->first();
             $this->baseData['name'] = $asset->project_name ?? '';
 
+            $asset = Asset::where('id', $asset->id)->first();
+            $investor = Investor::where('id', $asset->investor_id)->first();
+            $this->baseData['extra'] = [
+                'asset_name' => $asset->project_name,
+                'asset_route' => route('asset.view', [ $asset->id ]),
+                'investor_name' => $investor->name . ' ' . $investor->surname,
+            ];
+
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
         }

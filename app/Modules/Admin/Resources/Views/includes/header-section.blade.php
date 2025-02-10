@@ -15,7 +15,8 @@
                 <div><i class="el-icon-user"></i> {{ $extra['investor_name'] }}</div>
                 @if(isset($extra['asset_edit_route'])
                         || isset($extra['payments_route'])
-                        || isset($extra['rentals_route']))
+                        || isset($extra['rentals_route'])
+                        || isset($extra['investments_route']))
                     <div class="text-center" style="margin-top: 10px">
                         @if($extra['asset_edit_route'])
                             @can(getPermissionKey('asset', 'update', true))
@@ -30,6 +31,11 @@
                         @if(isset($extra['rentals_route']))
                             @can(getPermissionKey('rental', 'index', true))
                                 @include('admin::includes.actions.rental', ['title' => 'Rentals', 'route' => $extra['rentals_route']])
+                            @endcan
+                        @endif
+                            @if(isset($extra['investments_route']))
+                            @can(getPermissionKey('investment', 'index', true))
+                                @include('admin::includes.actions.investment', ['title' => 'Investments', 'route' => $extra['investments_route']])
                             @endcan
                         @endif
                     </div>
