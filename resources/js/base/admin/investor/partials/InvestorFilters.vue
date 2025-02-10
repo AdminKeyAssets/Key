@@ -33,7 +33,7 @@
                     </el-date-picker>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="isAdmin">
                     <el-select v-model="form.manager" filterable placeholder="Manager">
                         <el-option
                             v-for="manager in this.managers"
@@ -60,6 +60,9 @@
 import {responseParse} from "../../../mixins/responseParse";
 
 export default {
+    props: [
+        'isAdmin'
+    ],
     data() {
         return {
             form: {

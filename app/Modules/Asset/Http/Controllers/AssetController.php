@@ -849,7 +849,15 @@ class AssetController extends BaseController
 
     public function filterOptions()
     {
-        $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+        $this->baseData['investors'] = [];
+        if (\Auth::guard('admin')->check()) {
+            if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+                $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+            } else {
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+            }
+        }
+
 
         // Group by project_name and get the latest asset (by max id) for each project
         $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
