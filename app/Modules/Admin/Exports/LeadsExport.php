@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Exports;
 
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Lead\Models\Lead;
+use App\Modules\Lead\Models\LeadComment;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -32,6 +33,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             'status',
             'marketing_channel',
             'admin_id',
+            'id'
         )->get();
 
         $leads->transform(function ($lead) {
@@ -42,6 +44,19 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
                     $manager = $managerObj->name . ' ' . $managerObj->surname;
                 }
             }
+
+            $commentsObj = LeadComment::where('lead_id', $lead->id)
+                ->orderByDesc('id')
+                ->get();
+
+            $commentLines = [];
+            foreach ($commentsObj as $comment) {
+                $formattedDate = $comment->created_at->format('d/m/Y');
+                $commentLines[] = $formattedDate . ': ' . $comment->comment;
+            }
+
+            $comments = implode("\n", $commentLines);
+
             return [
                 'name' => $lead->name . ' ' . $lead->surname,
                 'status' => $lead->status,
@@ -49,6 +64,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
                 'phone' => '"' . $lead->prefix . $lead->phone . '"',
                 'marketing_channel' => $lead->marketing_channel,
                 'manager' => $manager,
+                'comments' => $comments,
             ];
         });
 
@@ -64,6 +80,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             'Phone',
             'Marketing Channel',
             'Manager',
+            'Comments'
         ];
     }
 
@@ -81,6 +98,9 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
                 foreach ($sheet->getColumnIterator() as $column) {
                     $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
                 }
+
+                $sheet->getStyle('G')->getAlignment()->setWrapText(true);
+
             },
         ];
     }
