@@ -371,11 +371,24 @@ export default {
                     this.currentValues = data.current_values;
 
                     this.tenants.forEach(tenant => {
-                        tenant.rentals = this.generateRentals(
-                            tenant.agreement_date,
-                            tenant.agreement_term,
-                            tenant.monthly_rent,
-                            !tenant.status && tenant.rental_payments_amount_sum ? tenant.rental_payments_amount_sum : (tenant.agreement_term * tenant.monthly_rent));
+                        if (tenant.rentals) {
+                            let rentals = [];
+
+                            tenant.rentals.forEach(rental => {
+                                rentals.push({
+                                    payment_date: rental.payment_date,
+                                    amount: rental.amount,
+                                });
+                            });
+
+                            tenant.rentals = rentals;
+                        } else {
+                            tenant.rentals = this.generateRentals(
+                                tenant.agreement_date,
+                                tenant.agreement_term,
+                                tenant.monthly_rent,
+                                !tenant.status && tenant.rental_payments_amount_sum ? tenant.rental_payments_amount_sum : (tenant.agreement_term * tenant.monthly_rent));
+                        }
                         this.$set(tenant, 'showDetails', tenant.status);
                     });
 
@@ -475,9 +488,10 @@ export default {
     display: none;
 }
 
-.rental-actions{
+.rental-actions {
     padding: 10px 0 0;
 }
+
 .rental-delete {
     text-decoration: underline;
     cursor: pointer;
