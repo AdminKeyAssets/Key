@@ -285,6 +285,9 @@ export default {
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
             this.$emit('update-form', {...this.form, total_price: totalPrice});
+            if(!this.form.id){
+                this.$emit('update-form', {...this.form, current_value: totalPrice});
+            }
 
             this.updatingTotalPrice = false;
         },

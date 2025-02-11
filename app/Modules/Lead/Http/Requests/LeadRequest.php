@@ -40,7 +40,6 @@ class LeadRequest extends FormRequest
             'surname' => 'required',
             'phone' => 'required',
             'prefix' => 'required',
-            'admin_id' => 'required',
             'marketing_channel' => 'required',
         ];
     }

@@ -764,6 +764,7 @@ class AssetController extends BaseController
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
+                'investments_route' => route('asset.investment.index', [ $asset->id ]),
                 'investor_name' => $investor->name . ' ' . $investor->surname,
             ];
 
