@@ -130,6 +130,14 @@ class LeadController extends BaseController
      */
     public function store(LeadRequest $request)
     {
+        if (auth()->user()->getRolesNameAttribute() === 'administrator') {
+            $request->validate([
+                'admin_id' => 'required',
+            ],[
+                'admin_id.required' => 'Please select a Manager.',
+            ]);
+        }
+
         if ($request->id) {
             $lead = Lead::where('id', $request->id)->first();
             $lead->update(
