@@ -310,8 +310,9 @@ class InvestorController extends BaseController
 
             if (isset($investor) && $oldAdminId && $oldAdminId != $newAdminId) {
 //                dd($oldAdminId);
-                Asset::where('investor_id', $investor->id)
-                    ->update(['admin_id' => $newAdminId]);
+                Asset::whereHas('investors', function ($query) use ($investor) {
+                    $query->where('id', $investor->id);
+                })->update(['admin_id' => $newAdminId]);
             }
 
         } catch (\Exception $ex) {
@@ -333,7 +334,9 @@ class InvestorController extends BaseController
                 throw new \Exception('You are not allowed to delete this user!');
             }
             $investor = Investor::where('id',$request->id)->first();
-            $investorAssets = Asset::where('investor_id', $investor->id)->get();
+            $investorAssets = Asset::whereHas('investors', function ($query) use ($investor) {
+                $query->where('id', $investor->id);
+            })->get();
 
             if ($investorAssets->count()) {
                 throw new \Exception('You are not allowed to delete user, while having assets attached on it!!');
@@ -377,7 +380,11 @@ class InvestorController extends BaseController
     public function updateManager(UpdateManagerRequest $request)
     {
         Investor::where('id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
-        Asset::where('investor_id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
+        Asset::whereHas('investors', function ($query) use ($request) {
+            $query->where('id', $request->id);
+        })->update(['admin_id' => $request->manager_id]);
+
+//        Asset::where('investor_id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
 
         $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
 
