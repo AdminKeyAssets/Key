@@ -9,6 +9,7 @@ use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\CurrentValue;
+use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
 use App\Utilities\ServiceResponse;
@@ -456,8 +457,10 @@ class RevenueController extends BaseController
                     $tenants = Tenant::where('asset_id', $asset->id)->orderByDesc('id')->get();
                     foreach ($tenants as $tenant) {
                         $tenantRentalPayments = RentalPaymentsHistory::where('tenant_id', $tenant->id)->orderByDesc('id');
+                        $tenantRentals = Rental::where('asset_id', $asset->id)->get();
                         $tenant = $tenant->toArray();
                         $tenant['rental_payments'] = $tenantRentalPayments->get();
+                        $tenant['rentals'] = $tenantRentals;
                         $tenant['rental_payments_amount_sum'] = $tenantRentalPayments->sum('amount');
                         $tenantData[] = $tenant;
                     }
