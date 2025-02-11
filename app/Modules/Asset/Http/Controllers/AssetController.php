@@ -461,6 +461,10 @@ class AssetController extends BaseController
                         'asset_id' => $asset->id,
                     ]);
 
+                Tenant::where('asset_id', $asset->id)
+                    ->where('id', '!=', $tenant->id)
+                    ->update(['status' => 0]);
+
                 if ($request->hasFile('tenant.passport')) {
                     $passportFile = $request->file('tenant.passport');
                     $filename = time() . '_' . $passportFile->getClientOriginalName();
