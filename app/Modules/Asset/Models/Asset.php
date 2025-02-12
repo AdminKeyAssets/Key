@@ -41,7 +41,12 @@ class Asset extends Model
         'current_value',
         'current_value_currency',
         'delivery_condition_description',
-        'total_floors'
+        'total_floors',
+        'renovation_agreement_date',
+        'renovation_first_payment_date',
+        'renovation_agreement',
+        'renovation_total_price',
+        'renovation_period'
     ];
 
     public function informations()
@@ -57,6 +62,10 @@ class Asset extends Model
     public function rentals()
     {
         return $this->hasMany(Rental::class);
+    }
+    public function renovations()
+    {
+        return $this->hasMany(RenovationPayment::class);
     }
     public function attachments()
     {
@@ -91,6 +100,10 @@ class Asset extends Model
     public function rentalPaymentsHistories()
     {
         return $this->hasMany(RentalPaymentsHistory::class);
+    }
+    public function renovationPaymentsHistories()
+    {
+        return $this->hasMany(RenovationPaymentsHistory::class);
     }
 
     public function investor()

@@ -90,4 +90,7 @@ return [
             ]
         ],
     ],
+    'renovation' => [
+        'default' => $default_permissions
+    ],
 ];

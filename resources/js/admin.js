@@ -64,6 +64,10 @@ Vue.component('payment-view-page-form', require('./base/admin/payment/page/Payme
 Vue.component('rental-page-form', require('./base/admin/rental/page/RentalForm').default);
 Vue.component('rental-view-page-form', require('./base/admin/rental/page/RentalViewForm').default);
 
+//Renovation Payment
+Vue.component('renovation-payment-page-form', require('./base/admin/renovation/page/RenovationPaymentForm').default);
+Vue.component('renovation-payment-view-page-form', require('./base/admin/renovation/page/RenovationPaymentViewForm').default);
+
 //Invetment
 Vue.component('investment-page-form', require('./base/admin/investment/page/InvestmentForm').default);
 Vue.component('investment-view-page-form', require('./base/admin/investment/page/InvestmentViewForm').default);
