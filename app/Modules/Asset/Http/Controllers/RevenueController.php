@@ -66,16 +66,28 @@ class RevenueController extends BaseController
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
         if (Auth::guard('investor')->check()) {
-            $paginatedAssets = Asset::where('investor_id', $userId)->orderByDesc('id');
-            $allAssets = Asset::where('investor_id', $userId);
+            $paginatedAssets = Asset::whereHas('investors', function ($query) use ($userId) {
+                $query->where('id', $userId);
+            })->orderByDesc('id');
+
+            $allAssets = Asset::whereHas('investors', function ($query) use ($userId) {
+                $query->where('id', $userId);
+            });
         } else if (in_array($user->getRolesNameAttribute(), $managers)) {
-            $investors = Investor::where('admin_id', $userId)->pluck('id');
-            $paginatedAssets = Asset::whereIn('investor_id', $investors)->orderByDesc('id');
-            $allAssets = Asset::whereIn('investor_id', $investors);
+            $investors = Investor::where('admin_id', $userId)->pluck('id')->toArray();
+
+            $paginatedAssets = Asset::whereHas('investors', function ($query) use ($investors) {
+                $query->whereIn('id', $investors);
+            })->orderByDesc('id');
+
+            $allAssets = Asset::whereHas('investors', function ($query) use ($investors) {
+                $query->whereIn('id', $investors);
+            });
         } else {
             $paginatedAssets = Asset::orderByDesc('id');
             $allAssets = Asset::orderByDesc('id');
         }
+
 
         // Apply filters based on the related entities
 
@@ -149,11 +161,11 @@ class RevenueController extends BaseController
                 ->where('surname', $surname)->first();
 
             if (isset($investorUser->id)) {
-                $paginatedAssets->where(function ($query) use ($investorUser) {
-                    $query->where('investor_id', '=', $investorUser->id);
+                $paginatedAssets->whereHas('investors', function ($query) use ($investorUser) {
+                    $query->where('id', $investorUser->id);
                 });
-                $allAssets->where(function ($query) use ($investorUser) {
-                    $query->where('investor_id', '=', $investorUser->id);
+                $allAssets->whereHas('investors', function ($query) use ($investorUser) {
+                    $query->where('id', $investorUser->id);
                 });
             }
         }
@@ -177,10 +189,10 @@ class RevenueController extends BaseController
         $userId = $user->getAuthIdentifier();
 
         // Fetch paginated assets
-        $paginatedAssets = Asset::where('investor_id', $userId)->orderByDesc('id');
+        $paginatedAssets = $user->assets()->orderByDesc('id');
 
         // Fetch all assets for totals calculation
-        $allAssets = Asset::where('investor_id', $userId);
+        $allAssets = $user->assets();
 
         if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
@@ -405,11 +417,17 @@ class RevenueController extends BaseController
             $this->baseData['name'] = $asset->project_name ?? '';
 
             $asset = Asset::where('id', $asset->id)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(', ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'asset_route' => route('asset.view', [$asset->id]),
+                'investor_name' => $investorNames,
             ];
 
         } catch (\Exception $ex) {
@@ -471,7 +489,7 @@ class RevenueController extends BaseController
                 }
 
                 $currentValues = [];
-                if($asset->currentValues){
+                if ($asset->currentValues) {
                     $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();;
                 }
 

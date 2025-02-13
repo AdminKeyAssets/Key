@@ -27,9 +27,11 @@ class RevenueExport implements FromCollection, WithHeadings, WithEvents
     {
         $query = Asset::query();
 
-        if(\Auth::guard('investor')->check()){
+        if (\Auth::guard('investor')->check()) {
             $user = auth('investor')->user();
-            $query->where('investor_id', $user->getAuthIdentifier());
+            $query->whereHas('investors', function ($q) use ($user) {
+                $q->where('id', $user->getAuthIdentifier());
+            });
         }
 
         $assets = $query->select('id', 'project_name', 'agreement_date', 'current_value', 'total_price')->get();

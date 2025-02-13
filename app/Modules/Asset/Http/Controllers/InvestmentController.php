@@ -49,11 +49,17 @@ class InvestmentController extends BaseController
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(', ', $investorNames);
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'asset_route' => route('asset.view', [$asset->id]),
+            'investor_name' => $investorNames,
         ];
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -68,11 +74,18 @@ class InvestmentController extends BaseController
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(', ', $investorNames);
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'asset_route' => route('asset.view', [$asset->id]),
+            'investor_name' => $investorNames,
         ];
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
@@ -115,10 +128,9 @@ class InvestmentController extends BaseController
 
         $currentValue = CurrentValue::where('asset_id', $assetId)->orderBy('id', 'desc')->first();
 
-        if($currentValue){
+        if ($currentValue) {
             $currentValueAmount = (float)$currentValue->value;
-        }
-        else{
+        } else {
             $asset = Asset::where('id', $assetId)->first();
             $currentValueAmount = $asset->total_price;
 
@@ -150,7 +162,7 @@ class InvestmentController extends BaseController
                 $path = $investment->attachment;
             }
 
-            if($request->status === 'Renovation' && $investment->status !== 'Renovation'){
+            if ($request->status === 'Renovation' && $investment->status !== 'Renovation') {
 
                 $currentValue->update([
                     'value' => $currentValueAmount + $request->amount,
@@ -176,7 +188,7 @@ class InvestmentController extends BaseController
                 $path = Storage::url($path);
             }
 
-            if($request->status === 'Renovation'){
+            if ($request->status === 'Renovation') {
 //                $currentValue = CurrentValue::where('asset_id', $assetId)->orderByDesc('id')->first();
                 $currentValue->update([
                     'value' => $currentValueAmount + $request->amount,
@@ -213,11 +225,18 @@ class InvestmentController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(', ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'asset_route' => route('asset.view', [$asset->id]),
+                'investor_name' => $investorNames,
             ];
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
@@ -239,11 +258,18 @@ class InvestmentController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(', ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'asset_route' => route('asset.view', [$asset->id]),
+                'investor_name' => $investorNames,
             ];
 
         } catch (\Exception $ex) {
@@ -262,9 +288,9 @@ class InvestmentController extends BaseController
         try {
             $investment = Investment::findOrFail($request->get('id'));
 
-            if($investment->status == 'Renovation'){
+            if ($investment->status == 'Renovation') {
                 $currentValue = CurrentValue::where('asset_id', $investment->asset_id)->orderBy('id', 'desc')->first();
-                if($currentValue){
+                if ($currentValue) {
                     Asset::where('id', $investment->asset_id)->first()->update([
                         'current_value' => (float)$currentValue->value - (float)$investment->amount
                     ]);
