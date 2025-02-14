@@ -202,10 +202,10 @@
                                                 </div>
                                             </el-col>
                                             <el-col :span="12">
-                                                <div v-if="!investorView && form.investor_id" class="form-group">
-                                                    <label class="col-md-4 control-label">Investor: </label>
+                                                <div v-if="form.investorNames" class="form-group">
+                                                    <label class="col-md-4 control-label">Investor(s): </label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ selectedInvestor.name }} {{ selectedInvestor.surname }}
+                                                        {{ form.investorNames }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -861,9 +861,6 @@ export default {
         modifiedTextHeight() {
             return this.replaceWidthAndHeight(this.form.location);
         },
-        selectedInvestor() {
-            return this.investors.find(investor => investor.id === this.form.investor_id);
-        }
     },
     methods: {
         /**

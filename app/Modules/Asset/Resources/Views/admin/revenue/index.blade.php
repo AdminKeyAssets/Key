@@ -80,7 +80,7 @@
                                         @foreach($item->investors as $investor)
                                             {!! $investor->name !!} {!! $investor->surname !!}
                                             @if(!$loop->last)
-                                                ,<br>
+                                                /<br>
                                             @endif
                                         @endforeach
                                     </td>

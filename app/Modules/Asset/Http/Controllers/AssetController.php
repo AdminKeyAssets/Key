@@ -194,7 +194,14 @@ class AssetController extends BaseController
                 }
 
                 $this->baseData['item'] = $asset;
-                $this->baseData['item']['investor_ids'] = $asset->investors->pluck('id')->toArray();
+                $investors = $asset->investors;
+                $investorNames = [];
+                foreach ($investors as $investor) {
+                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                }
+                $investorNames = implode(' / ', $investorNames);
+                $this->baseData['item']['investor_ids'] = $investors->pluck('id')->toArray();
+                $this->baseData['item']['investorNames'] = $investorNames;
                 $this->baseData['item']['attachments'] = AssetAttachment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['extraDetails'] = AssetInformation::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['agreements'] = AssetAgreement::where('asset_id', $asset->id)->get();
@@ -747,7 +754,7 @@ class AssetController extends BaseController
             foreach ($investors as $investor) {
                 $investorNames[] = $investor->name . ' ' . $investor->surname;
             }
-            $investorNames = implode(', ', $investorNames);
+            $investorNames = implode(' / ', $investorNames);
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [$asset->id]),
@@ -781,7 +788,7 @@ class AssetController extends BaseController
             foreach ($investors as $investor) {
                 $investorNames[] = $investor->name . ' ' . $investor->surname;
             }
-            $investorNames = implode(', ', $investorNames);
+            $investorNames = implode(' / ', $investorNames);
 
             $this->baseData['extra'] = [
                 'asset_edit_route' => route('asset.edit', [$asset->id]),

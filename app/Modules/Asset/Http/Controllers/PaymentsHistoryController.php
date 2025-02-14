@@ -72,7 +72,7 @@ class PaymentsHistoryController extends BaseController
         foreach ($investors as $investor) {
             $investorNames[] = $investor->name . ' ' . $investor->surname;
         }
-        $investorNames = implode(', ', $investorNames);
+        $investorNames = implode(' / ', $investorNames);
 
 
         $this->baseData['extra'] = [
@@ -99,7 +99,7 @@ class PaymentsHistoryController extends BaseController
         foreach ($investors as $investor) {
             $investorNames[] = $investor->name . ' ' . $investor->surname;
         }
-        $investorNames = implode(', ', $investorNames);
+        $investorNames = implode(' / ', $investorNames);
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
@@ -222,7 +222,7 @@ class PaymentsHistoryController extends BaseController
             foreach ($investors as $investor) {
                 $investorNames[] = $investor->name . ' ' . $investor->surname;
             }
-            $investorNames = implode(', ', $investorNames);
+            $investorNames = implode(' / ', $investorNames);
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
@@ -259,7 +259,7 @@ class PaymentsHistoryController extends BaseController
             foreach ($investors as $investor) {
                 $investorNames[] = $investor->name . ' ' . $investor->surname;
             }
-            $investorNames = implode(', ', $investorNames);
+            $investorNames = implode(' / ', $investorNames);
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,

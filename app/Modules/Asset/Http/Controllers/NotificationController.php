@@ -53,7 +53,7 @@ class NotificationController extends BaseController
                 foreach ($investors as $investor) {
                     $investorNames[] = $investor->name . ' ' . $investor->surname;
                 }
-                $investorNames = implode(', ', $investorNames);
+                $investorNames = implode(' / ', $investorNames);
 //                $investor = Investor::where('id', $payment->asset->investor_id)->first();
                 return [
                     'amount' => $payment->amount,
@@ -104,7 +104,7 @@ class NotificationController extends BaseController
                 foreach ($investors as $investor) {
                     $investorNames[] = $investor->name . ' ' . $investor->surname;
                 }
-                $investorNames = implode(', ', $investorNames);
+                $investorNames = implode(' / ', $investorNames);
                 $tenant = $rental->asset->tenant;
                 if ($tenant) {
                     $tenant = $tenant->first();
