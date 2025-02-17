@@ -101,9 +101,8 @@
             <label class="col-md-1 control-label">Select Investor:</label>
             <div class="col-md-10 uppercase-medium">
                 <el-select
-                    v-model="form.investor_id"
-                    :value="form.investor_id"
-                    filterable
+                    v-model="form.investor_ids"
+                    multiple
                     placeholder="Select"
                 >
                     <el-option

@@ -48,14 +48,19 @@ class NotificationController extends BaseController
             ->with('asset')
             ->get()
             ->map(function ($payment) {
-                $investor = Investor::where('id', $payment->asset->investor_id)->first();
+                $investors = $payment->asset->investors;
+                $investorNames = [];
+                foreach ($investors as $investor) {
+                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                }
+                $investorNames = implode(' / ', $investorNames);
+//                $investor = Investor::where('id', $payment->asset->investor_id)->first();
                 return [
                     'amount' => $payment->amount,
                     'currency' => $payment->currency,
                     'project_name' => $payment->asset->project_name,
                     'project_route' => route('asset.view', [$payment->asset->id]),
-                    'investor_name' => $investor->name,
-                    'investor_surname' => $investor->surname,
+                    'investor_name' => $investorNames,
                     'payment_date' => $payment->payment_date,
                 ];
             });
@@ -92,7 +97,14 @@ class NotificationController extends BaseController
             ->with(['asset.tenant'])
             ->get()
             ->map(function ($rental) {
-                $investor = Investor::where('id', $rental->asset->investor_id)->first();
+//                $investor = Investor::where('id', $rental->asset->investor_id)->first();
+
+                $investors = $rental->asset->investors;
+                $investorNames = [];
+                foreach ($investors as $investor) {
+                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                }
+                $investorNames = implode(' / ', $investorNames);
                 $tenant = $rental->asset->tenant;
                 if ($tenant) {
                     $tenant = $tenant->first();
@@ -103,8 +115,7 @@ class NotificationController extends BaseController
                         'project_route' => route('asset.view', [$rental->asset->id]),
                         'tenant_name' => $tenant->name,
                         'tenant_surname' => $tenant->surname,
-                        'investor_name' => $investor->name,
-                        'investor_surname' => $investor->surname,
+                        'investor_name' => $investorNames,
                         'payment_date' => $rental->payment_date,
                     ];
                 }

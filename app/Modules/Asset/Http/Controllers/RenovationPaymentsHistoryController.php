@@ -4,14 +4,17 @@ namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Exports\PaymentHistoryExport;
 use App\Modules\Admin\Exports\PaymentScheduleExport;
+use App\Modules\Admin\Exports\RenovationPaymentScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
+use App\Modules\Asset\Helpers\UpdateRenovationPaymentsHelper;
 use App\Modules\Asset\Http\Requests\PaymentRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
+use App\Modules\Asset\Models\RenovationPaymentsHistory;
 use App\Utilities\ServiceResponse;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
@@ -45,7 +48,7 @@ class RenovationPaymentsHistoryController extends BaseController
     protected $paymentsHelper;
 
     public function __construct(
-        UpdatePaymentsHelper $paymentsHelper
+        UpdateRenovationPaymentsHelper $paymentsHelper
     )
     {
         parent::__construct();
@@ -62,15 +65,22 @@ class RenovationPaymentsHistoryController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = PaymentsHistory::where('asset_id', $assetId)->paginate(25);
+        $this->baseData['allData'] = RenovationPaymentsHistory::where('asset_id', $assetId)->paginate(25);
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(' / ', $investorNames);
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'investor_name' => $investorNames,
         ];
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -85,11 +95,18 @@ class RenovationPaymentsHistoryController extends BaseController
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(' / ', $investorNames);
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'investor_name' => $investorNames,
         ];
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
@@ -110,7 +127,7 @@ class RenovationPaymentsHistoryController extends BaseController
                 'edit' => route('asset.renovation.edit', $assetId, []),
             ];
             if ($request->get('id')) {
-                $payment = PaymentsHistory::where('id',$request->get('id'))->where('asset_id', $assetId)->first();
+                $payment = RenovationPaymentsHistory::where('id',$request->get('id'))->where('asset_id', $assetId)->first();
 
                 $this->baseData['item'] = $payment;
             }
@@ -133,7 +150,7 @@ class RenovationPaymentsHistoryController extends BaseController
         $path = null;
 
         if (isset($request->id)) {
-            $paymentHistory = PaymentsHistory::where('id', $request->id)->first();
+            $paymentHistory = RenovationPaymentsHistory::where('id', $request->id)->first();
             $oldAmount = $paymentHistory->amount;
 
             if ($request->hasFile('attachment')) {
@@ -171,7 +188,7 @@ class RenovationPaymentsHistoryController extends BaseController
                 $path = Storage::url($path);
             }
 
-            $paymentHistory = PaymentsHistory::create([
+            $paymentHistory = RenovationPaymentsHistory::create([
                 'asset_id' => $assetId,
                 'date' => $request->date,
                 'amount' => $request->amount,
@@ -201,11 +218,18 @@ class RenovationPaymentsHistoryController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
 
 
@@ -230,11 +254,18 @@ class RenovationPaymentsHistoryController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
 
         } catch (\Exception $ex) {
@@ -252,7 +283,7 @@ class RenovationPaymentsHistoryController extends BaseController
     public function destroy(Request $request, $assetId)
     {
         try {
-            $paymentHistory = PaymentsHistory::findOrFail($request->get('id'));
+            $paymentHistory = RenovationPaymentsHistory::findOrFail($request->get('id'));
             $amount = $paymentHistory->amount;
             $asset = $paymentHistory->asset;
             $paymentHistory->delete();
@@ -274,7 +305,7 @@ class RenovationPaymentsHistoryController extends BaseController
     {
         $filters = ['asset_id' => $assetId];
 
-        return Excel::download(new PaymentScheduleExport($filters), 'renovation_payments_schedule.xlsx');
+        return Excel::download(new RenovationPaymentScheduleExport($filters), 'renovation_payments_schedule.xlsx');
     }
 
     public function exportHistory(Request $request, $assetId)
@@ -282,6 +313,6 @@ class RenovationPaymentsHistoryController extends BaseController
 
         $filters = ['asset_id' => $assetId];
 
-        return Excel::download(new PaymentHistoryExport($filters), 'renovation_payments_history.xlsx');
+        return Excel::download(new RenovationPaymentScheduleExport($filters), 'renovation_payments_history.xlsx');
     }
 }

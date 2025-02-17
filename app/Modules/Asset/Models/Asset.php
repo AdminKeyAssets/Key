@@ -63,7 +63,7 @@ class Asset extends Model
     {
         return $this->hasMany(Rental::class);
     }
-    public function renovations()
+    public function renovationPayments()
     {
         return $this->hasMany(RenovationPayment::class);
     }
@@ -109,6 +109,11 @@ class Asset extends Model
     public function investor()
     {
         return $this->belongsTo(Investor::class);
+    }
+
+    public function investors()
+    {
+        return $this->belongsToMany(Investor::class);
     }
 
     public function agreements()

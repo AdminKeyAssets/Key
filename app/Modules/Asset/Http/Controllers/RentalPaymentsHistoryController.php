@@ -63,11 +63,18 @@ class RentalPaymentsHistoryController extends BaseController
         $this->baseData['allData'] = RentalPaymentsHistory::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(' / ', $investorNames);
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'investor_name' => $investorNames,
         ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -80,11 +87,18 @@ class RentalPaymentsHistoryController extends BaseController
     {
         $this->baseData['assetId'] = $assetId;
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(' / ', $investorNames);
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'investor_name' => $investorNames,
         ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
     }
@@ -202,11 +216,18 @@ class RentalPaymentsHistoryController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.edit', ServiceResponse::error($ex->getMessage()));
@@ -227,11 +248,18 @@ class RentalPaymentsHistoryController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));

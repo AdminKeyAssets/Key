@@ -66,11 +66,19 @@ class PaymentsHistoryController extends BaseController
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(' / ', $investorNames);
+
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'investor_name' => $investorNames,
         ];
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -85,11 +93,18 @@ class PaymentsHistoryController extends BaseController
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
-        $investor = Investor::where('id', $asset->investor_id)->first();
+//        $investor = Investor::where('id', $asset->investor_id)->first();
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->name . ' ' . $investor->surname;
+        }
+        $investorNames = implode(' / ', $investorNames);
+
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [ $asset->id ]),
-            'investor_name' => $investor->name . ' ' . $investor->surname,
+            'investor_name' => $investorNames,
         ];
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
@@ -201,11 +216,18 @@ class PaymentsHistoryController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
 
 
@@ -230,11 +252,19 @@ class PaymentsHistoryController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $assetId)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [ $asset->id ]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
 
         } catch (\Exception $ex) {

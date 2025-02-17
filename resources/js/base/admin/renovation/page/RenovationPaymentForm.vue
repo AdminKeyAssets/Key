@@ -109,7 +109,7 @@ export default {
                     const data = response.data.data;
                     setTimeout(() => {
 
-                        window.location.href = `assets/${data.item.asset_id}/payments`;
+                        window.location.href = `assets/${data.item.asset_id}/renovation`;
                         // window.location.reload();
                     }, 1000);
                     this.loading = false;

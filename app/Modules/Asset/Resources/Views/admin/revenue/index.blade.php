@@ -76,7 +76,14 @@
                                     @endif
                                 </td>
                                 @if(Auth::guard('admin')->check())
-                                    <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
+                                    <td>
+                                        @foreach($item->investors as $investor)
+                                            {!! $investor->name !!} {!! $investor->surname !!}
+                                            @if(!$loop->last)
+                                                /<br>
+                                            @endif
+                                        @endforeach
+                                    </td>
                                 @endif
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! number_format($item->total_price,0,".",",") !!}$</td>

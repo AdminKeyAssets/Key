@@ -120,8 +120,8 @@ class AssetController extends BaseController
                 ->where('surname', $surname)->first();
 
             if (isset($investorUser->id)) {
-                $query->where(function ($query) use ($investorUser) {
-                    $query->where('investor_id', '=', $investorUser->id);
+                $query->whereHas('investors', function ($q) use ($investorUser) {
+                    $q->where('id', $investorUser->id);
                 });
             }
         }
@@ -157,7 +157,7 @@ class AssetController extends BaseController
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
 
-        $this->baseData['allData'] = Asset::where('investor_id', $userId)->orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = $user->assets()->orderByDesc('id')->paginate(25);
 
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -191,9 +191,9 @@ class AssetController extends BaseController
                 $salesManager = null;
                 $nextPayment = null;
 
-                if ($asset->investor_id) {
-                    $investor = Investor::where('id', $asset->investor_id)->first();
-                    $salesManager = Admin::where('id', $investor->admin_id)->first();
+                if ($asset->investors->isNotEmpty()) {
+                    $investor = $asset->investors->first();
+                    $salesManager = Admin::find($investor->admin_id);
                 }
 
                 if ($asset->payments) {
@@ -201,6 +201,14 @@ class AssetController extends BaseController
                 }
 
                 $this->baseData['item'] = $asset;
+                $investors = $asset->investors;
+                $investorNames = [];
+                foreach ($investors as $investor) {
+                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                }
+                $investorNames = implode(' / ', $investorNames);
+                $this->baseData['item']['investor_ids'] = $investors->pluck('id')->toArray();
+                $this->baseData['item']['investorNames'] = $investorNames;
                 $this->baseData['item']['attachments'] = AssetAttachment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['extraDetails'] = AssetInformation::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['agreements'] = AssetAgreement::where('asset_id', $asset->id)->get();
@@ -438,6 +446,10 @@ class AssetController extends BaseController
         }
 
         $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
+
+        $investorIds = explode(',', $request->investor_ids);
+
+        $asset->investors()->sync($investorIds);
 
         if ($request->agreement_status === 'Installments') {
             if ($asset->payments) {
@@ -795,11 +807,18 @@ class AssetController extends BaseController
             $this->baseData['id'] = $id;
 
             $asset = Asset::where('id', $id)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
                 'asset_route' => route('asset.view', [$asset->id]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investor_name' => $investorNames,
             ];
 
         } catch (\Exception $ex) {
@@ -823,13 +842,20 @@ class AssetController extends BaseController
             $this->baseData['name'] = $asset->project_name ?? '';
 
             $asset = Asset::where('id', $id)->first();
-            $investor = Investor::where('id', $asset->investor_id)->first();
+//            $investor = Investor::where('id', $asset->investor_id)->first();
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->name . ' ' . $investor->surname;
+            }
+            $investorNames = implode(' / ', $investorNames);
+
             $this->baseData['extra'] = [
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
-                'investments_route' => route('asset.investment.index', [$asset->id]),
-                'investor_name' => $investor->name . ' ' . $investor->surname,
+                'investments_route' => route('asset.investment.index', [ $asset->id ]),
+                'investor_name' => $investorNames,
             ];
 
         } catch (\Exception $ex) {

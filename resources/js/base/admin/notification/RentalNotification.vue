@@ -12,7 +12,7 @@
                         <div slot="header" class="clearfix">
                             <a :href="rental.project_route"><i class="el-icon-house"> {{ rental.project_name }}</i></a>
                             <span v-if="!investorView"> - <i
-                                class="el-icon-user">{{ rental.investor_name }} {{ rental.investor_surname }}</i></span>
+                                class="el-icon-user">{{ rental.investor_name }}</i></span>
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
