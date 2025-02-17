@@ -16,7 +16,8 @@
                 @if(isset($extra['asset_edit_route'])
                         || isset($extra['payments_route'])
                         || isset($extra['rentals_route'])
-                        || isset($extra['investments_route']))
+                        || isset($extra['investments_route'])
+                        || isset($extra['renoavtion_route']))
                     <div class="text-center" style="margin-top: 10px">
                         @if($extra['asset_edit_route'])
                             @can(getPermissionKey('asset', 'update', true))
@@ -33,9 +34,14 @@
                                 @include('admin::includes.actions.rental', ['title' => 'Rentals', 'route' => $extra['rentals_route']])
                             @endcan
                         @endif
-                            @if(isset($extra['investments_route']))
+                        @if(isset($extra['investments_route']))
                             @can(getPermissionKey('investment', 'index', true))
                                 @include('admin::includes.actions.investment', ['title' => 'Investments', 'route' => $extra['investments_route']])
+                            @endcan
+                        @endif
+                        @if(isset($extra['renovation_route']))
+                            @can(getPermissionKey('renovation', 'index', true))
+                                @include('admin::includes.actions.renovation', ['title' => 'Renovations Payments', 'route' => $extra['renovation_route']])
                             @endcan
                         @endif
                     </div>
