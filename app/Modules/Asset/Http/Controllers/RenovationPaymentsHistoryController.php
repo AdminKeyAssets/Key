@@ -12,6 +12,7 @@ use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
 use App\Modules\Asset\Helpers\UpdateRenovationPaymentsHelper;
 use App\Modules\Asset\Http\Requests\PaymentRequest;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
 use App\Modules\Asset\Models\RenovationPaymentsHistory;
@@ -43,7 +44,7 @@ class RenovationPaymentsHistoryController extends BaseController
      */
     public $baseName = 'renovation.';
     /**
-     * @var UpdatePaymentsHelper
+     * @var UpdateRenovationPaymentsHelper
      */
     protected $paymentsHelper;
 
@@ -65,7 +66,7 @@ class RenovationPaymentsHistoryController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = RenovationPaymentsHistory::where('asset_id', $assetId)->paginate(25);
+        $this->baseData['allData'] = RenovationPaymentsHistory::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
@@ -79,7 +80,7 @@ class RenovationPaymentsHistoryController extends BaseController
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
+            'asset_route' => route('asset.view', [$asset->id]),
             'investor_name' => $investorNames,
         ];
 
@@ -105,7 +106,7 @@ class RenovationPaymentsHistoryController extends BaseController
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
+            'asset_route' => route('asset.view', [$asset->id]),
             'investor_name' => $investorNames,
         ];
 
@@ -127,7 +128,7 @@ class RenovationPaymentsHistoryController extends BaseController
                 'edit' => route('asset.renovation.edit', $assetId, []),
             ];
             if ($request->get('id')) {
-                $payment = RenovationPaymentsHistory::where('id',$request->get('id'))->where('asset_id', $assetId)->first();
+                $payment = RenovationPaymentsHistory::where('id', $request->get('id'))->where('asset_id', $assetId)->first();
 
                 $this->baseData['item'] = $payment;
             }
@@ -149,9 +150,13 @@ class RenovationPaymentsHistoryController extends BaseController
     {
         $path = null;
 
+        $currentValue = CurrentValue::where('asset_id', $assetId)->orderByDesc('id')->first();
+
         if (isset($request->id)) {
             $paymentHistory = RenovationPaymentsHistory::where('id', $request->id)->first();
+
             $oldAmount = $paymentHistory->amount;
+            $newAmount = $request->amount;
 
             if ($request->hasFile('attachment')) {
                 if ($paymentHistory->attachment && Storage::disk('public')->exists($paymentHistory->attachment)) {
@@ -160,7 +165,7 @@ class RenovationPaymentsHistoryController extends BaseController
 
                 $file = $request->file('attachment');
                 $originalFileName = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('uploads', $originalFileName,'public');
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
 
             } else if ($request->input('attachment') === null) {
@@ -179,12 +184,23 @@ class RenovationPaymentsHistoryController extends BaseController
                 'attachment' => $path
             ]);
 
+            $amountToAddCurrentValue = 0;
+
+            if ($oldAmount != $newAmount) {
+                $amountToAddCurrentValue = $newAmount - $oldAmount;
+            }
+
+            if ($amountToAddCurrentValue) {
+                $currentValue->update([
+                    'value' => $currentValue->value + $amountToAddCurrentValue
+                ]);
+            }
             $this->paymentsHelper->recalculatePaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $originalFileName = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('uploads', $originalFileName,'public');
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
             }
 
@@ -194,6 +210,10 @@ class RenovationPaymentsHistoryController extends BaseController
                 'amount' => $request->amount,
                 'currency' => $request->currency,
                 'attachment' => $path
+            ]);
+
+            $currentValue->update([
+                'value' => $currentValue->value + $request->amount
             ]);
 
             $this->paymentsHelper->updatePayments($paymentHistory->asset, $paymentHistory->amount);
@@ -228,7 +248,7 @@ class RenovationPaymentsHistoryController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investorNames,
             ];
 
@@ -264,7 +284,7 @@ class RenovationPaymentsHistoryController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investorNames,
             ];
 
@@ -280,7 +300,7 @@ class RenovationPaymentsHistoryController extends BaseController
      * @param $assetId
      * @return JsonResponse
      */
-    public function destroy(Request $request, $assetId)
+    public function destroy(Request $request)
     {
         try {
             $paymentHistory = RenovationPaymentsHistory::findOrFail($request->get('id'));
@@ -288,6 +308,11 @@ class RenovationPaymentsHistoryController extends BaseController
             $asset = $paymentHistory->asset;
             $paymentHistory->delete();
 
+            $currentValue = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->first();
+
+            $currentValue->update([
+                'value' => $currentValue->value - $amount
+            ]);
             $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
 
             if ($asset->renovationPaymentsHistories()->count() == 0) {
