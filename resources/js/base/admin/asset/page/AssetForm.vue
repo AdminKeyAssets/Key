@@ -128,6 +128,8 @@ export default {
                     formData.append(key, this.form[key]);
                 } else if (key === 'ownership_certificate' && this.form[key]) {
                     formData.append(key, this.form[key]);
+                } else if (key === 'renovation_agreement' && this.form[key]) {
+                    formData.append(key, this.form[key]);
                 } else if (key === 'extraDetails') {
                     this.form.extraDetails.forEach((detail, index) => {
                         formData.append(`extraDetails[${index}][key]`, detail.key);
@@ -165,6 +167,8 @@ export default {
                 } else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'rentals') {
+                    formData.append(key, JSON.stringify(this.form[key]));
+                } else if (key === 'renovation_payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'tenant') {
                     for (let tenantKey in this.form.tenant) {

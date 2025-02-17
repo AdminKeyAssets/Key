@@ -105,6 +105,11 @@
                                             @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
                                         @endif
                                     @endcan
+                                    @can(getPermissionKey('renovation', 'index', true))
+                                        @if($item->renovation_total_price)
+                                            @include('admin::includes.actions.renovation',['title' => 'Renovation Payments', 'route' => route($moduleKey . '.renovation.index', [ $item->id ])])
+                                        @endif
+                                    @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
                                             :url="'{{ route($moduleKey . '.delete') }}'"
