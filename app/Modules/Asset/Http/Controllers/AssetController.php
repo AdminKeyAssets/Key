@@ -592,24 +592,21 @@ class AssetController extends BaseController
                 }
             }
         }
-
         if ($asset->renovation_payments) {
             $asset->renovation_payments()->delete();
-
-            if (json_decode($request->renovation_payments)) {
-                foreach (json_decode($request->renovation_payments) as $payment) {
-                    RenovationPayment::create([
-                        'number' => $payment->number,
-                        'payment_date' => $payment->payment_date,
-                        'amount' => $payment->amount,
-                        'left_amount' => $payment->amount,
-                        'asset_id' => $asset->id
-                    ]);
-                }
-                if ($asset->renovationPaymentsHistories) {
-                    $renovationTotalPaid = $asset->renovationPaymentsHistories()->sum('amount');
-                    $this->updateRenovationPaymentsHelper->updatePayments($asset, $renovationTotalPaid);
-                }
+        }
+        if (json_decode($request->renovation_payments)) {
+            foreach (json_decode($request->renovation_payments) as $payment) {
+                RenovationPayment::create([
+                    'payment_date' => $payment->payment_date,
+                    'amount' => $payment->amount,
+                    'left_amount' => $payment->amount,
+                    'asset_id' => $asset->id
+                ]);
+            }
+            if ($asset->renovationPaymentsHistories) {
+                $renovationTotalPaid = $asset->renovationPaymentsHistories()->sum('amount');
+                $this->updateRenovationPaymentsHelper->updatePayments($asset, $renovationTotalPaid);
             }
         }
 

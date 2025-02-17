@@ -347,24 +347,29 @@ class RevenueController extends BaseController
             $paid = $asset->paymentsHistories;
             $allInvestments = $asset->investments;
             $renovationInvestment = $asset->investments->where('status', 'Renovation');
+            $renovationPayments = $asset->renovationPaymentsHistories();
             if ($startDate) {
                 $rent = $rent->where('date', '>=', $startDate);
                 $paid = $paid->where('date', '>=', $startDate);
                 $allInvestments = $allInvestments->where('date', '>=', $startDate);
                 $renovationInvestment = $renovationInvestment->where('date', '>=', $startDate);
-
+                $renovationPayments = $renovationPayments->where('date', '>=', $startDate);
             }
             if ($endDate) {
                 $rent = $rent->where('date', '<=', $endDate);
                 $paid = $paid->where('date', '<=', $endDate);
                 $allInvestments = $allInvestments->where('date', '<=', $endDate);
                 $renovationInvestment = $renovationInvestment->where('date', '<=', $endDate);
+                $renovationPayments = $renovationPayments->where('date', '<=', $startDate);
             }
 
             $rent = $rent->sum('amount');
             $paid = $paid->sum('amount');
             $allInvestments = $allInvestments->sum('amount');
             $renovationInvestment = $renovationInvestment->sum('amount');
+            $renovationPayments = $renovationPayments->sum('amount');
+            $renovationInvestment = $renovationInvestment + $renovationPayments;
+
             $otherInvestments = $allInvestments - $renovationInvestment;  // everything that's not Renovation
 
             // Set per-asset fields

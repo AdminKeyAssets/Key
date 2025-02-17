@@ -476,21 +476,18 @@
 
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card agreement-details-card"
-                                         :class="{ 'hidden-body': !showAgreementDetails }">
+                                         :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
-                                    <div slot="header" v-if="form.agreement_status === 'Complete'"
+                                    <div slot="header"
                                          class="clearfix main-header"
-                                         @click="showAgreementDetails = !showAgreementDetails" style="cursor: pointer;">
+                                         @click="showRenovationAgreementDetails = !showRenovationAgreementDetails" style="cursor: pointer;">
                                         <div style="width: 98%">
-                                            <span>Agreement Details</span>
+                                            <span>Renovation Agreement Details</span>
                                         </div>
                                         <div style="width: 2%">
-                                            <i v-if="!showAgreementDetails" class="el-icon-caret-right"></i>
+                                            <i v-if="!showRenovationAgreementDetails" class="el-icon-caret-right"></i>
                                             <i v-else class="el-icon-caret-bottom"></i>
                                         </div>
-                                    </div>
-                                    <div slot="header" v-else class="clearfix main-header">
-                                        <span>Agreement Details</span>
                                     </div>
                                     <el-row>
                                         <el-row class="row-item">
@@ -498,7 +495,7 @@
                                                 <div v-if="form.agreement_date" class="form-group">
                                                     <label class="col-md-4 control-label">Agreement Date:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ form.agreement_date }}
+                                                        {{ form.renovation_agreement_date }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -517,70 +514,29 @@
                                             </el-col>
                                         </el-row>
 
-                                        <el-row class="row-item" v-if="form.price || form.total_price">
-                                            <el-col :span="12">
-                                                <div v-if="form.price" class="form-group">
-                                                    <label class="col-md-4 control-label">M2 Price:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.price) }}$
-                                                    </div>
-                                                </div>
-                                            </el-col>
+                                        <el-row class="row-item" v-if="form.renovation_total_price">
+
                                             <el-col :span="12">
                                                 <div v-if="form.total_price" class="form-group">
                                                     <label class="col-md-4 control-label">Total Price:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(form.total_price) }}$
+                                                        {{ formatPrice(form.renovation_total_price) }}$
                                                     </div>
                                                 </div>
                                             </el-col>
                                         </el-row>
 
-                                        <el-row class="row-item" v-if="form.agreement_status">
-                                            <el-col :span="12">
-                                                <div v-if="form.agreement_status" class="form-group">
-                                                    <label class="col-md-4 control-label">Agreement Status:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ form.agreement_status }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                            <el-col :span="12">
-                                                <template v-if="form.agreement_status === 'Complete'">
-                                                    <div v-if="form.ownership_certificate" class="form-group">
-                                                        <label class="col-md-4 control-label">Ownership
-                                                            Certificate:</label>
-                                                        <div class="col-md-6 uppercase-medium">
-                                                            <div v-if="form.ownership_certificate">
-                                                                <p v-if="form.ownership_certificate"><a
-                                                                    :href="form.ownership_certificate"
-                                                                    v-if="form.ownership_certificate" target="_blank">View
-                                                                    {{ getFilename(form.ownership_certificate) }}</a>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </template>
-                                            </el-col>
-                                        </el-row>
+
 
                                     </el-row>
 
                                     <template>
                                         <el-row class="row-item">
                                             <el-col :span="12">
-                                                <div v-if="form.first_payment_date" class="form-group">
+                                                <div v-if="form.renovation_first_payment_date" class="form-group">
                                                     <label class="col-md-4 control-label">First Payment Date:</label>
                                                     <div class="col-md-8 uppercase-medium">
-                                                        {{ form.first_payment_date }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                            <el-col :span="12" v-if="form.agreement_status === 'Installments'">
-                                                <div v-if="form.period" class="form-group">
-                                                    <label class="col-md-4 control-label">Period:</label>
-                                                    <div class="col-md-8 uppercase-medium">
-                                                        {{ form.period }} Month(s)
+                                                        {{ form.renovation_first_payment_date }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -588,7 +544,7 @@
 
                                         <el-row style="margin-top: 20px;" class="payments-wrapper row-item">
                                             <el-col :span="24" :md="11">
-                                                <div v-if="form.payments && form.payments.length">
+                                                <div v-if="form.renovation_payments && form.renovation_payments.length">
                                                     <div class="payments-schedule-title-wrapper">
                                                         <div class="payments-schedule-heading"
                                                              style="text-align: center; max-width: 500px">
@@ -602,7 +558,7 @@
                                                             @click="exportPaymentSchedule">Export Schedule
                                                         </el-button>
                                                     </div>
-                                                    <el-table border :data="form.payments" style="width: 100%">
+                                                    <el-table border :data="form.renovation_payments" style="width: 100%">
                                                         <el-table-column label="Payment Date">
                                                             <template slot-scope="scope">
                                                                 {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
@@ -627,7 +583,7 @@
                                             </el-col>
 
                                             <el-col :span="24" :md="11" class="payments-history-wrapper-col">
-                                                <div v-if="form.payments_histories && form.payments_histories.length">
+                                                <div v-if="form.renovation_payments_histories && form.renovation_payments_histories.length">
                                                     <div class="payments-schedule-title-wrapper">
                                                         <div class="payments-history-heading"
                                                              style="text-align: center; max-width: 500px">
@@ -641,7 +597,7 @@
                                                             @click="exportPayments">Export Payments
                                                         </el-button>
                                                     </div>
-                                                    <el-table border :data="form.payments_histories"
+                                                    <el-table border :data="form.renovation_payments_histories"
                                                               style="width: 100%">
                                                         <el-table-column label="Payment Date">
                                                             <template slot-scope="scope">
@@ -839,6 +795,7 @@ export default {
             salesManager: {},
             nextPayment: {},
             showAgreementDetails: true,
+            showRenovationAgreementDetails: true,
             showExtraAttachments: true
         }
     },
