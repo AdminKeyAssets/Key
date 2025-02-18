@@ -151,6 +151,7 @@ class RenovationPaymentsHistoryController extends BaseController
         $path = null;
 
         $currentValue = CurrentValue::where('asset_id', $assetId)->orderByDesc('id')->first();
+        $asset = Asset::where('id', $assetId)->first();
 
         if (isset($request->id)) {
             $paymentHistory = RenovationPaymentsHistory::where('id', $request->id)->first();
@@ -195,6 +196,9 @@ class RenovationPaymentsHistoryController extends BaseController
                     'value' => $currentValue->value + $amountToAddCurrentValue
                 ]);
             }
+
+            $asset->update(['current_value', $currentValue->value + $amountToAddCurrentValue]);
+
             $this->paymentsHelper->recalculatePaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
         } else {
             if ($request->hasFile('attachment')) {
@@ -216,6 +220,7 @@ class RenovationPaymentsHistoryController extends BaseController
                 'value' => $currentValue->value + $request->amount
             ]);
 
+            $asset->update(['current_value', $currentValue->value + $request->amount]);
             $this->paymentsHelper->updatePayments($paymentHistory->asset, $paymentHistory->amount);
         }
 
@@ -313,6 +318,8 @@ class RenovationPaymentsHistoryController extends BaseController
             $currentValue->update([
                 'value' => $currentValue->value - $amount
             ]);
+            $asset->update(['current_value', $currentValue->value - $amount]);
+
             $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
 
             if ($asset->renovationPaymentsHistories()->count() == 0) {
