@@ -415,9 +415,6 @@ class RevenueController extends BaseController
                 $asset->total_investment = $asset->total_price + $allInvestments;
                 $asset->paid = $asset->total_price;
             }
-            if ($asset->sale_status !== 'sold') {
-                $asset->current_value = $asset->sale_price;
-            }
 
             if($asset->sale_status !== 'sold'){
                 $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
