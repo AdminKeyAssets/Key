@@ -196,8 +196,8 @@ class RenovationPaymentsHistoryController extends BaseController
                     'value' => $currentValue->value + $amountToAddCurrentValue
                 ]);
             }
-
-            $asset->update(['current_value', $currentValue->value + $amountToAddCurrentValue]);
+//dd(1);
+            $asset->update(['current_value' => $currentValue->value + $amountToAddCurrentValue]);
 
             $this->paymentsHelper->recalculatePaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
         } else {
@@ -220,7 +220,8 @@ class RenovationPaymentsHistoryController extends BaseController
                 'value' => $currentValue->value + $request->amount
             ]);
 
-            $asset->update(['current_value', $currentValue->value + $request->amount]);
+            $asset->update(['current_value' => $currentValue->value + $request->amount]);
+
             $this->paymentsHelper->updatePayments($paymentHistory->asset, $paymentHistory->amount);
         }
 
@@ -318,7 +319,7 @@ class RenovationPaymentsHistoryController extends BaseController
             $currentValue->update([
                 'value' => $currentValue->value - $amount
             ]);
-            $asset->update(['current_value', $currentValue->value - $amount]);
+            $asset->update(['current_value' => $currentValue->value - $amount]);
 
             $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
 
