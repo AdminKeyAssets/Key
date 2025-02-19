@@ -3,12 +3,13 @@
 namespace App\Modules\Asset\Helpers;
 
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\RenovationPayment;
 
 class UpdateRenovationPaymentsHelper
 {
     public function updatePayments(Asset $asset, $amount)
     {
-        $payments = $asset->renovationPayments()->where('status', 0)->orderBy('id')->get();
+        $payments = RenovationPayment::where('asset_id', $asset->id)->where('status', 0)->orderBy('id')->get();
 
         foreach ($payments as $payment) {
             if ($amount <= 0.00) {
@@ -34,15 +35,14 @@ class UpdateRenovationPaymentsHelper
 
     public function recalculatePayments(Asset $asset)
     {
-        $totalPaid = $asset->renovationPaymentsHistories()->sum('amount');
+        $totalPaid = RenovationPayment::where('asset_id', $asset->id)->sum('amount');
 
         $this->updatePayments($asset, $totalPaid);
     }
 
     public function recalculatePaymentsAfterDeletion(Asset $asset, $amount)
     {
-        $payments = $asset->renovationPayments()->orderByDesc('id')->get();
-
+        $payments = RenovationPayment::where('asset_id', $asset->id)->orderByDesc('id')->get();
         foreach ($payments as $payment) {
             if ($amount <= 0) {
                 break;
