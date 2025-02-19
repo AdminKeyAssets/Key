@@ -323,7 +323,7 @@ class RevenueController extends BaseController
                 $paid = $asset->total_price;
                 $investmentAmount = $asset->total_price + $allInvestments;
             }
-            $totalInvestment += $investmentAmount;
+            $totalInvestment += $investmentAmount + $renovationPayments;
 
             // Calculate capital gain
             $capitalGain = $asset->current_value - ($asset->total_price + $renovationInvestment);
@@ -378,10 +378,10 @@ class RevenueController extends BaseController
             $asset->net_cache_balance = $rent - $otherInvestments;
 
             if ($asset->agreement_status === 'Installments') {
-                $asset->total_investment = $paid + $allInvestments;
+                $asset->total_investment = $paid + $allInvestments + $renovationPayments;
                 $asset->paid = $paid;
             } else {
-                $asset->total_investment = $asset->total_price + $allInvestments;
+                $asset->total_investment = $asset->total_price + $allInvestments + $renovationPayments;
                 $asset->paid = $asset->total_price;
             }
 
