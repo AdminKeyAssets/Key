@@ -309,9 +309,10 @@ class RevenueController extends BaseController
             $allInvestments = $allInvestments->sum('amount');
             $renovationInvestment = $renovationInvestment->sum('amount');
             $renovationPayments = $renovationPayments->sum('amount');
-            $renovationInvestment = $renovationInvestment + $renovationPayments;
 
             $otherInvestments = $allInvestments - $renovationInvestment;  // everything that's not Renovation
+
+            $renovationInvestment = $renovationInvestment + $renovationPayments;
 
             $totalRent += $rent;
 
@@ -368,9 +369,9 @@ class RevenueController extends BaseController
             $allInvestments = $allInvestments->sum('amount');
             $renovationInvestment = $renovationInvestment->sum('amount');
             $renovationPayments = $renovationPayments->sum('amount');
-            $renovationInvestment = $renovationInvestment + $renovationPayments;
 
             $otherInvestments = $allInvestments - $renovationInvestment;  // everything that's not Renovation
+            $renovationInvestment = $renovationInvestment + $renovationPayments;
 
             // Set per-asset fields
             $asset->rent = $rent;
