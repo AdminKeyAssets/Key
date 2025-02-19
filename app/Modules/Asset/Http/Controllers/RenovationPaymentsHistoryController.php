@@ -191,13 +191,15 @@ class RenovationPaymentsHistoryController extends BaseController
                 $amountToAddCurrentValue = $newAmount - $oldAmount;
             }
 
+            $currentValueAmount = $currentValue->value + $amountToAddCurrentValue;
+
             if ($amountToAddCurrentValue) {
                 $currentValue->update([
-                    'value' => $currentValue->value + $amountToAddCurrentValue
+                    'value' => $currentValueAmount
                 ]);
             }
 //dd(1);
-            $asset->update(['current_value' => $currentValue->value + $amountToAddCurrentValue]);
+            $asset->update(['current_value' => $currentValueAmount]);
 
             $this->paymentsHelper->recalculatePaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
         } else {
@@ -216,11 +218,13 @@ class RenovationPaymentsHistoryController extends BaseController
                 'attachment' => $path
             ]);
 
+            $currentValueAmount = $currentValue->value + $request->amount;
+
             $currentValue->update([
-                'value' => $currentValue->value + $request->amount
+                'value' => $currentValueAmount
             ]);
 
-            $asset->update(['current_value' => $currentValue->value + $request->amount]);
+            $asset->update(['current_value' => $currentValueAmount]);
 
             $this->paymentsHelper->updatePayments($paymentHistory->asset, $paymentHistory->amount);
         }
@@ -315,11 +319,11 @@ class RenovationPaymentsHistoryController extends BaseController
             $paymentHistory->delete();
 
             $currentValue = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->first();
-
+            $currentValueAmount = $currentValue->value - $amount;
             $currentValue->update([
-                'value' => $currentValue->value - $amount
+                'value' => $currentValueAmount
             ]);
-            $asset->update(['current_value' => $currentValue->value - $amount]);
+            $asset->update(['current_value' => $currentValueAmount]);
 
             $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
 
