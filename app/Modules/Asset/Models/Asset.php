@@ -46,7 +46,12 @@ class Asset extends Model
         'renovation_first_payment_date',
         'renovation_agreement',
         'renovation_total_price',
-        'renovation_period'
+        'renovation_period',
+        'sale_status',
+        'sale_date',
+        'sale_price',
+        'sale_agreement',
+        'purchaser'
     ];
 
     public function informations()
