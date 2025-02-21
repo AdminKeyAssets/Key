@@ -24,21 +24,16 @@
 
                 <div class="form-group">
                     <el-select v-model="form.investor" filterable placeholder="Investor">
-                        <el-option label="All" value="all"></el-option>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
                         <el-option
                             v-for="investor in investors"
                             :key="investor.name + ' ' + investor.surname"
                             :label="investor.name + ' ' + investor.surname"
-                            :value="investor.name + ' ' + investor.surname">
-                        </el-option>
-                    </el-select>
-                </div>
-
-                <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
-                        <el-option label="All" value="all"></el-option>
-                        <el-option label="Active" value="active"></el-option>
-                        <el-option label="Sold" value="sold"></el-option>
+                            :value="investor.name + ' ' + investor.surname"
+                        ></el-option>
                     </el-select>
                 </div>
 
@@ -58,7 +53,6 @@ export default {
             form: {
                 agreement_date: '',
                 investor: '',
-                status: 'active' // Default status is active
             },
             showFilters: false,
             investors: []
@@ -68,40 +62,36 @@ export default {
         this.loadFiltersFromQueryParams();
         this.fetchRevenueFilters();
 
-        if (
-            (this.form.agreement_date && this.form.agreement_date.length > 0) ||
-            this.form.investor ||
-            this.form.status !== 'active'
-        ) {
+        if ((this.form.agreement_date && this.form.agreement_date.length > 0) ||
+            this.form.investor) {
             this.showFilters = true;
         }
     },
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            this.form.agreement_date = urlParams.get('agreement_date')
-                ? urlParams.get('agreement_date').split(',')
-                : '';
+            this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
-            this.form.status = urlParams.get('status') || 'active';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
             window.location.search = queryParams;
         },
-        // Clear filters and reset status to default (active)
+
+        // New method to clear filters
         clearFilters() {
             this.form.agreement_date = '';
             this.form.investor = '';
-            this.form.status = 'active';
-            this.applyFilters();
+            this.applyFilters(); // Optionally apply empty filters after clearing
         },
+
         fetchRevenueFilters() {
             axios.get('/assets/revenues/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
                         let data = response.data.data;
+
                         if (data.investors) {
                             this.investors = data.investors;
                         }

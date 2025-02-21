@@ -110,10 +110,6 @@
                                             @include('admin::includes.actions.renovation',['title' => 'Renovation Payments', 'route' => route($moduleKey . '.renovation.index', [ $item->id ])])
                                         @endif
                                     @endcan
-                                        @can(getPermissionKey($moduleKey, 'update', true))
-                                            <register-purchase-component :asset-id="{{ $item->id }}">
-                                            </register-purchase-component>
-                                        @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
                                             :url="'{{ route($moduleKey . '.delete') }}'"
