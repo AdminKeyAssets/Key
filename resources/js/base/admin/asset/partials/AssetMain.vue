@@ -21,7 +21,11 @@
                             <AgreementDetails
                                 :form="form" :loading="loading" :currencies="currencies" :agreement-statuses="agreementStatuses" :numbers="numbers" @update-form="updateForm"/>
                         </el-tab-pane>
-                        <el-tab-pane label="Current Value" name="5">
+                        <el-tab-pane label="Renovation Agreement Details" name="5">
+                            <RenovationAgreementDetails
+                                :form="form" :loading="loading" :currencies="currencies" :agreement-statuses="agreementStatuses" :numbers="numbers" @update-form="updateForm"/>
+                        </el-tab-pane>
+                        <el-tab-pane label="Current Value" name="6">
                             <CurrentValue :form="form"  :currencies="currencies" :loading="loading" @update-form="updateForm"/>
                         </el-tab-pane>
                     </el-tabs>
@@ -36,10 +40,11 @@ import ProjectDetails from './components/ProjectDetails.vue'
 import AssetDetails from './components/AssetDetails.vue'
 import ExtraDetails from './components/ExtraDetails.vue'
 import AgreementDetails from './components/AgreementDetails.vue'
+import RenovationAgreementDetails from './components/RenovationAgreementDetails.vue'
 import CurrentValue from './components/CurrentValue.vue'
 
 export default {
-    components: { ProjectDetails, AssetDetails, ExtraDetails, AgreementDetails, CurrentValue },
+    components: { ProjectDetails, AssetDetails, ExtraDetails, AgreementDetails, RenovationAgreementDetails, CurrentValue },
     props: [
         'routes',
         'updateData',

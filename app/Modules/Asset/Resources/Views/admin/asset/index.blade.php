@@ -14,7 +14,8 @@
             <div class="row">
                 @can(getPermissionKey($moduleKey, 'create', true))
                     <div class="col-md-6">
-                        <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i class="el-icon-plus"></i>
+                        <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i
+                                class="el-icon-plus"></i>
                             Create Asset</a>
                     </div>
                 @endcan
@@ -75,7 +76,14 @@
                                 </td>
                                 <td>{!! $item->city !!}</td>
                                 @if(Auth::guard('admin')->check())
-                                    <td>{!! $item->investor->name !!} {!! $item->investor->surname !!}</td>
+                                    <td>
+                                        @foreach($item->investors as $investor)
+                                            {!! $investor->name !!} {!! $investor->surname !!}
+                                            @if(!$loop->last)
+                                                /<br>
+                                            @endif
+                                        @endforeach
+                                    </td>
                                 @endif
                                 <td>{!! $item->type !!} - {!! $item->area !!} sq.m</td>
                                 <td>{!! $item->agreement_status !!}</td>
@@ -95,6 +103,11 @@
                                     @can(getPermissionKey('rental', 'index', true))
                                         @if($item->asset_status == 'Rented')
                                             @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                        @endif
+                                    @endcan
+                                    @can(getPermissionKey('renovation', 'index', true))
+                                        @if($item->renovation_total_price)
+                                            @include('admin::includes.actions.renovation',['title' => 'Renovation Payments', 'route' => route($moduleKey . '.renovation.index', [ $item->id ])])
                                         @endif
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))

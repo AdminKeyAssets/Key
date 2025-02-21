@@ -39,6 +39,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     // Delete
     Route::post('/{asset}/payments/delete', $paymentController . '@destroy')->name('payments.delete')->middleware(['permission:' . getPermissionKey($paymentModuleName, 'delete', true)]);
     //Export Rentals
+
     Route::get('/{asset}/payments/export', $paymentController . '@export')
         ->name('export');
     Route::get('/{asset}/payments-history/export', $paymentController . '@exportHistory')
@@ -76,6 +77,29 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/{asset}/rental/export', $leaseController . '@export')
         ->name('export');
     Route::get('/{asset}/rental-payments-history/export', $leaseController . '@exportHistory')
+        ->name('export.history');
+
+
+
+    $renovationPaymentsController = 'RenovationPaymentsHistoryController';
+    $renovationPaymentsModuleName = 'renovation';
+
+    Route::get('/{asset}/renovation', $renovationPaymentsController . '@index')->name('renovation.index')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'index', true)]);
+    //Create/Update view.
+    Route::get('/{asset}/renovation/create', $renovationPaymentsController . '@create')->name('renovation.create')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'create', true)]);
+    Route::post('/{asset}/renovation/create-data', $renovationPaymentsController . '@createData')->name('renovation.create_data')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'view', true)]);
+    Route::get('/{asset}/renovation/edit/{id?}', $renovationPaymentsController . '@edit')->name('renovation.edit')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'update', true)]);
+    Route::get('/{asset}/renovation/view/{id?}', $renovationPaymentsController . '@view')->name('renovation.view')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'view', true)]);
+    //Save
+    Route::post('/{asset}/renovation/store', $renovationPaymentsController . '@store')->name('renovation.store')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'create', true)]);
+    // Delete
+    Route::post('/{asset}/renovation/delete', $renovationPaymentsController . '@destroy')->name('renovation.delete')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'delete', true)]);
+    //Complete
+    Route::post('/{asset}/renovation/complete', $renovationPaymentsController . '@complete')->name('renovation.complete')->middleware(['permission:' . getPermissionKey($renovationPaymentsModuleName, 'update', true)]);
+    //Export renovations
+    Route::get('/{asset}/renovation/export', $renovationPaymentsController . '@export')
+        ->name('export');
+    Route::get('/{asset}/renovation-payments-history/export', $renovationPaymentsController . '@exportHistory')
         ->name('export.history');
 
 

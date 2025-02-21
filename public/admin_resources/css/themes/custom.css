@@ -453,6 +453,12 @@ fieldset[disabled] .btn-default.active {
     border-color: #AAD178;
 }
 
+.text-center .btn-success.btn-home.renovations-icon {
+    padding: 3px 3px !Important;
+    background-color: #ff826e;
+    border-color: #ff826e;
+}
+
 .list-delete-button.el-button--small {
     padding: 3px 3px !Important;
     background-color: #F56C6C;

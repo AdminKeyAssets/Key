@@ -14,7 +14,7 @@
                             <a :href="payment.project_route"><i class="el-icon-house"> {{
                                     payment.project_name
                                 }}</i></a> <span v-if="!investorView"> - <i
-                            class="el-icon-user">{{ payment.investor_name }} {{ payment.investor_surname }}</i></span>
+                            class="el-icon-user">{{ payment.investor_name }}</i></span>
                         </div>
                         <div class="text item">
                             <div style="padding-bottom: 5px">
