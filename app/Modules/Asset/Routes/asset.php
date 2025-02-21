@@ -10,8 +10,6 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/create', $controller . '@create')->name('create')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/create-data', $controller . '@createData')->name('create_data');
     Route::get('/edit/{id?}', $controller . '@edit')->name('edit')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
-    Route::post('/sell/{id?}', $controller . '@sell')->name('sell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
-    Route::post('/delete/sell/{id?}', $controller . '@deleteSell')->name('deleteSell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/view/{id?}', $controller . '@view')->name('view')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
     Route::get('/names', $controller . '@getAssetsToClone')->name('assets.to.clone')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
     Route::post('/clone/{name?}', $controller . '@clone')->name('clone')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
@@ -80,6 +78,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
         ->name('export');
     Route::get('/{asset}/rental-payments-history/export', $leaseController . '@exportHistory')
         ->name('export.history');
+
 
 
     $renovationPaymentsController = 'RenovationPaymentsHistoryController';

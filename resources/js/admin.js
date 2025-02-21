@@ -50,7 +50,6 @@ Vue.component('asset-page-form', require('./base/admin/asset/page/AssetForm').de
 Vue.component('manager-page-form', require('./base/admin/asset/page/ManagerForm').default);
 Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetViewForm').default);
 Vue.component('asset-filter-component', require('./base/admin/asset/partials/AssetFilters').default);
-Vue.component('register-purchase-component', require('./base/admin/asset/partials/components/AssetSaleModal').default);
 
 //Revenue
 Vue.component('revenue-filter-component', require('./base/admin/revenue/partials/RevenueFilters').default);

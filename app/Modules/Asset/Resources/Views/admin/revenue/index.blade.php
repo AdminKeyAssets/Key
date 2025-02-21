@@ -87,29 +87,18 @@
                                 @endif
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! number_format($item->total_price,0,".",",") !!}$</td>
-                                <td class="paid-col">{!! number_format($item->paid,0,".",",") !!}$
-                                    - {{ fmod(($item->paid/$item->total_price)*100, 1) == 0 ? number_format(($item->paid/$item->total_price)*100, 0) : number_format(($item->paid/$item->total_price)*100, 2) }}
-                                    %
-                                </td>
+                                <td class="paid-col">{!! number_format($item->paid,0,".",",") !!}$ - {{ fmod(($item->paid/$item->total_price)*100, 1) == 0 ? number_format(($item->paid/$item->total_price)*100, 0) : number_format(($item->paid/$item->total_price)*100, 2) }}%</td>
                                 <td>{!! number_format($item->renovation,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->other_investment,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->total_investment,0,".",",") !!}$</td>
-                                @if($item->sale_status !== 'sold')
-                                    <td>{!! number_format($item->current_value,0,".",",") !!}$</td>
-                                @else
-                                    <td>{!! number_format($item->sale_price,0,".",",") !!}$</td>
-                                @endif
+                                <td>{!! number_format($item->current_value,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->capital_gain,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->rent,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->net_cache_balance,0,".",",") !!}$</td>
                                 <td>
-                                    @if($item->sale_status !== 'sold')
-                                        @can(getPermissionKey('investment', 'index', true))
-                                            @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
-                                        @endcan
-                                    @else
-                                        <span>Sold</span>
-                                    @endif
+                                    @can(getPermissionKey('investment', 'index', true))
+                                        @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach
