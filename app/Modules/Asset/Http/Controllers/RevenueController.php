@@ -570,8 +570,9 @@ class RevenueController extends BaseController
                         $this->baseData['item']['total_investment'] = $paid + $allInvestments + $renovationPayments;
                         $this->baseData['item']['paid'] = $paid;
                     } else {
+                        $paid = $asset->total_price;
                         $this->baseData['item']['total_investment'] = $asset->total_price + $allInvestments + $renovationPayments;
-                        $this->baseData['item']['paid'] = $asset->total_price;
+                        $this->baseData['item']['paid'] = $paid;
                     }
 
                     $this->baseData['item']['capital_gain'] = $asset->sale_price - ($asset->total_price + $renovationInvestment);
@@ -580,7 +581,6 @@ class RevenueController extends BaseController
                     $this->baseData['item']['renovation'] = $renovationInvestment;
 
                     $paidPercent = fmod(($paid / $asset->total_price) * 100, 1) == 0 ? number_format(($paid / $asset->total_price) * 100, 0) : number_format(($paid / $asset->total_price) * 100, 2);
-
                     $investors = $asset->investors;
                     $investorNames = [];
                     foreach ($investors as $investor) {
