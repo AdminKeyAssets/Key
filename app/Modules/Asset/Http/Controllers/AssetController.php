@@ -856,6 +856,7 @@ class AssetController extends BaseController
                 'investments_route' => route('asset.investment.index', [$asset->id]),
                 'renovation_route' => route('asset.renovation.index', [$asset->id]),
                 'investor_name' => $investorNames,
+                'asset_id' => $asset->id
             ];
 
         } catch (\Exception $ex) {

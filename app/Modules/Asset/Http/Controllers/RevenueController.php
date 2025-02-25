@@ -349,8 +349,7 @@ class RevenueController extends BaseController
             // Calculate capital gain
             if ($asset->sale_status !== 'sold') {
                 $capitalGain = $asset->current_value - ($asset->total_price + $renovationInvestment);
-            }
-            else{
+            } else {
                 $capitalGain = $asset->sale_price - ($asset->total_price + $renovationInvestment);
             }
 
@@ -417,9 +416,9 @@ class RevenueController extends BaseController
                 $asset->paid = $asset->total_price;
             }
 
-            if($asset->sale_status !== 'sold'){
+            if ($asset->sale_status !== 'sold') {
                 $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
-            }else{
+            } else {
                 $asset->capital_gain = $asset->sale_price - ($asset->total_price + $renovationInvestment);
             }
             $asset->other_investment = $otherInvestments;
@@ -544,20 +543,57 @@ class RevenueController extends BaseController
                 $this->baseData['item']['agreements'] = $this->baseData['item']['payments'] = $this->baseData['item']['payments_histories'] = $this->baseData['item']['files'] = [];
 
                 if ($asset->sale_status === 'sold') {
-                    $renovationPayments = $asset->renovationPaymentsHistories()->sum('amount');
-                    $renovationInvestment = $asset->investments->where('status', 'Renovation')->sum('amount');
-                    $totalRenovationInvestment = $renovationInvestment + $renovationPayments;
-
-                    $allInvestments = $asset->investments()->sum('amount');
-                    $otherInvestments = $allInvestments - $totalRenovationInvestment;
-                    $rent = $asset->rentalPaymentsHistories()->where('date', '<=', $asset->sale_date)->sum('amount');
-//dd($otherInvestments);
                     $this->baseData['item'] = $asset;
-                    $this->baseData['item']['capital_gain'] = $asset->sale_price - ($asset->total_price + $totalRenovationInvestment);
-                    $this->baseData['item']['net_cash_balance'] = $rent - $otherInvestments;
+
+                    $paid = $asset->paymentsHistories;
+                    $rent = $asset->rentalPaymentsHistories;
+                    $allInvestments = $asset->investments;
+                    $renovationInvestment = $asset->investments->where('status', 'Renovation');
+                    $renovationPayments = $asset->renovationPaymentsHistories();
+
+
+                    $rent = $rent->sum('amount');
+                    $allInvestments = $allInvestments->sum('amount');
+
+                    $renovationInvestment = $renovationInvestment->sum('amount');
+                    $renovationPayments = $renovationPayments->sum('amount');
+
+                    $otherInvestments = $allInvestments - $renovationInvestment;  // everything that's not Renovation
+                    $renovationInvestment = $renovationInvestment + $renovationPayments;
+
+                    // Set per-asset fields
+                    $this->baseData['item']['rent'] = $rent;
+                    $this->baseData['item']['net_cache_balance'] = $rent - $otherInvestments;
+
+                    if ($asset->agreement_status === 'Installments') {
+                        $paid = $paid->sum('amount');
+                        $this->baseData['item']['total_investment'] = $paid + $allInvestments + $renovationPayments;
+                        $this->baseData['item']['paid'] = $paid;
+                    } else {
+                        $this->baseData['item']['total_investment'] = $asset->total_price + $allInvestments + $renovationPayments;
+                        $this->baseData['item']['paid'] = $asset->total_price;
+                    }
+
+                    $this->baseData['item']['capital_gain'] = $asset->sale_price - ($asset->total_price + $renovationInvestment);
+
+                    $this->baseData['item']['other_investment'] = $otherInvestments;
+                    $this->baseData['item']['renovation'] = $renovationInvestment;
+
+                    $paidPercent = fmod(($paid / $asset->total_price) * 100, 1) == 0 ? number_format(($paid / $asset->total_price) * 100, 0) : number_format(($paid / $asset->total_price) * 100, 2);
+
+                    $investors = $asset->investors;
+                    $investorNames = [];
+                    foreach ($investors as $investor) {
+                        $investorNames[] = $investor->name . ' ' . $investor->surname;
+                    }
+                    $investorNames = implode(' / ', $investorNames);
+
+                    $this->baseData['item']['investorNames'] = $investorNames;
+
+                    $this->baseData['item']['paid'] = number_format($paid, 0, ".", ",") . '$ - ' . $paidPercent . '%';
+
                     $this->baseData['item']['agreements'] = AssetAgreement::where('asset_id', $asset->id)->get();
-                    $this->baseData['item']['payments'] = Payment::where('asset_id', $asset->id)->get();
-                    $this->baseData['item']['payments_histories'] = PaymentsHistory::where('asset_id', $asset->id)->get();
+
                     $files = [];
                     if ($asset->attachments) {
                         foreach ($asset->attachments as $item) {

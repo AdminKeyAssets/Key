@@ -475,8 +475,7 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px">
-                                <el-card class="box-card agreement-details-card"
-                                         :class="{ 'hidden-body': !showAgreementDetails }">
+                                <el-card class="box-card agreement-details-card" :class="{ 'hidden-body': !showAgreementDetails }">
 
                                     <div slot="header" v-if="form.agreement_status === 'Complete'"
                                          class="clearfix main-header"
