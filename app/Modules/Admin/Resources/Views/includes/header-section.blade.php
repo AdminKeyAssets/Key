@@ -44,6 +44,12 @@
                                 @include('admin::includes.actions.renovation', ['title' => 'Renovations Payments', 'route' => $extra['renovation_route']])
                             @endcan
                         @endif
+                        @if($extra['asset_id'])
+                            @can(getPermissionKey('asset', 'update', true))
+                                    <register-purchase-component :asset-id="{{ $extra['asset_id'] }}">
+                                    </register-purchase-component>
+                            @endcan
+                        @endif
                     </div>
                 @endif
             </div>

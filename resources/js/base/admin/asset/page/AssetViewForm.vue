@@ -475,6 +475,202 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px">
+                                <el-card class="box-card agreement-details-card" :class="{ 'hidden-body': !showAgreementDetails }">
+
+                                    <div slot="header" v-if="form.agreement_status === 'Complete'"
+                                         class="clearfix main-header"
+                                         @click="showAgreementDetails = !showAgreementDetails" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Agreement Details</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showAgreementDetails" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+                                    <div slot="header" v-else class="clearfix main-header">
+                                        <span>Agreement Details</span>
+                                    </div>
+                                    <el-row>
+                                        <el-row class="row-item">
+                                            <el-col :span="12">
+                                                <div v-if="form.agreement_date" class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement Date:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.agreement_date }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.agreements && form.agreements.length"
+                                                     class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement(s):</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-for="agreement in form.agreements">
+                                                            <p v-if="agreement.attachment && agreement.name">
+                                                                <a :href="agreement.attachment"
+                                                                   target="_blank">{{ agreement.name }}</a></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item" v-if="form.price || form.total_price">
+                                            <el-col :span="12">
+                                                <div v-if="form.price" class="form-group">
+                                                    <label class="col-md-4 control-label">M2 Price:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ formatPrice(form.price) }}$
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.total_price" class="form-group">
+                                                    <label class="col-md-4 control-label">Total Price:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ formatPrice(form.total_price) }}$
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item" v-if="form.agreement_status">
+                                            <el-col :span="12">
+                                                <div v-if="form.agreement_status" class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement Status:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.agreement_status }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <template v-if="form.agreement_status === 'Complete'">
+                                                    <div v-if="form.ownership_certificate" class="form-group">
+                                                        <label class="col-md-4 control-label">Ownership
+                                                            Certificate:</label>
+                                                        <div class="col-md-6 uppercase-medium">
+                                                            <div v-if="form.ownership_certificate">
+                                                                <p v-if="form.ownership_certificate"><a
+                                                                    :href="form.ownership_certificate"
+                                                                    v-if="form.ownership_certificate" target="_blank">View
+                                                                    {{ getFilename(form.ownership_certificate) }}</a>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </el-col>
+                                        </el-row>
+
+                                    </el-row>
+
+                                    <template>
+                                        <el-row class="row-item">
+                                            <el-col :span="12">
+                                                <div v-if="form.first_payment_date" class="form-group">
+                                                    <label class="col-md-4 control-label">First Payment Date:</label>
+                                                    <div class="col-md-8 uppercase-medium">
+                                                        {{ form.first_payment_date }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12" v-if="form.agreement_status === 'Installments'">
+                                                <div v-if="form.period" class="form-group">
+                                                    <label class="col-md-4 control-label">Period:</label>
+                                                    <div class="col-md-8 uppercase-medium">
+                                                        {{ form.period }} Month(s)
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row style="margin-top: 20px;" class="payments-wrapper row-item">
+                                            <el-col :span="24" :md="11">
+                                                <div v-if="form.payments && form.payments.length">
+                                                    <div class="payments-schedule-title-wrapper">
+                                                        <div class="payments-schedule-heading"
+                                                             style="text-align: center; max-width: 500px">
+                                                            <h4>Payments Schedule</h4>
+                                                        </div>
+                                                        <el-button
+                                                            icon="el-icon-document"
+                                                            style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                            type="secondary"
+                                                            class="pull-right"
+                                                            @click="exportPaymentSchedule">Export Schedule
+                                                        </el-button>
+                                                    </div>
+                                                    <el-table border :data="form.payments" style="width: 100%">
+                                                        <el-table-column label="Payment Date">
+                                                            <template slot-scope="scope">
+                                                                {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
+                                                            </template>
+                                                        </el-table-column>
+                                                        <el-table-column prop="amount" label="Amount">
+                                                            <template slot-scope="scope">
+                                                                {{
+                                                                    scope.row.status ? formatPrice(scope.row.amount)+'$' : formatPrice(scope.row.left_amount)+'$'
+                                                                }}
+                                                            </template>
+                                                        </el-table-column>
+                                                        <el-table-column prop="status" label="Status">
+                                                            <template slot-scope="scope">
+                                                                <i v-if="scope.row.status" class="el-icon-check"
+                                                                   style="color: green"></i>
+                                                                <i v-else class="el-icon-close" style="color: red"></i>
+                                                            </template>
+                                                        </el-table-column>
+                                                    </el-table>
+                                                </div>
+                                            </el-col>
+
+                                            <el-col :span="24" :md="11" class="payments-history-wrapper-col">
+                                                <div v-if="form.payments_histories && form.payments_histories.length">
+                                                    <div class="payments-schedule-title-wrapper">
+                                                        <div class="payments-history-heading"
+                                                             style="text-align: center; max-width: 500px">
+                                                            <h4>Payments History</h4>
+                                                        </div>
+                                                        <el-button
+                                                            icon="el-icon-document"
+                                                            style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                            type="secondary"
+                                                            class="pull-right"
+                                                            @click="exportPayments">Export Payments
+                                                        </el-button>
+                                                    </div>
+                                                    <el-table border :data="form.payments_histories"
+                                                              style="width: 100%">
+                                                        <el-table-column label="Payment Date">
+                                                            <template slot-scope="scope">
+                                                                {{ scope.$index + 1 }}. {{ scope.row.date }}
+                                                            </template>
+                                                        </el-table-column>
+                                                        <el-table-column prop="amount" label="Amount">
+                                                            <template slot-scope="scope">
+                                                                {{ formatPrice(scope.row.amount) }}$
+                                                            </template>
+                                                        </el-table-column>
+                                                        <el-table-column prop="attachment" label="Attachment">
+                                                            <template slot-scope="scope">
+                                                                <a :href="scope.row.attachment"
+                                                                   v-if="scope.row.attachment"
+                                                                   style="max-width: 150px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"
+                                                                   target="_blank">View
+                                                                    {{ getFilename(scope.row.attachment) }}</a>
+                                                            </template>
+                                                        </el-table-column>
+                                                    </el-table>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+                                    </template>
+
+                                </el-card>
+                            </el-row>
+
+                            <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 

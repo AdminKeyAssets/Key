@@ -10,6 +10,7 @@ use App\Modules\Asset\Helpers\UpdatePaymentsHelper;
 use App\Modules\Asset\Helpers\UpdateRenovationPaymentsHelper;
 use App\Modules\Asset\Helpers\UpdateRentalPaymentsHelper;
 use App\Modules\Asset\Http\Requests\AssetRequest;
+use App\Modules\Asset\Http\Requests\AssetSaleRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAgreement;
 use App\Modules\Asset\Models\AssetAttachment;
@@ -100,6 +101,7 @@ class AssetController extends BaseController
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
         $query = Asset::query();
+        $query->where('sale_status', 'active');
 
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
@@ -157,7 +159,7 @@ class AssetController extends BaseController
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
 
-        $this->baseData['allData'] = $user->assets()->orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = $user->assets()->where('sale_status', 'active')->orderByDesc('id')->paginate(25);
 
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -851,9 +853,10 @@ class AssetController extends BaseController
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
-                'investments_route' => route('asset.investment.index', [ $asset->id ]),
-                'renovation_route' => route('asset.renovation.index', [ $asset->id ]),
+                'investments_route' => route('asset.investment.index', [$asset->id]),
+                'renovation_route' => route('asset.renovation.index', [$asset->id]),
                 'investor_name' => $investorNames,
+                'asset_id' => $asset->id
             ];
 
         } catch (\Exception $ex) {
@@ -955,6 +958,45 @@ class AssetController extends BaseController
             ->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+    }
+
+    public function sell(AssetSaleRequest $request, $assetId)
+    {
+        $path = null;
+
+        if ($request->hasFile('sale_agreement')) {
+            $file = $request->file('sale_agreement');
+            $originalFileName = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('uploads', $originalFileName, 'public');
+            $path = Storage::url($path);
+        }elseif (is_string($request->sale_agreement)) {
+            $path = $request->sale_agreement;
+        }
+        Asset::where('id', $assetId)->first()->update([
+            'sale_date' => $request->sale_date,
+            'sale_status' => 'sold',
+            'sale_price' => $request->sale_price,
+            'purchaser' => $request->purchaser,
+            'sale_agreement' => $path
+        ]);
+
+        return ServiceResponse::jsonNotification(__('Sale Registered successfully'), 200, $this->baseData);
+
+    }
+
+    public function deleteSell(Request $request, $assetId)
+    {
+
+        Asset::where('id', $assetId)->first()->update([
+            'sale_date' => null,
+            'sale_status' => 'active',
+            'sale_price' => null,
+            'purchaser' => null,
+            'sale_agreement' => null
+        ]);
+
+        return ServiceResponse::jsonNotification(__('Sale Deleted successfully'), 200, $this->baseData);
+
     }
 
 }

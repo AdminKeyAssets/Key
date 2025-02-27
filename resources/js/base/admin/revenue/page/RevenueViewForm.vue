@@ -10,6 +10,238 @@
                                  element-loading-background="rgba(0, 0, 0, 0.0)"
                                  class="">
 
+                            <el-row style="margin-bottom: 30px" v-if="form.sale_status === 'sold'">
+                                <el-card class="box-card agreement-details-card"
+                                         :class="{ 'hidden-body': !showAgreementDetails }">
+
+                                    <div slot="header"
+                                         class="clearfix main-header"
+                                         @click="showAgreementDetails = !showAgreementDetails" style="cursor: pointer;">
+                                        <div style="width: 98%">
+                                            <span>Sold - </span> <span>{{ form.sale_date }}</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showAgreementDetails" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+                                    <el-row>
+                                        <el-row class="row-item" v-if="form.agreement_date || form.sale_date">
+                                            <el-col :span="12">
+                                                <div v-if="form.agreement_date" class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement Date:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.agreement_date }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.sale_date" class="form-group">
+                                                    <label class="col-md-4 control-label">Sale Date:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.sale_date }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item">
+                                            <el-col :span="12">
+                                                <div v-if="form.agreements && form.agreements.length"
+                                                     class="form-group">
+                                                    <label class="col-md-4 control-label">Agreement(s):</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div v-for="agreement in form.agreements">
+                                                            <p v-if="agreement.attachment && agreement.name">
+                                                                <a :href="agreement.attachment"
+                                                                   target="_blank">{{ agreement.name }}</a></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.purchaser" class="form-group">
+                                                    <label class="col-md-4 control-label">Purchaser:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.purchaser }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item">
+                                            <el-col :span="12">
+                                                <div v-if="form.total_price" class="form-group">
+                                                    <label class="col-md-4 control-label">Total Price:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.total_price }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.sale_agreement"
+                                                     class="form-group">
+                                                    <label class="col-md-4 control-label">Sale Agreement:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        <div>
+                                                            <p v-if="form.sale_agreement">
+                                                                <a :href="form.sale_agreement"
+                                                                   target="_blank">View Agreement</a></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <el-row class="row-item">
+                                            <el-col :span="12">
+                                                <div v-if="form.paid" class="form-group">
+                                                    <label class="col-md-4 control-label">Paid:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.paid }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.sale_price" class="form-group">
+                                                    <label class="col-md-4 control-label">Sale Price:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ formatPrice(form.sale_price) }}$
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <template>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-vcenter table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th> Name</th>
+                                                        <th> Photo</th>
+
+                                                        <th v-if="isAdmin"> Investor</th>
+                                                        <th> Purchase Date</th>
+                                                        <th> Purchase Price</th>
+                                                        <th class="paid-col"> Paid</th>
+                                                        <th> Renovation</th>
+                                                        <th> Other Investment</th>
+                                                        <th> Total Investment</th>
+                                                        <th> Current Value</th>
+                                                        <th> Capital Gain</th>
+                                                        <th> Rent</th>
+                                                        <th> Net Cash Balance</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            {{ form.project_name }}
+                                                        </td>
+                                                        <td>
+                                                            <ImageModal v-if="form.icon" :thumbnail="form.icon"
+                                                                         :image-path="form.icon"
+                                                                         :rounded="true"
+                                                                         :width="50"
+                                                                         :height="50"></ImageModal>
+
+                                                        </td>
+
+                                                        <td v-if="isAdmin">
+                                                            {{ form.investorNames }}
+                                                        </td>
+                                                        <td>{{ form.agreement_date }}</td>
+                                                        <td>{{ formatPrice(form.total_price, 0, ".", ",") }}$</td>
+                                                        <td class="paid-col">{{ form.paid }}
+                                                        </td>
+                                                        <td>{{ formatPrice(form.renovation, 0, ".", ",") }}$</td>
+                                                        <td>{{ formatPrice(form.other_investment, 0, ".", ",") }}$</td>
+                                                        <td>{{ formatPrice(form.total_investment, 0, ".", ",") }}$</td>
+
+                                                        <td>{{ formatPrice(form.sale_price, 0, ".", ",") }}$</td>
+
+                                                        <td>{{ formatPrice(form.capital_gain, 0, ".", ",") }}$</td>
+                                                        <td>{{ formatPrice(form.rent, 0, ".", ",") }}$</td>
+                                                        <td>{{ formatPrice(form.net_cache_balance, 0, ".", ",") }}$</td>
+
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </template>
+                                    </el-row>
+
+                                    <el-row v-if="isAdmin && form.sale_status === 'sold'">
+                                        <div class="sale-actions">
+                                            <span class="sale-delete" @click="deleteSale(form.id)">
+                                                Restore
+                                            </span>
+                                            <div style="display: inline-block">
+                                                <span class="sale-delete" @click="openModal">
+                                                    Edit
+                                                </span>
+
+                                                <el-dialog
+                                                    :visible.sync="visible"
+                                                    title="Sell Asset"
+                                                    width="500px"
+                                                    @close="resetForm"
+                                                >
+                                                    <el-form ref="saleForm" :model="form"
+                                                             label-width="120px">
+
+                                                        <el-form-item label="Sale Date" prop="sale_date">
+                                                            <el-date-picker
+                                                                v-model="form.sale_date"
+                                                                format="yyyy/MM/dd"
+                                                                value-format="yyyy/MM/dd"
+                                                                type="date"
+                                                                placeholder="Pick a sale date">
+                                                            </el-date-picker>
+                                                        </el-form-item>
+
+                                                        <el-form-item label="Sale Price" prop="sale_price">
+                                                            <el-input v-model="form.sale_price" type="number"
+                                                                      placeholder="Enter sale price"></el-input>
+                                                        </el-form-item>
+
+                                                        <el-form-item label="Purchaser" prop="purchaser">
+                                                            <el-input v-model="form.purchaser"
+                                                                      placeholder="Enter purchaser name"></el-input>
+                                                        </el-form-item>
+
+                                                        <div class="form-group dashed">
+                                                            <label class="col-md-4 control-label">Attachment:</label>
+                                                            <div class="col-md-6 uppercase-medium">
+                                                                <p v-if="form.sale_agreement">File: <a
+                                                                    :href="form.sale_agreement" target="_blank">View
+                                                                    Attachment</a>
+                                                                    <el-button type="danger" icon="el-icon-delete"
+                                                                               size="small"
+                                                                               @click="removeFile"
+                                                                    ></el-button>
+                                                                </p>
+                                                                <input v-else type="file" class="form-control"
+                                                                       @change="onFileChange">
+                                                            </div>
+                                                        </div>
+                                                    </el-form>
+
+                                                    <span slot="footer" class="dialog-footer">
+                                                        <el-button @click="visible = false">Cancel</el-button>
+                                                        <el-button type="primary" :disabled="loading" @click="save">{{
+                                                                form.id ? 'Update' : 'Save'
+                                                            }}</el-button>
+                                                    </span>
+                                                </el-dialog>
+                                            </div>
+                                        </div>
+                                    </el-row>
+                                </el-card>
+
+                            </el-row>
+
                             <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
                                     v-bind:key="tenant.id">
                                 <el-card class="box-card"
@@ -291,6 +523,7 @@ import {getData} from '../../../mixins/getData'
 import MapMarker from "../../../components/admin/MapMarker.vue";
 import ImageModal from "../../../components/admin/ImageModal.vue";
 import ImageBox from "../../../components/admin/ImageBox.vue";
+import axios from "axios";
 
 export default {
     components: {
@@ -324,25 +557,44 @@ export default {
         return {
             item: {},
             data: {},
-            loading: false,
             routes: {},
             options: {},
             /** Form data*/
             form: {
                 id: this.id
             },
+            visible: false,
+            loading: false,
             tenants: {},
             rentals: {},
             investments: [],
             currentValues: [],
             showInvestments: false,
             showCurrentValues: false,
+            showAgreementDetails: true
         }
     },
     created() {
         this.getSaveData();
     },
     methods: {
+        onFileChange(e) {
+            this.form.sale_agreement = e.target.files[0];
+        },
+        removeFile() {
+            this.form.sale_agreement = null;
+        },
+        openModal() {
+            this.visible = true;
+        },
+        resetForm() {
+            this.form = {
+                sale_date: '',
+                sale_price: '',
+                purchaser: '',
+                sale_agreement: null
+            };
+        },
         /**
          *
          * Get save data.
@@ -369,7 +621,12 @@ export default {
                     this.tenants = data.tenants;
                     this.investments = data.investments;
                     this.currentValues = data.current_values;
-
+                    if (data.item) {
+                        this.form = data.item;
+                        if (data.item.files) {
+                            this.form.attachments = data.item.files;
+                        }
+                    }
                     this.tenants.forEach(tenant => {
                         if (tenant.rentals) {
                             let rentals = [];
@@ -468,6 +725,85 @@ export default {
                 });
             });
         },
+
+        async deleteSale(assetId) {
+            this.$confirm('Are you sure?', 'You are deleting a sale', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                type: 'warning'
+            }).then(async () => {
+                await axios.post(`/assets/delete/sell/${assetId}`).then(response => {
+                    responseParse(response);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                });
+            });
+        },
+
+        async save() {
+            this.$refs.saleForm.validate(async (valid) => {
+                if (!valid) return;
+
+                this.loading = true;
+
+                let formData = new FormData();
+                for (let key in this.form) {
+                    formData.append(key, this.form[key]);
+                }
+                formData.append('asset_id', this.assetId);
+
+                try {
+                    const response = await axios.post(`/assets/sell/${this.id}`, formData, {
+                        headers: {'Content-Type': 'multipart/form-data'}
+                    });
+                    responseParse(response);
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+
+                } catch (error) {
+                    responseParse(error.response);
+                    console.error(error);
+                } finally {
+                    this.loading = false;
+                }
+            });
+        },
+        async exportPaymentSchedule() {
+            try {
+                const response = await axios.get(`/assets/${this.id}/payments/export`, {
+                    params: this.filters,
+                    responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'payments_schedule.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting payments:', error);
+            }
+        },
+
+        async exportPayments() {
+            try {
+                const response = await axios.get(`/assets/${this.id}/payments-history/export`, {
+                    params: this.filters,
+                    responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'payments.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting payments:', error);
+            }
+        },
     }
 }
 </script>
@@ -488,12 +824,14 @@ export default {
     display: none;
 }
 
-.rental-actions {
+.rental-actions, .sale-actions {
     padding: 10px 0 0;
 }
 
-.rental-delete {
+.rental-delete, .sale-delete, .sale-edit {
     text-decoration: underline;
     cursor: pointer;
+    padding: 0 10px;
+    margin: 0 10px
 }
 </style>
