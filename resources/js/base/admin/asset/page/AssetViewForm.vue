@@ -670,7 +670,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px">
+                            <el-row style="margin-bottom: 30px" v-if="form.renovation_agreement_date">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
@@ -688,7 +688,7 @@
                                     <el-row>
                                         <el-row class="row-item">
                                             <el-col :span="12">
-                                                <div v-if="form.agreement_date" class="form-group">
+                                                <div v-if="form.renovation_agreement_date" class="form-group">
                                                     <label class="col-md-4 control-label">Agreement Date:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ form.renovation_agreement_date }}
@@ -696,14 +696,14 @@
                                                 </div>
                                             </el-col>
                                             <el-col :span="12">
-                                                <div v-if="form.agreements && form.agreements.length"
+                                                <div v-if="form.renovation_agreement"
                                                      class="form-group">
                                                     <label class="col-md-4 control-label">Agreement(s):</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        <div v-for="agreement in form.agreements">
-                                                            <p v-if="agreement.attachment && agreement.name">
-                                                                <a :href="agreement.attachment"
-                                                                   target="_blank">{{ agreement.name }}</a></p>
+                                                        <div>
+                                                            <p>
+                                                                <a :href="form.renovation_agreement"
+                                                                   target="_blank">View Agreement</a></p>
                                                         </div>
                                                     </div>
                                                 </div>

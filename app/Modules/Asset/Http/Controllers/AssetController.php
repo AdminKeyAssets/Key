@@ -853,8 +853,8 @@ class AssetController extends BaseController
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
-                'investments_route' => route('asset.investment.index', [$asset->id]),
-                'renovation_route' => route('asset.renovation.index', [$asset->id]),
+                'investments_route' =>route('asset.investment.index', [$asset->id]),
+                'renovation_route' =>  $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
                 'asset_id' => $asset->id
             ];

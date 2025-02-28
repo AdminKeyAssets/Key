@@ -114,17 +114,10 @@
 
                                         <template>
 
-                                            <div class="table-responsive">
+                                            <div class="table-responsive renovation-table">
                                                 <table class="table table-vcenter table-striped">
                                                     <thead>
                                                     <tr>
-                                                        <th> Name</th>
-                                                        <th> Photo</th>
-
-                                                        <th v-if="isAdmin"> Investor</th>
-                                                        <th> Purchase Date</th>
-                                                        <th> Purchase Price</th>
-                                                        <th class="paid-col"> Paid</th>
                                                         <th> Renovation</th>
                                                         <th> Other Investment</th>
                                                         <th> Total Investment</th>
@@ -136,25 +129,6 @@
                                                     </thead>
                                                     <tbody>
                                                     <tr>
-                                                        <td>
-                                                            {{ form.project_name }}
-                                                        </td>
-                                                        <td>
-                                                            <ImageModal v-if="form.icon" :thumbnail="form.icon"
-                                                                         :image-path="form.icon"
-                                                                         :rounded="true"
-                                                                         :width="50"
-                                                                         :height="50"></ImageModal>
-
-                                                        </td>
-
-                                                        <td v-if="isAdmin">
-                                                            {{ form.investorNames }}
-                                                        </td>
-                                                        <td>{{ form.agreement_date }}</td>
-                                                        <td>{{ formatPrice(form.total_price, 0, ".", ",") }}$</td>
-                                                        <td class="paid-col">{{ form.paid }}
-                                                        </td>
                                                         <td>{{ formatPrice(form.renovation, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.other_investment, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.total_investment, 0, ".", ",") }}$</td>
@@ -833,5 +807,8 @@ export default {
     cursor: pointer;
     padding: 0 10px;
     margin: 0 10px
+}
+.renovation-table th, .renovation-table td {
+    text-align: center;
 }
 </style>

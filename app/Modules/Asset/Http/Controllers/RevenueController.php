@@ -211,6 +211,11 @@ class RevenueController extends BaseController
             $allAssets->where('sale_status', $statusFilter);
         }
 
+        if ($statusFilter === 'active' && !$allAssets->count()) {
+            $paginatedAssets->orWhere('sale_status', 'sold');
+            $allAssets->orWhere('sale_status', 'sold');
+        }
+
         if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
@@ -363,7 +368,11 @@ class RevenueController extends BaseController
             $totalPaid += $paid;
 
             // Net cash balance
-            $netCashBalance = $rent - $otherInvestments;
+            if ($asset->sale_status !== 'sold') {
+                $netCashBalance = $rent - $otherInvestments;
+            } else {
+                $netCashBalance = $asset->sale_price + $rent - $allInvestments;
+            }
             $totalNetCashBalance += $netCashBalance;
         }
 
@@ -406,7 +415,12 @@ class RevenueController extends BaseController
 
             // Set per-asset fields
             $asset->rent = $rent;
-            $asset->net_cache_balance = $rent - $otherInvestments;
+
+            if($asset->sale_status !== 'sold'){
+                $asset->net_cache_balance = $rent - $otherInvestments;
+            }else{
+                $asset->net_cache_balance = $asset->sale_price + $rent - $allInvestments;
+            }
 
             if ($asset->agreement_status === 'Installments') {
                 $asset->total_investment = $paid + $allInvestments + $renovationPayments;
@@ -563,17 +577,20 @@ class RevenueController extends BaseController
 
                     // Set per-asset fields
                     $this->baseData['item']['rent'] = $rent;
-                    $this->baseData['item']['net_cache_balance'] = $rent - $otherInvestments;
 
                     if ($asset->agreement_status === 'Installments') {
                         $paid = $paid->sum('amount');
-                        $this->baseData['item']['total_investment'] = $paid + $allInvestments + $renovationPayments;
+                        $totalInvestments = $paid + $allInvestments + $renovationPayments;
                         $this->baseData['item']['paid'] = $paid;
                     } else {
                         $paid = $asset->total_price;
-                        $this->baseData['item']['total_investment'] = $asset->total_price + $allInvestments + $renovationPayments;
+                        $totalInvestments = $asset->total_price + $allInvestments + $renovationPayments;
                         $this->baseData['item']['paid'] = $paid;
                     }
+                    //                    dd([$asset->sale_price,$rent,$allInvestments]);
+
+                    $this->baseData['item']['total_investment'] = $totalInvestments;
+                    $this->baseData['item']['net_cache_balance'] = $asset->sale_price + $rent - $totalInvestments;
 
                     $this->baseData['item']['capital_gain'] = $asset->sale_price - ($asset->total_price + $renovationInvestment);
 
