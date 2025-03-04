@@ -12,7 +12,7 @@
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Price:</label>
                         <div class="col-md-7 uppercase-medium">
-                            <input class="form-control" :disabled="loading" v-model="form.amount"></input>
+                            <input class="form-control" :disabled="loading" v-model="form.amount">
                         </div>
                     </div>
 
@@ -32,7 +32,7 @@
                     <div class="form-group dashed col-md-6">
                         <label class="col-md-2 control-label">Select Rent Month:</label>
                         <div class="col-md-6 uppercase-medium">
-                            <el-select v-model="form.month" :value="form.month" filterable placeholder="Select">
+                            <el-select v-model="form.month" filterable placeholder="Select">
                                 <el-option
                                     v-for="(rental, index) in rentals"
                                     :key="index"
@@ -46,11 +46,9 @@
                     <div class="form-group dashed">
                         <label class="col-md-1 control-label">Attachment:</label>
                         <div class="col-md-10 uppercase-medium">
-                            <p v-if="form.attachment">File: <a :href="form.attachment" target="_blank">View
-                                Attachment</a>
-                                <el-button type="danger" icon="el-icon-delete" size="small"
-                                           @click="removeFile"
-                                ></el-button>
+                            <p v-if="form.attachment">
+                                File: <a :href="form.attachment" target="_blank">View Attachment</a>
+                                <el-button type="danger" icon="el-icon-delete" size="small" @click="removeFile"></el-button>
                             </p>
                             <input v-else type="file" class="form-control" @change="onFileChange">
                         </div>
@@ -63,10 +61,9 @@
     </div>
 </template>
 
-
 <script>
-import {responseParse} from '../../../mixins/responseParse'
-import {getData} from '../../../mixins/getData'
+import { responseParse } from '../../../mixins/responseParse'
+import { getData } from '../../../mixins/getData'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
@@ -74,12 +71,21 @@ export default {
         'routes',
         'updateData',
         'item',
-        'rentals'
+        'rentals',
+        'nextPayment'
     ],
     data() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        const formattedDate = `${year}/${month}/${day}`;
+
         return {
             form: {
-                currency: 'USD'
+                currency: 'USD',
+                date: formattedDate,          // Set default date to today's date.
+                amount: this.nextPayment || ''  // Set default amount from nextPayment prop.
             },
             loading: false,
             editor: ClassicEditor,
@@ -94,9 +100,17 @@ export default {
         this.updateData(this.form);
     },
     watch: {
-        'item'() {
-            if (this.item) {
-                this.form = this.item;
+        // Update the form with the new item when it changes.
+        item(newItem) {
+            if (newItem) {
+                this.form = newItem;
+            }
+        },
+        // Watch nextPayment to update the amount if it hasn't been manually set.
+        nextPayment(newVal) {
+            // Only update if the current amount is empty or 0.
+            if ((!this.form.amount || this.form.amount === 0) && newVal) {
+                this.form.amount = newVal;
             }
         }
     },
@@ -109,5 +123,4 @@ export default {
         },
     }
 }
-
 </script>

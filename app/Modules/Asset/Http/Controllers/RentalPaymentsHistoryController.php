@@ -73,7 +73,7 @@ class RentalPaymentsHistoryController extends BaseController
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
+            'asset_route' => route('asset.view', [$asset->id]),
             'investor_name' => $investorNames,
         ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -97,7 +97,7 @@ class RentalPaymentsHistoryController extends BaseController
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
+            'asset_route' => route('asset.view', [$asset->id]),
             'investor_name' => $investorNames,
         ];
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.create', $this->baseData);
@@ -119,6 +119,8 @@ class RentalPaymentsHistoryController extends BaseController
 
             $rentalsToPay = Rental::where('asset_id', $assetId)->where('status', 0)->get('number');
             $this->baseData['rentals'] = $rentalsToPay;
+            $nextPayment = Rental::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
+            $this->baseData['nextPayment'] = $nextPayment ? $nextPayment->left_amount : 0;
 
             if ($request->get('id')) {
                 $rental = RentalPaymentsHistory::findOrFail($request->get('id'));
@@ -137,10 +139,39 @@ class RentalPaymentsHistoryController extends BaseController
      */
     public function store(LeaseRequest $request, $assetId)
     {
+        // Calculate the total expected rental amount for the asset.
+        $totalRentals = Rental::where('asset_id', $assetId)->sum('amount');
+
+        // Check if updating an existing payment.
+        if (isset($request->id)) {
+            $paymentHistory = RentalPaymentsHistory::findOrFail($request->id);
+            // Sum of all payments minus the payment we're about to update.
+            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->sum('amount') - $paymentHistory->amount;
+
+            if (($existingPayments + $request->amount) > $totalRentals) {
+                return response()->json([
+                    'errors' => [
+                        'amount' => ['Rent Completed. Please prolong the rent schedule or complete.']
+                    ]
+                ], 422);
+            }
+        } else {
+            // Check for new payment.
+            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->sum('amount');
+
+            if (($existingPayments + $request->amount) > $totalRentals) {
+                return response()->json([
+                    'errors' => [
+                        'amount' => ['Rent Completed. Please prolong the rent schedule or complete.']
+                    ]
+                ], 422);
+            }
+        }
+
         $path = null;
 
         if (isset($request->id)) {
-            $paymentHistory = RentalPaymentsHistory::where('id', $request->id)->first();
+            $paymentHistory = RentalPaymentsHistory::findOrFail($request->id);
             $oldAmount = $paymentHistory->amount;
 
             if ($request->hasFile('attachment')) {
@@ -152,7 +183,6 @@ class RentalPaymentsHistoryController extends BaseController
                 $originalFileName = time() . '_' . $file->getClientOriginalName();
                 $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
-
             } else if ($request->input('attachment') === null) {
                 if ($paymentHistory->attachment && Storage::disk('public')->exists($paymentHistory->attachment)) {
                     Storage::disk('public')->delete($paymentHistory->attachment);
@@ -173,7 +203,13 @@ class RentalPaymentsHistoryController extends BaseController
             $startMonth = $request->month ?? Rental::where('asset_id', $assetId)
                 ->where('status', 0)->first()->number;
 
-            $this->paymentsHelper->recalculateRentalPaymentsAfterEdit($paymentHistory->asset, $paymentHistory, $oldAmount, $request->amount, $startMonth);
+            $this->paymentsHelper->recalculateRentalPaymentsAfterEdit(
+                $paymentHistory->asset,
+                $paymentHistory,
+                $oldAmount,
+                $request->amount,
+                $startMonth
+            );
         } else {
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
@@ -183,7 +219,10 @@ class RentalPaymentsHistoryController extends BaseController
             }
 
             $asset = Asset::where('id', $assetId)->first();
-            $tenant = Tenant::where('asset_id', $asset->id)->where('status', 1)->orderByDesc('id')->first();
+            $tenant = Tenant::where('asset_id', $asset->id)
+                ->where('status', 1)
+                ->orderByDesc('id')->first();
+
             $paymentHistory = RentalPaymentsHistory::create([
                 'asset_id' => $assetId,
                 'date' => $request->date,
@@ -197,8 +236,14 @@ class RentalPaymentsHistoryController extends BaseController
             $startMonth = $request->month ?? Rental::where('asset_id', $assetId)
                 ->where('status', 0)->first()->number;
 
-            $this->paymentsHelper->updateRentalPayments($paymentHistory->asset, $paymentHistory->amount, $paymentHistory, $startMonth);
+            $this->paymentsHelper->updateRentalPayments(
+                $paymentHistory->asset,
+                $paymentHistory->amount,
+                $paymentHistory,
+                $startMonth
+            );
         }
+
         $this->baseData['item'] = $paymentHistory;
 
         return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
@@ -226,7 +271,7 @@ class RentalPaymentsHistoryController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investorNames,
             ];
         } catch (\Exception $ex) {
@@ -258,7 +303,7 @@ class RentalPaymentsHistoryController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investorNames,
             ];
         } catch (\Exception $ex) {
