@@ -39,7 +39,7 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{!! $item->date !!}</td>
-                                <td>{!! number_format($item->amount,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->amount,2,".",",") !!}$</td>
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($moduleKey . '.payments.view', [$assetId, $item->id, ])])
