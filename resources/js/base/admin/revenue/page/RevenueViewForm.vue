@@ -121,7 +121,6 @@
                                                         <th> Renovation</th>
                                                         <th> Other Investment</th>
                                                         <th> Total Investment</th>
-                                                        <th> Current Value</th>
                                                         <th> Capital Gain</th>
                                                         <th> Rent</th>
                                                         <th> Net Cash Balance</th>
@@ -132,9 +131,6 @@
                                                         <td>{{ formatPrice(form.renovation, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.other_investment, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.total_investment, 0, ".", ",") }}$</td>
-
-                                                        <td>{{ formatPrice(form.sale_price, 0, ".", ",") }}$</td>
-
                                                         <td>{{ formatPrice(form.capital_gain, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.rent, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.net_cache_balance, 0, ".", ",") }}$</td>
