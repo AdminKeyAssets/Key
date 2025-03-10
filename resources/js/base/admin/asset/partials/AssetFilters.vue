@@ -137,7 +137,11 @@ export default {
         this.loadFiltersFromQueryParams();
         this.fetchRevenueFilters();
 
-        if (this.form.agreement_date || this.form.investor || this.form.asset) {
+        if (this.form.agreement_date || this.form.investor || this.form.asset
+            || this.form.asset_type
+            || this.form.asset_status
+            || this.form.manager
+            || this.form.agreement_status) {
             this.showFilters = true;
         }
     },
@@ -188,7 +192,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching managers:', error);
+                    console.error('Error fetching filters:', error);
                 });
         }
     }

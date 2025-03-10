@@ -105,6 +105,44 @@ class RevenueController extends BaseController
             $allAssets->where('sale_status', $statusFilter);
         }
 
+
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            if (isset($managerUser->id)) {
+                $paginatedAssets->where('admin_id', $managerUser->id);
+                $allAssets->where('admin_id', $managerUser->id);
+            }
+        }
+
+        if ($request->asset && $request->asset != 'all') {
+            $paginatedAssets->where('project_name', 'like', '%' . $request->asset . '%');
+            $allAssets->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $paginatedAssets->where('type', $request->asset_type);
+            $allAssets->where('type', $request->asset_type);
+        }
+
+        if ($request->asset_status && $request->asset_status != 'all') {
+            $paginatedAssets->where('asset_status', $request->asset_status);
+            $allAssets->where('asset_status', $request->asset_status);
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $paginatedAssets->where('agreement_status', $request->agreement_status);
+            $allAssets->where('agreement_status', $request->agreement_status);
+        }
+
+
         // Apply filters based on the related entities
 
         if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
@@ -646,8 +684,12 @@ class RevenueController extends BaseController
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
                 $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+                $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                    $query->where('name', 'like', '%asset%manager%');
+                })->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+                $this->baseData['managers'] = [];
             }
         }
 

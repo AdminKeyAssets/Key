@@ -138,7 +138,6 @@ class AssetController extends BaseController
             $managerUser = Admin::where('name', $managerFirstName)
                 ->where('surname', $managerSurname)->
                 first();
-//            dd($managerUser->id);
             if (isset($managerUser->id)) {
                 $query->where('admin_id', $managerUser->id);
             }
@@ -992,6 +991,7 @@ class AssetController extends BaseController
                 })->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+                $this->baseData['managers'] = [];
             }
         }
 
