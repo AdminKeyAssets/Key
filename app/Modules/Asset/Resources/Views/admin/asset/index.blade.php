@@ -27,6 +27,11 @@
                     <asset-filter-component>
                     </asset-filter-component>
                 </div>
+            @else
+                <div class="row">
+                    <investor-asset-filter-component>
+                    </investor-asset-filter-component>
+                </div>
             @endif
 
             @include('admin::includes.success')

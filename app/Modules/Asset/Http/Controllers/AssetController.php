@@ -158,7 +158,14 @@ class AssetController extends BaseController
     {
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
-        $userAssets = $user->assets()->where('sale_status', 'active')->orderByDesc('id');
+
+        $statusFilter = $request->status ?? 'active';
+
+        $userAssets = $user->assets()->orderByDesc('id');
+        if ($statusFilter !== 'all') {
+            $userAssets->where('sale_status', $statusFilter);
+        }
+
         if($userAssets->count() > 0){
             $this->baseData['allData'] = $userAssets->paginate(25);
         }else{
