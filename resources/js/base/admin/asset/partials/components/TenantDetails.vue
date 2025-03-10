@@ -10,6 +10,12 @@
             </div>
         </div>
         <div class="form-group dashed">
+            <label class="col-md-1 control-label">Representative:</label>
+            <div class="col-md-10 uppercase-medium">
+                <el-input v-model="tenant.representative" placeholder="Representative"></el-input>
+            </div>
+        </div>
+        <div class="form-group dashed">
             <label class="col-md-1 control-label">ID Number:</label>
             <div class="col-md-10 uppercase-medium">
                 <el-input v-model="tenant.id_number" placeholder="ID Number"></el-input>

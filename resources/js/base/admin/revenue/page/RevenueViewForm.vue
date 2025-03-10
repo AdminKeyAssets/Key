@@ -321,7 +321,7 @@
                                                         </el-row>
 
                                                         <el-row class="row-item"
-                                                                v-if="tenant.agreement_date">
+                                                                v-if="tenant.agreement_date || tenant.rent_end_date">
                                                             <el-col :span="12">
                                                                 <div v-if="tenant.agreement_date" class="form-group">
                                                                     <label class="col-md-4 control-label">Agreement
@@ -331,6 +331,19 @@
                                                                     </div>
                                                                 </div>
                                                             </el-col>
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.rent_end_date" class="form-group">
+                                                                    <label class="col-md-4 control-label">Rent End
+                                                                        Date:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.rent_end_date }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.passport || tenant.rent_agreement">
                                                             <el-col :span="12">
                                                                 <div v-if="tenant.rent_agreement"
                                                                      class="form-group">
@@ -344,10 +357,6 @@
                                                                     </div>
                                                                 </div>
                                                             </el-col>
-                                                        </el-row>
-
-                                                        <el-row class="row-item"
-                                                                v-if="tenant.passport">
                                                             <el-col :span="12">
                                                                 <div class="form-group">
                                                                     <label
@@ -359,6 +368,18 @@
                                                                                         :height="100"
                                                                                         :thumbnail="tenant.passport"></ImageModal>
                                                                         </div>
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.representative">
+                                                            <el-col :span="12">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 control-label">Representative:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.representative }}
                                                                     </div>
                                                                 </div>
                                                             </el-col>
@@ -435,7 +456,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="investments">
+                            <el-row style="margin-bottom: 30px" v-if="investments  && investments.length">
                                 <el-card class="box-card" :class="{ 'hidden-body': !showInvestments }">
                                     <div slot="header" class="clearfix main-header"
                                          @click="showInvestments = !showInvestments" style="cursor: pointer;">

@@ -52,6 +52,14 @@
                     </el-select>
                 </div>
 
+                <div class="form-group">
+                    <el-select v-model="form.status" filterable placeholder="Status">
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Active" value="active"></el-option>
+                        <el-option label="Archieve" value="archieve"></el-option>
+                    </el-select>
+                </div>
+
                 <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
                 <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
@@ -87,7 +95,8 @@ export default {
 
         if ((this.form.create_date && this.form.create_date.length > 0) ||
             this.form.manager ||
-            this.form.marketing_channel) {
+            this.form.marketing_channel ||
+            this.form.status !== 'active') {
             this.showFilters = true;
         }
     },
@@ -97,6 +106,7 @@ export default {
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.manager = urlParams.get('manager') || '';
             this.form.marketing_channel = urlParams.get('marketing_channel') || '';
+            this.form.status = urlParams.get('status') || 'active';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -109,6 +119,7 @@ export default {
             this.form.manager = '';
             this.form.marketing_channel = '';
             this.applyFilters(); // Optionally apply cleared filters
+            this.form.status = 'active';
         },
 
         fetchLeadFilters() {

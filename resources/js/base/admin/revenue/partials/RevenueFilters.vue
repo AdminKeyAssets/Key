@@ -35,6 +35,21 @@
                 </div>
 
                 <div class="form-group">
+                    <el-select v-model="form.asset" filterable placeholder="Asset Name">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="asset in assets"
+                            :key="asset.project_name"
+                            :label="asset.project_name"
+                            :value="asset.project_name"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
                     <el-select v-model="form.status" filterable placeholder="Status">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
@@ -58,10 +73,13 @@ export default {
             form: {
                 agreement_date: '',
                 investor: '',
-                status: 'active' // Default status is active
+                status: 'active',
+                asset: '',
+
             },
             showFilters: false,
-            investors: []
+            investors: [],
+            assets: []
         };
     },
     mounted() {
@@ -72,6 +90,7 @@ export default {
             (this.form.agreement_date && this.form.agreement_date.length > 0) ||
             this.form.investor ||
             this.form.status !== 'active'
+            || this.form.asset
         ) {
             this.showFilters = true;
         }
@@ -84,6 +103,7 @@ export default {
                 : '';
             this.form.investor = urlParams.get('investor') || '';
             this.form.status = urlParams.get('status') || 'active';
+            this.form.asset = urlParams.get('asset') || '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -94,6 +114,7 @@ export default {
             this.form.agreement_date = '';
             this.form.investor = '';
             this.form.status = 'active';
+            this.form.asset = '';
             this.applyFilters();
         },
         fetchRevenueFilters() {
@@ -104,6 +125,9 @@ export default {
                         let data = response.data.data;
                         if (data.investors) {
                             this.investors = data.investors;
+                        }
+                        if (data.assets) {
+                            this.assets = data.assets;
                         }
                     }
                 })

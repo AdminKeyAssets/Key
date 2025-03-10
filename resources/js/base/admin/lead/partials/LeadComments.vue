@@ -4,7 +4,8 @@
             <li v-for="comment in visibleComments" :key="comment.id"
                 :class="['comment-item',{ mine: comment.admin_id === userId }]">
                 <div class="comment-header">
-                    <span class="comment-user" v-if="comment.admin">{{ comment.admin.name }} {{
+                    <span class="comment-user" v-if="comment.admin && comment.author_name">{{ comment.author_name }}</span>
+                    <span class="comment-user" v-else-if="comment.admin">{{ comment.admin.name }} {{
                             comment.admin.surname
                         }}</span>
                     <span class="comment-user" v-else-if="comment.investor">{{

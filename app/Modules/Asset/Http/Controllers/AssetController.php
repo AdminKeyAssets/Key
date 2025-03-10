@@ -437,6 +437,7 @@ class AssetController extends BaseController
             'current_value' => $request->current_value ?? null,
             'current_value_currency' => $request->current_value_currency ?? 'USD',
             'renovation_agreement' => $renovationAgreementPath && $renovationAgreementPath !== 'null' ? $renovationAgreementPath : null,
+            'renovation_agreement_name' => $request->renovation_agreement_name,
             'renovation_agreement_date' => $request->renovation_agreement_date,
             'renovation_first_payment_date' => $request->renovation_first_payment_date ?? null,
             'renovation_period' => $request->renovation_period ?? null,
@@ -513,6 +514,7 @@ class AssetController extends BaseController
                         'currency' => $tenantData['currency'],
                         'prefix' => $tenantData['prefix'],
                         'asset_id' => $asset->id,
+                        'representative' => $tenantData['representative'],
                     ]);
 
                 Tenant::where('asset_id', $asset->id)
@@ -954,7 +956,7 @@ class AssetController extends BaseController
         // Group by project_name and get the latest asset (by max id) for each project
         $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
             ->groupBy('project_name')
-            ->orderByDesc('max_id')
+            ->orderBy('project_name')
             ->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);

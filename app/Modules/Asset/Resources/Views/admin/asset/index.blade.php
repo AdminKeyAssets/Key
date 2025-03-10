@@ -85,7 +85,11 @@
                                         @endforeach
                                     </td>
                                 @endif
-                                <td>{!! $item->type !!} - {!! $item->area !!} sq.m</td>
+                                <td>
+                                    @if($item->flat_number)
+                                        {!! $item->type !!} N{!! $item->flat_number !!} - {!! $item->area !!} sq.m
+                                    @endif
+                                </td>
                                 <td>{!! $item->agreement_status !!}</td>
                                 <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") . '$' : '' !!}</td>
                                 <td>{!! $item->asset_status == 'Rented' && count($item->rentals) && count($item->rentals->where('status', 0)) ? $item->rentals->where('status', 0)->first()->payment_date . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount,0,".",",") . '$' : '' !!}</td>
@@ -110,10 +114,10 @@
                                             @include('admin::includes.actions.renovation',['title' => 'Renovation Payments', 'route' => route($moduleKey . '.renovation.index', [ $item->id ])])
                                         @endif
                                     @endcan
-                                        @can(getPermissionKey($moduleKey, 'update', true))
-                                            <register-purchase-component :asset-id="{{ $item->id }}">
-                                            </register-purchase-component>
-                                        @endcan
+                                    @can(getPermissionKey($moduleKey, 'update', true))
+                                        <register-purchase-component :asset-id="{{ $item->id }}">
+                                        </register-purchase-component>
+                                    @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component
                                             :url="'{{ route($moduleKey . '.delete') }}'"

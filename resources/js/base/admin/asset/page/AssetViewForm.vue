@@ -116,7 +116,7 @@
                                         <el-row class="row-item" v-if="form.flat_number || form.area">
                                             <el-col :span="12">
                                                 <div v-if="form.flat_number" class="form-group">
-                                                    <label class="col-md-4 control-label">Flat number:</label>
+                                                    <label class="col-md-4 control-label">Unit number:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ form.flat_number }}
                                                     </div>
@@ -389,6 +389,17 @@
                                             </el-col>
                                         </el-row>
 
+                                        <el-row class="row-item"
+                                                v-if="form.tenant.representative">
+                                            <el-col :span="12">
+                                                <div class="form-group">
+                                                    <label class="col-md-4 control-label">Representative:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.tenant.representative }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
                                     </el-row>
 
                                     <el-row style="margin-top: 20px; " class="payments-wrapper row-item">
@@ -702,7 +713,9 @@
                                                     <div class="col-md-6 uppercase-medium">
                                                         <div>
                                                             <p>
-                                                                <a :href="form.renovation_agreement"
+                                                                <a v-if="form.renovation_agreement_name" :href="form.renovation_agreement"
+                                                                   target="_blank">{{ form.renovation_agreement_name }}</a>
+                                                                <a v-else :href="form.renovation_agreement"
                                                                    target="_blank">View Agreement</a></p>
                                                         </div>
                                                     </div>

@@ -35,7 +35,7 @@
                                 <div class="form-group dashed" v-if="form.status">
                                     <LeadStatusComponent :item="form"></LeadStatusComponent>
                                 </div>
-                                <div v-if="form.admin_id" class="form-group dashed">
+                                <div v-if="form.admin_id && managers.length" class="form-group dashed">
                                     <label class="col-md-1 control-label">Sales Manager: </label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{ selectedManager.name }} {{ selectedManager.surname }}

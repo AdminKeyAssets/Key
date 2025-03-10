@@ -82,6 +82,15 @@ class LeadController extends BaseController
             $query->where('leads.marketing_channel', '=', $request->marketing_channel);
         }
 
+        if ($request->has('status')) {
+            $status = $request->input('status');
+            if ($status !== 'all') {
+                $query->where('leads.status', $status);
+            }
+        } else {
+            $query->where('leads.status', '!=', 'archive');
+        }
+
         $this->baseData['allData'] = $query->paginate(50);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }

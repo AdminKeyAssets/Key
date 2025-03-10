@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -91,6 +92,11 @@ class RevenueController extends BaseController
         } else {
             $paginatedAssets = Asset::orderByDesc('id');
             $allAssets = Asset::orderByDesc('id');
+        }
+
+        if ($request->asset && $request->asset != 'all') {
+            $paginatedAssets->where('project_name', 'like', '%' . $request->asset . '%');
+            $allAssets->where('project_name', 'like', '%' . $request->asset . '%');
         }
 
 
@@ -204,16 +210,17 @@ class RevenueController extends BaseController
         $paginatedAssets = $user->assets()->orderByDesc('id');
 
         // Fetch all assets for totals calculation
-        $allAssets = $user->assets();
+        $allAssets = $user->assets()->orderByDesc('id');
 
-        if ($statusFilter !== 'all') {
+        $activeQuery = $user->assets()->orderByDesc('id')->where('sale_status', 'active');
+
+        if ($activeQuery->count() > 0){
             $paginatedAssets->where('sale_status', $statusFilter);
             $allAssets->where('sale_status', $statusFilter);
         }
-
-        if ($statusFilter === 'active' && !$allAssets->count()) {
-            $paginatedAssets->orWhere('sale_status', 'sold');
-            $allAssets->orWhere('sale_status', 'sold');
+        else{
+            $paginatedAssets->where('sale_status', 'sold');
+            $allAssets->where('sale_status', 'sold');
         }
 
         if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
@@ -416,11 +423,6 @@ class RevenueController extends BaseController
             // Set per-asset fields
             $asset->rent = $rent;
 
-            if($asset->sale_status !== 'sold'){
-                $asset->net_cache_balance = $rent - $otherInvestments;
-            }else{
-                $asset->net_cache_balance = $asset->sale_price + $rent - $allInvestments;
-            }
 
             if ($asset->agreement_status === 'Installments') {
                 $asset->total_investment = $paid + $allInvestments + $renovationPayments;
@@ -431,9 +433,11 @@ class RevenueController extends BaseController
             }
 
             if ($asset->sale_status !== 'sold') {
+                $asset->net_cache_balance = $asset->rent - $otherInvestments;
                 $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
             } else {
-                $asset->capital_gain = $asset->sale_price - ($asset->total_price + $renovationInvestment);
+                $asset->net_cache_balance = $asset->sale_price + $asset->rent - $asset->total_investment;
+                $asset->capital_gain = $asset->sale_price - $asset->total_investment;
             }
             $asset->other_investment = $otherInvestments;
             $asset->renovation = $renovationInvestment;
@@ -592,7 +596,7 @@ class RevenueController extends BaseController
                     $this->baseData['item']['total_investment'] = $totalInvestments;
                     $this->baseData['item']['net_cache_balance'] = $asset->sale_price + $rent - $totalInvestments;
 
-                    $this->baseData['item']['capital_gain'] = $asset->sale_price - ($asset->total_price + $renovationInvestment);
+                    $this->baseData['item']['capital_gain'] = $asset->sale_price - $totalInvestments;
 
                     $this->baseData['item']['other_investment'] = $otherInvestments;
                     $this->baseData['item']['renovation'] = $renovationInvestment;
@@ -646,6 +650,12 @@ class RevenueController extends BaseController
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
             }
         }
+
+        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }

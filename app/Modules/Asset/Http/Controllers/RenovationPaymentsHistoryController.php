@@ -15,6 +15,7 @@ use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\CurrentValue;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
+use App\Modules\Asset\Models\RenovationPayment;
 use App\Modules\Asset\Models\RenovationPaymentsHistory;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -127,6 +128,11 @@ class RenovationPaymentsHistoryController extends BaseController
                 'save' => route('asset.renovation.store', $assetId),
                 'edit' => route('asset.renovation.edit', $assetId, []),
             ];
+
+            $nextPayment = RenovationPayment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
+            $this->baseData['nextPayment'] = $nextPayment ? (float)$nextPayment->left_amount : 0;
+
+
             if ($request->get('id')) {
                 $payment = RenovationPaymentsHistory::where('id', $request->get('id'))->where('asset_id', $assetId)->first();
 

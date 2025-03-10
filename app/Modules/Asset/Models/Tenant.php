@@ -21,7 +21,9 @@ class Tenant extends Model
         'currency',
         'status',
         'passport',
-        'rent_agreement'
+        'rent_agreement',
+        'rent_end_date',
+        'representative',
     ];
 
     public function asset()

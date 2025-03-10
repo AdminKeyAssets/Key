@@ -10,6 +10,7 @@
                 <RenovationPaymentMain
                     :routes="routes"
                     :updateData="updateData"
+                    :next-payment="this.nextPayment"
                     :item="this.form && this.form ? this.form : undefined"
                 ></RenovationPaymentMain>
 
@@ -31,9 +32,10 @@
 import {responseParse} from '../../../mixins/responseParse'
 import {getData} from '../../../mixins/getData'
 import RenovationPaymentMain from "../partials/RenovationPaymentMain.vue";
+import PaymentMain from "../../payment/partials/PaymentMain.vue";
 
 export default {
-    components: {RenovationPaymentMain},
+    components: {PaymentMain, RenovationPaymentMain},
     props: [
         'getSaveDataRoute',
         'id'
@@ -49,7 +51,7 @@ export default {
             form: {
                 id: this.id
             },
-
+            nextPayment: 0
         }
     },
     created() {
@@ -84,6 +86,9 @@ export default {
 
                     if (data.item) {
                         this.form = data.item;
+                    }
+                    if(data.nextPayment){
+                        this.nextPayment = data.nextPayment;
                     }
                     this.form.id = this.id;
                 }
