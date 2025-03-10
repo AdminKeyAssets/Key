@@ -169,7 +169,7 @@ class AssetController extends BaseController
         if($userAssets->count() > 0){
             $this->baseData['allData'] = $userAssets->paginate(25);
         }else{
-            $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id');
+            $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
         }
 
 
