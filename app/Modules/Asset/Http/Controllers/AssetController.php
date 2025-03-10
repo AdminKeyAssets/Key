@@ -158,8 +158,12 @@ class AssetController extends BaseController
     {
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
-
-        $this->baseData['allData'] = $user->assets()->where('sale_status', 'active')->orderByDesc('id')->paginate(25);
+        $userAssets = $user->assets()->where('sale_status', 'active')->orderByDesc('id');
+        if($userAssets->count() > 0){
+            $this->baseData['allData'] = $userAssets->paginate(25);
+        }else{
+            $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id');
+        }
 
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
