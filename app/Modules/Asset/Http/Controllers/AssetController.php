@@ -117,7 +117,7 @@ class AssetController extends BaseController
             // The remaining parts are the surname
             $surname = implode(' ', $investorNamesArray);
 
-            $investorNamesArray = explode(' ', $request->investor);
+//            $investorNamesArray = explode(' ', $request->investor);
             $investorUser = Investor::where('name', $firstName)
                 ->where('surname', $surname)->first();
 
@@ -128,9 +128,38 @@ class AssetController extends BaseController
             }
         }
 
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+//            dd($managerUser->id);
+            if (isset($managerUser->id)) {
+                $query->where('admin_id', $managerUser->id);
+            }
+        }
+
         if ($request->asset && $request->asset != 'all') {
             $query->where('project_name', 'like', '%' . $request->asset . '%');
         }
+
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $query->where('type', $request->asset_type);
+        }
+
+        if ($request->asset_status && $request->asset_status != 'all') {
+            $query->where('asset_status', $request->asset_status);
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $query->where('agreement_status', $request->agreement_status);
+        }
+
 
         if ($request->create_date) {
             $createdDates = explode(',', $request->create_date);
@@ -166,9 +195,9 @@ class AssetController extends BaseController
             $userAssets->where('sale_status', $statusFilter);
         }
 
-        if($userAssets->count() > 0){
+        if ($userAssets->count() > 0) {
             $this->baseData['allData'] = $userAssets->paginate(25);
-        }else{
+        } else {
             $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
         }
 
@@ -866,8 +895,8 @@ class AssetController extends BaseController
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
-                'investments_route' =>route('asset.investment.index', [$asset->id]),
-                'renovation_route' =>  $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
+                'investments_route' => route('asset.investment.index', [$asset->id]),
+                'renovation_route' => $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
                 'asset_id' => $asset->id
             ];
@@ -958,6 +987,9 @@ class AssetController extends BaseController
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
                 $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+                $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                    $query->where('name', 'like', '%asset%manager%');
+                })->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
             }
@@ -982,7 +1014,7 @@ class AssetController extends BaseController
             $originalFileName = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('uploads', $originalFileName, 'public');
             $path = Storage::url($path);
-        }elseif (is_string($request->sale_agreement)) {
+        } elseif (is_string($request->sale_agreement)) {
             $path = $request->sale_agreement;
         }
         Asset::where('id', $assetId)->first()->update([

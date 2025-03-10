@@ -57,6 +57,7 @@
                     </el-select>
                 </div>
 
+
                 <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
                 <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>

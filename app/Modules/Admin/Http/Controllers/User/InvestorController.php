@@ -381,7 +381,7 @@ class InvestorController extends BaseController
     {
         Investor::where('id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
         Asset::whereHas('investors', function ($query) use ($request) {
-            $query->where('id', $request->id);
+            $query->where('id', $request->investor_id);
         })->update(['admin_id' => $request->manager_id]);
 
 //        Asset::where('investor_id', $request->investor_id)->update(['admin_id' => $request->manager_id]);

@@ -58,6 +58,50 @@
                     </el-select>
                 </div>
 
+                <div class="form-group">
+                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="manager in managers"
+                            :key="manager.name + ' ' + manager.surname"
+                            :label="manager.name + ' ' + manager.surname"
+                            :value="manager.name + ' ' + manager.surname"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.asset_status" filterable placeholder="Asset Status">
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Vacant" value="Vacant"></el-option>
+                        <el-option label="Under Renovation" value="Under Renovation"></el-option>
+                        <el-option label="Under Construction" value="Under Construction"></el-option>
+                        <el-option label="Rented" value="Rented"></el-option>
+                    </el-select>
+                </div>
+                <div class="form-group">
+                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type">
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Flat" value="Flat"></el-option>
+                        <el-option label="Land" value="Land"></el-option>
+                        <el-option label="Office" value="Office"></el-option>
+                        <el-option label="Commercial Space" value="Commercial Space"></el-option>
+                        <el-option label="Villa" value="Villa"></el-option>
+                        <el-option label="Parking" value="Parking"></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status">
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Complete" value="Complete"></el-option>
+                        <el-option label="Installments" value="Installments"></el-option>
+                    </el-select>
+                </div>
+
                 <!-- Apply Filters Button -->
                 <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
 
@@ -78,10 +122,15 @@ export default {
                 agreement_date: '',
                 investor: '',
                 asset: '',
+                manager: '',
+                asset_status: '',
+                asset_type: '',
+                agreement_status: ''
             },
             showFilters: false,
             investors: [],
-            assets: []
+            assets: [],
+            managers: [],
         };
     },
     mounted() {
@@ -98,6 +147,10 @@ export default {
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
             this.form.asset = urlParams.get('asset') || '';
+            this.form.asset_status = urlParams.get('asset_status') || '';
+            this.form.asset_type = urlParams.get('asset_type') || '';
+            this.form.agreement_status = urlParams.get('agreement_status') || '';
+            this.form.manager = urlParams.get('manager') || '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -109,6 +162,10 @@ export default {
             this.form.agreement_date = '';
             this.form.investor = '';
             this.form.asset = '';
+            this.form.asset_status = '';
+            this.form.asset_type = '';
+            this.form.agreement_status = '';
+            this.form.manager = '';
             this.applyFilters(); // Optionally, automatically apply the cleared filters
         },
 
@@ -124,6 +181,9 @@ export default {
                         }
                         if (data.assets) {
                             this.assets = data.assets;
+                        }
+                        if (data.managers) {
+                            this.managers = data.managers;
                         }
                     }
                 })
