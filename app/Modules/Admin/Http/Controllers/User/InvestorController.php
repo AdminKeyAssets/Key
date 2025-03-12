@@ -361,7 +361,7 @@ class InvestorController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = $request->only(['email', 'phone']);
+        $filters = $request->only(['search', 'assets', 'create_date', 'citizenship', 'manager']);
         return Excel::download(new InvestorsExport($filters), 'investors.xlsx');
     }
 

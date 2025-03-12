@@ -15,8 +15,11 @@ export default {
         return {
             investors: {},
             filters: {
-                email: '',
-                phone: ''
+                search: '',
+                assets: '',
+                create_date: '',
+                citizenship: '',
+                manager: '',
             }
         };
     },
@@ -37,7 +40,16 @@ export default {
             } catch (error) {
                 console.error('Error exporting investors:', error);
             }
-        }
+        },
+
+        loadFiltersFromQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.filters.search = urlParams.get('search') || '';
+            this.filters.assets = urlParams.get('assets') || '';
+            this.filters.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
+            this.filters.citizenship = urlParams.get('citizenship') || '';
+            this.filters.manager = urlParams.get('manager') || '';
+        },
     },
 };
 </script>

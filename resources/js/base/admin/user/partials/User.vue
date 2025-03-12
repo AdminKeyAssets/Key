@@ -16,8 +16,9 @@ export default {
         return {
             investors: {},
             filters: {
-                email: '',
-                phone: ''
+                search: '',
+                role: '',
+                create_date: '',
             }
         };
     },
@@ -25,6 +26,9 @@ export default {
 
         async exportInvestors() {
             try {
+
+                this.loadFiltersFromQueryParams();
+
                 const response = await axios.get('/admin/users/export', {
                     params: this.filters,
                     responseType: 'blob'
@@ -38,6 +42,12 @@ export default {
             } catch (error) {
                 console.error('Error exporting investors:', error);
             }
+        },
+        loadFiltersFromQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.filters.search = urlParams.get('search') || '';
+            this.filters.role = urlParams.get('role') || '';
+            this.filters.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
         }
     },
 };

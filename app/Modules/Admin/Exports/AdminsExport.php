@@ -33,6 +33,27 @@ class AdminsExport implements FromCollection, WithHeadings, WithColumnFormatting
             $query->where('phone', 'like', '%' . $this->filters['phone'] . '%');
         }
 
+        if (!empty($this->filters['create_date'])) {
+            $createdDates = explode(',', $this->filters['create_date']);
+            if (isset($createdDates[0])) {
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        if (!empty($this->filters['role'])) {
+            $role = $this->filters['role'];
+            $query->whereHas('roles', function ($roleQuery) use ($role) {
+                $roleQuery->where('name', '=', $role);
+            });
+        }
+
+        if (!empty($this->filters['search'])) {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+        }
+
         $admins = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'created_at')->get();
 
         $admins->transform(function ($admin) {

@@ -177,7 +177,7 @@ class UserController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = $request->only(['email', 'phone']);
+        $filters = $request->only(['search', 'role', 'create_date']);
         return Excel::download(new AdminsExport($filters), 'users.xlsx');
     }
 
