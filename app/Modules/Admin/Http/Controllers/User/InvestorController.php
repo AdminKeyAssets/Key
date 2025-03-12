@@ -107,7 +107,7 @@ class InvestorController extends BaseController
             }
         }
 
-        if ($request->search) {
+        if ($request->search && $request->search != 'all') {
             $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
@@ -340,7 +340,7 @@ class InvestorController extends BaseController
             if (auth()->user()->id == $request->get('id')) {
                 throw new \Exception('You are not allowed to delete this user!');
             }
-            $investor = Investor::where('id',$request->id)->first();
+            $investor = Investor::where('id', $request->id)->first();
             $investorAssets = Asset::whereHas('investors', function ($query) use ($investor) {
                 $query->where('id', $investor->id);
             })->get();
@@ -374,6 +374,18 @@ class InvestorController extends BaseController
             ->orderBy('name')
             ->orderBy('surname')
             ->get();
+
+
+        if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['investors'] = Investor::orderBy('name')
+                ->orderBy('surname')
+                ->get();
+        } else {
+            $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                ->orderBy('name')
+                ->orderBy('surname')
+                ->get();
+        }
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }

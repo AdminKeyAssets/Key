@@ -13,11 +13,18 @@
             <el-row>
                 <!-- Name search input -->
                 <div class="form-group">
-                    <el-input
-                        v-model="form.search"
-                        placeholder="Search by Name"
-                        clearable>
-                    </el-input>
+                    <el-select v-model="form.search" filterable placeholder="Investor">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="lead in leads"
+                            :key="lead.name + ' ' + lead.surname"
+                            :label="lead.name + ' ' + lead.surname"
+                            :value="lead.name + ' ' + lead.surname"
+                        ></el-option>
+                    </el-select>
                 </div>
 
                 <div class="form-group">
@@ -89,7 +96,7 @@
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
     props: {
@@ -109,6 +116,7 @@ export default {
                 communication_status: ''
             },
             managers: [],
+            leads: [],
             marketingChannels: [],
             showFilters: false,
         };
@@ -160,6 +168,9 @@ export default {
                         const data = response.data.data;
                         if (data.managers) {
                             this.managers = data.managers;
+                        }
+                        if (data.leads) {
+                            this.leads = data.leads;
                         }
                         if (data.marketingChannels) {
                             this.marketingChannels = data.marketingChannels;

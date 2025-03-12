@@ -62,7 +62,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             $query->where('status', '=', $this->filters['communication_status']);
         }
 
-        if (!empty($this->filters['search'])) {
+        if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
             $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
         }
 

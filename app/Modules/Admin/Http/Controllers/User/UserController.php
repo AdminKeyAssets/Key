@@ -91,8 +91,8 @@ class UserController extends BaseController
             });
         }
 
-        if ($request->search) {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+        if ($request->search && $request->search != 'all') {
+            $query->whereRaw("CONCAT_WS(' ', name, surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -184,6 +184,9 @@ class UserController extends BaseController
     public function filterOptions()
     {
         $this->baseData['roles'] = Role::get('name');
+        $this->baseData['users'] = Admin::orderBy('name')
+            ->orderBy('surname')
+            ->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }

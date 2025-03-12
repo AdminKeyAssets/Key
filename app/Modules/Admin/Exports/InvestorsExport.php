@@ -63,7 +63,7 @@ class InvestorsExport implements FromCollection, WithHeadings, WithEvents
             }
         }
 
-        if (!empty($this->filters['search'])) {
+        if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
             $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
         }
 

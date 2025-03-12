@@ -69,17 +69,10 @@ class RevenueController extends BaseController
         $statusFilter = $request->status ?? 'active';
 
         $userId = $user->getAuthIdentifier();
+
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
-        if (Auth::guard('investor')->check()) {
-            $paginatedAssets = Asset::whereHas('investors', function ($query) use ($userId) {
-                $query->where('id', $userId);
-            })->orderByDesc('id');
-
-            $allAssets = Asset::whereHas('investors', function ($query) use ($userId) {
-                $query->where('id', $userId);
-            });
-        } else if (in_array($user->getRolesNameAttribute(), $managers)) {
+        if (in_array($user->getRolesNameAttribute(), $managers)) {
             $investors = Investor::where('admin_id', $userId)->pluck('id')->toArray();
 
             $paginatedAssets = Asset::whereHas('investors', function ($query) use ($investors) {
@@ -122,10 +115,6 @@ class RevenueController extends BaseController
             }
         }
 
-        if ($request->asset && $request->asset != 'all') {
-            $paginatedAssets->where('project_name', 'like', '%' . $request->asset . '%');
-            $allAssets->where('project_name', 'like', '%' . $request->asset . '%');
-        }
 
         if ($request->asset_type && $request->asset_type != 'all') {
             $paginatedAssets->where('type', $request->asset_type);
@@ -501,7 +490,16 @@ class RevenueController extends BaseController
      */
     public function export(Request $request)
     {
-        $filters = $request->only(['agreement_date']);
+        $filters = $request->only([
+            'agreement_date',
+            'investor',
+            'status',
+            'asset',
+            'manager',
+            'asset_status',
+            'asset_type',
+            'agreement_status',
+            ]);
         return Excel::download(new RevenueExport($filters), 'revenues.xlsx');
     }
 

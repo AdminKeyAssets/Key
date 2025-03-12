@@ -50,8 +50,8 @@ class AdminsExport implements FromCollection, WithHeadings, WithColumnFormatting
             });
         }
 
-        if (!empty($this->filters['search'])) {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+        if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
+            $query->whereRaw("CONCAT_WS(' ', name, surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
         }
 
         $admins = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'created_at')->get();

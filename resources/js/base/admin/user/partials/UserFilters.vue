@@ -11,11 +11,19 @@
             <el-row>
                 <!-- Search Box -->
                 <div class="form-group">
-                    <el-input
-                        v-model="form.search"
-                        placeholder="Search Users"
-                        clearable>
-                    </el-input>
+                    <el-select v-model="form.search" filterable placeholder="User Names">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="user in users"
+                            :key="user.name + (user.surname ? ' ' + user.surname : '')"
+                            :label="user.name + (user.surname ? ' ' + user.surname : '')"
+                            :value="user.name + (user.surname ? ' ' + user.surname : '')"
+                        ></el-option>
+
+                    </el-select>
                 </div>
 
                 <div class="form-group">
@@ -58,6 +66,7 @@ export default {
                 create_date: '',
             },
             roles: [],
+            users: [],
             showFilters: false,
         };
     },
@@ -91,6 +100,9 @@ export default {
                         let data = response.data.data;
                         if (data.roles) {
                             this.roles = data.roles;
+                        }
+                        if (data.users) {
+                            this.users = data.users;
                         }
                     }
                 })

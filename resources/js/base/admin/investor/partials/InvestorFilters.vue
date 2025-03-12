@@ -13,11 +13,18 @@
             <el-row>
                 <!-- Search Input -->
                 <div class="form-group">
-                    <el-input
-                        v-model="form.search"
-                        placeholder="Search Investor"
-                        clearable>
-                    </el-input>
+                    <el-select v-model="form.search" filterable placeholder="Investor">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="investor in investors"
+                            :key="investor.name + ' ' + investor.surname"
+                            :label="investor.name + ' ' + investor.surname"
+                            :value="investor.name + ' ' + investor.surname"
+                        ></el-option>
+                    </el-select>
                 </div>
 
                 <div class="form-group">
@@ -83,6 +90,7 @@ export default {
             },
             countries: [],
             managers: [],
+            investors: [],
             showFilters: false, // Controls the visibility of the filters, initially hidden
         };
     },
@@ -125,6 +133,10 @@ export default {
                         }
                         if (data.managers) {
                             this.managers = data.managers;
+                        }
+
+                        if (data.investors) {
+                            this.investors = data.investors;
                         }
                     }
                 })

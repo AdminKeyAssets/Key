@@ -16,6 +16,13 @@ export default {
             investors: {},
             filters: {
                 agreement_date: '',
+                investor: '',
+                status: 'active',
+                asset: '',
+                manager: '',
+                asset_status: '',
+                asset_type: '',
+                agreement_status: ''
             }
         };
     },
@@ -23,6 +30,7 @@ export default {
 
         async exportInvestors() {
             try {
+                this.loadFiltersFromQueryParams();
                 const response = await axios.get('/assets/revenues/export', {
                     params: this.filters,
                     responseType: 'blob'
@@ -36,7 +44,20 @@ export default {
             } catch (error) {
                 console.error('Error exporting revenues:', error);
             }
-        }
+        },
+        loadFiltersFromQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.filters.agreement_date = urlParams.get('agreement_date')
+                ? urlParams.get('agreement_date').split(',')
+                : '';
+            this.filters.investor = urlParams.get('investor') || '';
+            this.filters.status = urlParams.get('status') || 'active';
+            this.filters.asset = urlParams.get('asset') || '';
+            this.filters.asset_status = urlParams.get('asset_status') || '';
+            this.filters.asset_type = urlParams.get('asset_type') || '';
+            this.filters.agreement_status = urlParams.get('agreement_status') || '';
+            this.filters.manager = urlParams.get('manager') || '';
+        },
     },
 };
 </script>

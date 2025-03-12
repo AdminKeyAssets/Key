@@ -94,7 +94,7 @@ class LeadController extends BaseController
             $query->where('leads.status', '=', $request->communication_status);
         }
 
-        if ($request->search) {
+        if ($request->search && $request->search != 'all') {
             $query->whereRaw("CONCAT(leads.name, ' ', leads.surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
@@ -302,8 +302,14 @@ class LeadController extends BaseController
             ->get();
 
         if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['leads'] = Lead::orderBy('name')
+                ->orderBy('surname')
+                ->get();
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
         } else {
+            $this->baseData['leads'] = Lead::where('admin_id', '=', \Auth::user()->getAuthIdentifier())->orderBy('name')
+                ->orderBy('surname')
+                ->get();
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)
                 ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
         }
