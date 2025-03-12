@@ -162,8 +162,9 @@ class AssetController extends BaseController
         }
 
 
-        if ($request->create_date) {
-            $createdDates = explode(',', $request->create_date);
+        if ($request->agreement_date) {
+            $createdDates = explode(',', $request->agreement_date);
+
             if (isset($createdDates[0])) {
                 $query->where('agreement_date', '>=', $createdDates[0]);
             }
