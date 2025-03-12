@@ -82,13 +82,20 @@ class LeadController extends BaseController
             $query->where('leads.marketing_channel', '=', $request->marketing_channel);
         }
 
-        if ($request->has('status')) {
-            $status = $request->input('status');
-            if ($status !== 'all') {
-                $query->where('leads.status', $status);
-            }
-        } else {
-            $query->where('leads.status', '!=', 'archive');
+
+        if ($request->has('status') && $request->input('status') === 'archieve') {
+            $query->where('leads.status', 'archieve');
+        }
+        elseif ($request->has('status') && $request->input('status') === 'active') {
+            $query->where('leads.status', '!=', 'archieve');
+        }
+
+        if ($request->communication_status && $request->communication_status != 'all') {
+            $query->where('leads.status', '=', $request->communication_status);
+        }
+
+        if ($request->search) {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
         $this->baseData['allData'] = $query->paginate(50);
@@ -142,7 +149,7 @@ class LeadController extends BaseController
         if (auth()->user()->getRolesNameAttribute() === 'administrator') {
             $request->validate([
                 'admin_id' => 'required',
-            ],[
+            ], [
                 'admin_id.required' => 'Please select a Manager.',
             ]);
         }

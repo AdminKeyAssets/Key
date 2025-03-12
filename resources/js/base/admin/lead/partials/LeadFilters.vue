@@ -11,6 +11,15 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
+                <!-- Name search input -->
+                <div class="form-group">
+                    <el-input
+                        v-model="form.search"
+                        placeholder="Search by Name"
+                        clearable>
+                    </el-input>
+                </div>
+
                 <div class="form-group">
                     <el-date-picker
                         v-model="form.create_date"
@@ -53,10 +62,22 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                    <el-select v-model="form.status" filterable placeholder="Lead Status">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Archieve" value="archieve"></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.communication_status" filterable placeholder="Communication Status">
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="New" value="New"></el-option>
+                        <el-option label="Not Responding" value="Not Responding"></el-option>
+                        <el-option label="Communication" value="Communication"></el-option>
+                        <el-option label="Proposal Sent" value="Proposal Sent"></el-option>
+                        <el-option label="Refused" value="Refused"></el-option>
+                        <el-option label="Signed" value="Signed"></el-option>
                     </el-select>
                 </div>
 
@@ -68,7 +89,7 @@
 </template>
 
 <script>
-import {responseParse} from "../../../mixins/responseParse";
+import { responseParse } from "../../../mixins/responseParse";
 
 export default {
     props: {
@@ -80,9 +101,12 @@ export default {
     data() {
         return {
             form: {
+                search: '',
                 create_date: '',
                 manager: '',
-                marketing_channel: ''
+                marketing_channel: '',
+                status: '',
+                communication_status: ''
             },
             managers: [],
             marketingChannels: [],
@@ -96,16 +120,20 @@ export default {
         if ((this.form.create_date && this.form.create_date.length > 0) ||
             this.form.manager ||
             this.form.marketing_channel ||
-            this.form.status !== 'active') {
+            this.form.communication_status ||
+            this.form.status !== 'active' ||
+            this.form.search) {
             this.showFilters = true;
         }
     },
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
+            this.form.search = urlParams.get('search') || '';
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.manager = urlParams.get('manager') || '';
             this.form.marketing_channel = urlParams.get('marketing_channel') || '';
+            this.form.communication_status = urlParams.get('communication_status') || '';
             this.form.status = urlParams.get('status') || 'active';
         },
         applyFilters() {
@@ -115,11 +143,13 @@ export default {
 
         // Method to clear the filters
         clearFilters() {
+            this.form.search = '';
             this.form.create_date = '';
             this.form.manager = '';
             this.form.marketing_channel = '';
-            this.applyFilters(); // Optionally apply cleared filters
+            this.form.communication_status = '';
             this.form.status = 'active';
+            this.applyFilters(); // Optionally apply cleared filters
         },
 
         fetchLeadFilters() {
@@ -128,7 +158,6 @@ export default {
                     responseParse(response, false);
                     if (response.status === 200) {
                         const data = response.data.data;
-
                         if (data.managers) {
                             this.managers = data.managers;
                         }

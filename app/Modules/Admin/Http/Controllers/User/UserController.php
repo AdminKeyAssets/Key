@@ -76,10 +76,10 @@ class UserController extends BaseController
 
         if ($request->create_date) {
             $createdDates = explode(',', $request->create_date);
-            if(isset($createdDates[0])){
+            if (isset($createdDates[0])) {
                 $query->where('created_at', '>=', $createdDates[0]);
             }
-            if(isset($createdDates[1])){
+            if (isset($createdDates[1])) {
                 $query->where('created_at', '<=', $createdDates[1]);
             }
         }
@@ -89,6 +89,10 @@ class UserController extends BaseController
             $query->whereHas('roles', function ($roleQuery) use ($role) {
                 $roleQuery->where('name', '=', $role);
             });
+        }
+
+        if ($request->search) {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
         $this->baseData['allData'] = $query->paginate();

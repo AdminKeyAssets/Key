@@ -101,7 +101,9 @@ class AssetController extends BaseController
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
         $query = Asset::query();
-        $query->where('sale_status', 'active');
+//        $query->where('sale_status', 'active');
+
+        $statusFilter = $request->status ?? 'active';
 
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
@@ -163,11 +165,15 @@ class AssetController extends BaseController
         if ($request->create_date) {
             $createdDates = explode(',', $request->create_date);
             if (isset($createdDates[0])) {
-                $query->where('created_at', '>=', $createdDates[0]);
+                $query->where('agreement_date', '>=', $createdDates[0]);
             }
             if (isset($createdDates[1])) {
-                $query->where('created_at', '<=', $createdDates[1]);
+                $query->where('agreement_date', '<=', $createdDates[1]);
             }
+        }
+
+        if ($statusFilter !== 'all') {
+            $query->where('sale_status', $statusFilter);
         }
 
         // Order by descending asset ID

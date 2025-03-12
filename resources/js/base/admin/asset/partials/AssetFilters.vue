@@ -59,6 +59,14 @@
                 </div>
 
                 <div class="form-group">
+                    <el-select v-model="form.status" filterable placeholder="Status">
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Active" value="active"></el-option>
+                        <el-option label="Sold" value="sold"></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
                     <el-select v-model="form.manager" filterable placeholder="Manager">
                         <el-option
                             label="All"
@@ -121,6 +129,7 @@ export default {
             form: {
                 agreement_date: '',
                 investor: '',
+                status: 'active',
                 asset: '',
                 manager: '',
                 asset_status: '',
@@ -138,6 +147,7 @@ export default {
         this.fetchRevenueFilters();
 
         if (this.form.agreement_date || this.form.investor || this.form.asset
+            || this.form.status !== 'active'
             || this.form.asset_type
             || this.form.asset_status
             || this.form.manager
@@ -155,6 +165,7 @@ export default {
             this.form.asset_type = urlParams.get('asset_type') || '';
             this.form.agreement_status = urlParams.get('agreement_status') || '';
             this.form.manager = urlParams.get('manager') || '';
+            this.form.status = urlParams.get('status') || 'active';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -170,6 +181,8 @@ export default {
             this.form.asset_type = '';
             this.form.agreement_status = '';
             this.form.manager = '';
+            this.form.status = 'active';
+
             this.applyFilters(); // Optionally, automatically apply the cleared filters
         },
 

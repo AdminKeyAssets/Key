@@ -78,11 +78,8 @@ class InvestorController extends BaseController
         }
         if ($request->assets) {
             $assetsCount = $request->assets;
-            $query->whereHas('assets', function ($query) use ($assetsCount) {
-                if ($assetsCount > 0) {
-                    $query->havingRaw('COUNT(*) = ?', [$assetsCount]);
-                }
-            });
+            $query->withCount('assets')
+                ->having('assets_count', '=', $assetsCount);
         }
 
         if ($request->create_date) {
@@ -95,13 +92,23 @@ class InvestorController extends BaseController
             }
         }
 
-        if ($request->manager) {
-            $managerName = $request->manager;
-            $query->whereHas('admin', function ($query) use ($managerName) {
-                $query->whereHas('roles', function ($roleQuery) use ($managerName) {
-                    $roleQuery->where('name', '=', $managerName);
-                });
-            });
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            if (isset($managerUser->id)) {
+                $query->where('admin_id', $managerUser->id);
+            }
+        }
+
+        if ($request->search) {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -360,7 +367,7 @@ class InvestorController extends BaseController
 
     public function filterOptions()
     {
-        $this->baseData['countries'] = Country::get('country');
+        $this->baseData['countries'] = Investor::distinct()->pluck('citizenship');
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
         })->get();
