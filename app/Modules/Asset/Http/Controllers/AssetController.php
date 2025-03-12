@@ -992,12 +992,19 @@ class AssetController extends BaseController
         $this->baseData['investors'] = [];
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
                 $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
                     $query->where('name', 'like', '%asset%manager%');
-                })->get();
+                })->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
             } else {
-                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
                 $this->baseData['managers'] = [];
             }
         }

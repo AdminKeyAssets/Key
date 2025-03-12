@@ -72,9 +72,9 @@
                 <div class="form-group">
                     <el-select v-model="form.communication_status" filterable placeholder="Communication Status">
                         <el-option label="All" value="all"></el-option>
+                        <el-option label="Communication" value="Communication"></el-option>
                         <el-option label="New" value="New"></el-option>
                         <el-option label="Not Responding" value="Not Responding"></el-option>
-                        <el-option label="Communication" value="Communication"></el-option>
                         <el-option label="Proposal Sent" value="Proposal Sent"></el-option>
                         <el-option label="Refused" value="Refused"></el-option>
                         <el-option label="Signed" value="Signed"></el-option>

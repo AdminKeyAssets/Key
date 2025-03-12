@@ -252,11 +252,10 @@ class RevenueController extends BaseController
 
         $activeQuery = $user->assets()->orderByDesc('id')->where('sale_status', 'active');
 
-        if ($activeQuery->count() > 0){
+        if ($activeQuery->count() > 0) {
             $paginatedAssets->where('sale_status', $statusFilter);
             $allAssets->where('sale_status', $statusFilter);
-        }
-        else{
+        } else {
             $paginatedAssets->where('sale_status', 'sold');
             $allAssets->where('sale_status', 'sold');
         }
@@ -683,12 +682,20 @@ class RevenueController extends BaseController
         $this->baseData['investors'] = [];
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
                 $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
                     $query->where('name', 'like', '%asset%manager%');
-                })->get();
+                })
+                    ->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
             } else {
-                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
                 $this->baseData['managers'] = [];
             }
         }

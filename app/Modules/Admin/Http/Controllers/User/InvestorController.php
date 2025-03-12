@@ -367,10 +367,13 @@ class InvestorController extends BaseController
 
     public function filterOptions()
     {
-        $this->baseData['countries'] = Investor::distinct()->pluck('citizenship');
+        $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
-        })->get();
+        })
+            ->orderBy('name')
+            ->orderBy('surname')
+            ->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
