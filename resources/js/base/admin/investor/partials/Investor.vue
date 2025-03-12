@@ -27,6 +27,8 @@ export default {
 
         async exportInvestors() {
             try {
+                this.loadFiltersFromQueryParams();
+
                 const response = await axios.get('/admin/investors/export', {
                     params: this.filters,
                     responseType: 'blob'

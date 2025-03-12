@@ -95,7 +95,7 @@ class LeadController extends BaseController
         }
 
         if ($request->search) {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            $query->whereRaw("CONCAT(leads.name, ' ', leads.surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
         $this->baseData['allData'] = $query->paginate(50);
@@ -319,7 +319,8 @@ class LeadController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = [];
+        $filters = $request->only(['search', 'create_date', 'manager', 'marketing_channel', 'status', 'communication_status']);
+
         return Excel::download(new LeadsExport($filters), 'leads.xlsx');
     }
 

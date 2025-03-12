@@ -24,6 +24,48 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
     {
         $query = Lead::query();
 
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        if (!empty($this->filters['create_date'])) {
+            $createdDates = explode(',', $this->filters['create_date']);
+
+            if (isset($createdDates[0])) {
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        if (!empty($this->filters['manager']) && $this->filters['manager'] != 'all') {
+            $managerNamesArray = explode(' ', $this->filters['manager']);
+            $managerUser = Admin::where('name', $managerNamesArray[0])
+                ->where('surname', $managerNamesArray[1])->first();
+            $query->where('admin_id', '=', $managerUser->id);
+        }
+
+        if (!empty($this->filters['marketing_channel']) && $this->filters['marketing_channel'] != 'all') {
+            $query->where('marketing_channel', '=', $this->filters['marketing_channel']);
+        }
+
+
+        if (!empty($this->filters['status']) && $this->filters['status'] === 'archieve') {
+            $query->where('status', 'archieve');
+        }
+        elseif (!empty($this->filters['status']) && $this->filters['status'] === 'active') {
+            $query->where('status', '!=', 'archieve');
+        }
+
+        if (!empty($this->filters['communication_status']) && $this->filters['communication_status'] != 'all') {
+            $query->where('status', '=', $this->filters['communication_status']);
+        }
+
+        if (!empty($this->filters['search'])) {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+        }
+
         $leads = $query->select(
             'name',
             'surname',

@@ -273,7 +273,7 @@ class SaleController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = [];
+        $filters = $request->only(['agreement_date', 'manager', 'marketing_channel', 'status']);
         return Excel::download(new SalesExport($filters), 'sales.xlsx');
     }
 

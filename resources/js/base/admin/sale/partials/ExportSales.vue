@@ -14,13 +14,20 @@ export default {
     data() {
         return {
             sales: {},
-            filters: {}
+            filters: {
+                agreement_date: '',
+                manager: '',
+                marketing_channel: '',
+                status: '',
+            }
         };
     },
     methods: {
 
         async exportSales() {
             try {
+                this.loadFiltersFromQueryParams();
+
                 const response = await axios.get('/sale/export', {
                     params: this.filters,
                     responseType: 'blob'
@@ -34,7 +41,14 @@ export default {
             } catch (error) {
                 console.error('Error exporting sales:', error);
             }
-        }
+        },
+        loadFiltersFromQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.filters.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
+            this.filters.manager = urlParams.get('manager') || '';
+            this.filters.status = urlParams.get('status') || '';
+            this.filters.marketing_channel = urlParams.get('marketing_channel') || '';
+        },
     },
 };
 </script>
