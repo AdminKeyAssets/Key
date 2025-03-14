@@ -237,16 +237,13 @@ class AssetController extends BaseController
                 $asset = Asset::findOrFail($request->get('id'));
 
                 $salesManager = null;
-                $nextPayment = null;
 
                 if ($asset->investors->isNotEmpty()) {
                     $investor = $asset->investors->first();
                     $salesManager = Admin::find($investor->admin_id);
                 }
 
-                if ($asset->payments) {
-                    $nextPayment = $asset->payments->where('status', 0)->first();
-                }
+
 
                 $this->baseData['item'] = $asset;
                 $investors = $asset->investors;
@@ -274,7 +271,6 @@ class AssetController extends BaseController
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
                 $this->baseData['salesManager'] = $salesManager;
-                $this->baseData['nextPayment'] = $nextPayment;
 
                 $files = [];
                 if ($asset->attachments) {
@@ -957,7 +953,7 @@ class AssetController extends BaseController
             $paymentDate = $firstPaymentDate->copy()->addMonths($i);
             $payments[] = [
                 'number' => $i + 1,
-                'date' => $paymentDate->toDateString(),
+                'date' => $paymentDate->format('Y/m/d'),
                 'amount' => $amountPerPeriod
             ];
         }

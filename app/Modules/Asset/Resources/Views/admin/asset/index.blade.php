@@ -96,8 +96,55 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->agreement_status !!}</td>
-                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") . '$' : '' !!}</td>
-                                <td>{!! $item->asset_status == 'Rented' && count($item->rentals) && count($item->rentals->where('status', 0)) ? $item->rentals->where('status', 0)->first()->payment_date . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount,0,".",",") . '$' : '' !!}</td>
+
+                                <td>
+                                    {!!
+                                        $item->agreement_status == 'Installments'
+                                        && count($item->payments)
+                                        && count($item->payments->where('status', 0))
+                                        ? (
+                                            strtotime($item->payments->where('status', 0)->first()->payment_date) < time()
+                                            ?
+                                                // Overdue: display formatted overdue date & sum of overdue left_amount
+                                                \Carbon\Carbon::parse($item->payments->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                . ' - ' . number_format(
+                                                    $item->payments->where('status', 0)
+                                                        ->filter(function($payment) {
+                                                            return strtotime($payment->payment_date) < time();
+                                                        })->sum('left_amount'), 0, ".", ",") . '$'
+                                            :
+                                                // Not overdue: display the first record's payment_date and left_amount
+                                                $item->payments->where('status', 0)->first()->payment_date
+                                                . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount, 0, ".", ",") . '$'
+                                          )
+                                        : ''
+                                    !!}
+                                </td>
+
+
+                                <td>
+                                    {!!
+                                        $item->asset_status == 'Rented'
+                                        && count($item->rentals)
+                                        && count($item->rentals->where('status', 0))
+                                        ? (
+                                            strtotime($item->rentals->where('status', 0)->first()->payment_date) < time()
+                                            ?
+                                                // Overdue: display formatted overdue date & sum of overdue left_amount
+                                                \Carbon\Carbon::parse($item->rentals->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                . ' - ' . number_format(
+                                                    $item->rentals->where('status', 0)
+                                                        ->filter(function($rental) {
+                                                            return strtotime($rental->payment_date) < time();
+                                                        })->sum('left_amount'), 0, ".", ",") . '$'
+                                            :
+                                                // Not overdue: display the first record's payment_date and left_amount
+                                                $item->rentals->where('status', 0)->first()->payment_date
+                                                . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 0, ".", ",") . '$'
+                                          )
+                                        : ''
+                                    !!}
+                                </td>
 
 
                                 <td class="text-center">
