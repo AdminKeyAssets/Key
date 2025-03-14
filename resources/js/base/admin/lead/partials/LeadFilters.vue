@@ -13,7 +13,7 @@
             <el-row>
                 <!-- Name search input -->
                 <div class="form-group">
-                    <el-select v-model="form.search" filterable placeholder="Investor">
+                    <el-select v-model="form.search" filterable placeholder="Name">
                         <el-option
                             label="All"
                             value="all"

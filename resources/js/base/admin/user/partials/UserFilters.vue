@@ -49,6 +49,8 @@
                 </div>
 
                 <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+
             </el-row>
         </el-form>
     </div>
@@ -90,6 +92,13 @@ export default {
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
             window.location.search = queryParams;
+        },
+
+        clearFilters() {
+            this.form.search = '';
+            this.form.role = '';
+            this.form.create_date = '';
+            this.applyFilters(); // Optionally apply cleared filters
         },
         fetchUsersFilters() {
             axios.get('/admin/users/filter-options')
