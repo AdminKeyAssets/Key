@@ -24,6 +24,7 @@ Route::prefix('lead')->name('lead.')->group(function () {
         ->name('filters');
 
     Route::post('update-manager', $controller . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('import', $controller . '@import')->name('import.leads')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 
     /**
      * Export leads.

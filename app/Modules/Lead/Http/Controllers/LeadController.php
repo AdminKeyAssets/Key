@@ -341,4 +341,6 @@ class LeadController extends BaseController
 
         return ServiceResponse::jsonNotification(__('Status changed successfully'), 200, $this->baseData);
     }
+
+
 }
