@@ -273,7 +273,7 @@ class SaleController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = [];
+        $filters = $request->only(['agreement_date', 'manager', 'marketing_channel', 'status']);
         return Excel::download(new SalesExport($filters), 'sales.xlsx');
     }
 
@@ -281,14 +281,16 @@ class SaleController extends BaseController
     {
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%sale%manager%');
-        })->get();
+        })
+            ->orderBy('name')
+            ->orderBy('surname')
+            ->get();
 
-        if(\Auth::user()->getRolesNameAttribute() == 'administrator') {
-            $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
-        }
-        else{
+        if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
+        } else {
             $this->baseData['marketingChannels'] = Sale::where('marketing_channel', '!=', null)
-                ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->get('marketing_channel');
+                ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
         }
         return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
     }

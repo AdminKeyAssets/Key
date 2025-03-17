@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Exports;
 
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Lead\Models\Sale;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -24,6 +25,40 @@ class SalesExport implements FromCollection, WithHeadings, WithEvents
     public function collection()
     {
         $query = Sale::query();
+
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        if (!empty($this->filters['agreement_date'])) {
+            $agreementDates = explode(',', $this->filters['agreement_date']);
+
+            if (isset($agreementDates[0])) {
+                $query->where('agreement_date', '>=', $agreementDates[0]);
+            }
+            if (isset($agreementDates[1])) {
+                $query->where('agreement_date', '<=', $agreementDates[1]);
+            }
+        }
+
+        if (!empty($this->filters['manager']) && $this->filters['manager'] != 'all') {
+            $managerNamesArray = explode(' ', $this->filters['manager']);
+            $managerUser = Admin::where('name', $managerNamesArray[0])
+                ->where('surname', $managerNamesArray[1])->first();
+            $query->where('admin_id', '=', $managerUser->id);
+        }
+
+        if (!empty($this->filters['marketing_channel']) && $this->filters['marketing_channel'] != 'all') {
+            $query->where('marketing_channel', '=', $this->filters['marketing_channel']);
+        }
+
+        if (!empty($this->filters['status']) && $this->filters['status'] == 'Complete') {
+            $query->where('complete', '=', 1);
+        }
+
+        if (!empty($this->filters['status']) && $this->filters['status'] == 'Pending') {
+            $query->where('complete', '!=', 1);
+        }
 
         $sales = $query->select(
             'project',

@@ -101,7 +101,9 @@ class AssetController extends BaseController
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
         $query = Asset::query();
-        $query->where('sale_status', 'active');
+//        $query->where('sale_status', 'active');
+
+        $statusFilter = $request->status ?? 'active';
 
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
@@ -117,7 +119,7 @@ class AssetController extends BaseController
             // The remaining parts are the surname
             $surname = implode(' ', $investorNamesArray);
 
-            $investorNamesArray = explode(' ', $request->investor);
+//            $investorNamesArray = explode(' ', $request->investor);
             $investorUser = Investor::where('name', $firstName)
                 ->where('surname', $surname)->first();
 
@@ -128,18 +130,51 @@ class AssetController extends BaseController
             }
         }
 
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            if (isset($managerUser->id)) {
+                $query->where('admin_id', $managerUser->id);
+            }
+        }
+
         if ($request->asset && $request->asset != 'all') {
             $query->where('project_name', 'like', '%' . $request->asset . '%');
         }
 
-        if ($request->create_date) {
-            $createdDates = explode(',', $request->create_date);
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $query->where('type', $request->asset_type);
+        }
+
+        if ($request->asset_status && $request->asset_status != 'all') {
+            $query->where('asset_status', $request->asset_status);
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $query->where('agreement_status', $request->agreement_status);
+        }
+
+
+        if ($request->agreement_date) {
+            $createdDates = explode(',', $request->agreement_date);
+
             if (isset($createdDates[0])) {
-                $query->where('created_at', '>=', $createdDates[0]);
+                $query->where('agreement_date', '>=', $createdDates[0]);
             }
             if (isset($createdDates[1])) {
-                $query->where('created_at', '<=', $createdDates[1]);
+                $query->where('agreement_date', '<=', $createdDates[1]);
             }
+        }
+
+        if ($statusFilter !== 'all') {
+            $query->where('sale_status', $statusFilter);
         }
 
         // Order by descending asset ID
@@ -159,7 +194,18 @@ class AssetController extends BaseController
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
 
-        $this->baseData['allData'] = $user->assets()->where('sale_status', 'active')->orderByDesc('id')->paginate(25);
+        $statusFilter = $request->status ?? 'active';
+
+        $userAssets = $user->assets()->orderByDesc('id');
+        if ($statusFilter !== 'all') {
+            $userAssets->where('sale_status', $statusFilter);
+        }
+
+        if ($userAssets->count() > 0) {
+            $this->baseData['allData'] = $userAssets->paginate(25);
+        } else {
+            $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
+        }
 
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -191,16 +237,13 @@ class AssetController extends BaseController
                 $asset = Asset::findOrFail($request->get('id'));
 
                 $salesManager = null;
-                $nextPayment = null;
 
                 if ($asset->investors->isNotEmpty()) {
                     $investor = $asset->investors->first();
                     $salesManager = Admin::find($investor->admin_id);
                 }
 
-                if ($asset->payments) {
-                    $nextPayment = $asset->payments->where('status', 0)->first();
-                }
+
 
                 $this->baseData['item'] = $asset;
                 $investors = $asset->investors;
@@ -228,7 +271,6 @@ class AssetController extends BaseController
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
                 $this->baseData['salesManager'] = $salesManager;
-                $this->baseData['nextPayment'] = $nextPayment;
 
                 $files = [];
                 if ($asset->attachments) {
@@ -437,6 +479,7 @@ class AssetController extends BaseController
             'current_value' => $request->current_value ?? null,
             'current_value_currency' => $request->current_value_currency ?? 'USD',
             'renovation_agreement' => $renovationAgreementPath && $renovationAgreementPath !== 'null' ? $renovationAgreementPath : null,
+            'renovation_agreement_name' => $request->renovation_agreement_name,
             'renovation_agreement_date' => $request->renovation_agreement_date,
             'renovation_first_payment_date' => $request->renovation_first_payment_date ?? null,
             'renovation_period' => $request->renovation_period ?? null,
@@ -513,6 +556,7 @@ class AssetController extends BaseController
                         'currency' => $tenantData['currency'],
                         'prefix' => $tenantData['prefix'],
                         'asset_id' => $asset->id,
+                        'representative' => $tenantData['representative'],
                     ]);
 
                 Tenant::where('asset_id', $asset->id)
@@ -854,7 +898,7 @@ class AssetController extends BaseController
                 'payments_route' => route('asset.payments.list', [$asset->id]),
                 'rentals_route' => route('asset.rental.index', [$asset->id]),
                 'investments_route' => route('asset.investment.index', [$asset->id]),
-                'renovation_route' => route('asset.renovation.index', [$asset->id]),
+                'renovation_route' => $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
                 'asset_id' => $asset->id
             ];
@@ -909,7 +953,7 @@ class AssetController extends BaseController
             $paymentDate = $firstPaymentDate->copy()->addMonths($i);
             $payments[] = [
                 'number' => $i + 1,
-                'date' => $paymentDate->toDateString(),
+                'date' => $paymentDate->format('Y/m/d'),
                 'amount' => $amountPerPeriod
             ];
         }
@@ -944,9 +988,20 @@ class AssetController extends BaseController
         $this->baseData['investors'] = [];
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
+                $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                    $query->where('name', 'like', '%asset%manager%');
+                })->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
             } else {
-                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
+                $this->baseData['managers'] = [];
             }
         }
 
@@ -954,7 +1009,7 @@ class AssetController extends BaseController
         // Group by project_name and get the latest asset (by max id) for each project
         $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
             ->groupBy('project_name')
-            ->orderByDesc('max_id')
+            ->orderBy('project_name')
             ->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
@@ -969,7 +1024,7 @@ class AssetController extends BaseController
             $originalFileName = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('uploads', $originalFileName, 'public');
             $path = Storage::url($path);
-        }elseif (is_string($request->sale_agreement)) {
+        } elseif (is_string($request->sale_agreement)) {
             $path = $request->sale_agreement;
         }
         Asset::where('id', $assetId)->first()->update([

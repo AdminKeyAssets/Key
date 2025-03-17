@@ -58,11 +58,20 @@ export default {
         'routes',
         'updateData',
         'item',
+        'nextPayment'
     ],
     data() {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        const formattedDate = `${year}/${month}/${day}`;
+
         return {
             form: {
-                currency: 'USD'
+                currency: 'USD',
+                date: formattedDate, // Set default date to today's date.
+                amount: this.nextPayment || ''
             },
             loading: false,
             editor: ClassicEditor,
@@ -80,6 +89,12 @@ export default {
         'item'() {
             if (this.item) {
                 this.form = this.item;
+            }
+        },
+        nextPayment(newVal) {
+            // Only update if the current amount is empty or 0.
+            if ((!this.form.amount || this.form.amount === 0) && newVal) {
+                this.form.amount = newVal;
             }
         }
     },

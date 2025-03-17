@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Exports;
 
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -25,12 +26,45 @@ class InvestorsExport implements FromCollection, WithHeadings, WithEvents
     {
         $query = Investor::query();
 
-        if (!empty($this->filters['email'])) {
-            $query->where('email', 'like', '%' . $this->filters['email'] . '%');
+        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+        if (!empty($this->filters['citizenship'])) {
+            $query->where('citizenship', '=', $this->filters['citizenship']);
+        }
+        if (!empty($this->filters['assets'])) {
+            $assetsCount = $this->filters['assets'];
+            $query->withCount('assets')
+                ->having('assets_count', '=', $assetsCount);
         }
 
-        if (!empty($this->filters['phone'])) {
-            $query->where('phone', 'like', '%' . $this->filters['phone'] . '%');
+        if (!empty($this->filters['create_date'])) {
+            $createdDates = explode(',', $this->filters['create_date']);
+            if (isset($createdDates[0])) {
+                $query->where('created_at', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $query->where('created_at', '<=', $createdDates[1]);
+            }
+        }
+
+        if (!empty($this->filters['manager']) && $this->filters['manager'] != 'all') {
+            $managerNamesArray = explode(' ', $this->filters['manager']);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            if (isset($managerUser->id)) {
+                $query->where('admin_id', $managerUser->id);
+            }
+        }
+
+        if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
         }
 
         $investors = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'citizenship', 'address', 'created_at')->get();

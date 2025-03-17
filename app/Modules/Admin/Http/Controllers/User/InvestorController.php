@@ -78,11 +78,8 @@ class InvestorController extends BaseController
         }
         if ($request->assets) {
             $assetsCount = $request->assets;
-            $query->whereHas('assets', function ($query) use ($assetsCount) {
-                if ($assetsCount > 0) {
-                    $query->havingRaw('COUNT(*) = ?', [$assetsCount]);
-                }
-            });
+            $query->withCount('assets')
+                ->having('assets_count', '=', $assetsCount);
         }
 
         if ($request->create_date) {
@@ -95,13 +92,23 @@ class InvestorController extends BaseController
             }
         }
 
-        if ($request->manager) {
-            $managerName = $request->manager;
-            $query->whereHas('admin', function ($query) use ($managerName) {
-                $query->whereHas('roles', function ($roleQuery) use ($managerName) {
-                    $roleQuery->where('name', '=', $managerName);
-                });
-            });
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            if (isset($managerUser->id)) {
+                $query->where('admin_id', $managerUser->id);
+            }
+        }
+
+        if ($request->search && $request->search != 'all') {
+            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -333,7 +340,7 @@ class InvestorController extends BaseController
             if (auth()->user()->id == $request->get('id')) {
                 throw new \Exception('You are not allowed to delete this user!');
             }
-            $investor = Investor::where('id',$request->id)->first();
+            $investor = Investor::where('id', $request->id)->first();
             $investorAssets = Asset::whereHas('investors', function ($query) use ($investor) {
                 $query->where('id', $investor->id);
             })->get();
@@ -354,16 +361,31 @@ class InvestorController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = $request->only(['email', 'phone']);
+        $filters = $request->only(['search', 'assets', 'create_date', 'citizenship', 'manager']);
         return Excel::download(new InvestorsExport($filters), 'investors.xlsx');
     }
 
     public function filterOptions()
     {
-        $this->baseData['countries'] = Country::get('country');
+        $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
-        })->get();
+        })
+            ->orderBy('name')
+            ->orderBy('surname')
+            ->get();
+
+
+        if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['investors'] = Investor::orderBy('name')
+                ->orderBy('surname')
+                ->get();
+        } else {
+            $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                ->orderBy('name')
+                ->orderBy('surname')
+                ->get();
+        }
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
@@ -381,7 +403,7 @@ class InvestorController extends BaseController
     {
         Investor::where('id', $request->investor_id)->update(['admin_id' => $request->manager_id]);
         Asset::whereHas('investors', function ($query) use ($request) {
-            $query->where('id', $request->id);
+            $query->where('id', $request->investor_id);
         })->update(['admin_id' => $request->manager_id]);
 
 //        Asset::where('investor_id', $request->investor_id)->update(['admin_id' => $request->manager_id]);

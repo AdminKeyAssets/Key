@@ -26,6 +26,7 @@
                                 <el-option label="Proposal Sent" value="Proposal Sent"></el-option>
                                 <el-option label="Refused" value="Refused"></el-option>
                                 <el-option label="Signed" value="Signed"></el-option>
+                                <el-option label="Archieve" value="Archieve"></el-option>
                             </el-select>
                         </div>
                     </div>

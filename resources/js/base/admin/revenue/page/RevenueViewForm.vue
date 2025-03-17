@@ -114,21 +114,13 @@
 
                                         <template>
 
-                                            <div class="table-responsive">
+                                            <div class="table-responsive renovation-table">
                                                 <table class="table table-vcenter table-striped">
                                                     <thead>
                                                     <tr>
-                                                        <th> Name</th>
-                                                        <th> Photo</th>
-
-                                                        <th v-if="isAdmin"> Investor</th>
-                                                        <th> Purchase Date</th>
-                                                        <th> Purchase Price</th>
-                                                        <th class="paid-col"> Paid</th>
                                                         <th> Renovation</th>
                                                         <th> Other Investment</th>
                                                         <th> Total Investment</th>
-                                                        <th> Current Value</th>
                                                         <th> Capital Gain</th>
                                                         <th> Rent</th>
                                                         <th> Net Cash Balance</th>
@@ -136,31 +128,9 @@
                                                     </thead>
                                                     <tbody>
                                                     <tr>
-                                                        <td>
-                                                            {{ form.project_name }}
-                                                        </td>
-                                                        <td>
-                                                            <ImageModal v-if="form.icon" :thumbnail="form.icon"
-                                                                         :image-path="form.icon"
-                                                                         :rounded="true"
-                                                                         :width="50"
-                                                                         :height="50"></ImageModal>
-
-                                                        </td>
-
-                                                        <td v-if="isAdmin">
-                                                            {{ form.investorNames }}
-                                                        </td>
-                                                        <td>{{ form.agreement_date }}</td>
-                                                        <td>{{ formatPrice(form.total_price, 0, ".", ",") }}$</td>
-                                                        <td class="paid-col">{{ form.paid }}
-                                                        </td>
                                                         <td>{{ formatPrice(form.renovation, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.other_investment, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.total_investment, 0, ".", ",") }}$</td>
-
-                                                        <td>{{ formatPrice(form.sale_price, 0, ".", ",") }}$</td>
-
                                                         <td>{{ formatPrice(form.capital_gain, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.rent, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.net_cache_balance, 0, ".", ",") }}$</td>
@@ -242,181 +212,251 @@
 
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
-                                    v-bind:key="tenant.id">
-                                <el-card class="box-card"
-                                         :class="{ 'hidden-body': !tenant.showDetails && !tenant.status }">
-                                    <!-- Card Header - Toggles visibility on click -->
+                            <el-row style="margin-bottom: 30px" v-if="tenants">
+                                <el-card class="box-card" :class="{ 'hidden-body': !showRentals }">
                                     <div slot="header" class="clearfix main-header"
-                                         @click="tenant.showDetails = !tenant.showDetails" style="cursor: pointer;">
+                                         @click="showRentals = !showRentals" style="cursor: pointer;">
                                         <div style="width: 98%">
-                                            <span>{{ tenant.name }} {{ tenant.surname }}</span>
-                                            <span>
+                                            <span>Rentals</span>
+                                        </div>
+                                        <div style="width: 2%">
+                                            <i v-if="!showRentals" class="el-icon-caret-right"></i>
+                                            <i v-else class="el-icon-caret-bottom"></i>
+                                        </div>
+                                    </div>
+
+                                    <el-row v-if="showRentals" style="margin-top: 20px;"
+                                            class="payments-wrapper row-item">
+                                        <el-col :span="24" class="payments-history-wrapper-col">
+                                            <el-row style="margin-bottom: 30px" v-if="tenants" v-for="tenant in tenants"
+                                                    v-bind:key="tenant.id">
+                                                <el-card class="box-card"
+                                                         :class="{ 'hidden-body': !tenant.showDetails && !tenant.status }">
+                                                    <!-- Card Header - Toggles visibility on click -->
+                                                    <div slot="header" class="clearfix main-header"
+                                                         @click="tenant.showDetails = !tenant.showDetails"
+                                                         style="cursor: pointer;">
+                                                        <div style="width: 98%">
+                                                            <span>{{ tenant.name }} {{ tenant.surname }}</span>
+                                                            <span>
                                             <span>{{ tenant.agreement_date }}</span>
                                             <span v-if="tenant.rentals && tenant.rentals.length && !tenant.status"> - {{
                                                     tenant.rentals.slice(-1)[0].payment_date
                                                 }}</span>
                                         </span>
-                                        </div>
-                                        <div style="width: 2%">
-                                            <i v-if="!tenant.showDetails" class="el-icon-caret-right"></i>
-                                            <i v-else class="el-icon-caret-bottom"></i>
-                                        </div>
-                                    </div>
-
-                                    <!-- Card Content - Shown when tenant.showDetails is true -->
-                                    <el-row v-if="tenant.showDetails">
-                                        <el-row class="row-item"
-                                                v-if="tenant.id_number || tenant.citizenship">
-                                            <el-col :span="12">
-                                                <div class="form-group">
-                                                    <label class="col-md-4 control-label">ID Number:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ tenant.id_number }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-
-                                            <el-col :span="12">
-                                                <div v-if="tenant.citizenship" class="form-group">
-                                                    <label class="col-md-4 control-label">Citizenship:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ tenant.citizenship }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-item"
-                                                v-if="tenant.phone || tenant.email">
-                                            <el-col :span="12">
-                                                <div v-if="tenant.phone" class="form-group">
-                                                    <label class="col-md-4 control-label">Phone:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ tenant.prefix + tenant.phone }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-
-                                            <el-col :span="12">
-                                                <div v-if="tenant.email" class="form-group">
-                                                    <label class="col-md-4 control-label">Email:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ tenant.email }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-item"
-                                                v-if="tenant.agreement_term || tenant.monthly_rent">
-                                            <el-col :span="12">
-                                                <div v-if="tenant.agreement_term" class="form-group">
-                                                    <label class="col-md-4 control-label">Agreement Term:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ tenant.agreement_term }} Month(s)
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                            <el-col :span="12">
-                                                <div v-if="tenant.monthly_rent" class="form-group">
-                                                    <label class="col-md-4 control-label">Monthly Rent:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ formatPrice(tenant.monthly_rent) }}$
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-item"
-                                                v-if="tenant.agreement_date">
-                                            <el-col :span="12">
-                                                <div v-if="tenant.agreement_date" class="form-group">
-                                                    <label class="col-md-4 control-label">Agreement Date:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        {{ tenant.agreement_date }}
-                                                    </div>
-                                                </div>
-                                            </el-col>
-                                        </el-row>
-
-                                        <el-row class="row-item"
-                                                v-if="tenant.passport">
-                                            <el-col :span="12">
-                                                <div class="form-group">
-                                                    <label class="col-md-4 control-label">Passport:</label>
-                                                    <div class="col-md-6 uppercase-medium">
-                                                        <div v-if="tenant.passport">
-                                                            <ImageModal :image-path="tenant.passport"
-                                                                        :width="100"
-                                                                        :height="100"
-                                                                        :thumbnail="tenant.passport"></ImageModal>
+                                                        </div>
+                                                        <div style="width: 2%">
+                                                            <i v-if="!tenant.showDetails"
+                                                               class="el-icon-caret-right"></i>
+                                                            <i v-else class="el-icon-caret-bottom"></i>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </el-col>
-                                        </el-row>
-                                    </el-row>
 
-                                    <el-row v-if="tenant.showDetails" style="margin-top: 20px;"
-                                            class="payments-wrapper row-item">
-                                        <el-col :span="24" :md="11">
-                                            <div>
-                                                <div class="payments-schedule-title-wrapper">
-                                                    <div class="rentals-schedule-heading"
-                                                         style="text-align: center; max-width: 500px">
-                                                        <h4>Rentals Schedule</h4>
-                                                    </div>
-                                                </div>
-                                                <el-table border :data="tenant.rentals" style="width: 100%">
-                                                    <el-table-column prop="payment_date" label="Payment Date"/>
-                                                    <el-table-column prop="amount" label="Amount">
-                                                        <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }}$
-                                                        </template>
-                                                    </el-table-column>
-                                                </el-table>
-                                            </div>
-                                        </el-col>
+                                                    <!-- Card Content - Shown when tenant.showDetails is true -->
+                                                    <el-row v-if="tenant.showDetails">
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.id_number || tenant.citizenship">
+                                                            <el-col :span="12">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 control-label">ID
+                                                                        Number:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.id_number }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
 
-                                        <el-col :span="24" :md="11" class="payments-history-wrapper-col">
-                                            <div v-if="tenant.rental_payments">
-                                                <div class="payments-schedule-title-wrapper">
-                                                    <div class="payments-history-heading"
-                                                         style="text-align: center; max-width: 500px">
-                                                        <h4>Payments History</h4>
-                                                    </div>
-                                                </div>
-                                                <el-table border :data="tenant.rental_payments" style="width: 100%">
-                                                    <el-table-column prop="date" label="Payment Date"/>
-                                                    <el-table-column prop="amount" label="Amount">
-                                                        <template slot-scope="scope">
-                                                            {{ formatPrice(scope.row.amount) }}$
-                                                        </template>
-                                                    </el-table-column>
-                                                    <el-table-column prop="attachment" label="Attachment">
-                                                        <template slot-scope="scope">
-                                                            <a :href="scope.row.attachment" v-if="scope.row.attachment"
-                                                               target="_blank">View {{
-                                                                    getFilename(scope.row.attachment)
-                                                                }}</a>
-                                                        </template>
-                                                    </el-table-column>
-                                                </el-table>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.citizenship" class="form-group">
+                                                                    <label
+                                                                        class="col-md-4 control-label">Citizenship:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.citizenship }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
 
-                                    <el-row v-if="isAdmin && !tenant.status">
-                                        <div class="rental-actions">
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.phone || tenant.email">
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.phone" class="form-group">
+                                                                    <label class="col-md-4 control-label">Phone:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.prefix + tenant.phone }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.email" class="form-group">
+                                                                    <label class="col-md-4 control-label">Email:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.email }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.agreement_term || tenant.monthly_rent">
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.agreement_term" class="form-group">
+                                                                    <label class="col-md-4 control-label">Agreement
+                                                                        Term:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.agreement_term }} Month(s)
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.monthly_rent" class="form-group">
+                                                                    <label class="col-md-4 control-label">Monthly
+                                                                        Rent:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ formatPrice(tenant.monthly_rent) }}$
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.agreement_date || tenant.rent_end_date">
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.agreement_date" class="form-group">
+                                                                    <label class="col-md-4 control-label">Agreement
+                                                                        Date:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.agreement_date }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.rent_end_date" class="form-group">
+                                                                    <label class="col-md-4 control-label">Rent End
+                                                                        Date:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.rent_end_date }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.passport || tenant.rent_agreement">
+                                                            <el-col :span="12">
+                                                                <div v-if="tenant.rent_agreement"
+                                                                     class="form-group">
+                                                                    <label class="col-md-4 control-label">Rent Agreement:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        <div>
+                                                                            <p>
+                                                                                <a :href="tenant.rent_agreement"
+                                                                                   target="_blank">View Agreement</a></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                            <el-col :span="12">
+                                                                <div class="form-group">
+                                                                    <label
+                                                                        class="col-md-4 control-label">Passport:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        <div v-if="tenant.passport">
+                                                                            <ImageModal :image-path="tenant.passport"
+                                                                                        :width="100"
+                                                                                        :height="100"
+                                                                                        :thumbnail="tenant.passport"></ImageModal>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+
+                                                        <el-row class="row-item"
+                                                                v-if="tenant.representative">
+                                                            <el-col :span="12">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 control-label">Representative:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ tenant.representative }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+                                                    </el-row>
+
+                                                    <el-row v-if="tenant.showDetails" style="margin-top: 20px;"
+                                                            class="payments-wrapper row-item">
+                                                        <el-col :span="24" :md="11">
+                                                            <div>
+                                                                <div class="payments-schedule-title-wrapper">
+                                                                    <div class="rentals-schedule-heading"
+                                                                         style="text-align: center; max-width: 500px">
+                                                                        <h4>Rentals Schedule</h4>
+                                                                    </div>
+                                                                </div>
+                                                                <el-table border :data="tenant.rentals"
+                                                                          style="width: 100%">
+                                                                    <el-table-column prop="payment_date"
+                                                                                     label="Payment Date"/>
+                                                                    <el-table-column prop="amount" label="Amount">
+                                                                        <template slot-scope="scope">
+                                                                            {{ formatPrice(scope.row.amount) }}$
+                                                                        </template>
+                                                                    </el-table-column>
+                                                                </el-table>
+                                                            </div>
+                                                        </el-col>
+
+                                                        <el-col :span="24" :md="11"
+                                                                class="payments-history-wrapper-col">
+                                                            <div v-if="tenant.rental_payments">
+                                                                <div class="payments-schedule-title-wrapper">
+                                                                    <div class="payments-history-heading"
+                                                                         style="text-align: center; max-width: 500px">
+                                                                        <h4>Payments History</h4>
+                                                                    </div>
+                                                                </div>
+                                                                <el-table border :data="tenant.rental_payments"
+                                                                          style="width: 100%">
+                                                                    <el-table-column prop="date" label="Payment Date"/>
+                                                                    <el-table-column prop="amount" label="Amount">
+                                                                        <template slot-scope="scope">
+                                                                            {{ formatPrice(scope.row.amount) }}$
+                                                                        </template>
+                                                                    </el-table-column>
+                                                                    <el-table-column prop="attachment"
+                                                                                     label="Attachment">
+                                                                        <template slot-scope="scope">
+                                                                            <a :href="scope.row.attachment"
+                                                                               v-if="scope.row.attachment"
+                                                                               target="_blank">View {{
+                                                                                    getFilename(scope.row.attachment)
+                                                                                }}</a>
+                                                                        </template>
+                                                                    </el-table-column>
+                                                                </el-table>
+                                                            </div>
+                                                        </el-col>
+                                                    </el-row>
+
+                                                    <el-row v-if="isAdmin && !tenant.status">
+                                                        <div class="rental-actions">
                                             <span class="rental-delete" @click="deleteRental(tenant.id)">
                                                 Delete
                                             </span>
-                                        </div>
+                                                        </div>
+                                                    </el-row>
+                                                </el-card>
+                                            </el-row>
+
+                                        </el-col>
                                     </el-row>
                                 </el-card>
                             </el-row>
-                            <el-row style="margin-bottom: 30px" v-if="investments">
+
+                            <el-row style="margin-bottom: 30px" v-if="investments  && investments.length">
                                 <el-card class="box-card" :class="{ 'hidden-body': !showInvestments }">
                                     <div slot="header" class="clearfix main-header"
                                          @click="showInvestments = !showInvestments" style="cursor: pointer;">
@@ -570,6 +610,7 @@ export default {
             investments: [],
             currentValues: [],
             showInvestments: false,
+            showRentals: false,
             showCurrentValues: false,
             showAgreementDetails: true
         }
@@ -833,5 +874,9 @@ export default {
     cursor: pointer;
     padding: 0 10px;
     margin: 0 10px
+}
+
+.renovation-table th, .renovation-table td {
+    text-align: center;
 }
 </style>

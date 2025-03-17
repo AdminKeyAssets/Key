@@ -11,13 +11,29 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
+                <!-- Search Input -->
+                <div class="form-group">
+                    <el-select v-model="form.search" filterable placeholder="Investor">
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="investor in investors"
+                            :key="investor.name + ' ' + investor.surname"
+                            :label="investor.name + ' ' + investor.surname"
+                            :value="investor.name + ' ' + investor.surname"
+                        ></el-option>
+                    </el-select>
+                </div>
+
                 <div class="form-group">
                     <el-select v-model="form.citizenship" filterable placeholder="Citizenship">
                         <el-option
-                            v-for="country in this.countries"
-                            :key="country.country"
-                            :label="country.country"
-                            :value="country.country"
+                            v-for="country in countries"
+                            :key="country"
+                            :label="country"
+                            :value="country"
                         ></el-option>
                     </el-select>
                 </div>
@@ -36,7 +52,7 @@
                 <div class="form-group" v-if="isAdmin">
                     <el-select v-model="form.manager" filterable placeholder="Manager">
                         <el-option
-                            v-for="manager in this.managers"
+                            v-for="manager in managers"
                             :key="manager.name + ' ' + manager.surname"
                             :label="manager.name + ' ' + manager.surname"
                             :value="manager.name + ' ' + manager.surname"
@@ -51,13 +67,14 @@
                 </div>
 
                 <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
         </el-form>
     </div>
 </template>
 
 <script>
-import {responseParse} from "../../../mixins/responseParse";
+import { responseParse } from "../../../mixins/responseParse";
 
 export default {
     props: [
@@ -66,6 +83,7 @@ export default {
     data() {
         return {
             form: {
+                search: '',
                 assets: '',
                 create_date: '',
                 citizenship: '',
@@ -73,6 +91,7 @@ export default {
             },
             countries: [],
             managers: [],
+            investors: [],
             showFilters: false, // Controls the visibility of the filters, initially hidden
         };
     },
@@ -83,13 +102,15 @@ export default {
         if (this.form.assets ||
             (this.form.create_date && this.form.create_date.length > 0) ||
             this.form.citizenship ||
-            this.form.manager) {
+            this.form.manager ||
+            this.form.search) {
             this.showFilters = true;
         }
     },
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
+            this.form.search = urlParams.get('search') || '';
             this.form.assets = urlParams.get('assets') || '';
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.citizenship = urlParams.get('citizenship') || '';
@@ -98,6 +119,15 @@ export default {
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
             window.location.search = queryParams;
+        },
+
+        clearFilters() {
+            this.form.search = '';
+            this.form.assets = '';
+            this.form.create_date = '';
+            this.form.citizenship = '';
+            this.form.manager = '';
+            this.applyFilters(); // Optionally apply cleared filters
         },
 
         fetchInvestorFilters() {
@@ -113,6 +143,10 @@ export default {
                         }
                         if (data.managers) {
                             this.managers = data.managers;
+                        }
+
+                        if (data.investors) {
+                            this.investors = data.investors;
                         }
                     }
                 })

@@ -45,6 +45,8 @@ class LeadCommentController extends BaseController
      */
     public function store(Request $request, $leadId)
     {
+        $user = Auth::user();
+//dd( $user->name . ' ' . $user->surname);
         $path = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
@@ -52,11 +54,13 @@ class LeadCommentController extends BaseController
             $path = $file->storeAs('uploads', $originalFilename, 'public');
         }
 
+        $user = Auth::user();
         LeadComment::create([
             'comment' => $request->comment,
             'lead_id' => $leadId,
-            'admin_id' => Auth::user()->getAuthIdentifier(),
-            'attachment' => $path ? Storage::url($path) : null
+            'admin_id' => $user->getAuthIdentifier(),
+            'attachment' => $path ? Storage::url($path) : null,
+            'author_name' => $user->name . ' ' . $user->surname,
         ]);
 
         $comments = LeadComment::query()

@@ -45,6 +45,7 @@ class Asset extends Model
         'renovation_agreement_date',
         'renovation_first_payment_date',
         'renovation_agreement',
+        'renovation_agreement_name',
         'renovation_total_price',
         'renovation_period',
         'sale_status',

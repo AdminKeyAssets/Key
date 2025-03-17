@@ -1197,3 +1197,13 @@ table thead th {
 .paid-col{
     white-space: nowrap;
 }
+.navbar.navbar-inverse{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+#page-content .content-header{
+    position: sticky;
+    top: 50px;
+    z-index: 999;
+}

@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -68,17 +69,10 @@ class RevenueController extends BaseController
         $statusFilter = $request->status ?? 'active';
 
         $userId = $user->getAuthIdentifier();
+
         $managers = ['Asset Manager', 'AssetManager', 'Sales Manager', 'Sales manager', 'SalesManager'];
 
-        if (Auth::guard('investor')->check()) {
-            $paginatedAssets = Asset::whereHas('investors', function ($query) use ($userId) {
-                $query->where('id', $userId);
-            })->orderByDesc('id');
-
-            $allAssets = Asset::whereHas('investors', function ($query) use ($userId) {
-                $query->where('id', $userId);
-            });
-        } else if (in_array($user->getRolesNameAttribute(), $managers)) {
+        if (in_array($user->getRolesNameAttribute(), $managers)) {
             $investors = Investor::where('admin_id', $userId)->pluck('id')->toArray();
 
             $paginatedAssets = Asset::whereHas('investors', function ($query) use ($investors) {
@@ -93,11 +87,50 @@ class RevenueController extends BaseController
             $allAssets = Asset::orderByDesc('id');
         }
 
+        if ($request->asset && $request->asset != 'all') {
+            $paginatedAssets->where('project_name', 'like', '%' . $request->asset . '%');
+            $allAssets->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
 
         if ($statusFilter !== 'all') {
             $paginatedAssets->where('sale_status', $statusFilter);
             $allAssets->where('sale_status', $statusFilter);
         }
+
+
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            if (isset($managerUser->id)) {
+                $paginatedAssets->where('admin_id', $managerUser->id);
+                $allAssets->where('admin_id', $managerUser->id);
+            }
+        }
+
+
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $paginatedAssets->where('type', $request->asset_type);
+            $allAssets->where('type', $request->asset_type);
+        }
+
+        if ($request->asset_status && $request->asset_status != 'all') {
+            $paginatedAssets->where('asset_status', $request->asset_status);
+            $allAssets->where('asset_status', $request->asset_status);
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $paginatedAssets->where('agreement_status', $request->agreement_status);
+            $allAssets->where('agreement_status', $request->agreement_status);
+        }
+
 
         // Apply filters based on the related entities
 
@@ -204,11 +237,16 @@ class RevenueController extends BaseController
         $paginatedAssets = $user->assets()->orderByDesc('id');
 
         // Fetch all assets for totals calculation
-        $allAssets = $user->assets();
+        $allAssets = $user->assets()->orderByDesc('id');
 
-        if ($statusFilter !== 'all') {
+        $activeQuery = $user->assets()->orderByDesc('id')->where('sale_status', 'active');
+
+        if ($activeQuery->count() > 0) {
             $paginatedAssets->where('sale_status', $statusFilter);
             $allAssets->where('sale_status', $statusFilter);
+        } else {
+            $paginatedAssets->where('sale_status', 'sold');
+            $allAssets->where('sale_status', 'sold');
         }
 
         if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
@@ -363,7 +401,11 @@ class RevenueController extends BaseController
             $totalPaid += $paid;
 
             // Net cash balance
-            $netCashBalance = $rent - $otherInvestments;
+            if ($asset->sale_status !== 'sold') {
+                $netCashBalance = $rent - $otherInvestments;
+            } else {
+                $netCashBalance = $asset->sale_price + $rent - $allInvestments;
+            }
             $totalNetCashBalance += $netCashBalance;
         }
 
@@ -406,7 +448,7 @@ class RevenueController extends BaseController
 
             // Set per-asset fields
             $asset->rent = $rent;
-            $asset->net_cache_balance = $rent - $otherInvestments;
+
 
             if ($asset->agreement_status === 'Installments') {
                 $asset->total_investment = $paid + $allInvestments + $renovationPayments;
@@ -417,9 +459,11 @@ class RevenueController extends BaseController
             }
 
             if ($asset->sale_status !== 'sold') {
+                $asset->net_cache_balance = $asset->rent - $otherInvestments;
                 $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
             } else {
-                $asset->capital_gain = $asset->sale_price - ($asset->total_price + $renovationInvestment);
+                $asset->net_cache_balance = $asset->sale_price + $asset->rent - $asset->total_investment;
+                $asset->capital_gain = $asset->sale_price - $asset->total_investment;
             }
             $asset->other_investment = $otherInvestments;
             $asset->renovation = $renovationInvestment;
@@ -446,7 +490,16 @@ class RevenueController extends BaseController
      */
     public function export(Request $request)
     {
-        $filters = $request->only(['agreement_date']);
+        $filters = $request->only([
+            'agreement_date',
+            'investor',
+            'status',
+            'asset',
+            'manager',
+            'asset_status',
+            'asset_type',
+            'agreement_status',
+            ]);
         return Excel::download(new RevenueExport($filters), 'revenues.xlsx');
     }
 
@@ -563,19 +616,22 @@ class RevenueController extends BaseController
 
                     // Set per-asset fields
                     $this->baseData['item']['rent'] = $rent;
-                    $this->baseData['item']['net_cache_balance'] = $rent - $otherInvestments;
 
                     if ($asset->agreement_status === 'Installments') {
                         $paid = $paid->sum('amount');
-                        $this->baseData['item']['total_investment'] = $paid + $allInvestments + $renovationPayments;
+                        $totalInvestments = $paid + $allInvestments + $renovationPayments;
                         $this->baseData['item']['paid'] = $paid;
                     } else {
                         $paid = $asset->total_price;
-                        $this->baseData['item']['total_investment'] = $asset->total_price + $allInvestments + $renovationPayments;
+                        $totalInvestments = $asset->total_price + $allInvestments + $renovationPayments;
                         $this->baseData['item']['paid'] = $paid;
                     }
+                    //                    dd([$asset->sale_price,$rent,$allInvestments]);
 
-                    $this->baseData['item']['capital_gain'] = $asset->sale_price - ($asset->total_price + $renovationInvestment);
+                    $this->baseData['item']['total_investment'] = $totalInvestments;
+                    $this->baseData['item']['net_cache_balance'] = $asset->sale_price + $rent - $totalInvestments;
+
+                    $this->baseData['item']['capital_gain'] = $asset->sale_price - $totalInvestments;
 
                     $this->baseData['item']['other_investment'] = $otherInvestments;
                     $this->baseData['item']['renovation'] = $renovationInvestment;
@@ -624,11 +680,29 @@ class RevenueController extends BaseController
         $this->baseData['investors'] = [];
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                $this->baseData['investors'] = Investor::orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
+                $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
+                    $query->where('name', 'like', '%asset%manager%');
+                })
+                    ->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
             } else {
-                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->orderByDesc('id')->get();
+                $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->orderBy('name')
+                    ->orderBy('surname')
+                    ->get();
+                $this->baseData['managers'] = [];
             }
         }
+
+        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }

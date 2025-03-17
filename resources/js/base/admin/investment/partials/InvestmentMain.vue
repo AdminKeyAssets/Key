@@ -24,6 +24,7 @@
                                 <el-option label="Utilities" value="Utilities"></el-option>
                                 <el-option label="Brokerage Fee" value="Brokerage Fee"></el-option>
                                 <el-option label="Taxes" value="Taxes"></el-option>
+                                <el-option label="Management Service" value="Management Service"></el-option>
                                 <el-option label="Other" value="Other"></el-option>
                             </el-select>
                         </div>

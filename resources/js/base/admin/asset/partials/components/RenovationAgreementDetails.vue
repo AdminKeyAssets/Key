@@ -16,13 +16,22 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Add Attachment:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onRenovationAttachmentChange">
-                <div v-if="form.renovation_attachment">
-                    <p v-if="form.renovation_attachment">File: <a :href="form.renovation_attachment"
-                                                                     target="_blank">View Attachment</a></p>
-                    <el-button icon="el-icon-delete-solid" size="small" type="danger"
-                               @click="removeRenovationAttachment"></el-button>
+
+                <div class="col-md-3 uppercase-medium">
+                    <el-input class="col-md-12" v-model="form.renovation_agreement_name" placeholder="Name for Agreement"></el-input>
                 </div>
+                <div class="col-md-3 uppercase-medium">
+                    <input type="file" @change="onRenovationAttachmentChange">
+                    <div v-if="form.renovation_agreement">
+                        <p v-if="form.renovation_agreement">File: <a :href="form.renovation_agreement"
+                                                                     target="_blank">View Attachment</a></p>
+                        <el-button icon="el-icon-delete-solid" size="small" type="danger"
+                                   @click="removeRenovationAttachment"></el-button>
+                    </div>
+                </div>
+
+
+
             </div>
         </div>
 
@@ -202,7 +211,7 @@ export default {
                 reader.onload = (e) => {
                     this.$emit('update-form', {
                         ...this.form,
-                        renovation_attachment: file,
+                        renovation_agreement: file,
                         renovationAttachmentPreview: e.target.result
                     });
                 };

@@ -11,6 +11,7 @@
                     :routes="routes"
                     :updateData="updateData"
                     :rentals="this.rentals"
+                    :next-payment="this.nextPayment"
                     :item="this.form && this.form ? this.form : undefined"
                 ></RentalMain>
 
@@ -50,7 +51,8 @@ export default {
             form: {
                 id: this.id
             },
-            rentals: {}
+            rentals: {},
+            nextPayment: 0
 
         }
     },
@@ -89,6 +91,9 @@ export default {
                     }
                     if(data.rentals){
                         this.rentals = data.rentals;
+                    }
+                    if(data.nextPayment){
+                        this.nextPayment = data.nextPayment;
                     }
                     this.form.id = this.id;
                 }

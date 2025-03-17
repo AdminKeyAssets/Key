@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- Asset Type -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Asset Type:</label>
             <div class="col-md-3 uppercase-medium">
@@ -19,6 +20,7 @@
             </div>
         </div>
 
+        <!-- Floor -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Floor:</label>
             <div class="col-md-10 uppercase-medium">
@@ -31,8 +33,9 @@
             </div>
         </div>
 
+        <!-- Flat Number -->
         <div class="form-group dashed">
-            <label class="col-md-1 control-label">Flat number:</label>
+            <label class="col-md-1 control-label">Unit number:</label>
             <div class="col-md-10 uppercase-medium">
                 <input
                     class="form-control"
@@ -42,6 +45,7 @@
             </div>
         </div>
 
+        <!-- Area -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Area (m2):</label>
             <div class="col-md-10 uppercase-medium">
@@ -54,6 +58,7 @@
             </div>
         </div>
 
+        <!-- Delivery Condition -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Delivery Condition:</label>
             <div class="col-md-3 uppercase-medium">
@@ -73,6 +78,7 @@
             </div>
         </div>
 
+        <!-- Condition Description -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Condition Description:</label>
             <div class="col-md-10 uppercase-medium">
@@ -86,6 +92,7 @@
             </div>
         </div>
 
+        <!-- Cadastral Number -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Cadastral Number:</label>
             <div class="col-md-10 uppercase-medium">
@@ -97,6 +104,7 @@
             </div>
         </div>
 
+        <!-- Select Investor -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Select Investor:</label>
             <div class="col-md-10 uppercase-medium">
@@ -115,10 +123,11 @@
             </div>
         </div>
 
+        <!-- Upload Floor Plan -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Floor Plan:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onFloorPlanChange" accept="image/*"/>
+                <input type="file" @change="onFloorPlanChange" accept="image/*" />
                 <div v-if="form.floor_plan">
                     <ImageModal
                         v-if="form.floorPlanPreview"
@@ -140,10 +149,11 @@
             </div>
         </div>
 
+        <!-- Upload Flat Plan -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Flat Plan:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="file" @change="onFlatPlanChange" accept="image/*"/>
+                <input type="file" @change="onFlatPlanChange" accept="image/*" />
                 <div v-if="form.flat_plan">
                     <ImageModal
                         v-if="form.flatPlanPreview"
@@ -165,6 +175,7 @@
             </div>
         </div>
 
+        <!-- Extra Details -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Extra Details:</label>
             <div class="col-md-10 uppercase-medium">
@@ -206,9 +217,9 @@
                                 alt="preview"
                                 style="max-width: 100px;"
                             />
-                            <a v-else :href="extraDetail.attachment" target="_blank"
-                            >View Attachment</a
-                            >
+                            <a v-else :href="extraDetail.attachment" target="_blank">
+                                View Attachment
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-1">
@@ -225,42 +236,35 @@
                     size="medium"
                     icon="el-icon-plus"
                     @click="addDetail"
-                >Add Extra Details
-                </el-button
                 >
+                    Add Extra Details
+                </el-button>
             </div>
         </div>
 
+        <!-- Asset Status -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Asset Status:</label>
             <div class="col-md-3 uppercase-medium">
-                <el-select
-                    v-model="form.asset_status"
-                    placeholder="Select Status"
-                >
-                    <el-option
-                        label="Vacant"
-                        value="Vacant"
-                    ></el-option>
-                    <el-option
-                        label="Under Renovation"
-                        value="Under Renovation"
-                    ></el-option>
-                    <el-option
-                        label="Under Construction"
-                        value="Under Construction"
-                    ></el-option>
+                <el-select v-model="form.asset_status" placeholder="Select Status">
+                    <el-option label="Vacant" value="Vacant"></el-option>
+                    <el-option label="Under Renovation" value="Under Renovation"></el-option>
+                    <el-option label="Under Construction" value="Under Construction"></el-option>
                     <el-option label="Rented" value="Rented"></el-option>
                 </el-select>
             </div>
         </div>
 
+        <!-- Complete Rent Button (only shows if asset is rented) -->
         <div class="form-group dashed" v-if="form.asset_status === 'Rented'">
             <div class="col-md-offset-1 col-md-3">
-                <el-button type="primary" @click="completeRent">Complete Rent</el-button>
+                <el-button type="primary" @click="openCompleteRentDialog">
+                    Complete Rent
+                </el-button>
             </div>
         </div>
 
+        <!-- Tenant Details and Rentals -->
         <div v-if="form.asset_status === 'Rented'">
             <TenantDetails
                 :tenant="tenant"
@@ -272,7 +276,7 @@
             />
             <div v-if="rentals.length">
                 <el-table :data="rentals" style="width: 100%">
-                    <el-table-column prop="number" label="Payment" width="150"/>
+                    <el-table-column prop="number" label="Payment" width="150" />
                     <el-table-column prop="payment_date" label="Payment Date" width="180">
                         <template slot-scope="scope">
                             <el-date-picker
@@ -296,16 +300,48 @@
                 </el-table>
             </div>
         </div>
+
+        <!-- Complete Rent Modal -->
+        <el-dialog
+            title="Complete Rent"
+            :visible.sync="completeRentDialog"
+            width="30%"
+            @close="resetRentCompletionDate"
+        >
+            <el-form :model="{ rentCompletionDate }">
+                <el-form-item label="Completion Date">
+                    <el-date-picker
+                        v-model="rentCompletionDate"
+                        type="date"
+                        placeholder="Select date"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                    ></el-date-picker>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+        <el-button @click="completeRentDialog = false">Cancel</el-button>
+                <!-- Disable the button if the date field is empty -->
+        <el-button
+            type="primary"
+            :disabled="!rentCompletionDate"
+            @click="completeRentWithDate"
+        >
+          Complete
+        </el-button>
+      </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import ImageModal from "../../../../components/admin/ImageModal.vue";
 import TenantDetails from "./TenantDetails.vue";
-import axios from "axios"; // Make sure axios is installed
+import axios from "axios";
 
 export default {
-    components: {ImageModal, TenantDetails},
+    name: "AssetFormComponent",
+    components: { ImageModal, TenantDetails },
     props: [
         "form",
         "loading",
@@ -330,10 +366,14 @@ export default {
                 agreement_term: "",
                 monthly_rent: 0,
                 currency: "USD",
+                representative: "",
             },
             rentals: [],
-            updatingTotalPrice: false, // Flag to prevent recursion
+            updatingTotalPrice: false,
             updatingSqmPrice: false,
+            // Modal properties
+            completeRentDialog: false,
+            rentCompletionDate: this.formatDate(new Date()),
         };
     },
     watch: {
@@ -343,9 +383,9 @@ export default {
         form() {
             if (this.form) {
                 if (!this.form.currency) {
-                    this.$emit("update-form", {...this.form, currency: "USD"});
+                    this.$emit("update-form", { ...this.form, currency: "USD" });
                 }
-                if (this.form.tenant.id) {
+                if (this.form.tenant && this.form.tenant.id) {
                     this.tenant = this.form.tenant;
                 }
                 this.rentals = this.form.rentals || [];
@@ -402,7 +442,7 @@ export default {
             });
         },
         updateTenant(newTenant) {
-            this.$emit("update-form", {...this.form, tenant: newTenant});
+            this.$emit("update-form", { ...this.form, tenant: newTenant });
         },
         generateRentalList() {
             if (
@@ -433,7 +473,7 @@ export default {
             }
 
             this.rentals = rentals;
-            this.$emit("update-form", {...this.form, rentals: this.rentals});
+            this.$emit("update-form", { ...this.form, rentals: this.rentals });
         },
         formatDate(date) {
             const year = date.getFullYear();
@@ -442,25 +482,24 @@ export default {
             return `${year}/${month}/${day}`;
         },
         updateTotalPrice() {
-            if (this.updatingSqmPrice) return; // Prevent recursion when sqm price is being updated
+            if (this.updatingSqmPrice) return;
             this.updatingTotalPrice = true;
 
             const price = parseFloat(this.form.price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
-            this.$emit('update-form', {...this.form, total_price: totalPrice});
+            this.$emit("update-form", { ...this.form, total_price: totalPrice });
 
             this.updatingTotalPrice = false;
         },
-
         updateSqmPrice() {
-            if (this.updatingTotalPrice) return; // Prevent recursion when total price is being updated
+            if (this.updatingTotalPrice) return;
             this.updatingSqmPrice = true;
 
             const totalPrice = parseFloat(this.form.total_price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const price = totalPrice / area;
-            this.$emit("update-form", {...this.form, price: price});
+            this.$emit("update-form", { ...this.form, price: price });
 
             this.updatingSqmPrice = false;
         },
@@ -487,18 +526,17 @@ export default {
             this.updateFinalRentalAmount(this.rentals);
         },
         updateFinalRentalAmount(rentals) {
+            // Uncomment and modify if necessary:
             // const totalAmount =
-            //     parseFloat(this.tenant.monthly_rent) *
-            //     parseInt(this.tenant.agreement_term, 10);
+            //   parseFloat(this.tenant.monthly_rent) *
+            //   parseInt(this.tenant.agreement_term, 10);
             // let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
-            //     return sum + parseFloat(rental.amount);
+            //   return sum + parseFloat(rental.amount);
             // }, 0);
-            //
             // const finalAmount = totalAmount - amountSum;
-            //
             // this.$set(rentals, rentals.length - 1, {
-            //     ...rentals[rentals.length - 1],
-            //     amount: finalAmount.toFixed(2),
+            //   ...rentals[rentals.length - 1],
+            //   amount: finalAmount.toFixed(2),
             // });
         },
         onExtraDetailFileChange(e, index) {
@@ -512,7 +550,7 @@ export default {
                         preview: file.type.startsWith("image/") ? e.target.result : null,
                         name: file.name,
                     };
-                    this.$emit("update-form", {...this.form, extraDetails});
+                    this.$emit("update-form", { ...this.form, extraDetails });
                 };
                 reader.readAsDataURL(file);
             }
@@ -538,24 +576,34 @@ export default {
             const extraDetails = Array.isArray(this.form.extraDetails)
                 ? this.form.extraDetails.filter((detail) => detail.id !== item.id)
                 : [];
-            this.$emit("update-form", {...this.form, extraDetails});
+            this.$emit("update-form", { ...this.form, extraDetails });
         },
-        async completeRent() {
-            this.$confirm('Are you sure?', 'You are completing the rent', {
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-                type: 'warning'
-            }).then(async () => {
-
-                const response = await axios.post(`assets/${this.form.id}/rental/complete`, [{
-                    assetId: this.form.id,
-                }]);
-
+        // Modal methods
+        openCompleteRentDialog() {
+            this.rentCompletionDate = this.formatDate(new Date());
+            this.completeRentDialog = true;
+        },
+        resetRentCompletionDate() {
+            this.rentCompletionDate = this.formatDate(new Date());
+        },
+        async completeRentWithDate() {
+            try {
+                const response = await axios.post(
+                    `assets/${this.form.id}/rental/complete`,
+                    {
+                        assetId: this.form.id,
+                        completionDate: this.rentCompletionDate,
+                    }
+                );
                 if (response.status === 200) {
                     this.$message.success("Request successful. Page will be refreshed.");
-                    location.reload(); // Refresh the page
+                    location.reload();
                 }
-            });
+            } catch (error) {
+                this.$message.error("There was an error completing the rent.");
+            } finally {
+                this.completeRentDialog = false;
+            }
         },
     },
 };

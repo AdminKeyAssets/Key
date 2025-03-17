@@ -48,7 +48,7 @@ class AssetCompareService
             'location' => 'Location',
             'type' => 'Asset Type',
             'floor' => 'Floor',
-            'flat_number' => 'Flat Number',
+            'flat_number' => 'Unit Number',
             'condition' => 'Delivery Condition',
             'agreement_date' => 'Agreement Date',
             'asset_status' => 'Asset Status',

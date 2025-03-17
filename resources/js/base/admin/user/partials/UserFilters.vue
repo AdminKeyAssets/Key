@@ -1,6 +1,5 @@
 <template>
     <div class="block">
-
         <el-button type="primary" @click="showFilters = !showFilters" style="margin-bottom: 20px">
             {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
         </el-button>
@@ -10,15 +9,31 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
+                <!-- Search Box -->
                 <div class="form-group">
-                    <el-select v-model="form.role" filterable
-                               placeholder="Roles">
+                    <el-select v-model="form.search" filterable placeholder="User Names">
                         <el-option
-                            v-for="role in this.roles"
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="user in users"
+                            :key="user.name + (user.surname ? ' ' + user.surname : '')"
+                            :label="user.name + (user.surname ? ' ' + user.surname : '')"
+                            :value="user.name + (user.surname ? ' ' + user.surname : '')"
+                        ></el-option>
+
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.role" filterable placeholder="Roles">
+                        <el-option
+                            v-for="role in roles"
                             :key="role.name"
                             :label="role.name"
-                            :value="role.name"
-                        ></el-option>
+                            :value="role.name">
+                        </el-option>
                     </el-select>
                 </div>
 
@@ -34,22 +49,26 @@
                 </div>
 
                 <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+
             </el-row>
         </el-form>
     </div>
 </template>
 
 <script>
-import {responseParse} from "../../../mixins/responseParse";
+import { responseParse } from "../../../mixins/responseParse";
 
 export default {
     data() {
         return {
             form: {
+                search: '',
                 role: '',
                 create_date: '',
             },
             roles: [],
+            users: [],
             showFilters: false,
         };
     },
@@ -58,13 +77,15 @@ export default {
         this.loadFiltersFromQueryParams();
 
         if ((this.form.create_date && this.form.create_date.length > 0) ||
-            this.form.role) {
+            this.form.role ||
+            this.form.search) {
             this.showFilters = true;
         }
     },
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
+            this.form.search = urlParams.get('search') || '';
             this.form.role = urlParams.get('role') || '';
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
         },
@@ -73,6 +94,12 @@ export default {
             window.location.search = queryParams;
         },
 
+        clearFilters() {
+            this.form.search = '';
+            this.form.role = '';
+            this.form.create_date = '';
+            this.applyFilters(); // Optionally apply cleared filters
+        },
         fetchUsersFilters() {
             axios.get('/admin/users/filter-options')
                 .then(response => {
@@ -80,9 +107,11 @@ export default {
                     if (response.status === 200) {
                         // Response data.
                         let data = response.data.data;
-
                         if (data.roles) {
                             this.roles = data.roles;
+                        }
+                        if (data.users) {
+                            this.users = data.users;
                         }
                     }
                 })
@@ -95,5 +124,5 @@ export default {
 </script>
 
 <style>
-
+/* Add your styles here */
 </style>

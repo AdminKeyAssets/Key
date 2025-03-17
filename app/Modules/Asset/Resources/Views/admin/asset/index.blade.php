@@ -27,6 +27,11 @@
                     <asset-filter-component>
                     </asset-filter-component>
                 </div>
+            @else
+                <div class="row">
+                    <investor-asset-filter-component>
+                    </investor-asset-filter-component>
+                </div>
             @endif
 
             @include('admin::includes.success')
@@ -85,41 +90,96 @@
                                         @endforeach
                                     </td>
                                 @endif
-                                <td>{!! $item->type !!} - {!! $item->area !!} sq.m</td>
+                                <td>
+                                    @if($item->flat_number)
+                                        {!! $item->type !!} N{!! $item->flat_number !!} - {!! $item->area !!} sq.m
+                                    @endif
+                                </td>
                                 <td>{!! $item->agreement_status !!}</td>
-                                <td>{!! $item->agreement_status == 'Installments' && count($item->payments) && count($item->payments->where('status', 0)) ? $item->payments->where('status', 0)->first()->payment_date . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount,0,".",",") . '$' : '' !!}</td>
-                                <td>{!! $item->asset_status == 'Rented' && count($item->rentals) && count($item->rentals->where('status', 0)) ? $item->rentals->where('status', 0)->first()->payment_date . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount,0,".",",") . '$' : '' !!}</td>
+
+                                <td>
+                                    {!!
+                                        $item->agreement_status == 'Installments'
+                                        && count($item->payments)
+                                        && count($item->payments->where('status', 0))
+                                        ? (
+                                            strtotime($item->payments->where('status', 0)->first()->payment_date) < time()
+                                            ?
+                                                // Overdue: display formatted overdue date & sum of overdue left_amount
+                                                \Carbon\Carbon::parse($item->payments->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                . ' - ' . number_format(
+                                                    $item->payments->where('status', 0)
+                                                        ->filter(function($payment) {
+                                                            return strtotime($payment->payment_date) < time();
+                                                        })->sum('left_amount'), 0, ".", ",") . '$'
+                                            :
+                                                // Not overdue: display the first record's payment_date and left_amount
+                                                $item->payments->where('status', 0)->first()->payment_date
+                                                . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount, 0, ".", ",") . '$'
+                                          )
+                                        : ''
+                                    !!}
+                                </td>
+
+
+                                <td>
+                                    {!!
+                                        $item->asset_status == 'Rented'
+                                        && count($item->rentals)
+                                        && count($item->rentals->where('status', 0))
+                                        ? (
+                                            strtotime($item->rentals->where('status', 0)->first()->payment_date) < time()
+                                            ?
+                                                // Overdue: display formatted overdue date & sum of overdue left_amount
+                                                \Carbon\Carbon::parse($item->rentals->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                . ' - ' . number_format(
+                                                    $item->rentals->where('status', 0)
+                                                        ->filter(function($rental) {
+                                                            return strtotime($rental->payment_date) < time();
+                                                        })->sum('left_amount'), 0, ".", ",") . '$'
+                                            :
+                                                // Not overdue: display the first record's payment_date and left_amount
+                                                $item->rentals->where('status', 0)->first()->payment_date
+                                                . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 0, ".", ",") . '$'
+                                          )
+                                        : ''
+                                    !!}
+                                </td>
+
 
                                 <td class="text-center">
-
-                                    @can(getPermissionKey('payment', 'index', true))
-                                        @if($item->agreement_status == 'Installments')
-                                            @include('admin::includes.actions.payment',['title' => 'Payments','route' => route($moduleKey . '.payments.list', [ $item->id ]), ])
-                                        @endif
-                                    @endcan
-                                    @can(getPermissionKey($moduleKey, 'update', true))
-                                        @include('admin::includes.actions.edit',['title' => 'Update','route' => route($moduleKey . '.edit', [ $item->id ])])
-                                    @endcan
-                                    @can(getPermissionKey('rental', 'index', true))
-                                        @if($item->asset_status == 'Rented')
-                                            @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
-                                        @endif
-                                    @endcan
-                                    @can(getPermissionKey('renovation', 'index', true))
-                                        @if($item->renovation_total_price)
-                                            @include('admin::includes.actions.renovation',['title' => 'Renovation Payments', 'route' => route($moduleKey . '.renovation.index', [ $item->id ])])
-                                        @endif
-                                    @endcan
+                                    @if($item->sale_status !== 'sold')
+                                        @can(getPermissionKey('payment', 'index', true))
+                                            @if($item->agreement_status == 'Installments')
+                                                @include('admin::includes.actions.payment',['title' => 'Payments','route' => route($moduleKey . '.payments.list', [ $item->id ]), ])
+                                            @endif
+                                        @endcan
+                                        @can(getPermissionKey($moduleKey, 'update', true))
+                                            @include('admin::includes.actions.edit',['title' => 'Update','route' => route($moduleKey . '.edit', [ $item->id ])])
+                                        @endcan
+                                        @can(getPermissionKey('rental', 'index', true))
+                                            @if($item->asset_status == 'Rented')
+                                                @include('admin::includes.actions.rental',['title' => 'Rentals', 'route' => route($moduleKey . '.rental.index', [ $item->id ])])
+                                            @endif
+                                        @endcan
+                                        @can(getPermissionKey('renovation', 'index', true))
+                                            @if($item->renovation_agreement_date)
+                                                @include('admin::includes.actions.renovation',['title' => 'Renovation Payments', 'route' => route($moduleKey . '.renovation.index', [ $item->id ])])
+                                            @endif
+                                        @endcan
                                         @can(getPermissionKey($moduleKey, 'update', true))
                                             <register-purchase-component :asset-id="{{ $item->id }}">
                                             </register-purchase-component>
                                         @endcan
-                                    @can(getPermissionKey($moduleKey, 'delete', true))
-                                        <delete-component
-                                            :url="'{{ route($moduleKey . '.delete') }}'"
-                                            :id="{{ $item->id }}"
-                                        ></delete-component>
-                                    @endcan
+                                        @can(getPermissionKey($moduleKey, 'delete', true))
+                                            <delete-component
+                                                :url="'{{ route($moduleKey . '.delete') }}'"
+                                                :id="{{ $item->id }}"
+                                            ></delete-component>
+                                        @endcan
+                                    @else
+                                        Sold
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

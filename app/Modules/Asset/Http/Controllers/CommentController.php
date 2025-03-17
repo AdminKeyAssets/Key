@@ -59,15 +59,17 @@ class CommentController extends BaseController
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             $originalFilename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('uploads', $originalFilename,'public');
+            $path = $file->storeAs('uploads', $originalFilename, 'public');
         }
 
+        $user = Auth::user();
         Comment::create([
             'comment' => $request->comment,
             'asset_id' => $assetId,
-            'admin_id' => Auth::user()->getAuthIdentifier(),
+            'admin_id' => $user->getAuthIdentifier(),
             'investor_id' => null,
-            'attachment' => $path ? Storage::url($path) : null
+            'attachment' => $path ? Storage::url($path) : null,
+            'author_name' => $user->name . ' ' . $user->surname,
         ]);
 
         $comments = Comment::query()
@@ -96,15 +98,18 @@ class CommentController extends BaseController
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             $originalFilename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('uploads', $originalFilename,'public');
+            $path = $file->storeAs('uploads', $originalFilename, 'public');
         }
 
+        $user = Auth::user();
         Comment::create([
             'comment' => $request->comment,
             'asset_id' => $assetId,
             'admin_id' => null,
-            'investor_id' => Auth::user()->getAuthIdentifier(),
-            'attachment' => $path ? Storage::url($path) : null
+            'investor_id' => $user->getAuthIdentifier(),
+            'attachment' => $path ? Storage::url($path) : null,
+            'author_name' => $user->name . ' ' . $user->surname,
+
         ]);
 
         $comments = Comment::query()
@@ -212,7 +217,7 @@ class CommentController extends BaseController
             $assetIds[] = $asset->id;
         }
 
-        $comments = Comment::query()->where('read', '=',0)
+        $comments = Comment::query()->where('read', '=', 0)
             ->with(['admin' => function ($query) {
                 $query->select('id', 'name', 'surname');
             }])

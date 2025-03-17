@@ -14,13 +14,22 @@ export default {
     data() {
         return {
             sales: {},
-            filters: {}
+            filters: {
+                search: '',
+                create_date: '',
+                manager: '',
+                marketing_channel: '',
+                status: '',
+                communication_status: ''
+            }
         };
     },
     methods: {
 
         async exportLeads() {
             try {
+                this.loadFiltersFromQueryParams();
+
                 const response = await axios.get('/lead/export', {
                     params: this.filters,
                     responseType: 'blob'
@@ -34,7 +43,16 @@ export default {
             } catch (error) {
                 console.error('Error exporting leads:', error);
             }
-        }
+        },
+        loadFiltersFromQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.filters.search = urlParams.get('search') || '';
+            this.filters.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
+            this.filters.manager = urlParams.get('manager') || '';
+            this.filters.marketing_channel = urlParams.get('marketing_channel') || '';
+            this.filters.communication_status = urlParams.get('communication_status') || '';
+            this.filters.status = urlParams.get('status') || 'active';
+        },
     },
 };
 </script>

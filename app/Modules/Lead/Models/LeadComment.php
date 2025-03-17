@@ -11,7 +11,8 @@ class LeadComment extends Model
         'comment',
         'attachment',
         'admin_id',
-        'lead_id'
+        'lead_id',
+        'author_name'
     ];
 
 

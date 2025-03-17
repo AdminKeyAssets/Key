@@ -51,9 +51,9 @@
                             <th> Capital Gain <br>({!! number_format($totals['total_capital_gain']) !!}$)</th>
                             <th> Rent <br>({!! number_format($totals['total_rent'])  !!}$)</th>
                             <th> Net Cash Balance <br>({!! number_format($totals['total_net_cash_balance'])  !!}$)</th>
-                            @if(!Auth::guard('investor')->check())
+{{--                            @if(!Auth::guard('investor')->check())--}}
                                 <th width="10%" class="text-center">@lang('Action')</th>
-                            @endif
+{{--                            @endif--}}
                         </tr>
                         </thead>
                         <tbody>

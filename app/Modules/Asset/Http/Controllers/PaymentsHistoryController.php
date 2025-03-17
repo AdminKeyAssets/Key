@@ -124,6 +124,11 @@ class PaymentsHistoryController extends BaseController
                 'save' => route('asset.payments.store', $assetId),
                 'edit' => route('asset.payments.edit', $assetId, []),
             ];
+
+            $nextPayment = Payment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
+            $this->baseData['nextPayment'] = $nextPayment ? (float)$nextPayment->left_amount : 0;
+
+
             if ($request->get('id')) {
                 $payment = PaymentsHistory::where('id',$request->get('id'))->where('asset_id', $assetId)->first();
 
@@ -145,6 +150,35 @@ class PaymentsHistoryController extends BaseController
      */
     public function store(PaymentRequest $request, $assetId)
     {
+        // Calculate the total scheduled payment amount from the Payment model.
+        $totalScheduledPayments = Payment::where('asset_id', $assetId)->sum('amount');
+
+        // Calculate the current sum of payment histories and check for overpayment.
+        if (isset($request->id)) {
+            // If updating an existing payment, subtract its current amount.
+            $paymentHistory = PaymentsHistory::where('id', $request->id)->first();
+            $existingPayments = PaymentsHistory::where('asset_id', $assetId)->sum('amount') - $paymentHistory->amount;
+
+            if (($existingPayments + $request->amount) > $totalScheduledPayments) {
+                return response()->json([
+                    'errors' => [
+                        'amount' => ['Payments Completed. Please prolong the payments schedule or complete.']
+                    ]
+                ], 422);
+            }
+        } else {
+            // New payment case.
+            $existingPayments = PaymentsHistory::where('asset_id', $assetId)->sum('amount');
+
+            if (($existingPayments + $request->amount) > $totalScheduledPayments) {
+                return response()->json([
+                    'errors' => [
+                        'amount' => ['Payments Completed. Please prolong the payments schedule or complete.']
+                    ]
+                ], 422);
+            }
+        }
+
         $path = null;
 
         if (isset($request->id)) {
@@ -158,9 +192,8 @@ class PaymentsHistoryController extends BaseController
 
                 $file = $request->file('attachment');
                 $originalFileName = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('uploads', $originalFileName,'public');
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
-
             } else if ($request->input('attachment') === null) {
                 if ($paymentHistory->attachment && Storage::disk('public')->exists($paymentHistory->attachment)) {
                     Storage::disk('public')->delete($paymentHistory->attachment);
@@ -170,10 +203,10 @@ class PaymentsHistoryController extends BaseController
             }
 
             $paymentHistory->update([
-                'asset_id' => $assetId,
-                'date' => $request->date,
-                'amount' => $request->amount,
-                'currency' => $request->currency,
+                'asset_id'   => $assetId,
+                'date'       => $request->date,
+                'amount'     => $request->amount,
+                'currency'   => $request->currency,
                 'attachment' => $path
             ]);
 
@@ -182,15 +215,15 @@ class PaymentsHistoryController extends BaseController
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $originalFileName = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('uploads', $originalFileName,'public');
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
                 $path = Storage::url($path);
             }
 
             $paymentHistory = PaymentsHistory::create([
-                'asset_id' => $assetId,
-                'date' => $request->date,
-                'amount' => $request->amount,
-                'currency' => $request->currency,
+                'asset_id'   => $assetId,
+                'date'       => $request->date,
+                'amount'     => $request->amount,
+                'currency'   => $request->currency,
                 'attachment' => $path
             ]);
 

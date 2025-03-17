@@ -82,6 +82,22 @@ class LeadController extends BaseController
             $query->where('leads.marketing_channel', '=', $request->marketing_channel);
         }
 
+
+        if ($request->has('status') && $request->input('status') === 'archieve') {
+            $query->where('leads.status', 'archieve');
+        }
+        elseif ($request->has('status') && $request->input('status') === 'active') {
+            $query->where('leads.status', '!=', 'archieve');
+        }
+
+        if ($request->communication_status && $request->communication_status != 'all') {
+            $query->where('leads.status', '=', $request->communication_status);
+        }
+
+        if ($request->search && $request->search != 'all') {
+            $query->whereRaw("CONCAT(leads.name, ' ', leads.surname) LIKE ?", ['%' . $request->search . '%']);
+        }
+
         $this->baseData['allData'] = $query->paginate(50);
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -133,7 +149,7 @@ class LeadController extends BaseController
         if (auth()->user()->getRolesNameAttribute() === 'administrator') {
             $request->validate([
                 'admin_id' => 'required',
-            ],[
+            ], [
                 'admin_id.required' => 'Please select a Manager.',
             ]);
         }
@@ -280,13 +296,22 @@ class LeadController extends BaseController
     {
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%sale%manager%');
-        })->get();
+        })
+            ->orderBy('name')
+            ->orderBy('surname')
+            ->get();
 
         if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
-            $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->get('marketing_channel');
+            $this->baseData['leads'] = Lead::orderBy('name')
+                ->orderBy('surname')
+                ->get();
+            $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
         } else {
+            $this->baseData['leads'] = Lead::where('admin_id', '=', \Auth::user()->getAuthIdentifier())->orderBy('name')
+                ->orderBy('surname')
+                ->get();
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)
-                ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->get('marketing_channel');
+                ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
         }
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
@@ -303,7 +328,8 @@ class LeadController extends BaseController
 
     public function export(Request $request)
     {
-        $filters = [];
+        $filters = $request->only(['search', 'create_date', 'manager', 'marketing_channel', 'status', 'communication_status']);
+
         return Excel::download(new LeadsExport($filters), 'leads.xlsx');
     }
 
