@@ -25,7 +25,7 @@ class RentsScheduleExport implements FromCollection, WithHeadings, WithEvents
     {
         $query = Rental::query();
 
-        $query->where('asset_id', '=', $this->filters['asset_id']);
+        $query->where('asset_id', '=', $this->filters['asset_id'])->where('status', 1);
 
         $rents = $query->select('payment_date', 'amount')->get();
 

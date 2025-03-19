@@ -60,7 +60,7 @@ class RentalPaymentsHistoryController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = RentalPaymentsHistory::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
+        $this->baseData['allData'] = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
         $asset = Asset::where('id', $assetId)->first();
 
@@ -384,6 +384,7 @@ class RentalPaymentsHistoryController extends BaseController
         }
         $asset->save();
         $asset->rentals()->delete();
+        $asset->rentalPaymentsHistories()->update(['status' => 0]);
 
         return ServiceResponse::jsonNotification('Rent updated successfully', 200, []);
     }
