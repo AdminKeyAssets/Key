@@ -18,13 +18,12 @@
                         format="yyyy/MM/dd"
                         value-format="yyyy/MM/dd"
                         start-placeholder="Start date"
-                        end-placeholder="End date"
-                        append-to-body>
+                        end-placeholder="End date">
                     </el-date-picker>
                 </div>
 
                 <div class="form-group" v-if="this.isAdmin">
-                    <el-select v-model="form.manager" filterable   reserve-keyword placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager">
                         <el-option
                             label="All"
                             value="all"
@@ -106,7 +105,7 @@ export default {
 
         if ((this.form.agreement_date && this.form.agreement_date.length > 0) ||
             this.form.manager ||
-            this.form.marketing_channel ||
+            this.form.marketing_channel||
             this.form.status) {
             this.showFilters = true;
         }
