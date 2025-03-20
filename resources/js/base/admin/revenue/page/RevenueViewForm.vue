@@ -239,7 +239,7 @@
                                                         <div style="width: 98%">
                                                             <span>{{ tenant.name }} {{ tenant.surname }}</span>
                                                             <span>
-                                            <span>{{ tenant.agreement_date }}</span>
+                                            <span>{{ tenant.agreement_date }}</span> <span v-if="tenant.rent_end_date"> - {{ tenant.rent_end_date }}</span>
                                             <span v-if="tenant.rentals && tenant.rentals.length && !tenant.status"> - {{
                                                     tenant.rentals.slice(-1)[0].payment_date
                                                 }}</span>

@@ -23,7 +23,8 @@
                 </div>
 
                 <div class="form-group" v-if="this.isAdmin">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager"
+                               @visible-change="handleVisibleChange">
                         <el-option
                             label="All"
                             value="all"
@@ -38,7 +39,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel">
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel" @visible-change="handleVisibleChange">
                         <el-option
                             label="All"
                             value="all"
@@ -53,7 +54,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                    <el-select v-model="form.status" filterable placeholder="Status" @visible-change="handleVisibleChange">
                         <el-option
                             label="All"
                             value="all"
@@ -150,6 +151,17 @@ export default {
                 .catch(error => {
                     console.error('Error fetching managers:', error);
                 });
+        },
+        handleVisibleChange(visible) {
+            if (visible) {
+                this.$nextTick(() => {
+                    // Query the input element within the dropdown
+                    const input = document.querySelector('.el-select-dropdown__wrap input');
+                    if (input) {
+                        input.focus();
+                    }
+                });
+            }
         }
     }
 };
@@ -158,5 +170,13 @@ export default {
 <style scoped>
 .block {
     margin-bottom: 20px;
+}
+@media (max-width: 480px) {
+    /* Adjust the calendar panel to better fit mobile screens */
+    .el-picker-panel {
+        width: 90% !important;
+        left: 5% !important;
+        transform: none !important;
+    }
 }
 </style>
