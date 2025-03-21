@@ -37,6 +37,10 @@
                             <img v-if="file.preview" :src="file.preview" :alt="file.name" class="img-thumbnail">
                             <img v-else :src="file.image" :alt="file.name" class="img-thumbnail">
                             <div class="remove" @click="removeFile(index)">×</div>
+                            <!-- Icon placed at the bottom right to move the file to the beginning -->
+                            <span class="move-to-front" @click="moveToFront(index)">
+                                <i class="fa fa-arrow-up"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -120,12 +124,12 @@
 </template>
 
 <script>
-import axios from 'axios'; // Assuming you're using axios for HTTP requests
+import axios from 'axios';
 import MapMarker from "../../../../components/admin/MapMarker.vue";
 import ImageModal from "../../../../components/admin/ImageModal.vue";
 
 export default {
-    components: {ImageModal, MapMarker},
+    components: { ImageModal, MapMarker },
     props: ['form', 'loading', 'updateData', 'item'],
     data() {
         return {
@@ -136,10 +140,18 @@ export default {
         };
     },
     watch: {
-        'form'() {
-            if (this.form.gallery) {
-                this.files = this.form.gallery;
-            }
+        'form': {
+            handler() {
+                if (this.form.gallery) {
+                    this.files = this.form.gallery.map(file => ({
+                        ...file,
+                        preview: file.preview || file.image || '',
+                        name: file.name || file.fileName || ''
+                    }));
+                }
+            },
+            deep: true,
+            immediate: true
         }
     },
     methods: {
@@ -150,7 +162,7 @@ export default {
         fetchAssets() {
             axios.get('/assets/names')
                 .then(response => {
-                    this.assets = response.data.data.assets; // Assuming the API returns an array of asset names
+                    this.assets = response.data.data.assets;
                 })
                 .catch(error => {
                     console.error('Error fetching assets:', error);
@@ -164,7 +176,6 @@ export default {
                         const asset = data.asset;
                         const gallery = data.gallery;
 
-                        // Assign values to the existing form fields
                         if (asset.project_name) this.form.project_name = asset.project_name;
                         if (asset.project_description) this.form.project_description = asset.project_description;
                         if (asset.project_link) this.form.project_link = asset.project_link;
@@ -173,19 +184,17 @@ export default {
                         if (asset.total_floors) this.form.total_floors = asset.total_floors;
                         if (asset.location) this.form.location = asset.location;
                         if (asset.delivery_date) this.form.delivery_date = asset.delivery_date;
-                        // if (gallery) this.files = gallery;
+
                         if (gallery) {
                             this.form.gallery = gallery;
                             this.files = gallery.map(file => ({
-                                file: file,
+                                ...file,
                                 preview: file.preview || file.image || '',
                                 name: file.name || file.fileName || ''
                             }));
                         }
 
-                        this.$emit('update-form', {...this.form});
-
-                        this.$emit('update-form', this.form);
+                        this.$emit('update-form', { ...this.form });
                         this.isModalVisible = false;
                     })
                     .catch(error => {
@@ -193,7 +202,6 @@ export default {
                     });
             }
         },
-
         triggerInput() {
             this.$refs.fileInput.click();
         },
@@ -202,15 +210,18 @@ export default {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.$emit('update-form', {
-                        ...this.form,
-                        gallery: [...(Array.isArray(this.form.gallery) ? this.form.gallery : []), {
-                            file: file,
-                            preview: file.type.startsWith('image/') ? e.target.result : null,
-                            name: file.name,
-                        }]
-                    });
+                reader.onload = (event) => {
+                    const fileData = {
+                        file: file,
+                        preview: file.type.startsWith('image/') ? event.target.result : null,
+                        name: file.name
+                    };
+                    if (!this.form.gallery || !Array.isArray(this.form.gallery)) {
+                        this.form.gallery = [];
+                    }
+                    this.form.gallery.push(fileData);
+                    this.files.push(fileData);
+                    this.$emit('update-form', this.form);
                 };
                 reader.readAsDataURL(file);
             }
@@ -228,24 +239,44 @@ export default {
             }
         },
         dragOver() {
-            // Add any visual cues for dragging over the area
+            // Optional visual cues can be added here
         },
         dragLeave() {
-            // Handle cleanup of visual cues
+            // Optional: Remove visual cues when leaving drop area
         },
         addFile(file) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                this.files.push({
-                    name: file.name,
-                    url: e.target.result
-                });
+            reader.onload = (event) => {
+                const fileData = {
+                    file: file,
+                    preview: file.type.startsWith('image/') ? event.target.result : null,
+                    name: file.name
+                };
+                this.files.push(fileData);
+                if (!this.form.gallery || !Array.isArray(this.form.gallery)) {
+                    this.form.gallery = [];
+                }
+                this.form.gallery.push(fileData);
+                this.$emit('update-form', this.form);
             };
             reader.readAsDataURL(file);
         },
         removeFile(index) {
             this.files.splice(index, 1);
-            this.$emit('update-form', {...this.form});
+            if (this.form.gallery && Array.isArray(this.form.gallery)) {
+                this.form.gallery.splice(index, 1);
+            }
+            this.$emit('update-form', this.form);
+        },
+        moveToFront(index) {
+            if (index > 0) {
+                const file = this.files.splice(index, 1)[0];
+                this.files.unshift(file);
+                if (this.form.gallery) {
+                    this.form.gallery = [...this.files];
+                }
+                this.$emit('update-form', this.form);
+            }
         }
     }
 }
@@ -288,12 +319,26 @@ export default {
     object-fit: cover;
 }
 
+/* Remove button styling */
 .remove {
     position: absolute;
     top: 0;
     right: 0;
     background: red;
     color: white;
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+/* Move-to-front icon styling */
+.move-to-front {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
     cursor: pointer;
 }
 </style>
