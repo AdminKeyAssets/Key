@@ -86,7 +86,7 @@ class LeadController extends BaseController
         if ($request->has('status') && $request->input('status') === 'archieve') {
             $query->where('leads.status', 'archieve');
         }
-        elseif ($request->has('status') && $request->input('status') === 'active') {
+        elseif (!$request->has('status') || ($request->has('status') && $request->input('status') === 'active')) {
             $query->where('leads.status', '!=', 'archieve');
         }
 
