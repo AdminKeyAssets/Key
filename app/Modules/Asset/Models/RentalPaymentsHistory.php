@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RentalPaymentsHistory extends Model
 {
-    protected $fillable = ['asset_id', 'date', 'amount', 'attachment', 'currency', 'tenant_id', 'month'];
+    protected $fillable = ['asset_id', 'date', 'amount', 'attachment', 'currency', 'tenant_id', 'month', 'status'];
 
     public function asset()
     {

@@ -266,7 +266,7 @@ class AssetController extends BaseController
                 $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
-                    $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->get();
+                    $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->where('status', 1)->get();
                 }
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
@@ -638,8 +638,8 @@ class AssetController extends BaseController
                 }
             }
         }
-        if ($asset->renovation_payments) {
-            $asset->renovation_payments()->delete();
+        if ($asset->renovationPayments) {
+            $asset->renovationPayments()->delete();
         }
         if (json_decode($request->renovation_payments)) {
             foreach (json_decode($request->renovation_payments) as $payment) {

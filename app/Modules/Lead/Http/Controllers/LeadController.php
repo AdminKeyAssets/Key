@@ -146,13 +146,13 @@ class LeadController extends BaseController
      */
     public function store(LeadRequest $request)
     {
-        if (auth()->user()->getRolesNameAttribute() === 'administrator') {
-            $request->validate([
-                'admin_id' => 'required',
-            ], [
-                'admin_id.required' => 'Please select a Manager.',
-            ]);
-        }
+//        if (auth()->user()->getRolesNameAttribute() === 'administrator') {
+//            $request->validate([
+//                'admin_id' => 'required',
+//            ], [
+//                'admin_id.required' => 'Please select a Manager.',
+//            ]);
+//        }
 
         if ($request->id) {
             $lead = Lead::where('id', $request->id)->first();
@@ -302,7 +302,8 @@ class LeadController extends BaseController
             ->get();
 
         if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
-            $this->baseData['leads'] = Lead::orderBy('name')
+            $this->baseData['leads'] = Lead::select('name', 'surname', DB::raw('COUNT(*) as total'))
+                ->groupBy('name', 'surname')
                 ->orderBy('surname')
                 ->get();
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
