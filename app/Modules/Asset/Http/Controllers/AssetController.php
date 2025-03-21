@@ -638,8 +638,8 @@ class AssetController extends BaseController
                 }
             }
         }
-        if ($asset->renovation_payments) {
-            $asset->renovation_payments()->delete();
+        if ($asset->renovationPayments) {
+            $asset->renovationPayments()->delete();
         }
         if (json_decode($request->renovation_payments)) {
             foreach (json_decode($request->renovation_payments) as $payment) {
