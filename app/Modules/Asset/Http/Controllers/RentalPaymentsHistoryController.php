@@ -119,8 +119,13 @@ class RentalPaymentsHistoryController extends BaseController
 
             $rentalsToPay = Rental::where('asset_id', $assetId)->where('status', 0)->get('number');
             $this->baseData['rentals'] = $rentalsToPay;
-            $nextPayment = Rental::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
-            $this->baseData['nextPayment'] = $nextPayment ? $nextPayment->left_amount : 0;
+//            $nextPayment = Rental::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
+
+            $this->baseData['nextPayment'] = strtotime(Rental::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
+                Rental::where('asset_id', $assetId)
+                    ->where('status', 0)
+                    ->where('payment_date', '<', now())
+                    ->sum('left_amount') : Rental::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
 
             if ($request->get('id')) {
                 $rental = RentalPaymentsHistory::findOrFail($request->get('id'));

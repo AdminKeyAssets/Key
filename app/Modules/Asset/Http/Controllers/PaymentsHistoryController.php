@@ -125,8 +125,12 @@ class PaymentsHistoryController extends BaseController
                 'edit' => route('asset.payments.edit', $assetId, []),
             ];
 
-            $nextPayment = Payment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
-            $this->baseData['nextPayment'] = $nextPayment ? (float)$nextPayment->left_amount : 0;
+//            $assetPayments = Payment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
+            $this->baseData['nextPayment'] = strtotime(Payment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
+                Payment::where('asset_id', $assetId)
+                    ->where('status', 0)
+                    ->where('payment_date', '<', now()) // Using Laravel's helper for current date/time
+                    ->sum('left_amount') : Payment::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
 
 
             if ($request->get('id')) {
