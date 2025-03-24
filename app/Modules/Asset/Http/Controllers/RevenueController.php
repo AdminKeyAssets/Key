@@ -379,7 +379,7 @@ class RevenueController extends BaseController
             if ($asset->agreement_status === 'Installments') {
                 $investmentAmount = $paid + $allInvestments;
             } else {
-                $paid = $asset->total_price;
+//                $paid = $asset->total_price;
                 $investmentAmount = $asset->total_price + $allInvestments;
             }
             $totalInvestment += $investmentAmount + $renovationPayments;
