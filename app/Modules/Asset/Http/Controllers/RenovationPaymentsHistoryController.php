@@ -133,7 +133,7 @@ class RenovationPaymentsHistoryController extends BaseController
             $this->baseData['nextPayment'] = strtotime(RenovationPayment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
                 RenovationPayment::where('asset_id', $assetId)
                     ->where('status', 0)
-                    ->where('payment_date', '<', now()) // Using Laravel's helper for current date/time
+                    ->where('payment_date', '<', date('Y/m/d')) // Using Laravel's helper for current date/time
                     ->sum('left_amount') : RenovationPayment::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
 
 

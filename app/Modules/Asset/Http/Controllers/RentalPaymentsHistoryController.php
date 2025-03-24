@@ -124,7 +124,7 @@ class RentalPaymentsHistoryController extends BaseController
             $this->baseData['nextPayment'] = strtotime(Rental::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
                 Rental::where('asset_id', $assetId)
                     ->where('status', 0)
-                    ->where('payment_date', '<', now())
+                    ->where('payment_date', '<', date('Y/m/d'))
                     ->sum('left_amount') : Rental::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
 
             if ($request->get('id')) {

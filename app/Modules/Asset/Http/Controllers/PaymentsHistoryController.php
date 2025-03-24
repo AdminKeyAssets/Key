@@ -129,9 +129,8 @@ class PaymentsHistoryController extends BaseController
             $this->baseData['nextPayment'] = strtotime(Payment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
                 Payment::where('asset_id', $assetId)
                     ->where('status', 0)
-                    ->where('payment_date', '<', now()) // Using Laravel's helper for current date/time
-                    ->sum('left_amount') : Payment::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
-
+                    ->where('payment_date', '<', date('Y/m/d')) // Using Laravel's helper for current date/time
+                    ->sum('left_amount') : 4;
 
             if ($request->get('id')) {
                 $payment = PaymentsHistory::where('id',$request->get('id'))->where('asset_id', $assetId)->first();
