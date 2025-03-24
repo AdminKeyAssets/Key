@@ -25,7 +25,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
-
+    Route::get('/export', $controller . '@export')
+        ->name('export.assets');
 
     $paymentController = 'PaymentsHistoryController';
     $paymentModuleName = 'payment';

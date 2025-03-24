@@ -23,6 +23,12 @@
             </div>
 
             @if(\Auth::guard('admin')->check())
+
+                <div class="row">
+                    <asset-export-component>
+                    </asset-export-component>
+                </div>
+
                 <div class="row">
                     <asset-filter-component>
                     </asset-filter-component>

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\AssetExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -36,6 +37,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
 
 class AssetController extends BaseController
@@ -1054,4 +1056,22 @@ class AssetController extends BaseController
 
     }
 
+    /**
+     * @param Request $request
+     * @return BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $filters = $request->only([
+            'agreement_date',
+            'investor',
+            'status',
+            'asset',
+            'manager',
+            'asset_status',
+            'asset_type',
+            'agreement_status',
+        ]);
+        return Excel::download(new AssetExport($filters), 'assets.xlsx');
+    }
 }
