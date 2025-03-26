@@ -212,7 +212,7 @@
 
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="tenants">
+                            <el-row style="margin-bottom: 30px" v-if="tenants && tenants.length">
                                 <el-card class="box-card" :class="{ 'hidden-body': !showRentals }">
                                     <div slot="header" class="clearfix main-header"
                                          @click="showRentals = !showRentals" style="cursor: pointer;">
