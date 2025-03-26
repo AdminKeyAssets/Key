@@ -138,27 +138,27 @@ class RevenueController extends BaseController
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
-                    $query->where('created_at', '>=', $createdDates[0])
+                    $query
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         });
                 });
                 $allAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '>=', $createdDates[0])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         });
                 });
             }
@@ -166,25 +166,25 @@ class RevenueController extends BaseController
                 $paginatedAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '<=', $createdDates[1])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         });
                 });
                 $allAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '<=', $createdDates[1])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         });
                 });
             }
