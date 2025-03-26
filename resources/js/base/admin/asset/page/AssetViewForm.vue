@@ -488,7 +488,7 @@
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card agreement-details-card" :class="{ 'hidden-body': !showAgreementDetails }">
 
-                                    <div slot="header" v-if="form.agreement_status === 'Complete'"
+                                    <div slot="header"
                                          class="clearfix main-header"
                                          @click="showAgreementDetails = !showAgreementDetails" style="cursor: pointer;">
                                         <div style="width: 98%">
@@ -498,9 +498,6 @@
                                             <i v-if="!showAgreementDetails" class="el-icon-caret-right"></i>
                                             <i v-else class="el-icon-caret-bottom"></i>
                                         </div>
-                                    </div>
-                                    <div slot="header" v-else class="clearfix main-header">
-                                        <span>Agreement Details</span>
                                     </div>
                                     <el-row>
                                         <el-row class="row-item">
