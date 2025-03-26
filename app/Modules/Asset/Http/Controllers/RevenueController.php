@@ -714,4 +714,19 @@ class RevenueController extends BaseController
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
+
+    public function exportRentals(Request $request, $assetId)
+    {
+        dd($assetId);
+    }
+
+    public function exportInvestments(Request $request, $assetId)
+    {
+
+    }
+
+    public function exportAssetValueHistory(Request $request, $assetId)
+    {
+
+    }
 }
