@@ -32,7 +32,7 @@ class RevenueRentalExport implements FromCollection, WithHeadings, WithEvents
             $tenantRentalPaymentsAmount = RentalPaymentsHistory::where('asset_id', $assetId)
             ->where('tenant_id', $tenant->id)->sum('amount');
 
-            $period = $tenant->period;
+            $period = $tenant->agreement_term;
 
             $investments = Investment::where('asset_id', $assetId)
                 ->where('status', '!=', 'Renovation')
@@ -43,7 +43,7 @@ class RevenueRentalExport implements FromCollection, WithHeadings, WithEvents
                 $investments = $investments->where('date', '<=', $tenant->rent_end_date);
             }
             $investmentsAmount = $investments->sum('amount');
-            
+
             return [
                 'tenant_name' => $tenant->name . ' ' . $tenant->surname,
                 'rent_date' => $tenant->agreement_date,
