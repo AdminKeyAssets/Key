@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" reserve-keyword>
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" multiple>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
