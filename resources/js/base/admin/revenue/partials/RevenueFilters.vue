@@ -50,7 +50,14 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status" reserve-keyword>
+                    <el-select
+                        v-model="form.status"
+                        filterable
+                        remote
+                        :remote-method="() => {}"
+                        placeholder="Status"
+                        reserve-keyword
+                    >
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
@@ -93,7 +100,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" multiple>
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" reserve-keyword>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
