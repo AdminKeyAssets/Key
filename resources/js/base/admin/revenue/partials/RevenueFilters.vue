@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status">
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status"   v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
@@ -147,7 +147,31 @@ export default {
             this.showFilters = true;
         }
     },
+    directives: {
+        removeReadonly: {
+            inserted(el) {
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Delay slightly to ensure inner input is rendered
+                    setTimeout(() => {
+                        const input = el.querySelector('.el-input__inner');
+                        if (input) {
+                            input.removeAttribute('readonly');
+                        }
+                    }, 0);
+                }
+            }
+        }
+    },
     methods: {
+        openKeyboard() {
+            // Ensure the focus() call is directly within the user click event handler
+            this.$nextTick(() => {
+                const input = this.$refs.investorSelect.$el.querySelector('.el-input__inner');
+                if (input) {
+                    input.focus();
+                }
+            });
+        },
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date')
