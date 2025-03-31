@@ -117,11 +117,11 @@
                                                     $item->payments->where('status', 0)
                                                         ->filter(function($payment) {
                                                             return strtotime($payment->payment_date) < time();
-                                                        })->sum('left_amount'), 0, ".", ",") . '$'
+                                                        })->sum('left_amount'), 2, ".", ",") . '$'
                                             :
                                                 // Not overdue: display the first record's payment_date and left_amount
                                                 $item->payments->where('status', 0)->first()->payment_date
-                                                . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount, 0, ".", ",") . '$'
+                                                . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
                                           )
                                         : ''
                                     !!}
@@ -142,11 +142,11 @@
                                                     $item->rentals->where('status', 0)
                                                         ->filter(function($rental) {
                                                             return strtotime($rental->payment_date) < time();
-                                                        })->sum('left_amount'), 0, ".", ",") . '$'
+                                                        })->sum('left_amount'), 2, ".", ",") . '$'
                                             :
                                                 // Not overdue: display the first record's payment_date and left_amount
                                                 $item->rentals->where('status', 0)->first()->payment_date
-                                                . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 0, ".", ",") . '$'
+                                                . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
                                           )
                                         : ''
                                     !!}

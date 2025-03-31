@@ -18,11 +18,15 @@ class AssetRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge(
-            array_map(function ($value) {
-                return $value === 'null' ? null : $value;
-            }, $this->all())
-        );
+        $data = $this->all();
+
+        array_walk_recursive($data, function (&$value) {
+            if ($value === 'null') {
+                $value = null;
+            }
+        });
+
+        $this->merge($data);
     }
 
     /**

@@ -133,7 +133,7 @@
                                                         <td>{{ formatPrice(form.total_investment, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.capital_gain, 0, ".", ",") }}$</td>
                                                         <td>{{ formatPrice(form.rent, 0, ".", ",") }}$</td>
-                                                        <td>{{ formatPrice(form.net_cache_balance, 0, ".", ",") }}$</td>
+                                                        <td>{{ formatPrice(form.net_cash_balance, 0, ".", ",") }}$</td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -637,7 +637,7 @@ export default {
                         }
                     }
                     this.tenants.forEach(tenant => {
-                        if (tenant.rentals) {
+                        if (tenant.rentals && tenant.rentals.length) {
                             let rentals = [];
                             tenant.rentals.forEach(rental => {
                                 rentals.push({

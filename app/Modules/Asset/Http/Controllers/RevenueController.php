@@ -2,7 +2,10 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\RevenueAssetValueExport;
 use App\Modules\Admin\Exports\RevenueExport;
+use App\Modules\Admin\Exports\RevenueInvestmentExport;
+use App\Modules\Admin\Exports\RevenueRentalExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -590,7 +593,7 @@ class RevenueController extends BaseController
 
                 $currentValues = [];
                 if ($asset->currentValues) {
-                    $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();;
+                    $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
                 }
                 $this->baseData['item'] = [];
                 $this->baseData['item']['agreements'] = $this->baseData['item']['payments'] = $this->baseData['item']['payments_histories'] = $this->baseData['item']['files'] = [];
@@ -629,7 +632,7 @@ class RevenueController extends BaseController
                     //                    dd([$asset->sale_price,$rent,$allInvestments]);
 
                     $this->baseData['item']['total_investment'] = $totalInvestments;
-                    $this->baseData['item']['net_cache_balance'] = $asset->sale_price + $rent - $totalInvestments;
+                    $this->baseData['item']['net_cash_balance'] = $asset->sale_price + $rent - $totalInvestments;
 
                     $this->baseData['item']['capital_gain'] = $asset->sale_price - $totalInvestments;
 
@@ -717,16 +720,18 @@ class RevenueController extends BaseController
 
     public function exportRentals(Request $request, $assetId)
     {
-        dd($assetId);
+        return Excel::download(new RevenueRentalExport(['asset_id' => $assetId]), 'revenue_rentals.xlsx');
     }
 
     public function exportInvestments(Request $request, $assetId)
     {
+        return Excel::download(new RevenueInvestmentExport(['asset_id' => $assetId]), 'revenue_investments.xlsx');
 
     }
 
     public function exportAssetValueHistory(Request $request, $assetId)
     {
+        return Excel::download(new RevenueAssetValueExport(['asset_id' => $assetId]), 'asset_values.xlsx');
 
     }
 }
