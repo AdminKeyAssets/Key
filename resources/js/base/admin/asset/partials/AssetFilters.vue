@@ -92,13 +92,16 @@
                 </div>
                 <div class="form-group">
                     <el-select v-model="form.asset_type" filterable placeholder="Asset Type" v-remove-readonly>
-                        <el-option label="All" value="all"></el-option>
-                        <el-option label="Commercial Space" value="Commercial Space"></el-option>
-                        <el-option label="Flat" value="Flat"></el-option>
-                        <el-option label="Land" value="Land"></el-option>
-                        <el-option label="Office" value="Office"></el-option>
-                        <el-option label="Parking" value="Parking"></el-option>
-                        <el-option label="Villa" value="Villa"></el-option>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="type in types"
+                            :key="type.type"
+                            :label="type.type"
+                            :value="type.type"
+                        ></el-option>
                     </el-select>
                 </div>
 
@@ -140,6 +143,7 @@ export default {
             investors: [],
             assets: [],
             managers: [],
+            types: [],
         };
     },
     mounted() {
@@ -201,6 +205,9 @@ export default {
                         }
                         if (data.managers) {
                             this.managers = data.managers;
+                        }
+                        if (data.types) {
+                            this.types = data.types;
                         }
                     }
                 })

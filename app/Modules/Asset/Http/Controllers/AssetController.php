@@ -28,7 +28,6 @@ use App\Modules\Asset\Models\Tenant;
 use App\Modules\Asset\Services\AssetCompareService;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -39,6 +38,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
+use Illuminate\Support\Facades\DB;
 
 class AssetController extends BaseController
 {
@@ -1007,6 +1007,10 @@ class AssetController extends BaseController
             }
         }
 
+        $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
 
         // Group by project_name and get the latest asset (by max id) for each project
         $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))

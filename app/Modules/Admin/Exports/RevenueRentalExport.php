@@ -106,6 +106,6 @@ class RevenueRentalExport implements FromCollection, WithHeadings, WithEvents
             $result = $fullMonths + $fraction;
         }
 
-        return number_format($result, 2);
+        return number_format($result, 1);
     }
 }

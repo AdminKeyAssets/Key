@@ -23,7 +23,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -700,6 +699,11 @@ class RevenueController extends BaseController
                 $this->baseData['managers'] = [];
             }
         }
+
+        $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
 
         $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
             ->groupBy('project_name')
