@@ -246,7 +246,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Asset Status:</label>
             <div class="col-md-3 uppercase-medium">
-                <el-select v-model="form.asset_status" placeholder="Select Status">
+                <el-select v-model="form.asset_status" placeholder="Select Status" v-remove-readonly>
                     <el-option label="Vacant" value="Vacant"></el-option>
                     <el-option label="Under Renovation" value="Under Renovation"></el-option>
                     <el-option label="Under Construction" value="Under Construction"></el-option>

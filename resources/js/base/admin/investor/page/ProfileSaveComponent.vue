@@ -42,7 +42,7 @@
                         class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-select v-model="form.citizenship" filterable
-                                   placeholder="Select Country">
+                                   placeholder="Select Country" v-remove-readonly>
                             <el-option
                                 v-for="country in this.countries"
                                 :key="country.country"
@@ -77,6 +77,7 @@
                     <div class="col-md-6">
                         <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
                             <el-select v-model="form.prefix" slot="prepend" filterable
+                                       v-remove-readonly
                                        placeholder="Prefix">
                                 <el-option
                                     v-for="prefix in this.prefixes"

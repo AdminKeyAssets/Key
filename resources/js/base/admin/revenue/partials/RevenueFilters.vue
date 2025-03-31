@@ -11,7 +11,7 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
-                <div class="form-group" v-remove-readonly>
+                <div class="form-group">
                     <el-date-picker
                         v-model="form.agreement_date"
                         type="daterange"
@@ -22,8 +22,8 @@
                     </el-date-picker>
                 </div>
 
-                <div class="form-group" v-remove-readonly>
-                    <el-select v-model="form.investor" filterable placeholder="Investor">
+                <div class="form-group">
+                    <el-select v-model="form.investor" filterable placeholder="Investor" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option
                             v-for="investor in investors"
@@ -34,8 +34,8 @@
                     </el-select>
                 </div>
 
-                <div class="form-group" v-remove-readonly>
-                    <el-select v-model="form.asset" filterable placeholder="Asset Name">
+                <div class="form-group">
+                    <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -49,8 +49,8 @@
                     </el-select>
                 </div>
 
-                <div class="form-group" v-remove-readonly>
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                <div class="form-group" >
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
@@ -145,21 +145,6 @@ export default {
             || this.form.agreement_status
         ) {
             this.showFilters = true;
-        }
-    },
-    directives: {
-        removeReadonly: {
-            inserted(el) {
-                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    // Delay slightly to ensure inner input is rendered
-                    setTimeout(() => {
-                        const input = el.querySelector('.el-input__inner');
-                        if (input) {
-                            input.removeAttribute('readonly');
-                        }
-                    }, 0);
-                }
-            }
         }
     },
     methods: {

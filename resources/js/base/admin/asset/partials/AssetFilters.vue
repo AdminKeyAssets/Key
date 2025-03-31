@@ -28,7 +28,7 @@
 
                 <!-- Investor Filter -->
                 <div class="form-group">
-                    <el-select v-model="form.investor" filterable placeholder="Investor">
+                    <el-select v-model="form.investor" filterable placeholder="Investor" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -44,7 +44,7 @@
 
                 <!-- Asset Filter -->
                 <div class="form-group">
-                    <el-select v-model="form.asset" filterable placeholder="Asset Name">
+                    <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -59,7 +59,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset_status" filterable placeholder="Asset Status">
+                    <el-select v-model="form.asset_status" filterable placeholder="Asset Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Rented" value="Rented"></el-option>
                         <el-option label="Under Construction" value="Under Construction"></el-option>
@@ -91,7 +91,7 @@
                     </el-select>
                 </div>
                 <div class="form-group">
-                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type">
+                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Commercial Space" value="Commercial Space"></el-option>
                         <el-option label="Flat" value="Flat"></el-option>
@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status">
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>

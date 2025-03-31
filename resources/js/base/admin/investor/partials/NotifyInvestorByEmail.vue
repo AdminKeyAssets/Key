@@ -11,7 +11,7 @@
         >
             <el-form>
                 <el-form-item label="Select email template:">
-                    <el-select v-model="form.template" @change="onTemplateSelect" placeholder="Select Template">
+                    <el-select v-model="form.template" @change="onTemplateSelect" placeholder="Select Template"  v-remove-readonly>
                         <el-option
                             v-for="template in emailTemplates"
                             :key="template.id"

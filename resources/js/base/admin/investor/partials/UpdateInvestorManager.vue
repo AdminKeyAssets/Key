@@ -12,7 +12,7 @@
         >
             <el-form>
                 <el-form-item label="Select new manager:">
-                    <el-select v-model="form.manager" placeholder="Select Manager">
+                    <el-select v-model="form.manager" placeholder="Select Manager" v-remove-readonly>
                         <el-option
                             v-for="manager in managers"
                             :key="manager.id"

@@ -63,7 +63,8 @@
                     <el-select v-model="form.renovation_period"
                                :value="form.renovation_period"
                                filterable
-                               placeholder="Period">
+                               placeholder="Period"
+                               v-remove-readonly>
                         <el-option
                             v-for="number in numbers"
                             :key="number"

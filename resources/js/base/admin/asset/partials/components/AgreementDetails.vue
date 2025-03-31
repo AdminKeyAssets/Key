@@ -57,7 +57,8 @@
                 <el-select v-model="form.agreement_status"
                            :value="form.agreement_status"
                            filterable
-                           placeholder="Agreement Status">
+                           placeholder="Agreement Status"
+                           v-remove-readonly>
                     <el-option
                         v-for="status in agreementStatuses"
                         :key="status"
@@ -103,7 +104,8 @@
                     <el-select v-model="form.period"
                                :value="form.period"
                                filterable
-                               placeholder="Period">
+                               placeholder="Period"
+                               v-remove-readonly>
                         <el-option
                             v-for="number in numbers"
                             :key="number"

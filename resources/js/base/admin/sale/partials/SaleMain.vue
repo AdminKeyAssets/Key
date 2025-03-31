@@ -99,6 +99,7 @@
                             <el-select v-model="form.agreement_status"
                                        :value="form.agreement_status"
                                        filterable
+                                       v-remove-readonly
                                        placeholder="Agreement Status">
                                 <el-option
                                     v-for="status in agreementStatuses"
@@ -114,6 +115,7 @@
                         <label class="col-md-2 control-label">Select Manager: </label>
                         <div class="col-md-6">
                             <el-select v-model="form.admin_id" filterable
+                                       v-remove-readonly
                                        placeholder="Manager">
                                 <el-option
                                     v-for="manager in this.managers"
@@ -148,6 +150,7 @@
                                 <el-select v-model="form.period"
                                            :value="form.period"
                                            filterable
+                                           v-remove-readonly
                                            placeholder="Period">
                                     <el-option
                                         v-for="number in numbers"

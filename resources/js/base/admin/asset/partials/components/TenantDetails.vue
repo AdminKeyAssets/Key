@@ -25,6 +25,7 @@
             <label class="col-md-1 control-label">Citizenship:</label>
             <div class="col-md-10 uppercase-medium">
                 <el-select v-model="tenant.citizenship" filterable
+                           v-remove-readonly
                            placeholder="Select Country">
                     <el-option
                         v-for="country in this.countries"
@@ -46,6 +47,7 @@
             <div class="col-md-10 uppercase-medium">
                 <el-input placeholder="Phone" v-model="tenant.phone" class="input-with-select">
                     <el-select v-model="tenant.prefix" slot="prepend" filterable
+                               v-remove-readonly
                                placeholder="Prefix">
                         <el-option
                             v-for="prefix in this.prefixes"
@@ -89,7 +91,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Term:</label>
             <div class="col-md-10 uppercase-medium">
-                <el-select v-model="tenant.agreement_term" placeholder="Agreement Term" filterable>
+                <el-select v-model="tenant.agreement_term" placeholder="Agreement Term" filterable v-remove-readonly>
                     <el-option
                         v-for="term in agreementTerms"
                         :key="term"
