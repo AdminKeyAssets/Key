@@ -23,7 +23,12 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.investor" filterable placeholder="Investor" reserve-keyword>
+                    <el-select
+                        v-model="form.investor"
+                        filterable
+                        placeholder="Investor"
+                        reserve-keyword
+                        :popper-append-to-body="false">
                         <el-option label="All" value="all"></el-option>
                         <el-option
                             v-for="investor in investors"
@@ -35,17 +40,19 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset" filterable placeholder="Asset Name" reserve-keyword>
-                        <el-option
-                            label="All"
-                            value="all"
-                        ></el-option>
+                    <el-select
+                        v-model="form.asset"
+                        filterable
+                        placeholder="Asset Name"
+                        reserve-keyword
+                        :popper-append-to-body="false">
+                        <el-option label="All" value="all"></el-option>
                         <el-option
                             v-for="asset in assets"
                             :key="asset.project_name"
                             :label="asset.project_name"
-                            :value="asset.project_name"
-                        ></el-option>
+                            :value="asset.project_name">
+                        </el-option>
                     </el-select>
                 </div>
 
@@ -53,33 +60,38 @@
                     <el-select
                         v-model="form.status"
                         filterable
-                        remote
-                        :remote-method="() => {}"
                         placeholder="Status"
                         reserve-keyword
-                    >
+                        :popper-append-to-body="false">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
                     </el-select>
                 </div>
                 <div class="form-group">
-                    <el-select v-model="form.manager" filterable placeholder="Manager" reserve-keyword>
-                        <el-option
-                            label="All"
-                            value="all"
-                        ></el-option>
+                    <el-select
+                        v-model="form.manager"
+                        filterable
+                        placeholder="Manager"
+                        reserve-keyword
+                        :popper-append-to-body="false">
+                        <el-option label="All" value="all"></el-option>
                         <el-option
                             v-for="manager in managers"
                             :key="manager.name + ' ' + manager.surname"
                             :label="manager.name + ' ' + manager.surname"
-                            :value="manager.name + ' ' + manager.surname"
-                        ></el-option>
+                            :value="manager.name + ' ' + manager.surname">
+                        </el-option>
                     </el-select>
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset_status" filterable placeholder="Asset Status" reserve-keyword>
+                    <el-select
+                        v-model="form.asset_status"
+                        filterable
+                        placeholder="Asset Status"
+                        reserve-keyword
+                        :popper-append-to-body="false">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Rented" value="Rented"></el-option>
                         <el-option label="Under Construction" value="Under Construction"></el-option>
@@ -88,7 +100,12 @@
                     </el-select>
                 </div>
                 <div class="form-group">
-                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type" reserve-keyword>
+                    <el-select
+                        v-model="form.asset_type"
+                        filterable
+                        placeholder="Asset Type"
+                        reserve-keyword
+                        :popper-append-to-body="false">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Commercial Space" value="Commercial Space"></el-option>
                         <el-option label="Flat" value="Flat"></el-option>
@@ -99,8 +116,14 @@
                     </el-select>
                 </div>
 
+                <!-- The multiple select already activates the iOS keyboard properly -->
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" reserve-keyword>
+                    <el-select
+                        v-model="form.agreement_status"
+                        filterable
+                        placeholder="Agreement Status"
+                        multiple
+                        :popper-append-to-body="false">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
@@ -129,7 +152,6 @@ export default {
                 asset_status: '',
                 asset_type: '',
                 agreement_status: ''
-
             },
             showFilters: false,
             investors: [],
@@ -144,12 +166,12 @@ export default {
         if (
             (this.form.agreement_date && this.form.agreement_date.length > 0) ||
             this.form.investor ||
-            this.form.status !== 'active'
-            || this.form.asset
-            || this.form.asset_type
-            || this.form.asset_status
-            || this.form.manager
-            || this.form.agreement_status
+            this.form.status !== 'active' ||
+            this.form.asset ||
+            this.form.asset_type ||
+            this.form.asset_status ||
+            this.form.manager ||
+            this.form.agreement_status
         ) {
             this.showFilters = true;
         }
