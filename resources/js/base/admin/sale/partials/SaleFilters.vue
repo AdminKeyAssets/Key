@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="form-group" v-if="this.isAdmin">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel">
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -110,7 +110,23 @@ export default {
             this.showFilters = true;
         }
     },
+    directives: {
+        removeReadonly: {
+            inserted(el) {
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Delay slightly to ensure inner input is rendered
+                    setTimeout(() => {
+                        const input = el.querySelector('.el-input__inner');
+                        if (input) {
+                            input.removeAttribute('readonly');
+                        }
+                    }, 0);
+                }
+            }
+        }
+    },
     methods: {
+
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';

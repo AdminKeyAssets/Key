@@ -11,7 +11,7 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
-                <div class="form-group">
+                <div class="form-group" v-remove-readonly>
                     <el-date-picker
                         v-model="form.agreement_date"
                         type="daterange"
@@ -22,7 +22,7 @@
                     </el-date-picker>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-remove-readonly>
                     <el-select v-model="form.investor" filterable placeholder="Investor">
                         <el-option label="All" value="all"></el-option>
                         <el-option
@@ -34,7 +34,7 @@
                     </el-select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-remove-readonly>
                     <el-select v-model="form.asset" filterable placeholder="Asset Name">
                         <el-option
                             label="All"
@@ -49,7 +49,7 @@
                     </el-select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-remove-readonly>
                     <el-select v-model="form.status" filterable placeholder="Status">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
@@ -57,7 +57,7 @@
                     </el-select>
                 </div>
                 <div class="form-group">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset_status" filterable placeholder="Asset Status">
+                    <el-select v-model="form.asset_status" filterable placeholder="Asset Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Rented" value="Rented"></el-option>
                         <el-option label="Under Construction" value="Under Construction"></el-option>
@@ -81,7 +81,7 @@
                     </el-select>
                 </div>
                 <div class="form-group">
-                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type">
+                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Commercial Space" value="Commercial Space"></el-option>
                         <el-option label="Flat" value="Flat"></el-option>
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status"   v-remove-readonly>
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
@@ -164,7 +164,6 @@ export default {
     },
     methods: {
         openKeyboard() {
-            // Ensure the focus() call is directly within the user click event handler
             this.$nextTick(() => {
                 const input = this.$refs.investorSelect.$el.querySelector('.el-input__inner');
                 if (input) {
