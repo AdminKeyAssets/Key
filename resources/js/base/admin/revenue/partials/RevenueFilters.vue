@@ -116,13 +116,12 @@
                     </el-select>
                 </div>
 
-                <!-- The multiple select already activates the iOS keyboard properly -->
                 <div class="form-group">
                     <el-select
                         v-model="form.agreement_status"
                         filterable
                         placeholder="Agreement Status"
-                        multiple
+                        reserve-keyword
                         :popper-append-to-body="false">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
