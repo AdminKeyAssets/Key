@@ -163,14 +163,6 @@ export default {
         }
     },
     methods: {
-        openKeyboard() {
-            this.$nextTick(() => {
-                const input = this.$refs.investorSelect.$el.querySelector('.el-input__inner');
-                if (input) {
-                    input.focus();
-                }
-            });
-        },
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date')

@@ -82,30 +82,8 @@ export default {
             this.showFilters = true;
         }
     },
-    directives: {
-        removeReadonly: {
-            inserted(el) {
-                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    // Delay slightly to ensure inner input is rendered
-                    setTimeout(() => {
-                        const input = el.querySelector('.el-input__inner');
-                        if (input) {
-                            input.removeAttribute('readonly');
-                        }
-                    }, 0);
-                }
-            }
-        }
-    },
+
     methods: {
-        openKeyboard() {
-            this.$nextTick(() => {
-                const input = this.$refs.investorSelect.$el.querySelector('.el-input__inner');
-                if (input) {
-                    input.focus();
-                }
-            });
-        },
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.search = urlParams.get('search') || '';

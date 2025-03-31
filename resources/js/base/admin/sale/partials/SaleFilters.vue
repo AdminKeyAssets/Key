@@ -110,21 +110,7 @@ export default {
             this.showFilters = true;
         }
     },
-    directives: {
-        removeReadonly: {
-            inserted(el) {
-                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    // Delay slightly to ensure inner input is rendered
-                    setTimeout(() => {
-                        const input = el.querySelector('.el-input__inner');
-                        if (input) {
-                            input.removeAttribute('readonly');
-                        }
-                    }, 0);
-                }
-            }
-        }
-    },
+
     methods: {
 
         loadFiltersFromQueryParams() {

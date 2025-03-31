@@ -26,6 +26,20 @@ Vue.use(VueGoogleMaps, {
 
 window.Vue = require('vue');
 
+Vue.directive('remove-readonly', {
+    inserted(el) {
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            // Slight delay to ensure the inner input is rendered
+            setTimeout(() => {
+                const input = el.querySelector('.el-input__inner');
+                if (input) {
+                    input.removeAttribute('readonly');
+                }
+            }, 0);
+        }
+    }
+});
+
 // User
 Vue.component('admin-user-save-component', require('./base/admin/user/page/SaveComponent').default);
 Vue.component('admin-profile-save-component', require('./base/admin/user/page/ProfileSaveComponent').default);
