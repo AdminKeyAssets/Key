@@ -114,7 +114,12 @@ export default {
                     const data = response.data.data;
                     setTimeout(() => {
 
-                        window.location.href = `assets/${data.item.asset_id}/renovation`;
+                        if(data.redirect_to){
+
+                            window.location.href = data.redirect_to;
+                        }else{
+                            window.location.href = `assets/${data.item.asset_id}/renovation`;
+                        }
                         // window.location.reload();
                     }, 1000);
                     this.loading = false;

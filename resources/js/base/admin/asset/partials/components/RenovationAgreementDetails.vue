@@ -1,5 +1,16 @@
 <template>
     <div>
+
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Renovation Status:</label>
+            <div class="col-md-3 uppercase-medium">
+                <el-select v-model="form.renovation_status" placeholder="Select Status" v-remove-readonly>
+                    <el-option label="In Progress" value="In Progress"></el-option>
+                    <el-option label="Completed" value="Completed"></el-option>
+                </el-select>
+            </div>
+        </div>
+
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Agreement Date:</label>
             <div class="col-md-10 uppercase-medium">
@@ -29,8 +40,6 @@
                                    @click="removeRenovationAttachment"></el-button>
                     </div>
                 </div>
-
-
 
             </div>
         </div>

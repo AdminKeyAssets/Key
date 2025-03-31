@@ -900,7 +900,7 @@ class AssetController extends BaseController
                 'payments_route' => $asset->agreement_status === 'Installments' ? route('asset.payments.list', [$asset->id]) : null,
                 'rentals_route' => $asset->asset_status === 'Rented' ? route('asset.rental.index', [$asset->id]) : null,
                 'investments_route' => route('asset.investment.index', [$asset->id]),
-                'renovation_route' => $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
+                'renovation_route' => $asset->renovation_status === 'In Progress' ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
                 'asset_id' => $asset->id
             ];
