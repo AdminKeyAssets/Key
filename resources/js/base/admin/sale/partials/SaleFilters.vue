@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="form-group" v-if="this.isAdmin">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel">
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -110,6 +110,7 @@ export default {
             this.showFilters = true;
         }
     },
+
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);

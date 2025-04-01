@@ -12,7 +12,7 @@
                                 <label class="col-md-1 control-label">Select Asset Manager:</label>
                                 <div class="col-md-10 uppercase-medium">
                                     <el-select v-model="form.admin_id" :value="form.admin_id" filterable
-                                               placeholder="Select">
+                                               placeholder="Select" v-remove-readonly>
                                         <el-option
                                             v-for="(item, index) in managers"
                                             :key="index"

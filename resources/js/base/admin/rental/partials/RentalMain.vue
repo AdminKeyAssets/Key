@@ -32,7 +32,7 @@
                     <div class="form-group dashed col-md-6">
                         <label class="col-md-2 control-label">Select Rent Month:</label>
                         <div class="col-md-6 uppercase-medium">
-                            <el-select v-model="form.month" filterable placeholder="Select">
+                            <el-select v-model="form.month" filterable placeholder="Select" v-remove-readonly>
                                 <el-option
                                     v-for="(rental, index) in rentals"
                                     :key="index"

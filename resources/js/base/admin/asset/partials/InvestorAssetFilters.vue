@@ -13,7 +13,7 @@
             <el-row>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status">
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>

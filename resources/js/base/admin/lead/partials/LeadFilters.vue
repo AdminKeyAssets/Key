@@ -13,7 +13,7 @@
             <el-row>
                 <!-- Name search input -->
                 <div class="form-group">
-                    <el-select v-model="form.search" filterable placeholder="Name">
+                    <el-select v-model="form.search" filterable placeholder="Name" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -38,8 +38,8 @@
                     </el-date-picker>
                 </div>
 
-                <div class="form-group" v-if="this.isAdmin">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                <div class="form-group" v-if="this.isAdmin" v-remove-readonly>
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel">
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Lead Status">
+                    <el-select v-model="form.status" filterable placeholder="Lead Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Archieve" value="archieve"></el-option>
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.communication_status" filterable placeholder="Communication Status">
+                    <el-select v-model="form.communication_status" filterable placeholder="Communication Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Communication" value="Communication"></el-option>
                         <el-option label="New" value="New"></el-option>

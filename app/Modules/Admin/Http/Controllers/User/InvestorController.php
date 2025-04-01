@@ -367,7 +367,6 @@ class InvestorController extends BaseController
 
     public function filterOptions()
     {
-        $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
         })
@@ -377,10 +376,13 @@ class InvestorController extends BaseController
 
 
         if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
             $this->baseData['investors'] = Investor::orderBy('name')
                 ->orderBy('surname')
                 ->get();
         } else {
+            $this->baseData['countries'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
+                ->distinct()->orderBy('citizenship')->pluck('citizenship');
             $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
                 ->orderBy('name')
                 ->orderBy('surname')

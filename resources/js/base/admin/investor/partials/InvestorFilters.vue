@@ -13,7 +13,7 @@
             <el-row>
                 <!-- Search Input -->
                 <div class="form-group">
-                    <el-select v-model="form.search" filterable placeholder="Investor">
+                    <el-select v-model="form.search" filterable placeholder="Investor" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.citizenship" filterable placeholder="Citizenship">
+                    <el-select v-model="form.citizenship" filterable placeholder="Citizenship" v-remove-readonly>
                         <el-option
                             v-for="country in countries"
                             :key="country"
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="form-group" v-if="isAdmin">
-                    <el-select v-model="form.manager" filterable placeholder="Manager">
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             v-for="manager in managers"
                             :key="manager.name + ' ' + manager.surname"

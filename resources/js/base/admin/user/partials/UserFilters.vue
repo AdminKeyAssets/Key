@@ -11,7 +11,7 @@
             <el-row>
                 <!-- Search Box -->
                 <div class="form-group">
-                    <el-select v-model="form.search" filterable placeholder="User Names">
+                    <el-select v-model="form.search" filterable placeholder="User Names" v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.role" filterable placeholder="Roles">
+                    <el-select v-model="form.role" filterable placeholder="Roles" v-remove-readonly>
                         <el-option
                             v-for="role in roles"
                             :key="role.name"
@@ -82,6 +82,7 @@ export default {
             this.showFilters = true;
         }
     },
+
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);

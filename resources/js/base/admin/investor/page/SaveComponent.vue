@@ -44,6 +44,7 @@
                         class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-select v-model="form.citizenship" filterable
+                                   v-remove-readonly
                                    placeholder="Select Country">
                             <el-option
                                 v-for="country in this.countries"
@@ -89,6 +90,7 @@
                     <div class="col-md-6">
                         <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
                             <el-select v-model="form.prefix" slot="prepend" filterable
+                                       v-remove-readonly
                                        placeholder="Prefix">
                                 <el-option
                                     v-for="prefix in this.prefixes"
@@ -106,6 +108,7 @@
                     <label class="col-md-2 control-label">Select Manager: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                         <el-select v-model="form.admin_id" filterable
+                                   v-remove-readonly
                                    placeholder="Manager">
                             <el-option
                                 v-for="manager in this.managers"

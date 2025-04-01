@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\AssetExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -27,7 +28,6 @@ use App\Modules\Asset\Models\Tenant;
 use App\Modules\Asset\Services\AssetCompareService;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -36,7 +36,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
+use Illuminate\Support\Facades\DB;
 
 class AssetController extends BaseController
 {
@@ -895,8 +897,8 @@ class AssetController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
-                'payments_route' => route('asset.payments.list', [$asset->id]),
-                'rentals_route' => route('asset.rental.index', [$asset->id]),
+                'payments_route' => $asset->agreement_status === 'Installments' ? route('asset.payments.list', [$asset->id]) : null,
+                'rentals_route' => $asset->asset_status === 'Rented' ? route('asset.rental.index', [$asset->id]) : null,
                 'investments_route' => route('asset.investment.index', [$asset->id]),
                 'renovation_route' => $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
@@ -996,21 +998,37 @@ class AssetController extends BaseController
                 })->orderBy('name')
                     ->orderBy('surname')
                     ->get();
+
+                $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('type')
+                    ->orderBy('type')
+                    ->get();
+
+                $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('project_name')
+                    ->orderBy('project_name')
+                    ->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
                     ->orderBy('name')
                     ->orderBy('surname')
                     ->get();
                 $this->baseData['managers'] = [];
+
+                $this->baseData['types'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('type', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('type')
+                    ->orderBy('type')
+                    ->get();
+
+                $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('project_name', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('project_name')
+                    ->orderBy('project_name')
+                    ->get();
             }
         }
 
-
-        // Group by project_name and get the latest asset (by max id) for each project
-        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
-            ->groupBy('project_name')
-            ->orderBy('project_name')
-            ->get();
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
     }
@@ -1054,4 +1072,22 @@ class AssetController extends BaseController
 
     }
 
+    /**
+     * @param Request $request
+     * @return BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $filters = $request->only([
+            'agreement_date',
+            'investor',
+            'status',
+            'asset',
+            'manager',
+            'asset_status',
+            'asset_type',
+            'agreement_status',
+        ]);
+        return Excel::download(new AssetExport($filters), 'assets.xlsx');
+    }
 }

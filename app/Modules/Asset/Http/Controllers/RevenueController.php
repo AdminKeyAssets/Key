@@ -2,7 +2,10 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\RevenueAssetValueExport;
 use App\Modules\Admin\Exports\RevenueExport;
+use App\Modules\Admin\Exports\RevenueInvestmentExport;
+use App\Modules\Admin\Exports\RevenueRentalExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -20,7 +23,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -75,11 +77,11 @@ class RevenueController extends BaseController
         if (in_array($user->getRolesNameAttribute(), $managers)) {
             $investors = Investor::where('admin_id', $userId)->pluck('id')->toArray();
 
-            $paginatedAssets = Asset::whereHas('investors', function ($query) use ($investors) {
+            $paginatedAssets = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->whereHas('investors', function ($query) use ($investors) {
                 $query->whereIn('id', $investors);
             })->orderByDesc('id');
 
-            $allAssets = Asset::whereHas('investors', function ($query) use ($investors) {
+            $allAssets = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->whereHas('investors', function ($query) use ($investors) {
                 $query->whereIn('id', $investors);
             });
         } else {
@@ -138,27 +140,27 @@ class RevenueController extends BaseController
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
-                    $query->where('created_at', '>=', $createdDates[0])
+                    $query
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         });
                 });
                 $allAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '>=', $createdDates[0])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         });
                 });
             }
@@ -166,25 +168,25 @@ class RevenueController extends BaseController
                 $paginatedAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '<=', $createdDates[1])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         });
                 });
                 $allAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '<=', $createdDates[1])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         });
                 });
             }
@@ -379,7 +381,7 @@ class RevenueController extends BaseController
             if ($asset->agreement_status === 'Installments') {
                 $investmentAmount = $paid + $allInvestments;
             } else {
-                $paid = $asset->total_price;
+//                $paid = $asset->total_price;
                 $investmentAmount = $asset->total_price + $allInvestments;
             }
             $totalInvestment += $investmentAmount + $renovationPayments;
@@ -499,7 +501,7 @@ class RevenueController extends BaseController
             'asset_status',
             'asset_type',
             'agreement_status',
-            ]);
+        ]);
         return Excel::download(new RevenueExport($filters), 'revenues.xlsx');
     }
 
@@ -590,7 +592,7 @@ class RevenueController extends BaseController
 
                 $currentValues = [];
                 if ($asset->currentValues) {
-                    $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();;
+                    $currentValues = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
                 }
                 $this->baseData['item'] = [];
                 $this->baseData['item']['agreements'] = $this->baseData['item']['payments'] = $this->baseData['item']['payments_histories'] = $this->baseData['item']['files'] = [];
@@ -629,7 +631,7 @@ class RevenueController extends BaseController
                     //                    dd([$asset->sale_price,$rent,$allInvestments]);
 
                     $this->baseData['item']['total_investment'] = $totalInvestments;
-                    $this->baseData['item']['net_cache_balance'] = $asset->sale_price + $rent - $totalInvestments;
+                    $this->baseData['item']['net_cash_balance'] = $asset->sale_price + $rent - $totalInvestments;
 
                     $this->baseData['item']['capital_gain'] = $asset->sale_price - $totalInvestments;
 
@@ -689,19 +691,36 @@ class RevenueController extends BaseController
                     ->orderBy('name')
                     ->orderBy('surname')
                     ->get();
+
+                $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('type')
+                    ->orderBy('type')
+                    ->get();
+
+                $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('project_name')
+                    ->orderBy('project_name')
+                    ->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
                     ->orderBy('name')
                     ->orderBy('surname')
                     ->get();
                 $this->baseData['managers'] = [];
+
+                $this->baseData['types'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('type', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('type')
+                    ->orderBy('type')
+                    ->get();
+
+                $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('project_name', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('project_name')
+                    ->orderBy('project_name')
+                    ->get();
             }
         }
-
-        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
-            ->groupBy('project_name')
-            ->orderBy('project_name')
-            ->get();
 
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
@@ -713,5 +732,22 @@ class RevenueController extends BaseController
         RentalPaymentsHistory::where('tenant_id', $tenantId)->delete();
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
+    }
+
+    public function exportRentals(Request $request, $assetId)
+    {
+        return Excel::download(new RevenueRentalExport(['asset_id' => $assetId]), 'revenue_rentals.xlsx');
+    }
+
+    public function exportInvestments(Request $request, $assetId)
+    {
+        return Excel::download(new RevenueInvestmentExport(['asset_id' => $assetId]), 'revenue_investments.xlsx');
+
+    }
+
+    public function exportAssetValueHistory(Request $request, $assetId)
+    {
+        return Excel::download(new RevenueAssetValueExport(['asset_id' => $assetId]), 'asset_values.xlsx');
+
     }
 }

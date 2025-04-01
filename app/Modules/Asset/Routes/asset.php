@@ -25,7 +25,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
-
+    Route::get('/export', $controller . '@export')
+        ->name('export.assets');
 
     $paymentController = 'PaymentsHistoryController';
     $paymentModuleName = 'payment';
@@ -117,6 +118,13 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/revenues/filter-options', $revenueController . '@filterOptions')
         ->name('revenues.filters');
     Route::post('/revenues/rental/delete/{id?}', $revenueController . '@deleteRental');
+
+    Route::get('/revenues/{id?}/rentals/export', $revenueController . '@exportRentals')
+        ->name('revenue_export_rentals');
+    Route::get('/revenues/{id?}/investments/export', $revenueController . '@exportInvestments')
+        ->name('revenue_export_investments');
+    Route::get('/revenues/{id?}/asset-value-history/export', $revenueController . '@exportAssetValueHistory')
+        ->name('revenue_export_asset_value_history');
 
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';

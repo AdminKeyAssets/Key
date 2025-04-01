@@ -26,6 +26,20 @@ Vue.use(VueGoogleMaps, {
 
 window.Vue = require('vue');
 
+Vue.directive('remove-readonly', {
+    inserted(el) {
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            // Slight delay to ensure the inner input is rendered
+            setTimeout(() => {
+                const input = el.querySelector('.el-input__inner');
+                if (input) {
+                    input.removeAttribute('readonly');
+                }
+            }, 0);
+        }
+    }
+});
+
 // User
 Vue.component('admin-user-save-component', require('./base/admin/user/page/SaveComponent').default);
 Vue.component('admin-profile-save-component', require('./base/admin/user/page/ProfileSaveComponent').default);
@@ -52,6 +66,7 @@ Vue.component('asset-view-page-form', require('./base/admin/asset/page/AssetView
 Vue.component('asset-filter-component', require('./base/admin/asset/partials/AssetFilters').default);
 Vue.component('investor-asset-filter-component', require('./base/admin/asset/partials/InvestorAssetFilters').default);
 Vue.component('register-purchase-component', require('./base/admin/asset/partials/components/AssetSaleModal').default);
+Vue.component('asset-export-component', require('./base/admin/asset/partials/AssetExport').default);
 
 
 //Revenue

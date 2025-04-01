@@ -48,6 +48,7 @@
                     <div class="col-md-6">
                         <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
                             <el-select v-model="form.prefix" slot="prepend" filterable
+                                       v-remove-readonly
                                        placeholder="Prefix">
                                 <el-option
                                     v-for="prefix in this.prefixes"
@@ -78,6 +79,7 @@
                 <label class="col-md-2 control-label">Select Role:</label>
                 <div class="col-md-6">
                     <el-select style="width:100%;" v-model="form.roles" filterable
+                               v-remove-readonly
                                placeholder="Select Role">
                         <el-option
                             v-for="role in this.data"

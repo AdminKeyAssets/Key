@@ -39,7 +39,7 @@
                         <div class="col-md-6">
                             <el-input placeholder="Phone" v-model="form.phone" class="input-with-select">
                                 <el-select v-model="form.prefix" slot="prepend" filterable
-                                           placeholder="Prefix">
+                                           placeholder="Prefix" v-remove-readonly>
                                     <el-option
                                         v-for="prefix in this.prefixes"
                                         :key="prefix.prefix"
@@ -55,7 +55,7 @@
                         <label class="col-md-2 control-label">Select Manager: </label>
                         <div class="col-md-6">
                             <el-select v-model="form.admin_id" filterable
-                                       placeholder="Manager">
+                                       placeholder="Manager" v-remove-readonly>
                                 <el-option
                                     v-for="manager in this.managers"
                                     :key="manager.id"

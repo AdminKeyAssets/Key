@@ -129,8 +129,13 @@ class RenovationPaymentsHistoryController extends BaseController
                 'edit' => route('asset.renovation.edit', $assetId, []),
             ];
 
-            $nextPayment = RenovationPayment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
-            $this->baseData['nextPayment'] = $nextPayment ? (float)$nextPayment->left_amount : 0;
+//            $nextPayment = RenovationPayment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
+            $this->baseData['nextPayment'] = strtotime(RenovationPayment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
+                RenovationPayment::where('asset_id', $assetId)
+                    ->where('status', 0)
+                    ->where('payment_date', '<', date('Y/m/d')) // Using Laravel's helper for current date/time
+                    ->sum('left_amount') : RenovationPayment::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
+
 
 
             if ($request->get('id')) {
