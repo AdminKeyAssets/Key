@@ -501,7 +501,7 @@ class RevenueController extends BaseController
             'asset_status',
             'asset_type',
             'agreement_status',
-            ]);
+        ]);
         return Excel::download(new RevenueExport($filters), 'revenues.xlsx');
     }
 
@@ -691,24 +691,36 @@ class RevenueController extends BaseController
                     ->orderBy('name')
                     ->orderBy('surname')
                     ->get();
+
+                $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('type')
+                    ->orderBy('type')
+                    ->get();
+
+                $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('project_name')
+                    ->orderBy('project_name')
+                    ->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
                     ->orderBy('name')
                     ->orderBy('surname')
                     ->get();
                 $this->baseData['managers'] = [];
+
+                $this->baseData['types'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('type', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('type')
+                    ->orderBy('type')
+                    ->get();
+
+                $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('project_name', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('project_name')
+                    ->orderBy('project_name')
+                    ->get();
             }
         }
-
-        $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
-            ->groupBy('type')
-            ->orderBy('type')
-            ->get();
-
-        $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
-            ->groupBy('project_name')
-            ->orderBy('project_name')
-            ->get();
 
 
         return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
