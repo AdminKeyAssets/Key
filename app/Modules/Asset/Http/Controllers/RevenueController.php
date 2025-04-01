@@ -77,11 +77,11 @@ class RevenueController extends BaseController
         if (in_array($user->getRolesNameAttribute(), $managers)) {
             $investors = Investor::where('admin_id', $userId)->pluck('id')->toArray();
 
-            $paginatedAssets = Asset::whereHas('investors', function ($query) use ($investors) {
+            $paginatedAssets = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->whereHas('investors', function ($query) use ($investors) {
                 $query->whereIn('id', $investors);
             })->orderByDesc('id');
 
-            $allAssets = Asset::whereHas('investors', function ($query) use ($investors) {
+            $allAssets = Asset::where('admin_id', auth()->user()->getAuthIdentifier())->whereHas('investors', function ($query) use ($investors) {
                 $query->whereIn('id', $investors);
             });
         } else {
