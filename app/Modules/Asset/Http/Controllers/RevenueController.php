@@ -697,6 +697,11 @@ class RevenueController extends BaseController
                     ->orderBy('type')
                     ->get();
 
+                $this->baseData['statuses'] = Asset::select('asset_status', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('asset_status')
+                    ->orderBy('asset_status')
+                    ->get();
+
                 $this->baseData['assets'] = Asset::select('project_name', DB::raw('MAX(id) as max_id'))
                     ->groupBy('project_name')
                     ->orderBy('project_name')
@@ -712,6 +717,12 @@ class RevenueController extends BaseController
                     ->select('type', DB::raw('MAX(id) as max_id'))
                     ->groupBy('type')
                     ->orderBy('type')
+                    ->get();
+
+                $this->baseData['statuses'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                    ->select('asset_status', DB::raw('MAX(id) as max_id'))
+                    ->groupBy('asset_status')
+                    ->orderBy('asset_status')
                     ->get();
 
                 $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
