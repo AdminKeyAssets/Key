@@ -151,7 +151,7 @@ class RentalPaymentsHistoryController extends BaseController
         if (isset($request->id)) {
             $paymentHistory = RentalPaymentsHistory::findOrFail($request->id);
             // Sum of all payments minus the payment we're about to update.
-            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->sum('amount') - $paymentHistory->amount;
+            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->sum('amount') - $paymentHistory->amount;
 
             if (($existingPayments + $request->amount) > $totalRentals) {
                 return response()->json([
@@ -162,7 +162,7 @@ class RentalPaymentsHistoryController extends BaseController
             }
         } else {
             // Check for new payment.
-            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->sum('amount');
+            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->sum('amount');
 
             if (($existingPayments + $request->amount) > $totalRentals) {
                 return response()->json([
