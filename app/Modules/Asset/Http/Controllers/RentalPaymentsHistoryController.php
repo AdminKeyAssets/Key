@@ -127,6 +127,10 @@ class RentalPaymentsHistoryController extends BaseController
                     ->where('payment_date', '<', date('Y/m/d'))
                     ->sum('left_amount') : Rental::where('asset_id', $assetId)->where('status', 0)->first()->left_amount;
 
+            $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->sum('amount');
+            $totalRentals = Rental::where('asset_id', $assetId)->sum('amount');
+            $this->baseData['totalAmountToPay'] = $totalRentals - $existingPayments;
+
             if ($request->get('id')) {
                 $rental = RentalPaymentsHistory::findOrFail($request->get('id'));
                 $this->baseData['item'] = $rental;
@@ -144,6 +148,7 @@ class RentalPaymentsHistoryController extends BaseController
      */
     public function store(LeaseRequest $request, $assetId)
     {
+        $message = 'Payment Added successfully';
         // Calculate the total expected rental amount for the asset.
         $totalRentals = Rental::where('asset_id', $assetId)->sum('amount');
 
@@ -153,10 +158,22 @@ class RentalPaymentsHistoryController extends BaseController
             // Sum of all payments minus the payment we're about to update.
             $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->sum('amount') - $paymentHistory->amount;
 
+            if (($existingPayments + $request->amount) == $totalRentals) {
+                $request = new Request([
+                    'completionDate' => $request->date
+                ]);
+
+
+                $this->complete($request, $assetId);
+
+                $this->baseData['redirect_to'] = route('asset.index');
+                $message = 'Rent completed.';
+            }
+
             if (($existingPayments + $request->amount) > $totalRentals) {
                 return response()->json([
                     'errors' => [
-                        'amount' => ['Rent Completed. Please prolong the rent schedule or complete.']
+                        'amount' => ['Payment Exceeds the Sum of the Installments Schedule. Please correct the amount, or alter the schedule']
                     ]
                 ], 422);
             }
@@ -164,10 +181,23 @@ class RentalPaymentsHistoryController extends BaseController
             // Check for new payment.
             $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->sum('amount');
 
+
+            if (($existingPayments + $request->amount) == $totalRentals) {
+                $request = new Request([
+                    'completionDate' => $request->date
+                ]);
+
+
+                $this->complete($request, $assetId);
+
+                $this->baseData['redirect_to'] = route('asset.index');
+
+                $message = 'Installment completed.';
+            }
             if (($existingPayments + $request->amount) > $totalRentals) {
                 return response()->json([
                     'errors' => [
-                        'amount' => ['Rent Completed. Please prolong the rent schedule or complete.']
+                        'amount' => ['Payment Exceeds the Sum of the Installments Schedule. Please correct the amount, or alter the schedule']
                     ]
                 ], 422);
             }
@@ -251,7 +281,7 @@ class RentalPaymentsHistoryController extends BaseController
 
         $this->baseData['item'] = $paymentHistory;
 
-        return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
+        return ServiceResponse::jsonNotification($message, 200, $this->baseData);
     }
 
     /**
