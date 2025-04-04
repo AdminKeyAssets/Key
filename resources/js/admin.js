@@ -110,6 +110,9 @@ Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewFor
 Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
 Vue.component('update-lead-manager', require('./base/admin/lead/partials/UpdateLeadManager').default);
 Vue.component('leads-export-component', require('./base/admin/lead/partials/ExportLeads').default);
+Vue.component('leads-import-component', require('./base/admin/lead/partials/ImportLeads').default);
+Vue.component('leads-import-status-component', require('./base/admin/lead/partials/ImportLeadsStatuses').default);
+Vue.component('leads-import-manager-component', require('./base/admin/lead/partials/ImportLeadsManagers').default);
 
 //Sale
 Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);

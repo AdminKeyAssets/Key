@@ -1207,3 +1207,17 @@ table thead th {
 /*    top: 50px;*/
 /*    z-index: 999;*/
 /*}*/
+.import-leads-uploader .el-upload__input{
+    display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+    .import-leads-button{
+        min-width: 100% !important;
+        margin-top: 5px !important;
+        margin-bottom: 0 !important;
+    }
+}
+.import-leads-button{
+    min-width: 90%;
+}

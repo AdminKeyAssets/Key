@@ -8,8 +8,14 @@ use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Lead\Exports\SampleLeadsExport;
+use App\Modules\Lead\Exports\SampleLeadsManagersExport;
+use App\Modules\Lead\Exports\SampleLeadsStatusExport;
 use App\Modules\Lead\Http\Requests\LeadRequest;
 use App\Modules\Lead\Http\Requests\UpdateManagerRequest;
+use App\Modules\Lead\Imports\LeadsImport;
+use App\Modules\Lead\Imports\LeadsManagerImport;
+use App\Modules\Lead\Imports\LeadsStatusImport;
 use App\Modules\Lead\Models\Lead;
 use App\Utilities\ServiceResponse;
 use DB;
@@ -343,5 +349,71 @@ class LeadController extends BaseController
         return ServiceResponse::jsonNotification(__('Status changed successfully'), 200, $this->baseData);
     }
 
+    public function import(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'file' => 'required|file|mimes:xlsx,xls,csv',
+            ]);
 
+            $file = $request->file('file');
+
+            Excel::import(new LeadsImport(auth()->user()->getAuthIdentifier()), $file);
+
+            return ServiceResponse::jsonNotification('Leads imported successfully!', 200, []);
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification('Error importing leads: ' . $ex->getMessage(), 500, []);
+        }
+    }
+
+    public function importStatus(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'file' => 'required|file|mimes:xlsx,xls,csv',
+            ]);
+
+            $file = $request->file('file');
+
+            Excel::import(new LeadsStatusImport(auth()->user()->getAuthIdentifier()), $file);
+
+            return ServiceResponse::jsonNotification('Leads imported successfully!', 200, []);
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification('Error importing leads: ' . $ex->getMessage(), 500, []);
+        }
+    }
+
+    public function importManager(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'file' => 'required|file|mimes:xlsx,xls,csv',
+            ]);
+
+            $file = $request->file('file');
+
+            Excel::import(new LeadsManagerImport(auth()->user()->getAuthIdentifier()), $file);
+
+            return ServiceResponse::jsonNotification('Leads imported successfully!', 200, []);
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification('Error importing leads: ' . $ex->getMessage(), 500, []);
+        }
+    }
+
+    public function exportImportSample()
+    {
+       return Excel::download(new SampleLeadsExport(), 'sample_leads.xlsx');
+    }
+
+    public function exportImportStatusSample()
+    {
+        return Excel::download(new SampleLeadsStatusExport(), 'sample_leads_status.xlsx');
+
+    }
+
+    public function exportImportManagerSample()
+    {
+        return Excel::download(new SampleLeadsManagersExport(), 'sample_leads_manager.xlsx');
+
+    }
 }

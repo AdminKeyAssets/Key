@@ -29,7 +29,7 @@ $custom_permissions = [
     'export' => [
         'key' => '{module_name}_export',
         'label' => '{module_name} export'
-    ]
+    ],
 ];
 
 return [
@@ -69,7 +69,16 @@ return [
     ],
     'lead' => [
         'default' => $default_permissions,
-        'custom' => $custom_permissions
+        'custom' => [
+            'export' => [
+                'key' => '{module_name}_export',
+                'label' => '{module_name} export'
+            ],
+            'import' => [
+                'key' => '{module_name}_import',
+                'label' => '{module_name} Import'
+            ],
+        ]
     ],
     'sale' => [
         'default' => $default_permissions,
