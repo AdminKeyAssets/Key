@@ -16,6 +16,7 @@
                     <el-button type="primary" size="medium" icon="el-icon-check"
                                @click="save"
                                :disabled="loading"
+                               :width="dialogWidth"
                                style="margin: 21px 1rem">Save
                     </el-button>
                 </div>
@@ -23,7 +24,6 @@
                 <el-dialog
                     title="Confirm Action"
                     :visible.sync="confirmVisible"
-                    width="30%"
                 >
                     <span>Please complete the rent or prolong the rent's schedule.</span>
                     <span slot="footer" class="dialog-footer">
@@ -119,6 +119,12 @@ export default {
         updateData(data) {
             this.form = data;
         },
-    }
+    },
+    computed: {
+        // Returns full width on mobile and 30% on larger screens.
+        dialogWidth() {
+            return window.innerWidth < 768 ? '100%' : '30%';
+        }
+    },
 }
 </script>

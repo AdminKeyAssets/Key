@@ -10,7 +10,7 @@
         <el-dialog
             title="Import Leads"
             :visible.sync="dialogVisible"
-            width="30%"
+            :width="dialogWidth"
             @close="resetUpload"
         >
             <!-- File upload option inside modal using a plain file input -->
@@ -119,6 +119,12 @@ export default {
                 console.error('Error exporting leads:', error);
             }
         },
+    },
+    computed: {
+        // Returns full width on mobile and 30% on larger screens.
+        dialogWidth() {
+            return window.innerWidth < 768 ? '100%' : '30%';
+        }
     },
 };
 </script>
