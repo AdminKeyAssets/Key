@@ -25,11 +25,11 @@
             </div>
 
             <!-- Modal footer with Cancel, Export Sample File, and Import buttons -->
-            <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelImport">Cancel</el-button>
-        <el-button type="warning" @click="exportSampleFile">Export Sample File</el-button>
-        <el-button type="primary" @click="uploadLeads">Import</el-button>
-      </span>
+            <span slot="footer" class="dialog-footer import-dialog-footer">
+                <el-button @click="cancelImport">Cancel</el-button>
+                <el-button type="warning" @click="exportSampleFile">Export Sample File</el-button>
+                <el-button type="primary" @click="uploadLeads">Import</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>

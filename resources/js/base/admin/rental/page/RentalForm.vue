@@ -26,7 +26,7 @@
                     :visible.sync="confirmVisible"
                 >
                     <span>Please complete the rent or prolong the rent's schedule.</span>
-                    <span slot="footer" class="dialog-footer">
+                    <span slot="footer" class="dialog-footer rental-dialog-footer">
                         <el-button @click="confirmVisible = false">Cancel</el-button>
                         <el-button type="primary" @click="confirmSave">Complete</el-button>
                     </span>

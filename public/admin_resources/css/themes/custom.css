@@ -1217,6 +1217,11 @@ table thead th {
         margin-top: 5px !important;
         margin-bottom: 0 !important;
     }
+    .dialog-footer button{
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 5px;
+    }
 }
 .import-leads-button{
     min-width: 90%;
