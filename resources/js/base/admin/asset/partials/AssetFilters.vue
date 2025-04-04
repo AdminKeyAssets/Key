@@ -84,10 +84,12 @@
                 <div class="form-group">
                     <el-select v-model="form.asset_status" filterable placeholder="Asset Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
-                        <el-option label="Rented" value="Rented"></el-option>
-                        <el-option label="Under Construction" value="Under Construction"></el-option>
-                        <el-option label="Under Renovation" value="Under Renovation"></el-option>
-                        <el-option label="Vacant" value="Vacant"></el-option>
+                        <el-option
+                            v-for="status in statuses"
+                            :key="status.asset_status"
+                            :label="status.asset_status"
+                            :value="status.asset_status"
+                        ></el-option>
                     </el-select>
                 </div>
                 <div class="form-group">
@@ -106,7 +108,8 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" v-remove-readonly>
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status"
+                               v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
@@ -124,7 +127,7 @@
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
     data() {
@@ -144,6 +147,7 @@ export default {
             assets: [],
             managers: [],
             types: [],
+            statuses: [],
         };
     },
     mounted() {
@@ -208,6 +212,9 @@ export default {
                         }
                         if (data.types) {
                             this.types = data.types;
+                        }
+                        if (data.statuses) {
+                            this.statuses = data.statuses;
                         }
                     }
                 })
