@@ -54,17 +54,14 @@ class LeadsManagerImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-        $lead = Lead::where('name', $row['name'])
-            ->where('surname', $row['surname'])
-            ->first();
-
         $manager = Admin::where('name', $row['manager_name'])
             ->where('surname', $row['manager_surname'])
             ->first();
 
-        if ($lead) {
-            $lead->admin_id = $manager ? $manager->id : null;
-            $lead->save();
-        }
+        Lead::where('name', $row['name'])
+            ->where('surname', $row['surname'])
+            ->update(['admin_id' => $manager ? $manager->id : null]);
+
+        return null;
     }
 }

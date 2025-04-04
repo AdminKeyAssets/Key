@@ -52,15 +52,10 @@ class LeadsStatusImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-        $lead = Lead::where('name', $row['name'])
+        Lead::where('name', $row['name'])
             ->where('surname', $row['surname'])
-            ->first();
+            ->update(['status' => $row['status']]);
 
-        if ($lead) {
-            $lead->status = $row['status'];
-            $lead->save();
-        }
-
-        return $lead;
+        return null;
     }
 }
