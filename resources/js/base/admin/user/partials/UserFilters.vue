@@ -9,6 +9,18 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
+
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.create_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Start date"
+                        end-placeholder="End date">
+                    </el-date-picker>
+                </div>
+
                 <!-- Search Box -->
                 <div class="form-group">
                     <el-select v-model="form.search" filterable placeholder="User Names" v-remove-readonly>
@@ -36,28 +48,17 @@
                         </el-option>
                     </el-select>
                 </div>
-
-                <div class="form-group">
-                    <el-date-picker
-                        v-model="form.create_date"
-                        type="daterange"
-                        format="yyyy/MM/dd"
-                        value-format="yyyy/MM/dd"
-                        start-placeholder="Start date"
-                        end-placeholder="End date">
-                    </el-date-picker>
+                <div class="button-wrapper">
+                    <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
                 </div>
-
-                <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
-                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
-
             </el-row>
         </el-form>
     </div>
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
     data() {

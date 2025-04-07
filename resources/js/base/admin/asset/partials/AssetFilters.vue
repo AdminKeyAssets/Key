@@ -15,7 +15,7 @@
         >
             <el-row>
                 <!-- Date Range Filter -->
-                <div class="form-group">
+                <div class="form-group date-filter">
                     <el-date-picker
                         v-model="form.agreement_date"
                         type="daterange"
@@ -115,12 +115,10 @@
                         <el-option label="Installments" value="Installments"></el-option>
                     </el-select>
                 </div>
-
-                <!-- Apply Filters Button -->
-                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
-
-                <!-- Clear Filters Button -->
-                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                <div class="button-wrapper">
+                    <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                </div>
             </el-row>
         </el-form>
     </div>

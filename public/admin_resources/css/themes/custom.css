@@ -1222,7 +1222,28 @@ table thead th {
         margin-left: 0 !important;
         margin-bottom: 5px;
     }
+    .button-wrapper {
+        width: 100%;
+        text-align: center;
+    }
+    .button-wrapper button{
+        width: 45%;
+    }
+    .form-group:not(.date-filter){
+        width: 49%;
+        display: inline-block;
+    }
+    .form-group.date-filter .el-date-editor{
+        width: 98%;
+    }
+
 }
+@media screen and (min-width: 769px) {
+    .button-wrapper {
+        display: inline-block;
+    }
+}
+
 .import-leads-button{
     min-width: 90%;
 }

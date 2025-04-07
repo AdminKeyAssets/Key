@@ -11,6 +11,17 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
+
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.create_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Start date"
+                        end-placeholder="End date">
+                    </el-date-picker>
+                </div>
                 <!-- Name search input -->
                 <div class="form-group">
                     <el-select v-model="form.search" filterable placeholder="Name" v-remove-readonly>
@@ -25,17 +36,6 @@
                             :value="lead.name + ' ' + lead.surname"
                         ></el-option>
                     </el-select>
-                </div>
-
-                <div class="form-group">
-                    <el-date-picker
-                        v-model="form.create_date"
-                        type="daterange"
-                        format="yyyy/MM/dd"
-                        value-format="yyyy/MM/dd"
-                        start-placeholder="Start date"
-                        end-placeholder="End date">
-                    </el-date-picker>
                 </div>
 
                 <div class="form-group" v-if="this.isAdmin" v-remove-readonly>
@@ -54,7 +54,8 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel" v-remove-readonly>
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel"
+                               v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -77,7 +78,8 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.communication_status" filterable placeholder="Communication Status" v-remove-readonly>
+                    <el-select v-model="form.communication_status" filterable placeholder="Communication Status"
+                               v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Communication" value="Communication"></el-option>
                         <el-option label="New" value="New"></el-option>
@@ -87,9 +89,10 @@
                         <el-option label="Signed" value="Signed"></el-option>
                     </el-select>
                 </div>
-
-                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
-                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                <div class="button-wrapper">
+                    <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                </div>
             </el-row>
         </el-form>
     </div>

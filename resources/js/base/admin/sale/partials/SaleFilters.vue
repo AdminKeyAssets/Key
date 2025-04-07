@@ -11,7 +11,7 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
-                <div class="form-group">
+                <div class="form-group date-filter">
                     <el-date-picker
                         v-model="form.agreement_date"
                         type="daterange"
@@ -38,7 +38,8 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel" v-remove-readonly>
+                    <el-select v-model="form.marketing_channel" filterable placeholder="Marketing Channel"
+                               v-remove-readonly>
                         <el-option
                             label="All"
                             value="all"
@@ -68,9 +69,10 @@
                         ></el-option>
                     </el-select>
                 </div>
-
-                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
-                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                <div class="button-wrapper">
+                    <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                </div>
             </el-row>
         </el-form>
     </div>
@@ -105,7 +107,7 @@ export default {
 
         if ((this.form.agreement_date && this.form.agreement_date.length > 0) ||
             this.form.manager ||
-            this.form.marketing_channel||
+            this.form.marketing_channel ||
             this.form.status) {
             this.showFilters = true;
         }
