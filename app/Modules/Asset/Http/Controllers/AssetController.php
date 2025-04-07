@@ -486,6 +486,7 @@ class AssetController extends BaseController
             'renovation_first_payment_date' => $request->renovation_first_payment_date ?? null,
             'renovation_period' => $request->renovation_period ?? null,
             'renovation_total_price' => $request->renovation_total_price ?? null,
+            'renovation_status' => $request->renovation_status ?? 'Completed',
         ];
 
         if (!$request->id) {

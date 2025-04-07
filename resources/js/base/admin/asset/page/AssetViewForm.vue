@@ -678,7 +678,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.renovation_agreement_date">
+                            <el-row style="margin-bottom: 30px" v-if="form.renovation_status === 'In Progress'">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
