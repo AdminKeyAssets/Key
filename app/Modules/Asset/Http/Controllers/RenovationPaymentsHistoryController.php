@@ -170,7 +170,7 @@ class RenovationPaymentsHistoryController extends BaseController
             if (($existingPayments + $request->amount) == $totalScheduledPayments) {
                 $asset = Asset::where('id', $assetId)->first();
                 $asset->update([
-                    'renovation_status' => 'Complete',
+                    'renovation_status' => 'Completed',
                 ]);
                 $this->baseData['redirect_to'] = route('asset.index');
 
@@ -189,7 +189,7 @@ class RenovationPaymentsHistoryController extends BaseController
             if (($existingPayments + $request->amount) == $totalScheduledPayments) {
                 $asset = Asset::where('id', $assetId)->first();
                 $asset->update([
-                    'agreement_status' => 'Complete',
+                    'renovation_status' => 'Completed',
                 ]);
                 $this->baseData['redirect_to'] = route('asset.index');
                 $message = 'Installment completed.';
