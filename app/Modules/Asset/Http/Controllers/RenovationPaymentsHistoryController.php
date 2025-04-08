@@ -174,7 +174,7 @@ class RenovationPaymentsHistoryController extends BaseController
                 ]);
                 $this->baseData['redirect_to'] = route('asset.index');
 
-                $message = 'Installment completed.';
+                $message = 'Renovation completed.';
             }
             if (($existingPayments + $request->amount) > $totalScheduledPayments) {
                 return response()->json([
@@ -192,7 +192,7 @@ class RenovationPaymentsHistoryController extends BaseController
                     'renovation_status' => 'Completed',
                 ]);
                 $this->baseData['redirect_to'] = route('asset.index');
-                $message = 'Installment completed.';
+                $message = 'Renovation completed.';
             }
 
             if (($existingPayments + $request->amount) > $totalScheduledPayments) {
