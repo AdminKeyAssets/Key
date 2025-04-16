@@ -126,11 +126,18 @@ class PaymentsHistoryController extends BaseController
             ];
 
 //            $assetPayments = Payment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
-            $this->baseData['nextPayment'] = strtotime(Payment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
-                Payment::where('asset_id', $assetId)
+            $this->baseData['nextPayment'] = 0;
+            if(Payment::where('asset_id', $assetId)->where('status', 0)->first() && strtotime(Payment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time()){
+                $payments = Payment::where('asset_id', $assetId)
                     ->where('status', 0)
-                    ->where('payment_date', '<', date('Y/m/d')) // Using Laravel's helper for current date/time
-                    ->sum('left_amount') : 4;
+                    ->where('payment_date', '<', date('Y/m/d'));
+                $this->baseData['nextPayment'] = $payments->count() ? $payments->sum('left_amount') : 0;
+            }else{
+                $payment = Payment::where('asset_id', $assetId)
+                    ->where('status', 0)->orderByDesc('id')->first();
+
+                $this->baseData['nextPayment'] = $payment ? $payment->left_amount : 0;
+            }
 
             if ($request->get('id')) {
                 $payment = PaymentsHistory::where('id', $request->get('id'))->where('asset_id', $assetId)->first();
