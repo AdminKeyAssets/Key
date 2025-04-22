@@ -1247,3 +1247,8 @@ table thead th {
 .import-leads-button{
     min-width: 90%;
 }
+@media (orientation: landscape) {
+    .table-responsive>.table>tbody>tr>td{
+        white-space: nowrap;
+    }
+}
