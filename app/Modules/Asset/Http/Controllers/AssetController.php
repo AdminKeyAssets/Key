@@ -198,7 +198,7 @@ class AssetController extends BaseController
 
         $statusFilter = $request->status ?? 'active';
 
-        $userAssets = $user->assets()->orderByDesc('id');
+        $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
         if ($statusFilter !== 'all') {
             $userAssets->where('sale_status', $statusFilter);
         }
@@ -245,14 +245,13 @@ class AssetController extends BaseController
                     $salesManager = Admin::find($investor->admin_id);
                 }
 
-
-
                 $this->baseData['item'] = $asset;
                 $investors = $asset->investors;
                 $investorNames = [];
                 foreach ($investors as $investor) {
                     $investorNames[] = $investor->name . ' ' . $investor->surname;
                 }
+
                 $investorNames = implode(' / ', $investorNames);
                 $this->baseData['item']['investor_ids'] = $investors->pluck('id')->toArray();
                 $this->baseData['item']['investorNames'] = $investorNames;
@@ -265,6 +264,7 @@ class AssetController extends BaseController
                 $this->baseData['item']['renovation_payments'] = RenovationPayment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['renovation_payments_histories'] = RenovationPaymentsHistory::where('asset_id', $asset->id)->get();
                 $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->orderByDesc('id')->first();
+
                 $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
@@ -488,6 +488,7 @@ class AssetController extends BaseController
             'renovation_period' => $request->renovation_period ?? null,
             'renovation_total_price' => $request->renovation_total_price ?? null,
             'renovation_status' => $request->renovation_status ?? 'Completed',
+            'status' => 'completed',
         ];
 
         if (!$request->id) {
@@ -1103,5 +1104,104 @@ class AssetController extends BaseController
             'agreement_status',
         ]);
         return Excel::download(new AssetExport($filters), 'assets.xlsx');
+    }
+
+
+    public function saveProjectDetails(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'project_name' => 'required|string|max:255',
+                'project_description' => 'nullable|string',
+                'project_link' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:255',
+                'address' => 'nullable|string|max:255',
+                'total_floors' => 'nullable|integer',
+                'location' => 'nullable|string',
+                'delivery_date' => 'nullable|date_format:Y/m/d',
+                'investor_ids' => 'nullable|string',
+            ]);
+
+            $path = null;
+
+            // Handle the icon/gallery if provided
+            if ($request->hasFile('icon')) {
+                $file = $request->file('icon');
+                $originalFileName = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
+                $path = Storage::url($path);
+            } elseif ($request->has('icon') && !is_null($request->icon)) {
+                $path = $request->icon;
+            } elseif ($request->id) {
+                // Keep existing icon for updates
+                $asset = Asset::find($request->id);
+                if ($asset) {
+                    $path = $asset->icon;
+                }
+            }
+
+            // Build asset data - only include project-related fields
+            $assetData = [
+                'project_name' => $request->project_name,
+                'project_description' => $request->project_description,
+                'project_link' => $request->project_link,
+                'city' => $request->city,
+                'address' => $request->address,
+                'total_floors' => $request->total_floors,
+                'location' => $request->location,
+                'delivery_date' => $request->delivery_date,
+                'status' => 'incomplete',
+                'icon' => $path,
+            ];
+
+            // Set admin_id for new assets
+            if (!$request->id) {
+                $assetData['admin_id'] = Auth::user()->getAuthIdentifier();
+            }
+
+            // Create or update asset
+            $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
+
+            // Handle investors if provided
+            if ($request->filled('investor_ids')) {
+                $investorIds = explode(',', $request->investor_ids);
+                $asset->investors()->sync($investorIds);
+            }
+
+            // Handle gallery files
+            if ($request->has('gallery')) {
+                $asset->gallery()->delete();
+                foreach ($request->gallery as $key => $file) {
+                    if (gettype($file) == 'string') {
+                        $path = $file;
+                        $explodedFile = explode('/', $path);
+                        $explodedFile = array_reverse($explodedFile);
+                        $originalFileName = $explodedFile[0];
+                    } else {
+                        $originalFileName = time() . '_' . $file->getClientOriginalName();
+                        $path = $file->storeAs('uploads', $originalFileName, 'public');
+                        $path = Storage::url($path);
+                    }
+
+                    AssetGallery::create([
+                        'name' => $originalFileName,
+                        'image' => $path,
+                        'asset_id' => $asset->id
+                    ]);
+
+                    if ($key == 0 && !$assetData['icon']) {
+                        $asset->icon = $path;
+                        $asset->save();
+                    }
+                }
+            }
+
+            // Return success response with the asset
+            $this->baseData['id'] = $asset->id;
+            return ServiceResponse::jsonNotification('Project details saved successfully', 200, $this->baseData);
+
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification($ex->getMessage(), 500);
+        }
     }
 }

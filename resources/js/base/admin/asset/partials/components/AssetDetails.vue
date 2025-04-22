@@ -6,7 +6,6 @@
             <div class="col-md-3 uppercase-medium">
                 <el-select
                     v-model="form.type"
-                    :value="form.type"
                     filterable
                     placeholder="Select Type"
                 >
@@ -64,7 +63,6 @@
             <div class="col-md-3 uppercase-medium">
                 <el-select
                     v-model="form.condition"
-                    :value="form.condition"
                     filterable
                     placeholder="Delivery Condition"
                 >
@@ -321,16 +319,15 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-        <el-button @click="completeRentDialog = false">Cancel</el-button>
-                <!-- Disable the button if the date field is empty -->
-        <el-button
-            type="primary"
-            :disabled="!rentCompletionDate"
-            @click="completeRentWithDate"
-        >
-          Complete
-        </el-button>
-      </span>
+                <el-button @click="completeRentDialog = false">Cancel</el-button>
+                <el-button
+                    type="primary"
+                    :disabled="!rentCompletionDate"
+                    @click="completeRentWithDate"
+                >
+                    Complete
+                </el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -372,25 +369,30 @@ export default {
             rentals: [],
             updatingTotalPrice: false,
             updatingSqmPrice: false,
-            // Modal properties
             completeRentDialog: false,
             rentCompletionDate: this.formatDate(new Date()),
         };
     },
+    mounted() {
+        // set default currency once
+        if (this.form && !this.form.currency) {
+            this.$emit("update-form", { ...this.form, currency: "USD" });
+        }
+        // initialize tenant & rentals from form
+        if (this.form.tenant && this.form.tenant.id) {
+            this.tenant = { ...this.form.tenant };
+        }
+        this.rentals = this.form.rentals ? [...this.form.rentals] : [];
+    },
     watch: {
-        "form.price": "updateTotalPrice",
-        "form.area": "updateTotalPrice",
-        "form.total_price": "updateSqmPrice",
-        form() {
-            if (this.form) {
-                if (!this.form.currency) {
-                    this.$emit("update-form", { ...this.form, currency: "USD" });
-                }
-                if (this.form.tenant && this.form.tenant.id) {
-                    this.tenant = this.form.tenant;
-                }
-                this.rentals = this.form.rentals || [];
-            }
+        'form.price': { handler: 'updateTotalPrice', immediate: false },
+        'form.area': { handler: 'updateTotalPrice', immediate: false },
+        'form.total_price': { handler: 'updateSqmPrice', immediate: false },
+        'form.tenant.id'(newVal) {
+            if (newVal) this.tenant = { ...this.form.tenant };
+        },
+        'form.rentals'(newVal) {
+            this.rentals = newVal ? [...newVal] : [];
         },
     },
     methods: {
@@ -398,15 +400,12 @@ export default {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = (evt) => {
                     this.$emit("update-form", {
                         ...this.form,
                         floor_plan: file,
-                        floorPlanPreview: e.target.result,
+                        floorPlanPreview: evt.target.result,
                     });
-                };
-                reader.onerror = (error) => {
-                    console.error("Error loading file:", error);
                 };
                 reader.readAsDataURL(file);
             }
@@ -422,15 +421,12 @@ export default {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = (evt) => {
                     this.$emit("update-form", {
                         ...this.form,
                         flat_plan: file,
-                        flatPlanPreview: e.target.result,
+                        flatPlanPreview: evt.target.result,
                     });
-                };
-                reader.onerror = (error) => {
-                    console.error("Error loading file:", error);
                 };
                 reader.readAsDataURL(file);
             }
@@ -446,140 +442,75 @@ export default {
             this.$emit("update-form", { ...this.form, tenant: newTenant });
         },
         generateRentalList() {
-            if (
-                !this.tenant.agreement_date ||
-                !this.tenant.agreement_term ||
-                !this.tenant.monthly_rent
-            ) {
-                this.$message.error(
-                    "Please fill in all required fields for the rental agreement."
-                );
+            if (!this.tenant.agreement_date || !this.theTenant.agreement_term || !this.tenant.monthly_rent) {
+                this.$message.error("Please fill in all required fields for the rental agreement.");
                 return;
             }
-
             const term = parseInt(this.tenant.agreement_term, 10);
             const agreementDate = new Date(this.tenant.agreement_date);
             const rentals = [];
-
             for (let i = 0; i < term; i++) {
-                const paymentDate = new Date(agreementDate);
-                paymentDate.setMonth(paymentDate.getMonth() + i);
-
-                rentals.push({
-                    number: i + 1,
-                    payment_date: this.formatDate(paymentDate),
-                    amount: this.tenant.monthly_rent,
-                    status: "Pending",
-                });
+                const pd = new Date(agreementDate);
+                pd.setMonth(pd.getMonth() + i);
+                rentals.push({ number: i + 1, payment_date: this.formatDate(pd), amount: this.tenant.monthly_rent, status: "Pending" });
             }
-
             this.rentals = rentals;
             this.$emit("update-form", { ...this.form, rentals: this.rentals });
         },
         formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            return `${year}/${month}/${day}`;
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}/${m}/${d}`;
         },
         updateTotalPrice() {
             if (this.updatingSqmPrice) return;
-            this.updatingTotalPrice = true;
-
             const price = parseFloat(this.form.price) || 0;
             const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
+            this.updatingTotalPrice = true;
             this.$emit("update-form", { ...this.form, total_price: totalPrice });
-
             this.updatingTotalPrice = false;
         },
         updateSqmPrice() {
             if (this.updatingTotalPrice) return;
-            this.updatingSqmPrice = true;
-
             const totalPrice = parseFloat(this.form.total_price) || 0;
             const area = parseFloat(this.form.area) || 0;
+            if (area === 0) return;
             const price = totalPrice / area;
-            this.$emit("update-form", { ...this.form, price: price });
-
+            this.updatingSqmPrice = true;
+            this.$emit("update-form", { ...this.form, price });
             this.updatingSqmPrice = false;
         },
         updateRentalDate(index, date) {
-            this.$set(this.rentals, index, {
-                ...this.rentals[index],
-                payment_date: date,
-            });
+            this.$set(this.rentals, index, { ...this.rentals[index], payment_date: date });
         },
         updateRentalAmount(index) {
-            const totalAmount =
-                parseFloat(this.tenant.monthly_rent) *
-                parseInt(this.tenant.agreement_term, 10);
-            let amountSum = this.rentals.reduce((sum, rental, idx) => {
-                return idx !== index ? sum + parseFloat(rental.amount) : sum;
-            }, 0);
-            const finalAmount = totalAmount - amountSum;
-
-            this.$set(this.rentals, index, {
-                ...this.rentals[index],
-                amount: parseFloat(this.rentals[index].amount),
-            });
-
-            this.updateFinalRentalAmount(this.rentals);
+            const totalAmount = parseFloat(this.tenant.monthly_rent) * parseInt(this.tenant.agreement_term, 10);
+            let sum = this.rentals.reduce((s, r, idx) => idx !== index ? s + parseFloat(r.amount) : s, 0);
+            this.$set(this.rentals, index, { ...this.rentals[index], amount: parseFloat(this.rentals[index].amount) });
         },
-        updateFinalRentalAmount(rentals) {
-            // Uncomment and modify if necessary:
-            // const totalAmount =
-            //   parseFloat(this.tenant.monthly_rent) *
-            //   parseInt(this.tenant.agreement_term, 10);
-            // let amountSum = rentals.slice(0, -1).reduce((sum, rental) => {
-            //   return sum + parseFloat(rental.amount);
-            // }, 0);
-            // const finalAmount = totalAmount - amountSum;
-            // this.$set(rentals, rentals.length - 1, {
-            //   ...rentals[rentals.length - 1],
-            //   amount: finalAmount.toFixed(2),
-            // });
-        },
-        onExtraDetailFileChange(e, index) {
+        onExtraDetailFileChange(e, idx) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    const extraDetails = [...this.form.extraDetails];
-                    extraDetails[index].attachment = {
-                        file: file,
-                        preview: file.type.startsWith("image/") ? e.target.result : null,
-                        name: file.name,
-                    };
-                    this.$emit("update-form", { ...this.form, extraDetails });
+                reader.onload = (evt) => {
+                    const details = [...this.form.extraDetails];
+                    details[idx].attachment = { file, preview: file.type.startsWith('image/') ? evt.target.result : null, name: file.name };
+                    this.$emit("update-form", { ...this.form, extraDetails: details });
                 };
                 reader.readAsDataURL(file);
             }
         },
         addDetail() {
-            this.$emit("update-form", {
-                ...this.form,
-                extraDetails: [
-                    ...(Array.isArray(this.form.extraDetails)
-                        ? this.form.extraDetails
-                        : []),
-                    {
-                        id: Date.now(),
-                        key: "",
-                        provider: "",
-                        value: "",
-                        attachment: null,
-                    },
-                ],
-            });
+            const list = Array.isArray(this.form.extraDetails) ? [...this.form.extraDetails] : [];
+            list.push({ id: Date.now(), key: '', provider: '', value: '', attachment: null });
+            this.$emit("update-form", { ...this.form, extraDetails: list });
         },
         removeDetail(item) {
-            const extraDetails = Array.isArray(this.form.extraDetails)
-                ? this.form.extraDetails.filter((detail) => detail.id !== item.id)
-                : [];
-            this.$emit("update-form", { ...this.form, extraDetails });
+            const newList = Array.isArray(this.form.extraDetails) ? this.form.extraDetails.filter(d => d.id !== item.id) : [];
+            this.$emit("update-form", { ...this.form, extraDetails: newList });
         },
-        // Modal methods
         openCompleteRentDialog() {
             this.rentCompletionDate = this.formatDate(new Date());
             this.completeRentDialog = true;
@@ -589,13 +520,10 @@ export default {
         },
         async completeRentWithDate() {
             try {
-                const response = await axios.post(
-                    `assets/${this.form.id}/rental/complete`,
-                    {
-                        assetId: this.form.id,
-                        completionDate: this.rentCompletionDate,
-                    }
-                );
+                const response = await axios.post(`assets/${this.form.id}/rental/complete`, {
+                    assetId: this.form.id,
+                    completionDate: this.rentCompletionDate,
+                });
                 if (response.status === 200) {
                     this.$message.success("Request successful. Page will be refreshed.");
                     location.reload();
@@ -605,7 +533,7 @@ export default {
             } finally {
                 this.completeRentDialog = false;
             }
-        },
-    },
+        }
+    }
 };
 </script>

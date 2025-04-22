@@ -4,6 +4,7 @@
         <!-- Copy From Button -->
         <div class="form-group">
             <div @click="openModal" class="btn btn-primary">Copy From</div>
+            <div v-if="!form.id" @click="saveProjectDetails" class="btn btn-warning" style="margin-left: 10px;">Save Project Details</div>
         </div>
 
         <!-- Modal for Selecting Asset -->
@@ -136,7 +137,8 @@ export default {
             files: [],
             isModalVisible: false,
             assets: [],
-            selectedAsset: null
+            selectedAsset: null,
+            isSavingProjectDetails: false
         };
     },
     watch: {
@@ -277,6 +279,71 @@ export default {
                 }
                 this.$emit('update-form', this.form);
             }
+        },
+
+        saveProjectDetails() {
+            this.isSavingProjectDetails = true;
+
+            // Create a stripped-down version with only project details
+            const projectData = new FormData();
+
+            // Add item ID if exists (for edit mode)
+            if (this.form.id) {
+                projectData.append('id', this.form.id);
+            }
+
+            // Add only project-related fields
+            projectData.append('project_name', this.form.project_name || '');
+            projectData.append('project_description', this.form.project_description || '');
+            projectData.append('project_link', this.form.project_link || '');
+            projectData.append('city', this.form.city || '');
+            projectData.append('address', this.form.address || '');
+            projectData.append('total_floors', this.form.total_floors || '');
+            projectData.append('location', this.form.location || '');
+            projectData.append('delivery_date', this.form.delivery_date || '');
+
+            // Force asset_status to incomplete
+            projectData.append('asset_status', 'incomplete');
+
+            // Add investor IDs if available
+            if (this.form.investor_ids && this.form.investor_ids.length) {
+                projectData.append('investor_ids', this.form.investor_ids);
+            }
+
+            // Handle gallery files
+            if (this.files.length > 0) {
+                this.files.forEach((file, index) => {
+                    if (file.file) {
+                        projectData.append(`gallery[${index}]`, file.file);
+                    } else if (file.image) {
+                        projectData.append(`gallery[${index}]`, file.image);
+                    }
+                });
+            }
+
+            // Send to backend
+            axios.post('/assets/save-project-details', projectData)
+                .then(response => {
+                    this.isSavingProjectDetails = false;
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Project details saved successfully',
+                        type: 'success'
+                    });
+
+                    // If this is a new asset, redirect to the edit page with the new ID
+                    if (response.data.data && response.data.data.id && !this.form.id) {
+                        window.location.href = `/assets/edit/${response.data.data.id}`;
+                    }
+                })
+                .catch(error => {
+                    this.isSavingProjectDetails = false;
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'Failed to save project details'
+                    });
+                    console.error('Error saving project details:', error);
+                });
         }
     }
 }

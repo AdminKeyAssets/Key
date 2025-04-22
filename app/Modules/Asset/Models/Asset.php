@@ -53,7 +53,8 @@ class Asset extends Model
         'sale_date',
         'sale_price',
         'sale_agreement',
-        'purchaser'
+        'purchaser',
+        'status'
     ];
 
     public function informations()

@@ -12,11 +12,13 @@
                         <i class="el-icon-house"></i> {{ $extra['asset_name'] }}
                     @endif
                 </div>
-                <div>
-                    <a href="{{route('asset.index', ['investor' => $extra['investor_name']])}}">
-                        <i class="el-icon-user"></i> {{ $extra['investor_name'] }}
-                    </a>
-                </div>
+                @if($extra['investor_name'])
+                    <div>
+                        <a href="{{route('asset.index', ['investor' => $extra['investor_name']])}}">
+                            <i class="el-icon-user"></i> {{ $extra['investor_name'] }}
+                        </a>
+                    </div>
+                @endif
                 @if(isset($extra['asset_edit_route'])
                         || isset($extra['payments_route'])
                         || isset($extra['rentals_route'])

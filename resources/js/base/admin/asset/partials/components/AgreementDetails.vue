@@ -55,7 +55,6 @@
             <label class="col-md-1 control-label">Agreement Status:</label>
             <div class="col-md-3 uppercase-medium">
                 <el-select v-model="form.agreement_status"
-                           :value="form.agreement_status"
                            filterable
                            placeholder="Agreement Status"
                            v-remove-readonly>
@@ -75,7 +74,7 @@
                 <div class="col-md-10 uppercase-medium">
                     <input type="file" @change="onOwnershipCertificateChange">
                     <div v-if="form.ownership_certificate">
-                        <p v-if="form.ownership_certificate">File: <a :href="form.ownership_certificate" target="_blank">View Attachment</a></p>
+                        <p>File: <a :href="form.ownership_certificate" target="_blank">View Attachment</a></p>
                         <el-button icon="el-icon-delete-solid" size="small" type="danger"
                                    @click="removeOwnershipCertificate"></el-button>
                     </div>
@@ -102,7 +101,6 @@
                 <label class="col-md-1 control-label">Period:</label>
                 <div class="col-md-3 uppercase-medium">
                     <el-select v-model="form.period"
-                               :value="form.period"
                                filterable
                                placeholder="Period"
                                v-remove-readonly>
@@ -153,52 +151,59 @@
 
 <script>
 import { Notification } from 'element-ui';
+
 export default {
     props: ['form', 'loading', 'currencies', 'agreementStatuses', 'numbers'],
+
     data() {
         return {
             previousAgreementStatus: '',
             errorMessage: '',
-            updatingTotalPrice: false, // Flag to prevent recursion
+            updatingTotalPrice: false,
             updatingSqmPrice: false,
         };
     },
+
+    mounted() {
+        // Set default currency once on mount
+        if (this.form && !this.form.currency) {
+            this.$emit('update-form', { ...this.form, currency: 'USD' });
+        }
+        this.previousAgreementStatus = this.form.agreement_status;
+    },
+
     watch: {
-        'form.price': 'updateTotalPrice',
-        'form.area': 'updateTotalPrice',
-        'form.total_price': 'updateSqmPrice',
-        'form'() {
-            if (this.form) {
-                if (!this.form.currency) {
-                    this.$emit('update-form', { ...this.form, currency: 'USD' });
-                }
-            }
-        },
+        'form.price': { handler: 'updateTotalPrice', immediate: false },
+        'form.area':  { handler: 'updateTotalPrice', immediate: false },
+        'form.total_price': { handler: 'updateSqmPrice', immediate: false },
+
         'form.agreement_status'(newStatus) {
-            if (newStatus === 'Complete' && this.form.payments_histories && this.form.payments_histories.length > 0) {
-                const totalPayments = this.form.payments_histories.reduce((sum, history) => sum + history.amount, 0);
+            if (
+                newStatus === 'Complete' &&
+                this.form.payments_histories &&
+                this.form.payments_histories.length > 0
+            ) {
+                const totalPayments = this.form.payments_histories.reduce((sum, h) => sum + h.amount, 0);
 
                 if (totalPayments < this.form.agreement_price) {
                     this.form.agreement_status = 'Installments';
                     Notification.error({
-                        message: 'Total payments are less than the agreement price!',
+                        message: 'Total payments are less than the agreement price!'
                     });
                 } else {
                     this.form.agreement_status = newStatus;
                 }
             }
-        },
+        }
     },
+
     methods: {
         onOwnershipCertificateChange(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = e => {
                     this.$emit('update-form', { ...this.form, ownership_certificate: file, ownershipCertificatePreview: e.target.result });
-                };
-                reader.onerror = (error) => {
-                    console.error('Error loading file:', error);
                 };
                 reader.readAsDataURL(file);
             }
@@ -216,126 +221,87 @@ export default {
             const period = parseInt(this.form.period);
             const firstPaymentDate = new Date(this.form.first_payment_date);
 
-            if (!totalAmount || !period || isNaN(firstPaymentDate)) {
-                return;
-            }
+            if (isNaN(totalAmount) || isNaN(period) || isNaN(firstPaymentDate)) return;
 
             const amountPerPeriod = (totalAmount / period).toFixed(2);
             const payments = [];
             for (let i = 0; i < period; i++) {
-                let paymentDate = new Date(firstPaymentDate);
-                paymentDate.setMonth(paymentDate.getMonth() + i);
-
-                payments.push({
-                    number: i + 1,
-                    payment_date: this.formatDate(paymentDate),
-                    amount: amountPerPeriod
-                });
+                const date = new Date(firstPaymentDate);
+                date.setMonth(date.getMonth() + i);
+                payments.push({ number: i+1, payment_date: this.formatDate(date), amount: amountPerPeriod });
             }
-
             this.updateFinalPaymentAmount(payments);
             this.$set(this.form, 'payments', payments);
         },
 
         updatePaymentDate(index, date) {
-            this.$set(this.form.payments, index, {
-                ...this.form.payments[index],
-                payment_date: date
-            });
+            this.$set(this.form.payments, index, { ...this.form.payments[index], payment_date: date });
         },
 
         updatePaymentAmount(index) {
-            const totalAmount = parseFloat(this.form.total_price);
-            let amountSum = this.form.payments.reduce((sum, payment, idx) => {
-                return idx !== index ? sum + parseFloat(payment.amount) : sum;
-            }, 0);
-            const finalAmount = totalAmount - amountSum;
-
-            this.$set(this.form.payments, index, {
-                ...this.form.payments[index],
-                amount: parseFloat(this.form.payments[index].amount)
-            });
-
+            const total = parseFloat(this.form.total_price);
+            let sum = this.form.payments.reduce((s, p, idx) => idx!==index?s+parseFloat(p.amount):s, 0);
+            this.$set(this.form.payments, index, { ...this.form.payments[index], amount: parseFloat(this.form.payments[index].amount) });
             this.updateFinalPaymentAmount(this.form.payments);
         },
 
         updateFinalPaymentAmount(payments) {
-            const totalAmount = parseFloat(this.form.total_price);
-            let amountSum = payments.slice(0, -1).reduce((sum, payment) => {
-                return sum + parseFloat(payment.amount);
-            }, 0);
-
-            const finalAmount = totalAmount - amountSum;
-
-            this.$set(payments, payments.length - 1, {
-                ...payments[payments.length - 1],
-                amount: finalAmount.toFixed(2)
-            });
+            const total = parseFloat(this.form.total_price);
+            const sum = payments.slice(0,-1).reduce((s,p)=>s+parseFloat(p.amount),0);
+            const finalAmt = (total - sum).toFixed(2);
+            this.$set(payments, payments.length-1, { ...payments[payments.length-1], amount: finalAmt });
         },
         formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}/${month}/${day}`;
+            const y = date.getFullYear();
+            const m = String(date.getMonth()+1).padStart(2,'0');
+            const d = String(date.getDate()).padStart(2,'0');
+            return `${y}/${m}/${d}`;
         },
 
         updateTotalPrice() {
-            if (this.updatingSqmPrice) return; // Prevent recursion when sqm price is being updated
+            if (this.updatingSqmPrice) return;
+            const price = parseFloat(this.form.price);
+            const area  = parseFloat(this.form.area);
+            if (isNaN(price) || isNaN(area)) return;
             this.updatingTotalPrice = true;
-
-            const price = parseFloat(this.form.price) || 0;
-            const area = parseFloat(this.form.area) || 0;
             const totalPrice = price * area;
-            this.$emit('update-form', {...this.form, total_price: totalPrice});
-            if(!this.form.id){
-                this.$emit('update-form', {...this.form, current_value: totalPrice});
-            }
-
+            const payload = { ...this.form, total_price: totalPrice };
+            if (!this.form.id) payload.current_value = totalPrice;
+            this.$emit('update-form', payload);
             this.updatingTotalPrice = false;
         },
 
         updateSqmPrice() {
-            if (this.updatingTotalPrice) return; // Prevent recursion when total price is being updated
+            if (this.updatingTotalPrice) return;
+            const totalPrice = parseFloat(this.form.total_price);
+            const area       = parseFloat(this.form.area);
+            if (isNaN(totalPrice)||isNaN(area)||area===0) return;
             this.updatingSqmPrice = true;
-
-            const totalPrice = parseFloat(this.form.total_price) || 0;
-            const area = parseFloat(this.form.area) || 0;
-            const price = totalPrice / area;
-            this.$emit("update-form", {...this.form, price: price});
-
+            this.$emit('update-form', { ...this.form, price: totalPrice/area });
             this.updatingSqmPrice = false;
         },
 
-        onAgreementFileChange(e, index) {
+        onAgreementFileChange(e, i) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    const agreements = [...this.form.agreements];
-                    agreements[index].attachment = {
-                        file: file,
-                        preview: file.type.startsWith('image/') ? e.target.result : null,
-                        name: file.name,
-                    };
-                    this.$emit('update-form', { ...this.form, agreements });
+                reader.onload = ev => {
+                    const ags = [...this.form.agreements];
+                    ags[i].attachment = { file, preview: file.type.startsWith('image/')?ev.target.result:null, name: file.name };
+                    this.$emit('update-form', { ...this.form, agreements: ags });
                 };
                 reader.readAsDataURL(file);
             }
         },
         addAgreement() {
-            this.$emit('update-form', {
-                ...this.form,
-                agreements: [...(Array.isArray(this.form.agreements) ? this.form.agreements : []), {
-                    id: Date.now(),
-                    name: '',
-                    attachment: null
-                }]
-            });
+            const ags = Array.isArray(this.form.agreements)?[...this.form.agreements]:[];
+            ags.push({ id: Date.now(), name:'', attachment:null });
+            this.$emit('update-form', { ...this.form, agreements: ags });
         },
         removeAgreement(item) {
-            const agreements = Array.isArray(this.form.agreements) ? this.form.agreements.filter(detail => detail.id !== item.id) : [];
-            this.$emit('update-form', {...this.form, agreements});
+            const ags = Array.isArray(this.form.agreements)?this.form.agreements.filter(a=>a.id!==item.id):[];
+            this.$emit('update-form', { ...this.form, agreements: ags });
         }
     }
-}
+};
 </script>

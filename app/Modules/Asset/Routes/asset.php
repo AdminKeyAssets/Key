@@ -21,6 +21,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor']);
     //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
+    Route::post('/save-project-details', $controller . '@saveProjectDetails')->name('save-project-details')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
