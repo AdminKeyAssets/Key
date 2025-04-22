@@ -8,7 +8,7 @@
 
         <!-- Modal for Selecting Asset -->
         <el-dialog title="Select Asset" :visible.sync="isModalVisible" width="30%">
-            <el-select v-model="selectedAsset" placeholder="Select an asset" v-remove-readonly>
+            <el-select v-model="selectedAsset" filterable placeholder="Select an asset" v-remove-readonly>
                 <el-option v-for="asset in assets" :key="asset.id" :label="asset.project_name" :value="asset.project_name"></el-option>
             </el-select>
             <span slot="footer" class="dialog-footer">

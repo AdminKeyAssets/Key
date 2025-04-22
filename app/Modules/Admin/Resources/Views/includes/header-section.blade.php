@@ -12,7 +12,11 @@
                         <i class="el-icon-house"></i> {{ $extra['asset_name'] }}
                     @endif
                 </div>
-                <div><i class="el-icon-user"></i> {{ $extra['investor_name'] }}</div>
+                <div>
+                    <a href="{{route('asset.index', ['investor' => $extra['investor_name']])}}">
+                        <i class="el-icon-user"></i> {{ $extra['investor_name'] }}
+                    </a>
+                </div>
                 @if(isset($extra['asset_edit_route'])
                         || isset($extra['payments_route'])
                         || isset($extra['rentals_route'])
@@ -46,8 +50,8 @@
                         @endif
                         @if($extra['asset_id'])
                             @can(getPermissionKey('asset', 'update', true))
-                                    <register-purchase-component :asset-id="{{ $extra['asset_id'] }}">
-                                    </register-purchase-component>
+                                <register-purchase-component :asset-id="{{ $extra['asset_id'] }}">
+                                </register-purchase-component>
                             @endcan
                         @endif
                     </div>
