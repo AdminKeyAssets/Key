@@ -175,6 +175,31 @@ class AssetController extends BaseController
             }
         }
 
+        if ($request->payment_date) {
+            $dates = explode(',', $request->payment_date);
+            $start = $dates[0] ?? null;
+            $end   = $dates[1] ?? null;
+            $query->where(function ($query) use ($start, $end) {
+                $query->where('created_at', '>=', $start)
+                    ->orWhereHas('rentals', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('payments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('investments', function ($q) use ($start, $end) {
+                        $q->where('date', '>=', $start);
+                        $q->where('date', '<=', $end);
+                    });
+            });
+        }
+
         if ($statusFilter !== 'all') {
             $query->where('sale_status', $statusFilter);
         }

@@ -60,6 +60,7 @@
                             <th> Agreement Status</th>
                             <th> Next Installment</th>
                             <th> Next Rent</th>
+                            <th> Next Renovation</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
@@ -151,6 +152,30 @@
                                                 // Not overdue: display the first record's payment_date and left_amount
                                                 $item->rentals->where('status', 0)->first()->payment_date
                                                 . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
+                                          )
+                                        : ''
+                                    !!}
+                                </td>
+
+                                <td>
+                                    {!!
+                                        $item->renovation_status == 'In Progress'
+                                        && count($item->renovationPayments)
+                                        && count($item->renovationPayments->where('status', 0))
+                                        ? (
+                                            strtotime($item->renovationPayments->where('status', 0)->first()->payment_date) < time()
+                                            ?
+                                                // Overdue: display formatted overdue date & sum of overdue left_amount
+                                                \Carbon\Carbon::parse($item->renovationPayments->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                . ' - ' . number_format(
+                                                    $item->renovationPayments->where('status', 0)
+                                                        ->filter(function($renovationPayments) {
+                                                            return strtotime($renovationPayments->payment_date) < time();
+                                                        })->sum('left_amount'), 2, ".", ",") . '$'
+                                            :
+                                                // Not overdue: display the first record's payment_date and left_amount
+                                                $item->renovationPayments->where('status', 0)->first()->payment_date
+                                                . ' - ' . number_format($item->renovationPayments->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
                                           )
                                         : ''
                                     !!}

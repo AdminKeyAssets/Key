@@ -21,8 +21,19 @@
                         type="daterange"
                         format="yyyy/MM/dd"
                         value-format="yyyy/MM/dd"
-                        start-placeholder="Start date"
-                        end-placeholder="End date">
+                        start-placeholder="Asset Created At Start date"
+                        end-placeholder="Asset Created At End date">
+                    </el-date-picker>
+                </div>
+
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.payment_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Payments Start date"
+                        end-placeholder="Payments End date">
                     </el-date-picker>
                 </div>
 
@@ -132,6 +143,7 @@ export default {
         return {
             form: {
                 agreement_date: '',
+                payment_date: '',
                 investor: '',
                 status: 'active',
                 asset: '',
@@ -152,7 +164,7 @@ export default {
         this.loadFiltersFromQueryParams();
         this.fetchRevenueFilters();
 
-        if (this.form.agreement_date || this.form.investor || this.form.asset
+        if (this.form.agreement_date || this.form.payment_date || this.form.investor || this.form.asset
             || this.form.status !== 'active'
             || this.form.asset_type
             || this.form.asset_status
@@ -165,6 +177,7 @@ export default {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
+            this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
             this.form.asset = urlParams.get('asset') || '';
             this.form.asset_status = urlParams.get('asset_status') || '';
@@ -181,6 +194,7 @@ export default {
         // Method to clear filters
         clearFilters() {
             this.form.agreement_date = '';
+            this.form.payment_date = '';
             this.form.investor = '';
             this.form.asset = '';
             this.form.asset_status = '';
