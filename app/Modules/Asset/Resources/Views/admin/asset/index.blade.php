@@ -68,7 +68,11 @@
                         <tbody>
 
                         @foreach($allData as $item)
-                            <tr>
+                            <tr
+                                @if(Auth::guard('admin')->check() && !$item->rentals->where('status', 0)->count() && $item->asset_status === 'Rented')
+                                    class="completed-rent" title="Please complete the rent or prolong the rents schedule"
+                                @endif
+                            >
                                 <td>
                                     @if(Auth::guard('investor')->check())
                                         <a href="{{route($moduleKey . '.details', [ $item->id ])}}">{!! $item->project_name !!}</a>

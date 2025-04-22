@@ -159,15 +159,16 @@ class RentalPaymentsHistoryController extends BaseController
             $existingPayments = RentalPaymentsHistory::where('asset_id', $assetId)->where('status', 1)->sum('amount') - $paymentHistory->amount;
 
             if (($existingPayments + $request->amount) == $totalRentals) {
-                $request = new Request([
-                    'completionDate' => $request->date
-                ]);
 
+                // Uncomment to return complete rent
+//                $request = new Request([
+//                    'completionDate' => $request->date
+//                ]);
 
-                $this->complete($request, $assetId);
+//                $this->complete($request, $assetId);
 
                 $this->baseData['redirect_to'] = route('asset.index');
-                $message = 'Rent completed.';
+                $message = 'Rent completed. Please complete the rent or prolong the rents schedule;';
             }
 
             if (($existingPayments + $request->amount) > $totalRentals) {
@@ -183,16 +184,18 @@ class RentalPaymentsHistoryController extends BaseController
 
 
             if (($existingPayments + $request->amount) == $totalRentals) {
-                $request = new Request([
-                    'completionDate' => $request->date
-                ]);
+                // Uncomment to return complete rent
 
-
-                $this->complete($request, $assetId);
+//                $request = new Request([
+//                    'completionDate' => $request->date
+//                ]);
+//
+//
+//                $this->complete($request, $assetId);
 
                 $this->baseData['redirect_to'] = route('asset.index');
 
-                $message = 'Installment completed.';
+                $message = 'Rent completed. Please complete the rent or prolong the rents schedule;';
             }
             if (($existingPayments + $request->amount) > $totalRentals) {
                 return response()->json([

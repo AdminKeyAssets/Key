@@ -1252,3 +1252,13 @@ table thead th {
         white-space: nowrap;
     }
 }
+
+.completed-rent{
+    background-color: #eddada !important;
+}
+.view.view-asset .el-card.box-card.complete-rent-warning-card .el-card__header{
+    background-color: red;
+}
+.complete-rent-warning-text{
+    font-weight: normal;
+}

@@ -271,9 +271,9 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
-                                <el-card class="box-card">
+                                <el-card class="box-card" :class="{ 'complete-rent-warning-card': needToCompleteRent  && !investorView }">
                                     <div slot="header" class="clearfix main-header">
-                                        <span>Tenant Details</span>
+                                        <span>Tenant Details</span> <span class="complete-rent-warning-text" v-if="needToCompleteRent && !investorView"> - Please complete the rent or prolong the rents schedule.</span>
                                     </div>
                                     <el-row>
                                         <el-row class="row-item"
@@ -1002,7 +1002,8 @@ export default {
             nextPayment: {},
             showAgreementDetails: true,
             showRenovationAgreementDetails: true,
-            showExtraAttachments: true
+            showExtraAttachments: true,
+            needToCompleteRent: false,
         }
     },
     created() {
@@ -1059,6 +1060,9 @@ export default {
                         }
                         if (this.form.agreement_status === 'Complete') {
                             this.showAgreementDetails = false;
+                        }
+                        if(data.item.needToCompleteRent){
+                            this.needToCompleteRent = data.item.needToCompleteRent;
                         }
                     }
 

@@ -271,6 +271,7 @@ class AssetController extends BaseController
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->where('status', 1)->get();
                 }
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
+                $this->baseData['item']['needToCompleteRent'] = !Rental::where('asset_id', $asset->id)->where('status', 0)->count() && $asset->asset_status === 'Rented';
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
                 $this->baseData['salesManager'] = $salesManager;
 
