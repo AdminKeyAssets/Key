@@ -85,8 +85,8 @@ class RevenueController extends BaseController
                 $query->whereIn('id', $investors);
             });
         } else {
-            $paginatedAssets = Asset::orderByDesc('id');
-            $allAssets = Asset::orderByDesc('id');
+            $paginatedAssets = Asset::where('status', 'completed')->orderByDesc('id');
+            $allAssets = Asset::where('status', 'completed')->orderByDesc('id');
         }
 
         if ($request->asset && $request->asset != 'all') {
@@ -236,7 +236,7 @@ class RevenueController extends BaseController
         $statusFilter = $request->status ?? 'active';
 
         // Fetch paginated assets
-        $paginatedAssets = $user->assets()->orderByDesc('id');
+        $paginatedAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
 
         // Fetch all assets for totals calculation
         $allAssets = $user->assets()->orderByDesc('id');

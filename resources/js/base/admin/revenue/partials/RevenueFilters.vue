@@ -56,7 +56,7 @@
                         <el-option label="Sold" value="sold"></el-option>
                     </el-select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="isAdmin">
                     <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
@@ -118,6 +118,9 @@
 import {responseParse} from "../../../mixins/responseParse";
 
 export default {
+    props: [
+        'isAdmin',
+    ],
     data() {
         return {
             form: {

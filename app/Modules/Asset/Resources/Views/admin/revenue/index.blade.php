@@ -23,8 +23,15 @@
                 </div>
 
                 <div class="row">
-                    <revenue-filter-component>
-                    </revenue-filter-component>
+                    @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                        <revenue-filter-component
+                            is-admin="{{true}}">
+                        </revenue-filter-component>
+                    @else
+                        <revenue-filter-component>
+                        </revenue-filter-component>
+                    @endif
+
                 </div>
             @endif
 

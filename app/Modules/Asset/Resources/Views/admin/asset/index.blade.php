@@ -30,8 +30,14 @@
                 </div>
 
                 <div class="row">
-                    <asset-filter-component>
-                    </asset-filter-component>
+                    @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                        <asset-filter-component
+                            is-admin="{{true}}">
+                        </asset-filter-component>
+                    @else
+                        <asset-filter-component>
+                        </asset-filter-component>
+                    @endif
                 </div>
             @else
                 <div class="row">
@@ -71,7 +77,8 @@
                         @foreach($allData as $item)
                             <tr
                                 @if(Auth::guard('admin')->check() && !$item->rentals->where('status', 0)->count() && $item->asset_status === 'Rented')
-                                    class="completed-rent" title="Please complete the rent or prolong the rents schedule"
+                                    class="completed-rent"
+                                title="Please complete the rent or prolong the rents schedule"
                                 @endif
                             >
                                 <td>
