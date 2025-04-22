@@ -192,11 +192,11 @@ class AssetController extends BaseController
                     ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
                         $q->where('payment_date', '>=', $start);
                         $q->where('payment_date', '<=', $end);
-                    })
-                    ->orWhereHas('investments', function ($q) use ($start, $end) {
-                        $q->where('date', '>=', $start);
-                        $q->where('date', '<=', $end);
                     });
+//                    ->orWhereHas('investments', function ($q) use ($start, $end) {
+//                        $q->where('date', '>=', $start);
+//                        $q->where('date', '<=', $end);
+//                    });
             });
         }
 
