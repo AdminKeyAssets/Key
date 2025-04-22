@@ -111,6 +111,7 @@
                 <el-select
                     v-model="form.investor_ids"
                     multiple
+                    filterable
                     placeholder="Select"
                 >
                     <el-option

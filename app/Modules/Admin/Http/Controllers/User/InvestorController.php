@@ -76,11 +76,42 @@ class InvestorController extends BaseController
         if ($request->citizenship) {
             $query->where('citizenship', '=', $request->input('citizenship'));
         }
-        if ($request->assets) {
-            $assetsCount = $request->assets;
-            $query->withCount('assets')
-                ->having('assets_count', '=', $assetsCount);
+//        if ($request->assets) {
+//            $assetsCount = $request->assets;
+//            $query->withCount('assets')
+//                ->having('assets_count', '=', $assetsCount);
+//        }
+
+
+        if ($request->filled('assets')) {
+            $filter = $request->assets;
+            // always add the count select
+            $query->withCount('assets');
+
+            // 1) range “min-max” (e.g. “4-9”)
+            if (preg_match('/^(\d+)-(\d+)$/', $filter, $m)) {
+                $min = (int)$m[1];
+                $max = (int)$m[2];
+                $query->having('assets_count', '>=', $min)
+                    ->having('assets_count', '<=', $max);
+
+                // 2) open-ended “n-” (e.g. “5-”) → >= n
+            } elseif (preg_match('/^(\d+)-$/', $filter, $m)) {
+                $min = (int)$m[1];
+                $query->having('assets_count', '>=', $min);
+
+                // 3) exact integer “n”
+            } elseif (preg_match('/^\d+$/', $filter)) {
+                $exact = (int)$filter;
+                $query->having('assets_count', '=', $exact);
+
+                // (optional) you could also support “-n” for <= n:
+                // } elseif (preg_match('/^-(\d+)$/', $filter, $m)) {
+                //     $max = (int)$m[1];
+                //     $query->having('assets_count', '<=', $max);
+            }
         }
+
 
         if ($request->create_date) {
             $createdDates = explode(',', $request->create_date);
