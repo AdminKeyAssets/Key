@@ -442,7 +442,7 @@ export default {
             this.$emit("update-form", { ...this.form, tenant: newTenant });
         },
         generateRentalList() {
-            if (!this.tenant.agreement_date || !this.theTenant.agreement_term || !this.tenant.monthly_rent) {
+            if (!this.tenant.agreement_date || !this.tenant.agreement_term || !this.tenant.monthly_rent) {
                 this.$message.error("Please fill in all required fields for the rental agreement.");
                 return;
             }
