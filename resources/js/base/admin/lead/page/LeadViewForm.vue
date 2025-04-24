@@ -38,7 +38,7 @@
                                 <div v-if="form.admin_id && managers.length" class="form-group dashed">
                                     <label class="col-md-1 control-label">Sales Manager: </label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{ selectedManager.name }} {{ selectedManager.surname }}
+                                        <span v-if="selectedManager.name">{{ selectedManager.name }}</span> <span v-if="selectedManager.name">{{ selectedManager.surname }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group dashed" v-if="form.marketing_channel">
