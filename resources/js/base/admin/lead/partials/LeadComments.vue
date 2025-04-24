@@ -11,10 +11,10 @@
             {{ comment.author_name }}
           </span>
                     <span class="comment-user" v-else-if="comment.admin">
-            {{ comment.admin.name }} {{ comment.admin.surname }}
+            <span v-if="comment.admin.name">{{ comment.admin.name }}</span> <span v-if="comment.admin.surname">{{ comment.admin.surname }}</span>
           </span>
                     <span class="comment-user" v-else-if="comment.investor">
-            {{ comment.investor.name }} {{ comment.investor.surname }}
+            <span v-if="comment.investor.name">{{ comment.investor.name }}</span> <span v-if="comment.investor.surname">{{ comment.investor.surname }}</span>
           </span>
                     <span class="comment-date">
             {{ formatDate(comment.created_at) }}
@@ -94,8 +94,8 @@
 </template>
 
 <script>
-import { responseParse } from '../../../mixins/responseParse';
-import { getData } from '../../../mixins/getData';
+import {responseParse} from '../../../mixins/responseParse';
+import {getData} from '../../../mixins/getData';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
 
@@ -185,7 +185,7 @@ export default {
                                 ogTitle: url
                             };
                         } else {
-                            comment.preview = { ogTitle: url };
+                            comment.preview = {ogTitle: url};
                         }
                     }
                     // Fallback: simply display the URL as a clickable link
@@ -285,6 +285,7 @@ export default {
     .comment-item {
         width: 85%;
     }
+
     .comment-header {
         flex-direction: column;
     }
@@ -398,14 +399,17 @@ export default {
     overflow: hidden;
     max-width: 300px;
 }
+
 .link-preview-image {
     width: 100%;
     height: auto;
     object-fit: cover;
 }
+
 .link-preview-info {
     padding: 10px;
 }
+
 .link-preview-info a {
     text-decoration: none;
     color: #1e90ff;
