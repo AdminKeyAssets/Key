@@ -15,11 +15,11 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{ form.name }} {{ form.surname }}
+                                        <span v-if="form.name">{{ form.name }}</span> <span v-if="form.surname">{{ form.surname }}</span>
                                     </div>
                                 </div>
 
-                                <div class="form-group dashed">
+                                <div class="form-group dashed" v-if="form.email">
                                     <label class="col-md-1 control-label">Email:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{ form.email }}
