@@ -178,7 +178,7 @@ class AssetController extends BaseController
         if ($request->payment_date) {
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
-            $end   = $dates[1] ?? null;
+            $end = $dates[1] ?? null;
             $query->where(function ($query) use ($start, $end) {
                 $query->where('created_at', '>=', $start)
                     ->orWhereHas('rentals', function ($q) use ($start, $end) {
@@ -226,6 +226,29 @@ class AssetController extends BaseController
         $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
         if ($statusFilter !== 'all') {
             $userAssets->where('sale_status', $statusFilter);
+        }
+
+        if ($request->agreement_date) {
+            $createdDates = explode(',', $request->agreement_date);
+
+            if (isset($createdDates[0])) {
+                $userAssets->where('agreement_date', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $userAssets->where('agreement_date', '<=', $createdDates[1]);
+            }
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $userAssets->where('agreement_status', $request->agreement_status);
+        }
+
+        if ($request->asset && $request->asset != 'all') {
+            $userAssets->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $userAssets->where('type', $request->asset_type);
         }
 
         if ($userAssets->count() > 0) {
@@ -1070,7 +1093,33 @@ class AssetController extends BaseController
         }
 
 
-        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+    }
+
+    public function investorFilterOptions()
+    {
+        $user = \auth()->user();
+
+        $this->baseData['assets'] = Asset::query()
+            ->whereHas('investors', function($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
+        $this->baseData['types'] = Asset::query()
+            ->whereHas('investors', function($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+
     }
 
     public function sell(AssetSaleRequest $request, $assetId)

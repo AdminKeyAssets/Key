@@ -241,41 +241,58 @@ class RevenueController extends BaseController
         // Fetch all assets for totals calculation
         $allAssets = $user->assets()->orderByDesc('id');
 
-        $activeQuery = $user->assets()->orderByDesc('id')->where('sale_status', 'active');
+        if ($request->status != 'all') {
+            $activeQuery = $user->assets()->orderByDesc('id')->where('sale_status', 'active');
 
-        if ($activeQuery->count() > 0) {
-            $paginatedAssets->where('sale_status', $statusFilter);
-            $allAssets->where('sale_status', $statusFilter);
-        } else {
-            $paginatedAssets->where('sale_status', 'sold');
-            $allAssets->where('sale_status', 'sold');
+            if ($activeQuery->count() > 0) {
+                $paginatedAssets->where('sale_status', $statusFilter);
+                $allAssets->where('sale_status', $statusFilter);
+            } else {
+                $paginatedAssets->where('sale_status', 'sold');
+                $allAssets->where('sale_status', 'sold');
+            }
+        }
+
+        if ($request->asset && $request->asset != 'all') {
+            $paginatedAssets->where('project_name', 'like', '%' . $request->asset . '%');
+            $allAssets->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $paginatedAssets->where('type', $request->asset_type);
+            $allAssets->where('type', $request->asset_type);
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $paginatedAssets->where('agreement_status', $request->agreement_status);
+            $allAssets->where('agreement_status', $request->agreement_status);
         }
 
         if ($request->agreement_date && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
             if (isset($createdDates[0])) {
                 $paginatedAssets->where(function ($query) use ($createdDates) {
-                    $query->where('created_at', '>=', $createdDates[0])
+                    $query
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         });
                 });
                 $allAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '>=', $createdDates[0])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '>=', $createdDates[0]);
+                            $q->where('date', '>=', $createdDates[0]);
                         });
                 });
             }
@@ -283,25 +300,25 @@ class RevenueController extends BaseController
                 $paginatedAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '<=', $createdDates[1])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         });
                 });
                 $allAssets->where(function ($query) use ($createdDates) {
                     $query->where('created_at', '<=', $createdDates[1])
                         ->orWhereHas('paymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('rentalPaymentsHistories', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         })
                         ->orWhereHas('Investments', function ($q) use ($createdDates) {
-                            $q->where('created_at', '<=', $createdDates[1]);
+                            $q->where('date', '<=', $createdDates[1]);
                         });
                 });
             }
