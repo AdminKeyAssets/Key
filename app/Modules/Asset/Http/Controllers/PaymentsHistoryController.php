@@ -168,7 +168,9 @@ class PaymentsHistoryController extends BaseController
             // If updating an existing payment, subtract its current amount.
             $paymentHistory = PaymentsHistory::where('id', $request->id)->first();
             $existingPayments = PaymentsHistory::where('asset_id', $assetId)->sum('amount') - $paymentHistory->amount;
-            if (($existingPayments + $request->amount) == $totalScheduledPayments) {
+            $sumPayments = $existingPayments + $request->amount;
+
+            if (abs($sumPayments - $totalScheduledPayments) < 0.00001) {
                 $asset = Asset::where('id', $assetId)->first();
                 $asset->update([
                     'agreement_status' => 'Complete',
@@ -187,7 +189,9 @@ class PaymentsHistoryController extends BaseController
         } else {
             // New payment case.
             $existingPayments = PaymentsHistory::where('asset_id', $assetId)->sum('amount');
-            if (($existingPayments + $request->amount) == $totalScheduledPayments) {
+            $sumPayments = $existingPayments + $request->amount;
+
+            if (abs($sumPayments - $totalScheduledPayments) < 0.00001) {
                 $asset = Asset::where('id', $assetId)->first();
                 $asset->update([
                     'agreement_status' => 'Complete',
@@ -347,7 +351,7 @@ class PaymentsHistoryController extends BaseController
             $asset = $paymentHistory->asset;
             $paymentHistory->delete();
 
-            $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
+            $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, (float)$amount);
 
             if ($asset->paymentsHistories()->count() == 0) {
                 $asset->agreement_status = 'Installments';

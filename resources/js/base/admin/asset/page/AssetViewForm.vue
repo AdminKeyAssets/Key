@@ -273,7 +273,7 @@
                             <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
                                 <el-card class="box-card" :class="{ 'complete-rent-warning-card': needToCompleteRent  && !investorView }">
                                     <div slot="header" class="clearfix main-header">
-                                        <span>Tenant Details</span> <span class="complete-rent-warning-text" v-if="needToCompleteRent && !investorView"> - Please complete the rent or prolong the rents schedule.</span>
+                                        <span>Tenant Details</span> <span class="complete-rent-warning-text" v-if="needToCompleteRent && !investorView"> - Please complete the rent or prolong the rent schedule.</span>
                                     </div>
                                     <el-row>
                                         <el-row class="row-item"
