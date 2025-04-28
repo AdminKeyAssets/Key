@@ -113,6 +113,7 @@ Vue.component('leads-export-component', require('./base/admin/lead/partials/Expo
 Vue.component('leads-import-component', require('./base/admin/lead/partials/ImportLeads').default);
 Vue.component('leads-import-status-component', require('./base/admin/lead/partials/ImportLeadsStatuses').default);
 Vue.component('leads-import-manager-component', require('./base/admin/lead/partials/ImportLeadsManagers').default);
+Vue.component('update-lead-status', require('./base/admin/lead/partials/StatusForm').default);
 
 //Sale
 Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);

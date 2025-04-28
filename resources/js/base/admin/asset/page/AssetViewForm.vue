@@ -678,7 +678,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.renovation_status === 'In Progress'">
+                            <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
@@ -1060,6 +1060,9 @@ export default {
                         }
                         if (this.form.agreement_status === 'Complete') {
                             this.showAgreementDetails = false;
+                        }
+                        if (this.form.renovation_status === 'Completed') {
+                            this.showRenovationAgreementDetails = false;
                         }
                         if(data.item.needToCompleteRent){
                             this.needToCompleteRent = data.item.needToCompleteRent;

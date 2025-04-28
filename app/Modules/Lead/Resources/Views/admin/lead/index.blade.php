@@ -96,7 +96,12 @@
                                         </update-lead-manager>
                                     </td>
                                 @endif
-                                <td>{!! $item->status !!}</td>
+                                <td>
+                                    <update-lead-status
+                                        :lead-id="{!! $item->id !!}"
+                                        status="{{ $item->status }}">
+                                    </update-lead-status>
+                                </td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
                                 <td>{!! $item->marketing_channel !!}</td>
 
