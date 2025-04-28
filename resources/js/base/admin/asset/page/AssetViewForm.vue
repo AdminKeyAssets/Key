@@ -512,6 +512,7 @@
                                             <i v-else class="el-icon-caret-bottom"></i>
                                         </div>
                                     </div>
+
                                     <el-row>
                                         <el-row class="row-item">
                                             <el-col :span="12">
@@ -696,6 +697,13 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+                                        <el-button
+                                            icon="el-icon-document"
+                                            style="margin: 1rem 3rem 1rem 1rem;"
+                                            type="secondary"
+                                            class="pull-right"
+                                            @click.stop="exportAgreementDetails">Export Agreement Details
+                                        </el-button>
                                     </template>
 
                                 </el-card>
@@ -1202,6 +1210,37 @@ export default {
                 link.click();
             } catch (error) {
                 console.error('Error exporting payments:', error);
+            }
+        },
+
+        async exportAgreementDetails() {
+            try {
+                // Prepare data for PDF export
+                const agreementData = {
+                    id: this.id,
+                    assetType: this.form.type || '',
+                    area: this.form.area || '',
+                    flatNumber: this.form.flat_number || '',
+                    price: this.form.price || 0,
+                    totalPrice: this.form.total_price || 0,
+                    period: this.form.period || '',
+                    payments: this.form.payments || [],
+                    paymentsHistories: this.form.payments_histories || []
+                };
+
+                const response = await axios.post(`/assets/${this.id}/agreement-details/export`, agreementData, {
+                    responseType: 'blob'
+                });
+
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'agreement_details.pdf');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting agreement details:', error);
+                this.$message.error('Failed to export agreement details');
             }
         },
 

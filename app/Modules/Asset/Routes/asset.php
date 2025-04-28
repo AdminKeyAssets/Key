@@ -51,6 +51,12 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/{asset}/payments-history/export', $paymentController . '@exportHistory')
         ->name('export.history');
 
+    // Agreement Details Export
+    $agreementDetailsController = 'AgreementDetailsExportController';
+    Route::post('/{asset}/agreement-details/export', $agreementDetailsController . '@exportAgreementDetails')
+        ->name('agreement.details.export');
+
+
     $commentController = 'CommentController';
     $commentModuleName = 'comment';
 
