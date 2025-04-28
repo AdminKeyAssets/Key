@@ -271,9 +271,11 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
-                                <el-card class="box-card" :class="{ 'complete-rent-warning-card': needToCompleteRent  && !investorView }">
+                                <el-card class="box-card"
+                                         :class="{ 'complete-rent-warning-card': needToCompleteRent  && !investorView }">
                                     <div slot="header" class="clearfix main-header">
-                                        <span>Tenant Details</span> <span class="complete-rent-warning-text" v-if="needToCompleteRent && !investorView"> - Please complete the rent or prolong the rent schedule.</span>
+                                        <span>Tenant Details</span> <span class="complete-rent-warning-text"
+                                                                          v-if="needToCompleteRent && !investorView"> - Please complete the rent or prolong the rent schedule.</span>
                                     </div>
                                     <el-row>
                                         <el-row class="row-item"
@@ -418,7 +420,13 @@
                                                         @click="exportRentSchedule">Export Rents
                                                     </el-button>
                                                 </div>
-                                                <el-table border :data="form.rentals" style="width: 100%">
+                                                <el-table
+                                                    show-summary
+                                                    :summary-method="getRentPaymentsScheduleSummary"
+                                                    :row-class-name="tableRowClassName"
+                                                    border
+                                                    :data="form.rentals"
+                                                    style="width: 100%">
                                                     <el-table-column label="Payment Date">
                                                         <template slot-scope="scope">
                                                             {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
@@ -427,7 +435,7 @@
                                                     <el-table-column prop="amount" label="Amount">
                                                         <template slot-scope="scope">
                                                             {{
-                                                                scope.row.status ? formatPrice(scope.row.amount)+'$' : formatPrice(scope.row.left_amount)+'$'
+                                                                scope.row.status ? formatPrice(scope.row.amount) + '$' : formatPrice(scope.row.left_amount) + '$'
                                                             }}
                                                         </template>
                                                     </el-table-column>
@@ -457,8 +465,12 @@
                                                         @click="exportRentalPayments">Export Payments
                                                     </el-button>
                                                 </div>
-                                                <el-table border :data="form.rental_payments_histories"
-                                                          style="width: 100%">
+                                                <el-table
+                                                    show-summary
+                                                    :summary-method="getPaymentsSummary"
+                                                    border
+                                                    :data="form.rental_payments_histories"
+                                                    style="width: 100%">
                                                     <el-table-column label="Payment Date">
                                                         <template slot-scope="scope">
                                                             {{ scope.$index + 1 }}. {{ scope.row.date }}
@@ -486,7 +498,8 @@
                             </el-row>
 
                             <el-row style="margin-bottom: 30px">
-                                <el-card class="box-card agreement-details-card" :class="{ 'hidden-body': !showAgreementDetails }">
+                                <el-card class="box-card agreement-details-card"
+                                         :class="{ 'hidden-body': !showAgreementDetails }">
 
                                     <div slot="header"
                                          class="clearfix main-header"
@@ -609,7 +622,13 @@
                                                             @click="exportPaymentSchedule">Export Schedule
                                                         </el-button>
                                                     </div>
-                                                    <el-table border :data="form.payments" style="width: 100%">
+                                                    <el-table
+                                                        show-summary
+                                                        :summary-method="getPaymentsScheduleSummary"
+                                                        :row-class-name="tableRowClassName"
+                                                        border
+                                                        :data="form.payments"
+                                                        style="width: 100%">
                                                         <el-table-column label="Payment Date">
                                                             <template slot-scope="scope">
                                                                 {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
@@ -618,7 +637,7 @@
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{
-                                                                    scope.row.status ? formatPrice(scope.row.amount)+'$' : formatPrice(scope.row.left_amount)+'$'
+                                                                    scope.row.status ? formatPrice(scope.row.amount) + '$' : formatPrice(scope.row.left_amount) + '$'
                                                                 }}
                                                             </template>
                                                         </el-table-column>
@@ -648,8 +667,12 @@
                                                             @click="exportPayments">Export Payments
                                                         </el-button>
                                                     </div>
-                                                    <el-table border :data="form.payments_histories"
-                                                              style="width: 100%">
+                                                    <el-table
+                                                        show-summary
+                                                        :summary-method="getPaymentsSummary"
+                                                        border
+                                                        :data="form.payments_histories"
+                                                        style="width: 100%">
                                                         <el-table-column label="Payment Date">
                                                             <template slot-scope="scope">
                                                                 {{ scope.$index + 1 }}. {{ scope.row.date }}
@@ -684,7 +707,8 @@
 
                                     <div slot="header"
                                          class="clearfix main-header"
-                                         @click="showRenovationAgreementDetails = !showRenovationAgreementDetails" style="cursor: pointer;">
+                                         @click="showRenovationAgreementDetails = !showRenovationAgreementDetails"
+                                         style="cursor: pointer;">
                                         <div style="width: 98%">
                                             <span>Renovation Agreement Details</span>
                                         </div>
@@ -710,8 +734,11 @@
                                                     <div class="col-md-6 uppercase-medium">
                                                         <div>
                                                             <p>
-                                                                <a v-if="form.renovation_agreement_name" :href="form.renovation_agreement"
-                                                                   target="_blank">{{ form.renovation_agreement_name }}</a>
+                                                                <a v-if="form.renovation_agreement_name"
+                                                                   :href="form.renovation_agreement"
+                                                                   target="_blank">{{
+                                                                        form.renovation_agreement_name
+                                                                    }}</a>
                                                                 <a v-else :href="form.renovation_agreement"
                                                                    target="_blank">View Agreement</a></p>
                                                         </div>
@@ -731,7 +758,6 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
-
 
 
                                     </el-row>
@@ -764,7 +790,13 @@
                                                             @click="exportPaymentSchedule">Export Schedule
                                                         </el-button>
                                                     </div>
-                                                    <el-table border :data="form.renovation_payments" style="width: 100%">
+                                                    <el-table
+                                                        show-summary
+                                                        :summary-method="getRenovationPaymentsScheduleSummary"
+                                                        :row-class-name="tableRowClassName"
+                                                        border
+                                                        :data="form.renovation_payments"
+                                                        style="width: 100%">
                                                         <el-table-column label="Payment Date">
                                                             <template slot-scope="scope">
                                                                 {{ scope.$index + 1 }}. {{ scope.row.payment_date }}
@@ -773,7 +805,7 @@
                                                         <el-table-column prop="amount" label="Amount">
                                                             <template slot-scope="scope">
                                                                 {{
-                                                                    scope.row.status ? formatPrice(scope.row.amount)+'$' : formatPrice(scope.row.left_amount)+'$'
+                                                                    scope.row.status ? formatPrice(scope.row.amount) + '$' : formatPrice(scope.row.left_amount) + '$'
                                                                 }}
                                                             </template>
                                                         </el-table-column>
@@ -789,7 +821,8 @@
                                             </el-col>
 
                                             <el-col :span="24" :md="11" class="payments-history-wrapper-col">
-                                                <div v-if="form.renovation_payments_histories && form.renovation_payments_histories.length">
+                                                <div
+                                                    v-if="form.renovation_payments_histories && form.renovation_payments_histories.length">
                                                     <div class="payments-schedule-title-wrapper">
                                                         <div class="payments-history-heading"
                                                              style="text-align: center; max-width: 500px">
@@ -803,8 +836,12 @@
                                                             @click="exportPayments">Export Payments
                                                         </el-button>
                                                     </div>
-                                                    <el-table border :data="form.renovation_payments_histories"
-                                                              style="width: 100%">
+                                                    <el-table
+                                                        show-summary
+                                                        :summary-method="getPaymentsSummary"
+                                                        border
+                                                        :data="form.renovation_payments_histories"
+                                                        style="width: 100%">
                                                         <el-table-column label="Payment Date">
                                                             <template slot-scope="scope">
                                                                 {{ scope.$index + 1 }}. {{ scope.row.date }}
@@ -1064,7 +1101,7 @@ export default {
                         if (this.form.renovation_status === 'Completed') {
                             this.showRenovationAgreementDetails = false;
                         }
-                        if(data.item.needToCompleteRent){
+                        if (data.item.needToCompleteRent) {
                             this.needToCompleteRent = data.item.needToCompleteRent;
                         }
                     }
@@ -1178,7 +1215,96 @@ export default {
         replaceWidthAndHeight(text) {
             text = text.replace(/width="600"/g, 'width="100%"');
             return text.replace(/height="450"/g, 'height="300"');
+        },
+
+        getPaymentsScheduleSummary({columns, data}) {
+            const sums = [];
+
+            // Column 1 (Payment Date)
+            sums[0] = 'Sum of the Remaining Payments';
+
+            // Column 2 (Amount)
+            let totalLeftAmount = 0;
+            data.forEach(item => {
+                if (!item.status) {
+                    totalLeftAmount += Number(item.left_amount) || 0;
+                }
+            });
+            sums[1] = this.formatPrice(totalLeftAmount) + '$';
+
+            return sums;
+        },
+
+        getPaymentsSummary({columns, data}) {
+            const sums = [];
+
+            sums[0] = 'Total payments';
+            let totalAmount = 0;
+            data.forEach(item => {
+                totalAmount += Number(item.amount) || 0;
+            });
+            sums[1] = this.formatPrice(totalAmount) + '$';;
+            sums[2] = '';
+
+            return sums;
+        },
+
+        getRentPaymentsScheduleSummary({columns, data}) {
+            const sums = [];
+
+            // Column 1 (Payment Date)
+            sums[0] = 'Sum of the Remaining Rent';
+
+            // Column 2 (Amount)
+            let totalLeftAmount = 0;
+            data.forEach(item => {
+                if (!item.status) {
+                    totalLeftAmount += Number(item.left_amount) || 0;
+                }
+            });
+            sums[1] = this.formatPrice(totalLeftAmount) + '$';
+
+            // Column 3 (Status)
+            sums[2] = '';
+
+            return sums;
+        },
+
+
+        getRenovationPaymentsScheduleSummary({columns, data}) {
+            const sums = [];
+
+            // Column 1 (Payment Date)
+            sums[0] = 'Remaining Payments';
+
+            // Column 2 (Amount)
+            let totalLeftAmount = 0;
+            data.forEach(item => {
+                if (!item.status) {
+                    totalLeftAmount += Number(item.left_amount) || 0;
+                }
+            });
+            sums[1] = this.formatPrice(totalLeftAmount) + '$';
+
+            // Column 3 (Status)
+            sums[2] = '';
+
+            return sums;
+        },
+
+        tableRowClassName({ row }) {
+            if (!row.payment_date) return '';
+
+            const [year, month, day] = row.payment_date.split('/').map(Number);
+            const paymentDate = new Date(year, month - 1, day);
+            const today = new Date();
+
+            if (paymentDate < today && !row.status) {
+                return 'warning-row';
+            }
+            return '';
         }
+
     }
 }
 
@@ -1313,5 +1439,7 @@ export default {
     -ms-overflow-style: none;
     scrollbar-width: thin;
 }
-
+.el-table .warning-row {
+    background: oldlace;
+}
 </style>
