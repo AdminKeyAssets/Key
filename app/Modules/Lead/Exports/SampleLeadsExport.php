@@ -20,9 +20,9 @@ class SampleLeadsExport implements FromCollection, WithHeadings, WithEvents
         return [
             'name',
             'surname',
+            'prefix',
             'phone',
             'email',
-            'prefix',
             'marketing_channel',
         ];
     }
@@ -38,9 +38,9 @@ class SampleLeadsExport implements FromCollection, WithHeadings, WithEvents
             [
                 'name'              => "John",
                 'surname'           => "Doe",
+                'prefix'            => "+995",
                 'phone'             => "1234567890",
                 'email'             => "john.doe@example.com",
-                'prefix'            => "+995",
                 'marketing_channel' => "Facebook",
             ]
         ];
