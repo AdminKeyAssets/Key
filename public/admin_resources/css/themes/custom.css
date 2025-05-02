@@ -905,11 +905,11 @@ padding: 60px;
         background-repeat: no-repeat;
         background-position-y: bottom;
         max-width: 200px;
-        z-index: 998;
+        z-index: 1000;
     }
 
     .navbar.navbar-inverse {
-        z-index: 999;
+        z-index: 1001;
     }
 
 }
@@ -1229,7 +1229,7 @@ table thead th {
     .button-wrapper button{
         width: 45%;
     }
-    .form-group:not(.date-filter){
+    .form-group:not(.date-filter, #form-login .form-group){
         width: 49%;
         display: inline-block;
     }
