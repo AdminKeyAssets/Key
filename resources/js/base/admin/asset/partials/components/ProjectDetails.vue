@@ -4,11 +4,12 @@
         <!-- Copy From Button -->
         <div class="form-group">
             <div @click="openModal" class="btn btn-primary">Copy From</div>
+            <div v-if="!form.id" @click="saveProjectDetails" class="btn btn-warning" style="margin-left: 10px;">Save Project Details</div>
         </div>
 
         <!-- Modal for Selecting Asset -->
         <el-dialog title="Select Asset" :visible.sync="isModalVisible" width="30%">
-            <el-select v-model="selectedAsset" placeholder="Select an asset" v-remove-readonly>
+            <el-select v-model="selectedAsset" filterable placeholder="Select an asset" v-remove-readonly>
                 <el-option v-for="asset in assets" :key="asset.id" :label="asset.project_name" :value="asset.project_name"></el-option>
             </el-select>
             <span slot="footer" class="dialog-footer">
@@ -17,27 +18,33 @@
             </span>
         </el-dialog>
 
+        <!-- Upload Icon Section with Drag-and-Drop Reordering -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Icon:</label>
             <div class="col-md-10 uppercase-medium">
                 <div class="upload-container">
-                    <!-- Drag and Drop Area -->
                     <div class="drop-area"
-                         @dragover.prevent="dragOver"
-                         @dragleave.prevent="dragLeave"
+                         @dragover.prevent
+                         @dragleave.prevent
                          @drop.prevent="handleDrop"
                          @click="triggerInput">
                         <p>Drag your images here or click to upload</p>
                         <input type="file" multiple @change="handleFiles" ref="fileInput" style="display: none;">
                     </div>
 
-                    <!-- Thumbnails Preview -->
                     <div class="preview">
-                        <div class="thumbnail" v-for="(file, index) in files" :key="index">
+                        <div
+                            class="thumbnail"
+                            v-for="(file, index) in files"
+                            :key="index"
+                            draggable="true"
+                            @dragstart="onDragStart(index)"
+                            @dragover.prevent
+                            @drop="onDrop(index)"
+                        >
                             <img v-if="file.preview" :src="file.preview" :alt="file.name" class="img-thumbnail">
                             <img v-else :src="file.image" :alt="file.name" class="img-thumbnail">
                             <div class="remove" @click="removeFile(index)">×</div>
-                            <!-- Icon placed at the bottom right to move the file to the beginning -->
                             <span class="move-to-front" @click="moveToFront(index)">
                                 <i class="fa fa-arrow-up"></i>
                             </span>
@@ -47,10 +54,11 @@
             </div>
         </div>
 
+        <!-- Other Project Fields -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Project Name:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.project_name"></input>
+                <input class="form-control" :disabled="loading" v-model="form.project_name" />
             </div>
         </div>
 
@@ -70,28 +78,28 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Project Link:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.project_link"></input>
+                <input class="form-control" :disabled="loading" v-model="form.project_link" />
             </div>
         </div>
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">City:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.city"></input>
+                <input class="form-control" :disabled="loading" v-model="form.city" />
             </div>
         </div>
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Address:</label>
             <div class="col-md-10 uppercase-medium">
-                <input class="form-control" :disabled="loading" v-model="form.address"></input>
+                <input class="form-control" :disabled="loading" v-model="form.address" />
             </div>
         </div>
 
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Total Floors:</label>
             <div class="col-md-10 uppercase-medium">
-                <input type="number" class="form-control" :disabled="loading" v-model="form.total_floors"></input>
+                <input type="number" class="form-control" :disabled="loading" v-model="form.total_floors" />
             </div>
         </div>
 
@@ -120,6 +128,7 @@
                 </el-date-picker>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -136,11 +145,13 @@ export default {
             files: [],
             isModalVisible: false,
             assets: [],
-            selectedAsset: null
+            selectedAsset: null,
+            isSavingProjectDetails: false,
+            dragIndex: null, // For dragging reorder
         };
     },
     watch: {
-        'form': {
+        form: {
             handler() {
                 if (this.form.gallery) {
                     this.files = this.form.gallery.map(file => ({
@@ -238,12 +249,6 @@ export default {
                 });
             }
         },
-        dragOver() {
-            // Optional visual cues can be added here
-        },
-        dragLeave() {
-            // Optional: Remove visual cues when leaving drop area
-        },
         addFile(file) {
             const reader = new FileReader();
             reader.onload = (event) => {
@@ -277,6 +282,78 @@ export default {
                 }
                 this.$emit('update-form', this.form);
             }
+        },
+
+        // New methods for drag reordering
+        onDragStart(index) {
+            this.dragIndex = index;
+        },
+        onDrop(dropIndex) {
+            if (this.dragIndex === null) return;
+
+            const draggedItem = this.files[this.dragIndex];
+            this.files.splice(this.dragIndex, 1);
+            this.files.splice(dropIndex, 0, draggedItem);
+
+            if (this.form.gallery) {
+                this.form.gallery = [...this.files];
+            }
+
+            this.dragIndex = null;
+            this.$emit('update-form', this.form);
+        },
+
+        saveProjectDetails() {
+            this.isSavingProjectDetails = true;
+
+            const projectData = new FormData();
+            if (this.form.id) projectData.append('id', this.form.id);
+
+            projectData.append('project_name', this.form.project_name || '');
+            projectData.append('project_description', this.form.project_description || '');
+            projectData.append('project_link', this.form.project_link || '');
+            projectData.append('city', this.form.city || '');
+            projectData.append('address', this.form.address || '');
+            projectData.append('total_floors', this.form.total_floors || '');
+            projectData.append('location', this.form.location || '');
+            projectData.append('delivery_date', this.form.delivery_date || '');
+            projectData.append('asset_status', 'incomplete');
+
+            if (this.form.investor_ids && this.form.investor_ids.length) {
+                projectData.append('investor_ids', this.form.investor_ids);
+            }
+
+            if (this.files.length > 0) {
+                this.files.forEach((file, index) => {
+                    if (file.file) {
+                        projectData.append(`gallery[${index}]`, file.file);
+                    } else if (file.image) {
+                        projectData.append(`gallery[${index}]`, file.image);
+                    }
+                });
+            }
+
+            axios.post('/assets/save-project-details', projectData)
+                .then(response => {
+                    this.isSavingProjectDetails = false;
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Project details saved successfully',
+                        type: 'success'
+                    });
+
+                    if (response.data.data && response.data.data.id && !this.form.id) {
+                        window.location.href = `/assets/edit/${response.data.data.id}`;
+                    }
+                })
+                .catch(error => {
+                    this.isSavingProjectDetails = false;
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'Failed to save project details'
+                    });
+                    console.error('Error saving project details:', error);
+                });
         }
     }
 }
@@ -289,37 +366,31 @@ export default {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-
 .drop-area {
     padding: 20px;
     border: 2px dashed #ccc;
     text-align: center;
     cursor: pointer;
 }
-
 .drop-area:hover {
     background-color: #f9f9f9;
 }
-
 .preview {
     display: flex;
     flex-wrap: wrap;
     margin-top: 20px;
 }
-
 .thumbnail {
     margin-right: 10px;
     position: relative;
     display: inline-block;
+    cursor: move;
 }
-
 .img-thumbnail {
     width: 100px;
     height: 100px;
     object-fit: cover;
 }
-
-/* Remove button styling */
 .remove {
     position: absolute;
     top: 0;
@@ -329,8 +400,6 @@ export default {
     cursor: pointer;
     padding: 2px 5px;
 }
-
-/* Move-to-front icon styling */
 .move-to-front {
     position: absolute;
     bottom: 5px;

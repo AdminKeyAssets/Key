@@ -24,12 +24,27 @@ Route::prefix('lead')->name('lead.')->group(function () {
         ->name('filters');
 
     Route::post('update-manager', $controller . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('import', $controller . '@import')->name('import.leads')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('import-status', $controller . '@importStatus')->name('import.leads.status')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('import-manager', $controller . '@importManager')->name('import.leads.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 
     /**
      * Export leads.
      */
     Route::get('export', $controller . '@export')
         ->name('export')
+        ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
+
+    Route::get('export-import-sample', $controller . '@exportImportSample')
+        ->name('export_import_sample')
+        ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
+
+    Route::get('export-import-status-sample', $controller . '@exportImportStatusSample')
+        ->name('export_import_status_sample')
+        ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
+
+    Route::get('export-import-manager-sample', $controller . '@exportImportManagerSample')
+        ->name('export_import_manager_sample')
         ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
 
 

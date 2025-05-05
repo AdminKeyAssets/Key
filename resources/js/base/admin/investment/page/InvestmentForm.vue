@@ -69,7 +69,7 @@ export default {
             await getData({
                 method: 'POST',
                 config: {
-                    headers: { 'content-type': 'multipart/form-data' }
+                    headers: {'content-type': 'multipart/form-data'}
                 },
                 url: this.getSaveDataRoute,
                 data: this.form
@@ -128,8 +128,11 @@ export default {
                     responseParse(response);
                     const data = response.data.data;
                     setTimeout(() => {
-                        window.location.href = `assets/${data.item.asset_id}/investment`;
-                        // window.location.reload();
+                        if (data.redirect_to) {
+                            window.location.href = data.redirect_to;
+                        } else {
+                            window.location.href = `assets/${data.item.asset_id}/investment`;
+                        }
                     }, 1000);
 
                     this.loading = false;

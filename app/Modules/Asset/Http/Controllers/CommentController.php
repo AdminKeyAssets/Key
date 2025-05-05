@@ -80,6 +80,7 @@ class CommentController extends BaseController
                 $query->select('id', 'name', 'surname');
             }])
             ->where('asset_id', $assetId)
+            ->where('status', '!=', 2)
             ->orderBy('id', 'desc')
             ->get();
 

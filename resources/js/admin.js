@@ -73,6 +73,7 @@ Vue.component('asset-export-component', require('./base/admin/asset/partials/Ass
 Vue.component('revenue-filter-component', require('./base/admin/revenue/partials/RevenueFilters').default);
 Vue.component('revenue-export-component', require('./base/admin/revenue/partials/RevenueExport').default);
 Vue.component('revenue-view-page-form', require('./base/admin/revenue/page/RevenueViewForm').default);
+Vue.component('investor-revenue-filter-component', require('./base/admin/revenue/partials/InvestorRevenueFilters').default);
 
 //Payment
 Vue.component('payment-page-form', require('./base/admin/payment/page/PaymentForm').default);
@@ -110,6 +111,10 @@ Vue.component('lead-view-page-form', require('./base/admin/lead/page/LeadViewFor
 Vue.component('lead-filter-component', require('./base/admin/lead/partials/LeadFilters').default);
 Vue.component('update-lead-manager', require('./base/admin/lead/partials/UpdateLeadManager').default);
 Vue.component('leads-export-component', require('./base/admin/lead/partials/ExportLeads').default);
+Vue.component('leads-import-component', require('./base/admin/lead/partials/ImportLeads').default);
+Vue.component('leads-import-status-component', require('./base/admin/lead/partials/ImportLeadsStatuses').default);
+Vue.component('leads-import-manager-component', require('./base/admin/lead/partials/ImportLeadsManagers').default);
+Vue.component('update-lead-status', require('./base/admin/lead/partials/StatusForm').default);
 
 //Sale
 Vue.component('sale-page-form', require('./base/admin/sale/page/SaleForm').default);

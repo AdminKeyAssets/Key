@@ -11,7 +11,7 @@
             ref="form" :model="form" class="form-inline form-bordered"
             @submit.prevent="applyFilters">
             <el-row>
-                <div class="form-group">
+                <div class="form-group date-filter">
                     <el-date-picker
                         v-model="form.agreement_date"
                         type="daterange"
@@ -49,14 +49,14 @@
                     </el-select>
                 </div>
 
-                <div class="form-group" >
+                <div class="form-group">
                     <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
                     </el-select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="isAdmin">
                     <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
@@ -98,24 +98,29 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status" v-remove-readonly>
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status"
+                               v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
                     </el-select>
                 </div>
-
-                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
-                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                <div class="button-wrapper">
+                    <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                </div>
             </el-row>
         </el-form>
     </div>
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
+    props: [
+        'isAdmin',
+    ],
     data() {
         return {
             form: {

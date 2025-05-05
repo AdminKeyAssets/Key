@@ -77,7 +77,7 @@ class PaymentsHistoryController extends BaseController
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
+            'asset_route' => route('asset.view', [$asset->id]),
             'investor_name' => $investorNames,
         ];
 
@@ -103,7 +103,7 @@ class PaymentsHistoryController extends BaseController
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
-            'asset_route' => route('asset.view', [ $asset->id ]),
+            'asset_route' => route('asset.view', [$asset->id]),
             'investor_name' => $investorNames,
         ];
 
@@ -126,14 +126,21 @@ class PaymentsHistoryController extends BaseController
             ];
 
 //            $assetPayments = Payment::where('asset_id', $assetId)->where('status', 0)->orderByDesc('id')->first();
-            $this->baseData['nextPayment'] = strtotime(Payment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time() ?
-                Payment::where('asset_id', $assetId)
+            $this->baseData['nextPayment'] = 0;
+            if(Payment::where('asset_id', $assetId)->where('status', 0)->first() && strtotime(Payment::where('asset_id', $assetId)->where('status', 0)->first()->payment_date) < time()){
+                $payments = Payment::where('asset_id', $assetId)
                     ->where('status', 0)
-                    ->where('payment_date', '<', date('Y/m/d')) // Using Laravel's helper for current date/time
-                    ->sum('left_amount') : 4;
+                    ->where('payment_date', '<', date('Y/m/d'));
+                $this->baseData['nextPayment'] = $payments->count() ? $payments->sum('left_amount') : 0;
+            }else{
+                $payment = Payment::where('asset_id', $assetId)
+                    ->where('status', 0)->orderByDesc('id')->first();
+
+                $this->baseData['nextPayment'] = $payment ? $payment->left_amount : 0;
+            }
 
             if ($request->get('id')) {
-                $payment = PaymentsHistory::where('id',$request->get('id'))->where('asset_id', $assetId)->first();
+                $payment = PaymentsHistory::where('id', $request->get('id'))->where('asset_id', $assetId)->first();
 
                 $this->baseData['item'] = $payment;
             }
@@ -155,28 +162,49 @@ class PaymentsHistoryController extends BaseController
     {
         // Calculate the total scheduled payment amount from the Payment model.
         $totalScheduledPayments = Payment::where('asset_id', $assetId)->sum('amount');
-
+        $message = 'Payment Added successfully';
         // Calculate the current sum of payment histories and check for overpayment.
         if (isset($request->id)) {
             // If updating an existing payment, subtract its current amount.
             $paymentHistory = PaymentsHistory::where('id', $request->id)->first();
             $existingPayments = PaymentsHistory::where('asset_id', $assetId)->sum('amount') - $paymentHistory->amount;
+            $sumPayments = $existingPayments + $request->amount;
 
+            if (abs($sumPayments - $totalScheduledPayments) < 0.00001) {
+                $asset = Asset::where('id', $assetId)->first();
+                $asset->update([
+                    'agreement_status' => 'Complete',
+                ]);
+
+                $this->baseData['redirect_to'] = route('asset.index');
+                $message = 'Installment completed.';
+            }
             if (($existingPayments + $request->amount) > $totalScheduledPayments) {
                 return response()->json([
                     'errors' => [
-                        'amount' => ['Payments Completed. Please prolong the payments schedule or complete.']
+                        'amount' => ['Payment Exceeds the Sum of the Installments Schedule. Please correct the amount, or alter the schedule']
                     ]
                 ], 422);
             }
         } else {
             // New payment case.
             $existingPayments = PaymentsHistory::where('asset_id', $assetId)->sum('amount');
+            $sumPayments = $existingPayments + $request->amount;
 
+            if (abs($sumPayments - $totalScheduledPayments) < 0.00001) {
+                $asset = Asset::where('id', $assetId)->first();
+                $asset->update([
+                    'agreement_status' => 'Complete',
+                ]);
+
+                $this->baseData['redirect_to'] = route('asset.index');
+
+                $message = 'Installment completed.';
+            }
             if (($existingPayments + $request->amount) > $totalScheduledPayments) {
                 return response()->json([
                     'errors' => [
-                        'amount' => ['Payments Completed. Please prolong the payments schedule or complete.']
+                        'amount' => ['Payment Exceeds the Sum of the Installments Schedule. Please correct the amount, or alter the schedule']
                     ]
                 ], 422);
             }
@@ -206,10 +234,10 @@ class PaymentsHistoryController extends BaseController
             }
 
             $paymentHistory->update([
-                'asset_id'   => $assetId,
-                'date'       => $request->date,
-                'amount'     => $request->amount,
-                'currency'   => $request->currency,
+                'asset_id' => $assetId,
+                'date' => $request->date,
+                'amount' => $request->amount,
+                'currency' => $request->currency,
                 'attachment' => $path
             ]);
 
@@ -223,10 +251,10 @@ class PaymentsHistoryController extends BaseController
             }
 
             $paymentHistory = PaymentsHistory::create([
-                'asset_id'   => $assetId,
-                'date'       => $request->date,
-                'amount'     => $request->amount,
-                'currency'   => $request->currency,
+                'asset_id' => $assetId,
+                'date' => $request->date,
+                'amount' => $request->amount,
+                'currency' => $request->currency,
                 'attachment' => $path
             ]);
 
@@ -235,7 +263,7 @@ class PaymentsHistoryController extends BaseController
 
         $this->baseData['item'] = $paymentHistory;
 
-        return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
+        return ServiceResponse::jsonNotification($message, 200, $this->baseData);
     }
 
     /**
@@ -262,7 +290,7 @@ class PaymentsHistoryController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investorNames,
             ];
 
@@ -299,7 +327,7 @@ class PaymentsHistoryController extends BaseController
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
-                'asset_route' => route('asset.view', [ $asset->id ]),
+                'asset_route' => route('asset.view', [$asset->id]),
                 'investor_name' => $investorNames,
             ];
 
@@ -323,7 +351,7 @@ class PaymentsHistoryController extends BaseController
             $asset = $paymentHistory->asset;
             $paymentHistory->delete();
 
-            $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, $amount);
+            $this->paymentsHelper->recalculatePaymentsAfterDeletion($asset, (float)$amount);
 
             if ($asset->paymentsHistories()->count() == 0) {
                 $asset->agreement_status = 'Installments';

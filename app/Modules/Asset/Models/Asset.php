@@ -48,11 +48,13 @@ class Asset extends Model
         'renovation_agreement_name',
         'renovation_total_price',
         'renovation_period',
+        'renovation_status',
         'sale_status',
         'sale_date',
         'sale_price',
         'sale_agreement',
-        'purchaser'
+        'purchaser',
+        'status'
     ];
 
     public function informations()

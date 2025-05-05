@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div class="col-md-2">
         <el-button
             icon="el-icon-document"
             style="margin-bottom: 2rem; margin-right: 3rem;"
             type="secondary"
-            class="pull-right"
+            class="import-leads-button"
             @click="exportLeads">Export Leads</el-button>
     </div>
 </template>

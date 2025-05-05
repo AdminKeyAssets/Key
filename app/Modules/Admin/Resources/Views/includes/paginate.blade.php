@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-5 hidden-xs">
+    <div class="col-sm-5">
         <div class="dataTables_info" id="example-datatable_info" role="status" aria-live="polite">
             <strong>{{ ($data->currentPage() - 1) * $data->perPage() + 1 }}</strong>-<strong>{{ ($data->currentPage() - 1) * $data->perPage() + count($data) }}</strong>
             of <strong>{{ $data->total() }}</strong></div>

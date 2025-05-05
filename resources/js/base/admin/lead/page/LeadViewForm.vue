@@ -15,11 +15,11 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{ form.name }} {{ form.surname }}
+                                        <span v-if="form.name">{{ form.name }}</span> <span v-if="form.surname">{{ form.surname }}</span>
                                     </div>
                                 </div>
 
-                                <div class="form-group dashed">
+                                <div class="form-group dashed" v-if="form.email">
                                     <label class="col-md-1 control-label">Email:</label>
                                     <div class="col-md-10 uppercase-medium">
                                         {{ form.email }}
@@ -35,10 +35,10 @@
                                 <div class="form-group dashed" v-if="form.status">
                                     <LeadStatusComponent :item="form"></LeadStatusComponent>
                                 </div>
-                                <div v-if="form.admin_id && managers.length" class="form-group dashed">
+                                <div v-if="form.admin_id && managers.length && selectedManager" class="form-group dashed">
                                     <label class="col-md-1 control-label">Sales Manager: </label>
                                     <div class="col-md-10 uppercase-medium">
-                                        {{ selectedManager.name }} {{ selectedManager.surname }}
+                                        <span v-if="selectedManager.name">{{ selectedManager.name }}</span> <span v-if="selectedManager.surname">{{ selectedManager.surname }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group dashed" v-if="form.marketing_channel">

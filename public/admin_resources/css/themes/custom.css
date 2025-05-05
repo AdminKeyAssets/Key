@@ -905,11 +905,11 @@ padding: 60px;
         background-repeat: no-repeat;
         background-position-y: bottom;
         max-width: 200px;
-        z-index: 998;
+        z-index: 1000;
     }
 
     .navbar.navbar-inverse {
-        z-index: 999;
+        z-index: 1001;
     }
 
 }
@@ -1207,3 +1207,58 @@ table thead th {
 /*    top: 50px;*/
 /*    z-index: 999;*/
 /*}*/
+.import-leads-uploader .el-upload__input{
+    display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+    .import-leads-button{
+        min-width: 100% !important;
+        margin-top: 5px !important;
+        margin-bottom: 0 !important;
+    }
+    .dialog-footer button{
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 5px;
+    }
+    .button-wrapper {
+        width: 100%;
+        text-align: center;
+    }
+    .button-wrapper button{
+        width: 45%;
+    }
+    .form-group:not(.date-filter, #form-login .form-group){
+        width: 49%;
+        display: inline-block;
+    }
+    .form-group.date-filter .el-date-editor{
+        width: 98%;
+    }
+
+}
+@media screen and (min-width: 769px) {
+    .button-wrapper {
+        display: inline-block;
+    }
+}
+
+.import-leads-button{
+    min-width: 90%;
+}
+@media (orientation: landscape) {
+    .table-responsive>.table>tbody>tr>td{
+        white-space: nowrap;
+    }
+}
+
+.completed-rent{
+    background-color: #eddada !important;
+}
+.view.view-asset .el-card.box-card.complete-rent-warning-card .el-card__header{
+    background-color: red;
+}
+.complete-rent-warning-text{
+    font-weight: normal;
+}

@@ -12,11 +12,62 @@
             @submit.prevent="applyFilters">
             <el-row>
 
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.agreement_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Asset Created At Start date"
+                        end-placeholder="Asset Created At End date">
+                    </el-date-picker>
+                </div>
+
+
+                <div class="form-group">
+                    <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="asset in assets"
+                            :key="asset.project_name"
+                            :label="asset.project_name"
+                            :value="asset.project_name"
+                        ></el-option>
+                    </el-select>
+                </div>
+
                 <div class="form-group">
                     <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type" v-remove-readonly>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="type in types"
+                            :key="type.type"
+                            :label="type.type"
+                            :value="type.type"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status"
+                               v-remove-readonly>
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Complete" value="Complete"></el-option>
+                        <el-option label="Installments" value="Installments"></el-option>
                     </el-select>
                 </div>
 
@@ -28,26 +79,34 @@
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
     data() {
         return {
             form: {
                 status: 'active',
-
+                agreement_date: '',
+                payment_date: '',
+                asset_type: '',
+                agreement_status: '',
+                asset: '',
             },
             showFilters: false,
-            investors: [],
-            assets: []
+            assets: [],
+            types: [],
         };
     },
     mounted() {
         this.loadFiltersFromQueryParams();
-        this.fetchRevenueFilters();
+        this.fetchAssetFilters();
 
-        if (this.form.status !== 'active')
-        {
+        if (this.form.agreement_date ||
+            this.form.payment_date ||
+            this.form.status !== 'active' ||
+            this.form.asset ||
+            this.form.asset_status ||
+            this.form.agreement_status) {
             this.showFilters = true;
         }
     },
@@ -55,6 +114,11 @@ export default {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.status = urlParams.get('status') || 'active';
+            this.form.asset = urlParams.get('asset') || '';
+            this.form.asset_type = urlParams.get('asset_type') || '';
+            this.form.agreement_status = urlParams.get('agreement_status') || '';
+            this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
+            this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -63,19 +127,25 @@ export default {
         // Clear filters and reset status to default (active)
         clearFilters() {
             this.form.status = 'active';
+            this.form.agreement_date = '';
+            this.form.payment_date = '';
+            this.form.asset_type = '';
+            this.form.asset = '';
+            this.form.agreement_status = '';
             this.applyFilters();
         },
-        fetchRevenueFilters() {
-            axios.get('/assets/revenues/filter-options')
+        fetchAssetFilters() {
+            axios.get('/assets/investor/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
                         let data = response.data.data;
-                        if (data.investors) {
-                            this.investors = data.investors;
-                        }
+
                         if (data.assets) {
                             this.assets = data.assets;
+                        }
+                        if (data.types) {
+                            this.types = data.types;
                         }
                     }
                 })

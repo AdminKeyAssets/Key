@@ -21,10 +21,13 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor']);
     //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
+    Route::post('/save-project-details', $controller . '@saveProjectDetails')->name('save-project-details')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
+    Route::get('/investor/filter-options', $controller . '@investorFilterOptions')
+        ->name('assets.investor.filters')->middleware(['auth:investor']);
     Route::get('/export', $controller . '@export')
         ->name('export.assets');
 
@@ -47,6 +50,12 @@ Route::prefix('assets')->name('asset.')->group(function () {
         ->name('export');
     Route::get('/{asset}/payments-history/export', $paymentController . '@exportHistory')
         ->name('export.history');
+
+    // Agreement Details Export
+    $agreementDetailsController = 'AgreementDetailsExportController';
+    Route::post('/{asset}/agreement-details/export', $agreementDetailsController . '@exportAgreementDetails')
+        ->name('agreement.details.export');
+
 
     $commentController = 'CommentController';
     $commentModuleName = 'comment';
@@ -125,7 +134,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
         ->name('revenue_export_investments');
     Route::get('/revenues/{id?}/asset-value-history/export', $revenueController . '@exportAssetValueHistory')
         ->name('revenue_export_asset_value_history');
-
+    Route::get('/revenues/investor/filter-options', $revenueController . '@investorFilterOptions')
+        ->name('revenues.investor.filters')->middleware(['auth:investor']);
     $notificationController = 'NotificationController';
     $notificationModuleName = 'notification';
 

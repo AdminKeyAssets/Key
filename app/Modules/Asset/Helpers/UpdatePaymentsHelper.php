@@ -53,9 +53,9 @@ class UpdatePaymentsHelper
             }
 
             if ($payment->left_amount == 0 && $payment->status == 1) {
-                $amount -= $payment->amount;
                 $payment->status = 0;
-                $payment->left_amount = $payment->amount;
+                $payment->left_amount = $payment->amount <= $amount ? $payment->amount : $amount;
+                $amount -= $payment->amount;
             } elseif ($payment->left_amount < $payment->amount && $payment->status == 0) {
                 // Partially paid payment, revert to original amount
                 $remaining = $payment->amount - $payment->left_amount;

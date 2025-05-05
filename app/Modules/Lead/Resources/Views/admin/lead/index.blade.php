@@ -10,16 +10,28 @@
         <!-- Responsive Full Block -->
         <div class="row">
             @can(getPermissionKey($moduleKey, 'create', true))
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <a href="{{ route($moduleKey . '.create') }}" class="btn btn-primary"><i
                             class="el-icon-plus"></i> Add Lead</a>
                 </div>
             @endcan
 
-            @can(getPermissionKey($moduleKey, 'export', false))
-                <leads-export-component>
-                </leads-export-component>
-            @endcan
+            <div>
+                @can(getPermissionKey($moduleKey, 'export', false))
+                    <leads-export-component>
+                    </leads-export-component>
+                @endcan
+                @can(getPermissionKey($moduleKey, 'import', false))
+                    <leads-import-component>
+                    </leads-import-component>
+
+                    <leads-import-status-component>
+                    </leads-import-status-component>
+
+                    <leads-import-manager-component>
+                    </leads-import-manager-component>
+                @endcan
+            </div>
         </div>
         <br>
 
@@ -84,7 +96,12 @@
                                         </update-lead-manager>
                                     </td>
                                 @endif
-                                <td>{!! $item->status !!}</td>
+                                <td>
+                                    <update-lead-status
+                                        :lead-id="{!! $item->id !!}"
+                                        status="{{ $item->status }}">
+                                    </update-lead-status>
+                                </td>
                                 <td>{!! $item->created_at->toDateString() !!}</td>
                                 <td>{!! $item->marketing_channel !!}</td>
 

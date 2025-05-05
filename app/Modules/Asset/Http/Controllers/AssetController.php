@@ -175,6 +175,31 @@ class AssetController extends BaseController
             }
         }
 
+        if ($request->payment_date) {
+            $dates = explode(',', $request->payment_date);
+            $start = $dates[0] ?? null;
+            $end = $dates[1] ?? null;
+            $query->where(function ($query) use ($start, $end) {
+                $query->where('created_at', '>=', $start)
+                    ->orWhereHas('rentals', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('payments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    });
+//                    ->orWhereHas('investments', function ($q) use ($start, $end) {
+//                        $q->where('date', '>=', $start);
+//                        $q->where('date', '<=', $end);
+//                    });
+            });
+        }
+
         if ($statusFilter !== 'all') {
             $query->where('sale_status', $statusFilter);
         }
@@ -198,9 +223,57 @@ class AssetController extends BaseController
 
         $statusFilter = $request->status ?? 'active';
 
-        $userAssets = $user->assets()->orderByDesc('id');
+        $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
         if ($statusFilter !== 'all') {
             $userAssets->where('sale_status', $statusFilter);
+        }
+
+        if ($request->agreement_date) {
+            $createdDates = explode(',', $request->agreement_date);
+
+            if (isset($createdDates[0])) {
+                $userAssets->where('agreement_date', '>=', $createdDates[0]);
+            }
+            if (isset($createdDates[1])) {
+                $userAssets->where('agreement_date', '<=', $createdDates[1]);
+            }
+        }
+
+        if ($request->agreement_status && $request->agreement_status != 'all') {
+            $userAssets->where('agreement_status', $request->agreement_status);
+        }
+
+        if ($request->asset && $request->asset != 'all') {
+            $userAssets->where('project_name', 'like', '%' . $request->asset . '%');
+        }
+
+        if ($request->asset_type && $request->asset_type != 'all') {
+            $userAssets->where('type', $request->asset_type);
+        }
+
+        if ($request->payment_date) {
+            $dates = explode(',', $request->payment_date);
+            $start = $dates[0] ?? null;
+            $end = $dates[1] ?? null;
+            $userAssets->where(function ($userAssets) use ($start, $end) {
+                $userAssets->where('created_at', '>=', $start)
+                    ->orWhereHas('rentals', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('payments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    });
+//                    ->orWhereHas('investments', function ($q) use ($start, $end) {
+//                        $q->where('date', '>=', $start);
+//                        $q->where('date', '<=', $end);
+//                    });
+            });
         }
 
         if ($userAssets->count() > 0) {
@@ -245,14 +318,13 @@ class AssetController extends BaseController
                     $salesManager = Admin::find($investor->admin_id);
                 }
 
-
-
                 $this->baseData['item'] = $asset;
                 $investors = $asset->investors;
                 $investorNames = [];
                 foreach ($investors as $investor) {
                     $investorNames[] = $investor->name . ' ' . $investor->surname;
                 }
+
                 $investorNames = implode(' / ', $investorNames);
                 $this->baseData['item']['investor_ids'] = $investors->pluck('id')->toArray();
                 $this->baseData['item']['investorNames'] = $investorNames;
@@ -265,12 +337,14 @@ class AssetController extends BaseController
                 $this->baseData['item']['renovation_payments'] = RenovationPayment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['renovation_payments_histories'] = RenovationPaymentsHistory::where('asset_id', $asset->id)->get();
                 $tenant = Tenant::where('asset_id', $asset->id)->where('status', true)->orderByDesc('id')->first();
+
                 $this->baseData['item']['tenant'] = $this->baseData['item']['rental_payments_histories'] = [];
                 if ($tenant) {
                     $this->baseData['item']['tenant'] = $tenant;
                     $this->baseData['item']['rental_payments_histories'] = RentalPaymentsHistory::where('asset_id', $asset->id)->where('tenant_id', $tenant->id)->where('status', 1)->get();
                 }
                 $this->baseData['item']['rentals'] = Rental::where('asset_id', $asset->id)->get();
+                $this->baseData['item']['needToCompleteRent'] = !Rental::where('asset_id', $asset->id)->where('status', 0)->count() && $asset->asset_status === 'Rented';
                 $this->baseData['item']['currentValues'] = CurrentValue::where('asset_id', $asset->id)->orderByDesc('id')->get();
                 $this->baseData['salesManager'] = $salesManager;
 
@@ -486,6 +560,8 @@ class AssetController extends BaseController
             'renovation_first_payment_date' => $request->renovation_first_payment_date ?? null,
             'renovation_period' => $request->renovation_period ?? null,
             'renovation_total_price' => $request->renovation_total_price ?? null,
+            'renovation_status' => $request->renovation_status ?? 'Completed',
+            'status' => 'completed',
         ];
 
         if (!$request->id) {
@@ -900,7 +976,7 @@ class AssetController extends BaseController
                 'payments_route' => $asset->agreement_status === 'Installments' ? route('asset.payments.list', [$asset->id]) : null,
                 'rentals_route' => $asset->asset_status === 'Rented' ? route('asset.rental.index', [$asset->id]) : null,
                 'investments_route' => route('asset.investment.index', [$asset->id]),
-                'renovation_route' => $asset->renovation_agreement_date ? route('asset.renovation.index', [$asset->id]) : null,
+                'renovation_route' => $asset->renovation_status === 'In Progress' ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
                 'asset_id' => $asset->id
             ];
@@ -1042,7 +1118,33 @@ class AssetController extends BaseController
         }
 
 
-        return ServiceResponse::jsonNotification(__('Filter role successfully'), 200, $this->baseData);
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+    }
+
+    public function investorFilterOptions()
+    {
+        $user = \auth()->user();
+
+        $this->baseData['assets'] = Asset::query()
+            ->whereHas('investors', function($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
+        $this->baseData['types'] = Asset::query()
+            ->whereHas('investors', function($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+
     }
 
     public function sell(AssetSaleRequest $request, $assetId)
@@ -1101,5 +1203,104 @@ class AssetController extends BaseController
             'agreement_status',
         ]);
         return Excel::download(new AssetExport($filters), 'assets.xlsx');
+    }
+
+
+    public function saveProjectDetails(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'project_name' => 'required|string|max:255',
+                'project_description' => 'nullable|string',
+                'project_link' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:255',
+                'address' => 'nullable|string|max:255',
+                'total_floors' => 'nullable|integer',
+                'location' => 'nullable|string',
+                'delivery_date' => 'nullable|date_format:Y/m/d',
+                'investor_ids' => 'nullable|string',
+            ]);
+
+            $path = null;
+
+            // Handle the icon/gallery if provided
+            if ($request->hasFile('icon')) {
+                $file = $request->file('icon');
+                $originalFileName = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('uploads', $originalFileName, 'public');
+                $path = Storage::url($path);
+            } elseif ($request->has('icon') && !is_null($request->icon)) {
+                $path = $request->icon;
+            } elseif ($request->id) {
+                // Keep existing icon for updates
+                $asset = Asset::find($request->id);
+                if ($asset) {
+                    $path = $asset->icon;
+                }
+            }
+
+            // Build asset data - only include project-related fields
+            $assetData = [
+                'project_name' => $request->project_name,
+                'project_description' => $request->project_description,
+                'project_link' => $request->project_link,
+                'city' => $request->city,
+                'address' => $request->address,
+                'total_floors' => $request->total_floors,
+                'location' => $request->location,
+                'delivery_date' => $request->delivery_date,
+                'status' => 'incomplete',
+                'icon' => $path,
+            ];
+
+            // Set admin_id for new assets
+            if (!$request->id) {
+                $assetData['admin_id'] = Auth::user()->getAuthIdentifier();
+            }
+
+            // Create or update asset
+            $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
+
+            // Handle investors if provided
+            if ($request->filled('investor_ids')) {
+                $investorIds = explode(',', $request->investor_ids);
+                $asset->investors()->sync($investorIds);
+            }
+
+            // Handle gallery files
+            if ($request->has('gallery')) {
+                $asset->gallery()->delete();
+                foreach ($request->gallery as $key => $file) {
+                    if (gettype($file) == 'string') {
+                        $path = $file;
+                        $explodedFile = explode('/', $path);
+                        $explodedFile = array_reverse($explodedFile);
+                        $originalFileName = $explodedFile[0];
+                    } else {
+                        $originalFileName = time() . '_' . $file->getClientOriginalName();
+                        $path = $file->storeAs('uploads', $originalFileName, 'public');
+                        $path = Storage::url($path);
+                    }
+
+                    AssetGallery::create([
+                        'name' => $originalFileName,
+                        'image' => $path,
+                        'asset_id' => $asset->id
+                    ]);
+
+                    if ($key == 0 && !$assetData['icon']) {
+                        $asset->icon = $path;
+                        $asset->save();
+                    }
+                }
+            }
+
+            // Return success response with the asset
+            $this->baseData['id'] = $asset->id;
+            return ServiceResponse::jsonNotification('Project details saved successfully', 200, $this->baseData);
+
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification($ex->getMessage(), 500);
+        }
     }
 }

@@ -159,6 +159,51 @@ class RenovationPaymentsHistoryController extends BaseController
      */
     public function store(PaymentRequest $request, $assetId)
     {
+
+        $totalScheduledPayments = RenovationPayment::where('asset_id', $assetId)->sum('amount');
+        $message = 'Payment Added successfully';
+        // Calculate the current sum of payment histories and check for overpayment.
+        if (isset($request->id)) {
+            // If updating an existing payment, subtract its current amount.
+            $paymentHistory = RenovationPaymentsHistory::where('id', $request->id)->first();
+            $existingPayments = RenovationPaymentsHistory::where('asset_id', $assetId)->sum('amount') - $paymentHistory->amount;
+            if (($existingPayments + $request->amount) == $totalScheduledPayments) {
+                $asset = Asset::where('id', $assetId)->first();
+                $asset->update([
+                    'renovation_status' => 'Completed',
+                ]);
+                $this->baseData['redirect_to'] = route('asset.index');
+
+                $message = 'Renovation completed.';
+            }
+            if (($existingPayments + $request->amount) > $totalScheduledPayments) {
+                return response()->json([
+                    'errors' => [
+                        'amount' => ['Payment Exceeds the Sum of the Renovation Schedule. Please correct the amount, or alter the schedule']
+                    ]
+                ], 422);
+            }
+        } else {
+            // New payment case.
+            $existingPayments = RenovationPaymentsHistory::where('asset_id', $assetId)->sum('amount');
+            if (($existingPayments + $request->amount) == $totalScheduledPayments) {
+                $asset = Asset::where('id', $assetId)->first();
+                $asset->update([
+                    'renovation_status' => 'Completed',
+                ]);
+                $this->baseData['redirect_to'] = route('asset.index');
+                $message = 'Renovation completed.';
+            }
+
+            if (($existingPayments + $request->amount) > $totalScheduledPayments) {
+                return response()->json([
+                    'errors' => [
+                        'amount' => ['Payment Exceeds the Sum of the Renovation Schedule. Please correct the amount, or alter the schedule']
+                    ]
+                ], 422);
+            }
+        }
+
         $path = null;
 
         $currentValue = CurrentValue::where('asset_id', $assetId)->orderByDesc('id')->first();
@@ -209,7 +254,7 @@ class RenovationPaymentsHistoryController extends BaseController
                     'value' => $currentValueAmount
                 ]);
             }
-//dd(1);
+
             $asset->update(['current_value' => $currentValueAmount]);
 
             $this->paymentsHelper->recalculatePaymentsAfterEdit($paymentHistory->asset, $oldAmount, $request->amount);
@@ -242,7 +287,7 @@ class RenovationPaymentsHistoryController extends BaseController
 
         $this->baseData['item'] = $paymentHistory;
 
-        return ServiceResponse::jsonNotification('Payment Added successfully', 200, $this->baseData);
+        return ServiceResponse::jsonNotification($message, 200, $this->baseData);
     }
 
     /**

@@ -15,14 +15,25 @@
         >
             <el-row>
                 <!-- Date Range Filter -->
-                <div class="form-group">
+                <div class="form-group date-filter">
                     <el-date-picker
                         v-model="form.agreement_date"
                         type="daterange"
                         format="yyyy/MM/dd"
                         value-format="yyyy/MM/dd"
-                        start-placeholder="Start date"
-                        end-placeholder="End date">
+                        start-placeholder="Asset Created At Start date"
+                        end-placeholder="Asset Created At End date">
+                    </el-date-picker>
+                </div>
+
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.payment_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Payments Start date"
+                        end-placeholder="Payments End date">
                     </el-date-picker>
                 </div>
 
@@ -66,7 +77,7 @@
                     </el-select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="isAdmin">
                     <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             label="All"
@@ -115,12 +126,10 @@
                         <el-option label="Installments" value="Installments"></el-option>
                     </el-select>
                 </div>
-
-                <!-- Apply Filters Button -->
-                <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
-
-                <!-- Clear Filters Button -->
-                <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                <div class="button-wrapper">
+                    <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
+                    <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
+                </div>
             </el-row>
         </el-form>
     </div>
@@ -130,10 +139,14 @@
 import {responseParse} from "../../../mixins/responseParse";
 
 export default {
+    props: [
+        'isAdmin',
+    ],
     data() {
         return {
             form: {
                 agreement_date: '',
+                payment_date: '',
                 investor: '',
                 status: 'active',
                 asset: '',
@@ -154,7 +167,7 @@ export default {
         this.loadFiltersFromQueryParams();
         this.fetchRevenueFilters();
 
-        if (this.form.agreement_date || this.form.investor || this.form.asset
+        if (this.form.agreement_date || this.form.payment_date || this.form.investor || this.form.asset
             || this.form.status !== 'active'
             || this.form.asset_type
             || this.form.asset_status
@@ -167,6 +180,7 @@ export default {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
+            this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
             this.form.asset = urlParams.get('asset') || '';
             this.form.asset_status = urlParams.get('asset_status') || '';
@@ -183,6 +197,7 @@ export default {
         // Method to clear filters
         clearFilters() {
             this.form.agreement_date = '';
+            this.form.payment_date = '';
             this.form.investor = '';
             this.form.asset = '';
             this.form.asset_status = '';
