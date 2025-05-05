@@ -251,6 +251,31 @@ class AssetController extends BaseController
             $userAssets->where('type', $request->asset_type);
         }
 
+        if ($request->payment_date) {
+            $dates = explode(',', $request->payment_date);
+            $start = $dates[0] ?? null;
+            $end = $dates[1] ?? null;
+            $userAssets->where(function ($userAssets) use ($start, $end) {
+                $userAssets->where('created_at', '>=', $start)
+                    ->orWhereHas('rentals', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('payments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    })
+                    ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
+                        $q->where('payment_date', '>=', $start);
+                        $q->where('payment_date', '<=', $end);
+                    });
+//                    ->orWhereHas('investments', function ($q) use ($start, $end) {
+//                        $q->where('date', '>=', $start);
+//                        $q->where('date', '<=', $end);
+//                    });
+            });
+        }
+
         if ($userAssets->count() > 0) {
             $this->baseData['allData'] = $userAssets->paginate(25);
         } else {

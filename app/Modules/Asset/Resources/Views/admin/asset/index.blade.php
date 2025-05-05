@@ -52,6 +52,13 @@
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
             @else
+                @php
+                    $showNextRent = $allData
+                        ->filter(function($item) {
+                            return $item->asset_status === 'Rented';
+                        })
+                        ->isNotEmpty();
+                @endphp
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">
                         <thead>
@@ -59,13 +66,15 @@
                             <th> Name</th>
                             <th> Photo</th>
                             <th> City</th>
-                            @if(Auth::guard('admin')->check())
-                                <th> Investor</th>
-                            @endif
+                            {{--                            @if(Auth::guard('admin')->check())--}}
+                            <th> Investor</th>
+                            {{--                            @endif--}}
                             <th> Asset Type / Size</th>
                             <th> Agreement Status</th>
                             <th> Next Installment</th>
-                            <th> Next Rent</th>
+                            @if($showNextRent)
+                                <th> Next Rent</th>
+                            @endif
                             <th> Next Renovation</th>
                             @if(!Auth::guard('investor')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
@@ -98,16 +107,16 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>
-                                @if(Auth::guard('admin')->check())
-                                    <td>
-                                        @foreach($item->investors as $investor)
-                                            {!! $investor->name !!} {!! $investor->surname !!}
-                                            @if(!$loop->last)
-                                                /<br>
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                @endif
+                                {{--                                @if(Auth::guard('admin')->check())--}}
+                                <td>
+                                    @foreach($item->investors as $investor)
+                                        {!! $investor->name !!} {!! $investor->surname !!}
+                                        @if(!$loop->last)
+                                            /<br>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                {{--                                @endif--}}
                                 <td>
                                     @if($item->flat_number)
                                         {!! $item->type !!} N{!! $item->flat_number !!} - {!! $item->area !!} sq.m
@@ -139,31 +148,31 @@
                                     !!}
                                 </td>
 
-
-                                <td>
-                                    {!!
-                                        $item->asset_status == 'Rented'
-                                        && count($item->rentals)
-                                        && count($item->rentals->where('status', 0))
-                                        ? (
-                                            strtotime($item->rentals->where('status', 0)->first()->payment_date) < time()
-                                            ?
-                                                // Overdue: display formatted overdue date & sum of overdue left_amount
-                                                \Carbon\Carbon::parse($item->rentals->where('status', 0)->first()->payment_date)->format('Y/m/d')
-                                                . ' - ' . number_format(
-                                                    $item->rentals->where('status', 0)
-                                                        ->filter(function($rental) {
-                                                            return strtotime($rental->payment_date) < time();
-                                                        })->sum('left_amount'), 2, ".", ",") . '$'
-                                            :
-                                                // Not overdue: display the first record's payment_date and left_amount
-                                                $item->rentals->where('status', 0)->first()->payment_date
-                                                . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
-                                          )
-                                        : ''
-                                    !!}
-                                </td>
-
+                                @if($showNextRent)
+                                    <td>
+                                        {!!
+                                            $item->asset_status == 'Rented'
+                                            && count($item->rentals)
+                                            && count($item->rentals->where('status', 0))
+                                            ? (
+                                                strtotime($item->rentals->where('status', 0)->first()->payment_date) < time()
+                                                ?
+                                                    // Overdue: display formatted overdue date & sum of overdue left_amount
+                                                    \Carbon\Carbon::parse($item->rentals->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                    . ' - ' . number_format(
+                                                        $item->rentals->where('status', 0)
+                                                            ->filter(function($rental) {
+                                                                return strtotime($rental->payment_date) < time();
+                                                            })->sum('left_amount'), 2, ".", ",") . '$'
+                                                :
+                                                    // Not overdue: display the first record's payment_date and left_amount
+                                                    $item->rentals->where('status', 0)->first()->payment_date
+                                                    . ' - ' . number_format($item->rentals->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
+                                              )
+                                            : ''
+                                        !!}
+                                    </td>
+                                @endif
                                 <td>
                                     {!!
                                         $item->renovation_status == 'In Progress'

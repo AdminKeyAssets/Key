@@ -23,6 +23,7 @@
                     </el-date-picker>
                 </div>
 
+
                 <div class="form-group">
                     <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
                         <el-option
@@ -78,7 +79,7 @@
 </template>
 
 <script>
-import { responseParse } from "../../../mixins/responseParse";
+import {responseParse} from "../../../mixins/responseParse";
 
 export default {
     data() {
@@ -86,6 +87,7 @@ export default {
             form: {
                 status: 'active',
                 agreement_date: '',
+                payment_date: '',
                 asset_type: '',
                 agreement_status: '',
                 asset: '',
@@ -100,11 +102,11 @@ export default {
         this.fetchAssetFilters();
 
         if (this.form.agreement_date ||
+            this.form.payment_date ||
             this.form.status !== 'active' ||
             this.form.asset ||
             this.form.asset_status ||
-            this.form.agreement_status)
-        {
+            this.form.agreement_status) {
             this.showFilters = true;
         }
     },
@@ -116,6 +118,7 @@ export default {
             this.form.asset_type = urlParams.get('asset_type') || '';
             this.form.agreement_status = urlParams.get('agreement_status') || '';
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
+            this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -124,6 +127,11 @@ export default {
         // Clear filters and reset status to default (active)
         clearFilters() {
             this.form.status = 'active';
+            this.form.agreement_date = '';
+            this.form.payment_date = '';
+            this.form.asset_type = '';
+            this.form.asset = '';
+            this.form.agreement_status = '';
             this.applyFilters();
         },
         fetchAssetFilters() {

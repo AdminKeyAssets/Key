@@ -1314,7 +1314,7 @@ export default {
             const sums = [];
 
             // Column 1 (Payment Date)
-            sums[0] = 'Remaining Payments';
+            sums[0] = 'Sum of the Remaining Payments';
 
             // Column 2 (Amount)
             let totalLeftAmount = 0;
