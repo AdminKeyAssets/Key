@@ -65,10 +65,15 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group dashed">
                         <label class="col-md-2 control-label">M2 Price:</label>
                         <div class="col-md-6 uppercase-medium">
-                            <input class="form-control" type="number" :disabled="loading" v-model="form.price"></input>
+                            <input
+                                class="form-control"
+                                type="text"
+                                :disabled="loading"
+                                v-model="priceDisplay"
+                            />
                         </div>
                     </div>
 
@@ -253,6 +258,20 @@ export default {
     },
     updated() {
         this.updateData(this.form);
+    },
+    computed: {
+        priceDisplay: {
+            get() {
+                if (this.form.price === null || this.form.price === undefined) return '';
+                return parseFloat(this.form.price).toFixed(2);
+            },
+            set(val) {
+                const num = parseFloat(val);
+                if (!isNaN(num)) {
+                    this.$emit('update-form', { ...this.form, price: num });
+                }
+            }
+        }
     },
     watch: {
         'item'() {
