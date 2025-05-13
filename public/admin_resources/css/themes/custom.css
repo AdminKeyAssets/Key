@@ -1229,7 +1229,12 @@ table thead th {
     .button-wrapper button{
         width: 45%;
     }
-    .form-group:not(.date-filter, #form-login .form-group){
+    /*.form-group:not(.date-filter, #form-login .form-group, .project-details-wrapper  .form-group, .map.form-group, .agreement-details-card .form-group){*/
+    /*    width: 49%;*/
+    /*    display: inline-block;*/
+    /*}*/
+
+    .form-filters .form-group:not(.date-filter){
         width: 49%;
         display: inline-block;
     }
@@ -1261,4 +1266,7 @@ table thead th {
 }
 .complete-rent-warning-text{
     font-weight: normal;
+}
+.cell{
+    word-break: break-word !important;
 }

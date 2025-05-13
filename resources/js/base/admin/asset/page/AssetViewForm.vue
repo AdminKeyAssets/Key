@@ -57,7 +57,7 @@
                                             </div>
                                             <div
                                                 v-if="!form.delivery_date && !form.project_link && !form.project_description && form.location"
-                                                class="form-group">
+                                                class="form-group map">
                                                 <div v-html="modifiedTextHeight">
 
                                                 </div>
@@ -77,7 +77,7 @@
                                     <el-row>
                                         <div
                                             v-if="(form.delivery_date || form.project_link || form.project_description) && form.location"
-                                            class="form-group">
+                                            class="form-group map">
                                             <div v-html="modifiedText">
 
                                             </div>
@@ -709,7 +709,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px">
+                            <el-row style="margin-bottom: 30px" v-if="form.renovation_payments">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
