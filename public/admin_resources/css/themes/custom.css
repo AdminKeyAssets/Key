@@ -1241,7 +1241,11 @@ table thead th {
     .form-group.date-filter .el-date-editor{
         width: 98%;
     }
-
+    .el-picker-panel.el-date-range-picker{
+        left: 0 !important;
+        overflow: scroll !important;
+        width: 100% !important;
+    }
 }
 @media screen and (min-width: 769px) {
     .button-wrapper {

@@ -118,8 +118,13 @@
                                 </td>
                                 {{--                                @endif--}}
                                 <td>
+
+                                    {!! $item->type !!}
                                     @if($item->flat_number)
-                                        {!! $item->type !!} N{!! $item->flat_number !!} - {!! $item->area !!} sq.m
+                                        N{!! $item->flat_number !!} -
+                                    @endif
+                                    @if($item->area)
+                                        {!! $item->area !!} sq.m
                                     @endif
                                 </td>
                                 <td>{!! $item->agreement_status !!}</td>
