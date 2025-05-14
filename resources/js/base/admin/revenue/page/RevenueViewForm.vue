@@ -324,8 +324,8 @@
                                                             </el-col>
                                                         </el-row>
                                                         <el-row class="row-item" v-if="tenant.passport || tenant.rent_agreement">
-                                                            <el-col :span="12">
-                                                                <div v-if="tenant.rent_agreement" class="form-group">
+                                                            <el-col :span="12" v-if="tenant.rent_agreement" >
+                                                                <div class="form-group">
                                                                     <label class="col-md-4 control-label">Rent Agreement:</label>
                                                                     <div class="col-md-6 uppercase-medium">
                                                                         <div>
@@ -339,11 +339,11 @@
                                                                     </div>
                                                                 </div>
                                                             </el-col>
-                                                            <el-col :span="12">
+                                                            <el-col :span="12" v-if="tenant.passport">
                                                                 <div class="form-group">
                                                                     <label class="col-md-4 control-label">Passport:</label>
                                                                     <div class="col-md-6 uppercase-medium">
-                                                                        <div v-if="tenant.passport">
+                                                                        <div>
                                                                             <ImageModal :image-path="tenant.passport"
                                                                                         :width="100"
                                                                                         :height="100"
@@ -354,8 +354,34 @@
                                                                 </div>
                                                             </el-col>
                                                         </el-row>
-                                                        <el-row class="row-item" v-if="tenant.representative">
-                                                            <el-col :span="12">
+                                                        <el-row class="row-item" v-if="tenant.rental_payments_amount_sum || tenant.investments_during_rent">
+                                                            <el-col v-if="tenant.rental_payments_amount_sum" :span="12">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 control-label">Total rent:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ formatPrice(tenant.rental_payments_amount_sum) }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                            <el-col :span="12" v-if="tenant.investments_during_rent">
+                                                                <div  class="form-group">
+                                                                    <label class="col-md-4 control-label">Total Investment:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ formatPrice(tenant.investments_during_rent) }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
+                                                        <el-row class="row-item" v-if="tenant.representative || tenant.net_cash_balance">
+                                                            <el-col :span="12" v-if="tenant.net_cash_balance">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 control-label">Net Cash Balance:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ formatPrice(tenant.net_cash_balance) }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                            <el-col :span="12" v-if="tenant.representative">
                                                                 <div class="form-group">
                                                                     <label class="col-md-4 control-label">Representative:</label>
                                                                     <div class="col-md-6 uppercase-medium">
