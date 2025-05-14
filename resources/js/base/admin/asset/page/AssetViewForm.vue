@@ -709,7 +709,7 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.renovation_payments">
+                            <el-row style="margin-bottom: 30px" v-if="form.renovation_payments.length">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 

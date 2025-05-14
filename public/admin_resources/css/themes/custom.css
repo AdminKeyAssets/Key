@@ -1246,6 +1246,9 @@ table thead th {
         overflow: scroll !important;
         width: 100% !important;
     }
+    .asset-info{
+        width: 40%;
+    }
 }
 @media screen and (min-width: 769px) {
     .button-wrapper {
