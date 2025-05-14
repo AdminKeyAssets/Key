@@ -8,7 +8,7 @@
         <!-- Filters form, shown only if showFilters is true -->
         <el-form
             v-if="showFilters"
-            ref="form" :model="form" class="form-inline form-bordered"
+            ref="form" :model="form" class="form-inline form-bordered form-filters"
             @submit.prevent="applyFilters">
             <el-row>
 
