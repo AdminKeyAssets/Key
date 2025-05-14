@@ -63,9 +63,6 @@
                             <th> Capital Gain <br>({!! number_format($totals['total_capital_gain']) !!}$)</th>
                             <th> Rent <br>({!! number_format($totals['total_rent'])  !!}$)</th>
                             <th> Net Cash Balance <br>({!! number_format($totals['total_net_cash_balance'])  !!}$)</th>
-                            @if(\Auth::guard('admin')->check())
-                                <th width="10%" class="text-center">@lang('Action')</th>
-                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -114,17 +111,6 @@
                                 <td>{!! number_format($item->capital_gain,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->rent,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->net_cache_balance,0,".",",") !!}$</td>
-                                @if(\Auth::guard('admin')->check())
-                                    <td>
-                                        @if($item->sale_status !== 'sold')
-                                            @can(getPermissionKey('investment', 'index', true))
-                                                @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
-                                            @endcan
-                                        @else
-                                            <span>Sold</span>
-                                        @endif
-                                    </td>
-                                @endif
                             </tr>
                         @endforeach
                         </tbody>

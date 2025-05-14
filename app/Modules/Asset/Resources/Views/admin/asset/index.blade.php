@@ -227,6 +227,9 @@
                                             <register-purchase-component :asset-id="{{ $item->id }}">
                                             </register-purchase-component>
                                         @endcan
+                                        @can(getPermissionKey('investment', 'index', true))
+                                            @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
+                                        @endcan
                                         @can(getPermissionKey($moduleKey, 'delete', true))
                                             <delete-component
                                                 :url="'{{ route($moduleKey . '.delete') }}'"
