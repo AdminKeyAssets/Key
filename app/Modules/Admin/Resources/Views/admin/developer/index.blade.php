@@ -52,8 +52,6 @@
                                 <td>
                                     @if($item->logo)
                                         <img src="{{ $item->logo }}" alt="{{ $item->name }}" width="50">
-                                    @else
-                                        --
                                     @endif
                                 </td>
                                 <td>{{ $item->username }}</td>
@@ -83,23 +81,7 @@
             @endif
             <!-- END Responsive Full Content -->
 
-            <div class="row">
-                <div class="col-sm-6 col-xs-12">
-                    @if(count($allData) != 0)
-                        <div class="dataTables_info" id="example-datatable_info" role="status" aria-live="polite">
-                            <div class="btn-group">
-                                Showing {{ $allData->firstItem() }} to {{ $allData->lastItem() }}
-                                of {{ $allData->total() }} entries
-                            </div>
-                        </div>
-                    @endif
-                </div>
-                <div class="col-sm-6 col-xs-12">
-                    <div class="dataTables_paginate paging_simple_numbers" id="example-datatable_paginate">
-                        {{ $allData->links() }}
-                    </div>
-                </div>
-            </div>
+            @include('admin::includes.paginate', ['data' => $allData ])
 
         </div>
         <!-- END Responsive Full Block -->

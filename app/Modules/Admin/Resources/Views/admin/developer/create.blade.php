@@ -8,7 +8,7 @@
         <!-- Statistics Widgets Header -->
         @include('admin::includes.header-section', ['name' => 'Create Developer' ])
         <!-- END Statistics Widgets Header -->
-
+{{--        {{dd($data)}}--}}
         <!-- Responsive Full Block -->
         <div class="row">
             <div class="col-xs-12">

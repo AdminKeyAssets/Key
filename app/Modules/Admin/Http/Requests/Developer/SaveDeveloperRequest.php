@@ -25,7 +25,7 @@ class SaveDeveloperRequest extends FormRequest
     public function rules()
     {
         $passwordRequired = empty($this->request->all()['id']) ? 'required' : '';
-
+//dd($this->request->all());
         return [
             'name' => 'required',
             'id_code' => ['required', !empty($this->request->all()['id']) ? Rule::unique('developers', 'id_code')->ignore($this->request->all()['id']) : 'unique:developers,id_code'],
@@ -34,10 +34,10 @@ class SaveDeveloperRequest extends FormRequest
             'representative_position' => 'required',
             'username' => ['required', !empty($this->request->all()['id']) ? Rule::unique('developers', 'username')->ignore($this->request->all()['id']) : 'unique:developers,username'],
             'password' => [$passwordRequired],
-            'logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'stamp' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'service_agreement' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+//            'logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+//            'stamp' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+//            'signature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+//            'service_agreement' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ];
     }
 
@@ -67,5 +67,17 @@ class SaveDeveloperRequest extends FormRequest
             'service_agreement.mimes' => 'Service Agreement must be a document (pdf, doc, docx).',
             'service_agreement.max' => 'Service Agreement size cannot exceed 5MB.',
         ];
+    }
+    protected function prepareForValidation()
+    {
+        $data = $this->all();
+
+        array_walk_recursive($data, function (&$value) {
+            if ($value === 'null') {
+                $value = null;
+            }
+        });
+
+        $this->merge($data);
     }
 }
