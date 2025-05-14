@@ -1246,7 +1246,8 @@ table thead th {
         overflow: scroll !important;
         width: 100% !important;
     }
-    .asset-info{
+    .header-section.flex-header-row .asset-info{
+        text-align: center;
         width: 45%;
     }
 }
