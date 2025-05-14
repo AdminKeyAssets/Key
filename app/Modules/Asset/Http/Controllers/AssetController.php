@@ -220,9 +220,9 @@ class AssetController extends BaseController
     {
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
-        
+
         $statusFilter = $request->status ?? 'active';
-        
+
         // Check if the user is a developer
         if (Auth::guard('developer')->check()) {
             $developer = Auth::guard('developer')->user();
@@ -1132,6 +1132,32 @@ class AssetController extends BaseController
     }
 
     public function investorFilterOptions()
+    {
+        $user = \auth()->user();
+
+        $this->baseData['assets'] = Asset::query()
+            ->whereHas('investors', function($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
+        $this->baseData['types'] = Asset::query()
+            ->whereHas('investors', function($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+
+    }
+
+    public function developerFilterOptions()
     {
         $user = \auth()->user();
 

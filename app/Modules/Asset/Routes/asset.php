@@ -27,9 +27,12 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
     Route::get('/investor/filter-options', $controller . '@investorFilterOptions')
-        ->name('assets.investor.filters')->middleware(['auth:investor,developer']);
+        ->name('assets.investor.filters')->middleware(['auth:investor']);
     Route::get('/export', $controller . '@export')
         ->name('export.assets');
+
+    Route::get('/developer/filter-options', $controller . '@developerFilterOptions')
+        ->name('assets.developer.filters')->middleware(['auth:developer']);
 
     $paymentController = 'PaymentsHistoryController';
     $paymentModuleName = 'payment';

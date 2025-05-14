@@ -71,6 +71,7 @@ Vue.component('asset-filter-component', require('./base/admin/asset/partials/Ass
 Vue.component('investor-asset-filter-component', require('./base/admin/asset/partials/InvestorAssetFilters').default);
 Vue.component('register-purchase-component', require('./base/admin/asset/partials/components/AssetSaleModal').default);
 Vue.component('asset-export-component', require('./base/admin/asset/partials/AssetExport').default);
+Vue.component('developer-asset-filter-component', require('./base/admin/asset/partials/DeveloperAssetFilters').default);
 
 
 //Revenue
