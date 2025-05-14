@@ -220,10 +220,20 @@ class AssetController extends BaseController
     {
         $user = auth()->user();
         $userId = $user->getAuthIdentifier();
-
+        
         $statusFilter = $request->status ?? 'active';
-
-        $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
+        
+        // Check if the user is a developer
+        if (Auth::guard('developer')->check()) {
+            $developer = Auth::guard('developer')->user();
+            // For developers, find assets with matching names
+            $userAssets = Asset::where('project_name', $developer->name)
+                ->where('status', 'completed')
+                ->orderByDesc('id');
+        } else {
+            // For investors, use the relationship
+            $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
+        }
         if ($statusFilter !== 'all') {
             $userAssets->where('sale_status', $statusFilter);
         }

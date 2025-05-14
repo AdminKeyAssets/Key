@@ -39,7 +39,7 @@
         </li>
     @endif
 
-    @if(Auth::guard('investor')->check())
+    @if(Auth::guard('investor')->check() || Auth::guard('developer')->check())
         <li
             {!! strpos(request()->route()->getName(), 'asset.myassets') !== false ? ' class="active"' : '' !!}>
             <a href="{{route('asset.myassets')}}"><i class="el-icon-house sidebar-nav-icon"></i>
@@ -50,6 +50,14 @@
             {!! strpos(request()->route()->getName(), 'asset.revenue.investor') !== false ? ' class="active"' : '' !!}>
             <a href="{{route('asset.revenue.investor')}}"><i class="el-icon-house sidebar-nav-icon"></i>
                 <span class="sidebar-nav-mini-hide">Revenues</span></a>
+        </li>
+    @endif
+    
+    @can ( getPermissionKey('developer', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'admin.developer.') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('admin.developer.index')}}"><i class="el-icon-user sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">Developers</span></a>
         </li>
     @endif
 

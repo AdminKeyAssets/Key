@@ -16,9 +16,9 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/names', $controller . '@getAssetsToClone')->name('assets.to.clone')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
     Route::post('/clone/{name?}', $controller . '@clone')->name('clone')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
 
-    //For investor
-    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor']);
-    Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor']);
+    //For investor and developer
+    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor,developer']);
+    Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor,developer', 'developer.access']);
     //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/save-project-details', $controller . '@saveProjectDetails')->name('save-project-details')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);

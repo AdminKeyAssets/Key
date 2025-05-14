@@ -50,6 +50,10 @@ Vue.component('admin-user-filter-component', require('./base/admin/user/partials
 // User role
 Vue.component('admin-role-save-component', require('./base/admin/role/page/SaveComponent').default);
 
+// Developer
+Vue.component('developer-save-component', require('./base/admin/developer/page/SaveComponent').default);
+Vue.component('developer-view-component', require('./base/admin/developer/page/ViewComponent').default);
+
 //Base Component
 Vue.component('delete-component', require('./base/components/admin/Delete').default);
 Vue.component('checkbox-list-component', require('./base/components/admin/checkboxList').default);
