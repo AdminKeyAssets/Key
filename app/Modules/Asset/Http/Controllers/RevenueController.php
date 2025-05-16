@@ -13,6 +13,7 @@ use App\Modules\Admin\Models\User\Investor;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\AssetAgreement;
 use App\Modules\Asset\Models\CurrentValue;
+use App\Modules\Asset\Models\Investment;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
 use App\Modules\Asset\Models\Rental;
@@ -599,6 +600,19 @@ class RevenueController extends BaseController
                         $tenant['rental_payments'] = $tenantRentalPayments->get();
                         $tenant['rentals'] = $tenantRentals;
                         $tenant['rental_payments_amount_sum'] = $tenantRentalPayments->sum('amount');
+//                        dd();
+                        $tenantInvestments = Investment::where('asset_id', $asset->id)
+                            ->where('status', '!=', 'Renovation');
+                        if($tenant['agreement_date']){
+                            $tenantInvestments->where('date', '>=', $tenant['agreement_date']);
+                        }
+                        if($tenant['rent_end_date']){
+                            $tenantInvestments->where('date', '<=', $tenant['rent_end_date']);
+                        }
+
+                        $tenant['investments_during_rent'] = $tenantInvestments->sum('amount');
+//                        dd( $tenant['investments_during_rent']);
+                        $tenant['net_cash_balance'] = $tenant['rental_payments_amount_sum'] - $tenant['investments_during_rent'];
                         $tenantData[] = $tenant;
                     }
                 }
