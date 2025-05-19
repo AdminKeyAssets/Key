@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Models\User;
 
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\DeveloperAsset;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,11 +32,8 @@ class Developer extends Authenticatable
         $this->attributes['password'] = bcrypt($password);
     }
 
-    /**
-     * Get assets associated with the developer by name matching
-     */
     public function assets()
     {
-        return Asset::where('project_name', $this->name);
+        return $this->hasMany(DeveloperAsset::class);
     }
 }
