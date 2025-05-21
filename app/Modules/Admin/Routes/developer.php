@@ -54,5 +54,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
         Route::post('delete', $developerController . '@delete')
             ->name('delete')
             ->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
+
+        Route::get('filter-options', $developerController . '@filterOptions')
+            ->name('filters');
+
+        Route::post('update-asset', $developerController . '@updateAssets')->name('update.assets')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
     });
 });
+
+Route::get('/developer/managers', 'User\DeveloperController@developerManagers')
+    ->name('assets.developer.managers')->middleware(['auth:developer']);

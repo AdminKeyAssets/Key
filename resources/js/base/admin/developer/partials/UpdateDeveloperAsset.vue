@@ -1,23 +1,23 @@
 <template>
     <div>
-        <!-- Display current manager's name -->
+        <!-- Display current asset's name -->
         <a @click="openModal" style="cursor: pointer">{{ localAssetName }}</a>
 
-        <!-- Modal for selecting a new manager -->
+        <!-- Modal for selecting a new asset -->
         <el-dialog
-            title="Change Manager"
+            title="Change Asset"
             :visible.sync="showModal"
             width="30%"
             :before-close="handleClose"
         >
             <el-form>
-                <el-form-item label="Select new manager:">
-                    <el-select v-model="form.manager" placeholder="Select Manager" v-remove-readonly>
+                <el-form-item label="Select new asset:">
+                    <el-select v-model="form.asset" placeholder="Select Asset" multiple filterable v-remove-readonly>
                         <el-option
-                            v-for="manager in managers"
-                            :key="manager.id"
-                            :label="`${manager.name} ${manager.surname}`"
-                            :value="manager.id"
+                            v-for="asset in assets"
+                            :key="asset"
+                            :label="asset"
+                            :value="asset"
                         ></el-option>
                     </el-select>
                 </el-form-item>
@@ -25,7 +25,7 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="showModal = false">Cancel</el-button>
-                <el-button type="primary" @click="changeManager">Change</el-button>
+                <el-button type="primary" @click="changeAsset">Change</el-button>
             </span>
         </el-dialog>
     </div>
@@ -37,11 +37,11 @@ import { getData } from "../../../mixins/getData";
 
 export default {
     props: {
-        managerName: {
-            type: String,
-            required: true
+        assetName: {
+            type: Array,
+            default: () => []
         },
-        investorId: {
+        developerId: {
             type: [String, Number],
             required: true
         }
@@ -49,64 +49,62 @@ export default {
     data() {
         return {
             form: {
-                manager: ''
+                asset: [...this.assetName]
             },
             showModal: false,
-            managers: [],
-            localManagerName: this.managerName // Local copy of the prop
+            assets: [],
+            localAssetName: this.assetName.length ? this.assetName.join(", ") : 'Assign Asset',
         };
     },
     watch: {
-        // Watch the managerName prop for changes and update the local copy
-        managerName(newVal) {
-            this.localManagerName = newVal;
-        }
+        // Watch the assetName prop for changes and update the local copy
+        assetName(newVal) {
+            this.localAssetName = newVal.join(", ");
+            this.form.asset = [...newVal];        }
     },
     methods: {
         openModal() {
+            this.form.asset = [...this.assetName];
             this.showModal = true;
-            this.fetchManagers();
+            this.fetchAssets();
         },
         handleClose() {
             this.showModal = false;
         },
-        fetchManagers() {
-            axios.get('/admin/investors/filter-options')
+        fetchAssets() {
+            axios.get('/admin/developers/filter-options')
                 .then(response => {
                     responseParse(response, false);
                     if (response.status === 200) {
                         let data = response.data.data;
 
-                        if (data.managers) {
-                            this.managers = data.managers;
+                        if (data.assets) {
+                            this.assets = data.assets;
                         }
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching managers:', error);
+                    console.error('Error fetching assets:', error);
                 });
         },
-        async changeManager() {
+        async changeAsset() {
             await getData({
                 method: 'POST',
                 config: {
                     headers: { 'content-type': 'multipart/form-data' }
                 },
-                url: '/admin/investors/update-manager',
+                url: '/admin/developers/update-asset',
                 data: {
-                    manager_id: this.form.manager,
-                    investor_id: this.investorId
+                    assets: this.form.asset,
+                    developer_id: this.developerId
                 }
             }).then(response => {
                 responseParse(response, true);
 
                 if (response.status === 200) {
                     let data = response.data.data;
-                    if (data.manager) {
-                        // Update local manager name instead of mutating the prop
-                        this.localManagerName = data.manager.name + ' ' + data.manager.surname;
-                        this.handleClose();
-                    }
+                    data.assets.length ? this.localAssetName = data.assets.join(", ") : 'Assign Asset';
+                    this.handleClose();
                 }
             });
         }

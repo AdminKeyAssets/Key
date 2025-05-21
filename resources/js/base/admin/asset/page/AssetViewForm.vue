@@ -3,7 +3,16 @@
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
                 <div class="content-wrapper">
-                    <div class="block col-md-9 asset-details-wrapper form-horizontal form-bordered">
+                    <div
+                        :class="{
+                              block: true,
+                              'col-md-9': !developerView,
+                              'col-md-12': developerView,
+                              'asset-details-wrapper': true,
+                              'form-horizontal': true,
+                              'form-bordered': true
+                            }"
+                    >
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
@@ -216,6 +225,7 @@
                                 </el-card>
                             </el-row>
 
+                            <!--                            extra details section-->
                             <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
                                 <el-card class="box-card extra-details-card">
                                     <div slot="header" class="clearfix main-header">
@@ -241,7 +251,7 @@
                                 </el-card>
                             </el-row>
 
-
+                            <!--                            asset photos section-->
                             <el-row style="margin-bottom: 30px" v-if="form.attachments && form.attachments.length">
                                 <el-card class="box-card extra-attachments-card"
                                          :class="{ 'hidden-body': !showExtraAttachments }">
@@ -270,7 +280,9 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
+                            <!--            tenant section-->
+                            <el-row style="margin-bottom: 30px"
+                                    v-if="form.tenant && form.asset_status === 'Rented'  && !developerView">
                                 <el-card class="box-card"
                                          :class="{ 'complete-rent-warning-card': needToCompleteRent  && !investorView }">
                                     <div slot="header" class="clearfix main-header">
@@ -497,6 +509,7 @@
                                 </el-card>
                             </el-row>
 
+                            <!--                            agreement details section-->
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showAgreementDetails }">
@@ -708,8 +721,9 @@
 
                                 </el-card>
                             </el-row>
-
-                            <el-row style="margin-bottom: 30px" v-if="form.renovation_payments && form.renovation_payments.length">
+                            <!--renovation payments section-->
+                            <el-row style="margin-bottom: 30px"
+                                    v-if="form.renovation_payments && form.renovation_payments.length  && !developerView">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
@@ -877,7 +891,7 @@
 
                                 </el-card>
                             </el-row>
-
+                            <!--comments section-->
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
@@ -893,7 +907,7 @@
                             </el-row>
                         </el-form>
                     </div>
-                    <div class="block col-md-3 asset-manager-details">
+                    <div class="block col-md-3 asset-manager-details" v-if="!developerView">
                         <div v-loading="loading"
                              class="form-horizontal form-bordered">
 
@@ -1026,6 +1040,10 @@ export default {
             default: false
         },
         investorView: {
+            type: [Boolean, Number],
+            default: false
+        },
+        developerView: {
             type: [Boolean, Number],
             default: false
         }
@@ -1282,7 +1300,8 @@ export default {
             data.forEach(item => {
                 totalAmount += Number(item.amount) || 0;
             });
-            sums[1] = this.formatPrice(totalAmount) + '$';;
+            sums[1] = this.formatPrice(totalAmount) + '$';
+            ;
             sums[2] = '';
 
             return sums;
@@ -1331,7 +1350,7 @@ export default {
             return sums;
         },
 
-        tableRowClassName({ row }) {
+        tableRowClassName({row}) {
             if (!row.payment_date) return '';
 
             const [year, month, day] = row.payment_date.split('/').map(Number);
@@ -1478,6 +1497,7 @@ export default {
     -ms-overflow-style: none;
     scrollbar-width: thin;
 }
+
 .el-table .warning-row {
     background: oldlace;
 }

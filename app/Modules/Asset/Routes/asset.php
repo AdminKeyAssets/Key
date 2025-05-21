@@ -18,7 +18,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
 
     //For investor and developer
     Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor,developer']);
-    Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor,developer', 'developer.access']);
+    Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor,developer']);
     //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/save-project-details', $controller . '@saveProjectDetails')->name('save-project-details')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);

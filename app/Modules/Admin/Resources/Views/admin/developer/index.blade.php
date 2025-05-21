@@ -37,6 +37,9 @@
                             <th>Tel</th>
                             <th>Logo</th>
                             <th>Username</th>
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                <th class="developer-assets"> Assets</th>
+                            @endif
                             <th width="10%" class="text-center">Actions</th>
                         </tr>
                         </thead>
@@ -55,6 +58,17 @@
                                     @endif
                                 </td>
                                 <td>{{ $item->username }}</td>
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                    @php
+                                    $assetNameList = $item->assets->pluck('asset_name')->toArray();
+                                    @endphp
+                                    <td class="developer-assets">
+                                        <update-developer-asset
+                                            :asset-name='@json($assetNameList)'
+                                            :developer-id="{{ $item->id }}">
+                                        </update-developer-asset>
+                                    </td>
+                                @endif
                                 <td class="text-center">
                                     @can(getPermissionKey($moduleKey, 'view', true))
                                         @include('admin::includes.actions.view',['route' => route($baseRouteName . 'view',  [$item->id, ])])

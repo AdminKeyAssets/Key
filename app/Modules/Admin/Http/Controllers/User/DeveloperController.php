@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Http\Controllers\User;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\Developer\SaveDeveloperRequest;
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Developer;
 use App\Modules\Asset\Models\Asset;
 use App\Utilities\ServiceResponse;
@@ -268,7 +269,7 @@ class DeveloperController extends BaseController
     {
         try {
             $developer = Developer::where('id', $request->id)->first();
-            
+
             if (!$developer) {
                 throw new \Exception('Developer not found');
             }
@@ -277,15 +278,15 @@ class DeveloperController extends BaseController
             if ($developer->logo && Storage::disk('public')->exists($developer->logo)) {
                 Storage::disk('public')->delete($developer->logo);
             }
-            
+
             if ($developer->stamp && Storage::disk('public')->exists($developer->stamp)) {
                 Storage::disk('public')->delete($developer->stamp);
             }
-            
+
             if ($developer->signature && Storage::disk('public')->exists($developer->signature)) {
                 Storage::disk('public')->delete($developer->signature);
             }
-            
+
             if ($developer->service_agreement && Storage::disk('public')->exists($developer->service_agreement)) {
                 Storage::disk('public')->delete($developer->service_agreement);
             }
@@ -298,5 +299,42 @@ class DeveloperController extends BaseController
         }
 
         return ServiceResponse::jsonNotification('Developer Deleted Successfully', 200, $this->baseData);
+    }
+
+    public function filterOptions()
+    {
+        $this->baseData['assets'] = Asset::orderBy('project_name')
+            ->groupBy('project_name')
+            ->pluck('project_name')
+            ->toArray();
+
+        return ServiceResponse::jsonNotification(__('Asset List'), 200, $this->baseData);
+    }
+
+    public function updateAssets(Request $request)
+    {
+        $developer = Developer::find($request->developer_id);
+
+        $developer->assets()->delete();
+        foreach($request->assets as $asset){
+            $developer->assets()->create(['asset_name' => $asset]);
+        }
+
+        $this->baseData['assets'] = $developer->assets()
+            ->orderBy('asset_name')
+            ->pluck('asset_name')
+            ->toArray();
+
+        return ServiceResponse::jsonNotification(__('Assets updated successfully'), 200, $this->baseData);
+
+    }
+
+    public function developerManagers()
+    {
+        $user = \auth()->user();
+        $developerAssetNames = $user->assets()->pluck('asset_name')->toArray();
+        $this->baseData['allData'] = Admin::whereIn('id', Asset::whereIn('project_name', $developerAssetNames)->pluck('admin_id')->toArray())->paginate(25);
+
+        return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.managers', $this->baseData);
     }
 }
