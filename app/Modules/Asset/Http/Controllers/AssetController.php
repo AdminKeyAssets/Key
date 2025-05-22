@@ -619,24 +619,31 @@ class AssetController extends BaseController
             if ($request->tenant) {
                 $tenantData = $request->tenant;
 
-                $tenant = Tenant::updateOrCreate([
+                $tenantDataArray = [
+                    'name' => $tenantData['name'],
                     'email' => $tenantData['email'],
                     'phone' => $tenantData['phone'],
-                ],
-                    [
-                        'name' => $tenantData['name'],
-                        'surname' => $tenantData['surname'],
-                        'id_number' => $tenantData['id_number'],
-                        'citizenship' => $tenantData['citizenship'],
-                        'agreement_date' => $tenantData['agreement_date'],
-                        'agreement_term' => $tenantData['agreement_term'],
-                        'monthly_rent' => $tenantData['monthly_rent'],
-                        'currency' => $tenantData['currency'],
-                        'prefix' => $tenantData['prefix'],
-                        'asset_id' => $asset->id,
-                        'representative' => $tenantData['representative'],
-                        'status' => 1
-                    ]);
+                    'surname' => $tenantData['surname'],
+                    'id_number' => $tenantData['id_number'],
+                    'citizenship' => $tenantData['citizenship'],
+                    'agreement_date' => $tenantData['agreement_date'],
+                    'agreement_term' => $tenantData['agreement_term'],
+                    'monthly_rent' => $tenantData['monthly_rent'],
+                    'currency' => $tenantData['currency'],
+                    'prefix' => $tenantData['prefix'],
+                    'asset_id' => $asset->id,
+                    'representative' => $tenantData['representative'],
+                    'status' => 1
+                ];
+                if ($tenantData['id']) {
+                    $tenant = Tenant::where('id', $tenantData['id'])->first();
+                    $tenant->update(
+                        $tenantDataArray
+                    );
+                }
+                else{
+                    $tenant = Tenant::create($tenantDataArray);
+                }
 
                 Tenant::where('asset_id', $asset->id)
                     ->where('id', '!=', $tenant->id)
