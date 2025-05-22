@@ -164,7 +164,7 @@ class AssetController extends BaseController
         }
 
 
-        if ($request->agreement_date) {
+        if ($request->agreement_date && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
 
             if (isset($createdDates[0])) {
@@ -175,7 +175,7 @@ class AssetController extends BaseController
             }
         }
 
-        if ($request->payment_date) {
+        if ($request->payment_date && $request->payment_date !== 'null') {
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
             $end = $dates[1] ?? null;
@@ -228,7 +228,7 @@ class AssetController extends BaseController
             $userAssets->where('sale_status', $statusFilter);
         }
 
-        if ($request->agreement_date) {
+        if ($request->agreement_date && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
 
             if (isset($createdDates[0])) {
@@ -251,7 +251,7 @@ class AssetController extends BaseController
             $userAssets->where('type', $request->asset_type);
         }
 
-        if ($request->payment_date) {
+        if ($request->payment_date && $request->payment_date !== 'null') {
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
             $end = $dates[1] ?? null;
@@ -1126,7 +1126,7 @@ class AssetController extends BaseController
         $user = \auth()->user();
 
         $this->baseData['assets'] = Asset::query()
-            ->whereHas('investors', function($q) use ($user) {
+            ->whereHas('investors', function ($q) use ($user) {
                 $q->where('investor_id', $user->id);
             })
             ->select('project_name', DB::raw('MAX(id) as max_id'))
@@ -1135,7 +1135,7 @@ class AssetController extends BaseController
             ->get();
 
         $this->baseData['types'] = Asset::query()
-            ->whereHas('investors', function($q) use ($user) {
+            ->whereHas('investors', function ($q) use ($user) {
                 $q->where('investor_id', $user->id);
             })
             ->select('type', DB::raw('MAX(id) as max_id'))
