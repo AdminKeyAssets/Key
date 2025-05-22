@@ -635,6 +635,7 @@ class AssetController extends BaseController
                         'prefix' => $tenantData['prefix'],
                         'asset_id' => $asset->id,
                         'representative' => $tenantData['representative'],
+                        'status' => 1
                     ]);
 
                 Tenant::where('asset_id', $asset->id)
