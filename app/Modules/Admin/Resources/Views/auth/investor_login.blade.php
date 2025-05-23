@@ -30,6 +30,9 @@
                     <h1 class="title-black cms">
                         <img src="{{ config('admin.logo_c') }}" width="155"/>
                     </h1>
+                    <div class="text-center mb-4" style="margin-bottom: 20px;">
+                        <h3>Investor & Developer Login</h3>
+                    </div>
                     <!-- Login Form -->
                     <form class="form-horizontal form-bordered form-control-borderless" id="form-login" method="POST"
                           action="{{ route('admin.investor_login') }}">
@@ -39,7 +42,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="gi gi-envelope"></i></span>
                                     <input type="text" id="login-email" name="email" value="{{ old('email') }}"
-                                           class="form-control" placeholder="Email">
+                                           class="form-control" placeholder="Email or Username">
                                 </div>
 
                                 @if ($errors->has('email'))

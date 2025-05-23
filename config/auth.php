@@ -50,6 +50,11 @@ return [
             'driver' => 'session',
             'provider' => 'investors',
         ],
+        
+        'developer' => [
+            'driver' => 'session',
+            'provider' => 'developers',
+        ],
 
         'api' => [
             'driver' => 'token',
@@ -90,6 +95,11 @@ return [
         'investors' => [
             'driver' => 'eloquent',
             'model' => \App\Modules\Admin\Models\User\Investor::class,
+        ],
+        
+        'developers' => [
+            'driver' => 'eloquent',
+            'model' => \App\Modules\Admin\Models\User\Developer::class,
         ],
 
         // 'users' => [

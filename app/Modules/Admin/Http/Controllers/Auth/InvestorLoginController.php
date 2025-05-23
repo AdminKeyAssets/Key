@@ -39,6 +39,47 @@ class InvestorLoginController extends \App\Http\Controllers\Auth\LoginController
     {
         return Auth::guard('investor');
     }
+    
+    /**
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function login(Request $request)
+    {
+        $this->validateLogin($request);
+
+        // Check if a developer with these credentials exists
+        $developerCredentials = [
+            'username' => $request->input($this->username()),
+            'password' => $request->input('password')
+        ];
+        
+        if (Auth::guard('developer')->attempt($developerCredentials, $request->filled('remember'))) {
+            return $this->sendLoginResponse($request);
+        }
+
+        // If not a developer, try investor login as normal
+        return $this->attemptInvestorLogin($request);
+    }
+
+    /**
+     * Attempt to log the investor in.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function attemptInvestorLogin(Request $request)
+    {
+        if ($this->attemptLogin($request)) {
+            return $this->sendLoginResponse($request);
+        }
+
+        return $this->sendFailedLoginResponse($request);
+    }
 
     /**
      * Validate the user login request.
@@ -63,7 +104,15 @@ class InvestorLoginController extends \App\Http\Controllers\Auth\LoginController
      */
     public function logout(Request $request)
     {
-        Auth::guard('investor')->logout();
+        // Logout from both investor and developer guards
+        if (Auth::guard('investor')->check()) {
+            Auth::guard('investor')->logout();
+        }
+        
+        if (Auth::guard('developer')->check()) {
+            Auth::guard('developer')->logout();
+        }
+        
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

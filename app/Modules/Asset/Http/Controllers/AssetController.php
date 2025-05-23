@@ -223,7 +223,16 @@ class AssetController extends BaseController
 
         $statusFilter = $request->status ?? 'active';
 
-        $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
+        // Check if the user is a developer
+        if (Auth::guard('developer')->check()) {
+            $developer = Auth::guard('developer')->user();
+            // For developers, find assets with matching names
+            $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())
+                ->orderByDesc('id');
+        } else {
+            // For investors, use the relationship
+            $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
+        }
         if ($statusFilter !== 'all') {
             $userAssets->where('sale_status', $statusFilter);
         }
@@ -1146,6 +1155,28 @@ class AssetController extends BaseController
             ->whereHas('investors', function ($q) use ($user) {
                 $q->where('investor_id', $user->id);
             })
+            ->select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+
+    }
+
+    public function developerFilterOptions()
+    {
+        $user = \auth()->user();
+        $developerAssetNames = $user->assets()->pluck('asset_name')->toArray();
+        $this->baseData['assets'] = Asset::query()
+            ->whereIn('project_name', $developerAssetNames)
+            ->select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
+        $this->baseData['types'] = Asset::query()
+            ->whereIn('project_name', $developerAssetNames)
             ->select('type', DB::raw('MAX(id) as max_id'))
             ->groupBy('type')
             ->orderBy('type')

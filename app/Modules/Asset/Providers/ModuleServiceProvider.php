@@ -30,5 +30,8 @@ class ModuleServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        
+        // Register Developer Access middleware
+        $this->app['router']->aliasMiddleware('developer.access', \App\Modules\Asset\Http\Middleware\DeveloperAccess::class);
     }
 }

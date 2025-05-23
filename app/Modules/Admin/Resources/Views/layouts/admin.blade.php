@@ -5,6 +5,9 @@ $user = auth('investor')->user();
 if (!$user) {
     $user = auth('admin')->user();
 }
+if (!$user) {
+    $user = auth('developer')->user();
+}
 ?>
 @section('content')
     <div id="admin">
@@ -44,9 +47,15 @@ if (!$user) {
                                                 @endif
                                             </span>
                                         @endif
+                                    @elseif(\Auth::guard('developer')->check())
+                                        @if($user->logo)
+                                            <img src="{{ $user->logo }}" alt="avatar">
+                                        @else
+                                            <img src="{{ config('admin.user_avatar') }}" alt="avatar">
+                                        @endif
                                     @else
                                         <a href="{{ route('admin.profile.index') }}">
-                                            @if($user->profile_picture)
+                                            @if(isset($user->profile_picture))
                                                 <img src="{{ $user->profile_picture }}" alt="avatar">
                                             @else
                                                 <img src="{{ config('admin.user_avatar') }}" alt="avatar">
@@ -56,23 +65,29 @@ if (!$user) {
                                 </div>
                                 <div class="sidebar-user-name">{{ $user->name }}</div>
                                 <div class="sidebar-user-links">
-                                    @if(\Auth::guard('investor')->check())
-                                        @if(!$user->is_demo)
-                                            <a href="{{ route('investor.profile.index') }}" data-toggle="tooltip" data-placement="bottom" title="Profile">
+                                    @if(!Auth::guard('developer')->check())
+                                        @if(\Auth::guard('investor')->check())
+                                            @if(!$user->is_demo)
+                                                <a href="{{ route('investor.profile.index') }}" data-toggle="tooltip"
+                                                   data-placement="bottom" title="Profile">
+                                                    <i class="el-icon-user"></i>
+                                                </a>
+                                            @endif
+                                        @else
+                                            <a href="{{ route('admin.profile.index') }}" data-toggle="tooltip"
+                                               data-placement="bottom" title="Profile">
                                                 <i class="el-icon-user"></i>
                                             </a>
                                         @endif
-                                    @else
-                                        <a href="{{ route('admin.profile.index') }}" data-toggle="tooltip" data-placement="bottom" title="Profile">
-                                            <i class="el-icon-user"></i>
-                                        </a>
                                     @endif
                                     @if(\Auth::guard('admin')->check())
-                                        <a href="{{ route('admin.logout') }}" class="logout-link" data-toggle="tooltip" data-placement="bottom" title="Log Out">
+                                        <a href="{{ route('admin.logout') }}" class="logout-link" data-toggle="tooltip"
+                                           data-placement="bottom" title="Log Out">
                                             <i class="el-icon-switch-button"></i>
                                         </a>
-                                    @elseif(\Auth::guard('investor')->check())
-                                        <a href="{{ route('investor.logout') }}" class="logout-link" data-toggle="tooltip" data-placement="bottom" title="Log Out">
+                                    @elseif(\Auth::guard('investor')->check() || Auth::guard('developer')->check())
+                                        <a href="{{ route('investor.logout') }}" class="logout-link"
+                                           data-toggle="tooltip" data-placement="bottom" title="Log Out">
                                             <i class="el-icon-switch-button"></i>
                                         </a>
                                     @endif
@@ -98,11 +113,16 @@ if (!$user) {
                             <!-- Main Sidebar Toggle Button -->
                             <li>
                                 <a href="javascript:void(0)" onclick="toggleClass();this.blur();">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 4.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M12 9.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 14.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 19.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 4.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M12 9.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M21 14.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M21 19.5H3" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                              stroke-linejoin="round"/>
                                     </svg>
                                 </a>
                             </li>
@@ -110,19 +130,21 @@ if (!$user) {
                         </ul>
                         <!-- END Left Header Navigation -->
 
-                        <!-- Right Header Navigation -->
-                        <ul class="nav navbar-nav-custom pull-right">
-                            <!-- User Dropdown -->
-                            <li>
-                                <div id="header">
-                                    @include('asset::admin.notifications.reminders')
-                                    @include('asset::admin.notifications.rentals')
-                                    @include('asset::admin.notifications.payments')
-                                    @include('asset::admin.comment.unread')
-                                </div>
-                            </li>
-                            <!-- END User Dropdown -->
-                        </ul>
+                        @if(!Auth::guard('developer')->check())
+                            <!-- Right Header Navigation -->
+                            <ul class="nav navbar-nav-custom pull-right">
+                                <!-- User Dropdown -->
+                                <li>
+                                    <div id="header">
+                                        @include('asset::admin.notifications.reminders')
+                                        @include('asset::admin.notifications.rentals')
+                                        @include('asset::admin.notifications.payments')
+                                        @include('asset::admin.comment.unread')
+                                    </div>
+                                </li>
+                                <!-- END User Dropdown -->
+                            </ul>
+                        @endif
                         <!-- END Right Header Navigation -->
                     </header>
                     <!-- END Header -->
@@ -151,7 +173,7 @@ if (!$user) {
     }
 
     // Close sidebar when clicking outside of it
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         var sidebar = document.getElementById("sidebar");
         var toggleBtn = document.querySelector('[onclick="toggleClass();this.blur();"]');
         if (sidebar.classList.contains("sidebar-show")

@@ -39,10 +39,13 @@
                         </asset-filter-component>
                     @endif
                 </div>
+            @elseif(\Auth::guard('investor')->check())
+                <investor-asset-filter-component>
+                </investor-asset-filter-component>
             @else
                 <div class="row">
-                    <investor-asset-filter-component>
-                    </investor-asset-filter-component>
+                    <developer-asset-filter-component>
+                    </developer-asset-filter-component>
                 </div>
             @endif
 
@@ -72,11 +75,13 @@
                             <th> Asset Type / Size</th>
                             <th> Agreement Status</th>
                             <th> Next Installment</th>
-                            @if($showNextRent)
+                            @if($showNextRent && !Auth::guard('developer')->check())
                                 <th> Next Rent</th>
                             @endif
-                            <th> Next Renovation</th>
-                            @if(!Auth::guard('investor')->check())
+                            @if(!Auth::guard('developer')->check())
+                                <th> Next Renovation</th>
+                            @endif
+                            @if(!Auth::guard('investor')->check() && !Auth::guard('developer')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
                             @endif
                         </tr>
@@ -91,8 +96,9 @@
                                 @endif
                             >
                                 <td>
-                                    @if(Auth::guard('investor')->check())
+                                    @if(Auth::guard('investor')->check() || Auth::guard('developer')->check())
                                         <a href="{{route($moduleKey . '.details', [ $item->id ])}}">{!! $item->project_name !!}</a>
+
                                     @else
                                         <a href="{{route($moduleKey . '.view', [ $item->id ])}}">{!! $item->project_name !!}</a>
                                     @endif
@@ -153,7 +159,7 @@
                                     !!}
                                 </td>
 
-                                @if($showNextRent)
+                                @if($showNextRent && !Auth::guard('developer')->check())
                                     <td>
                                         {!!
                                             $item->asset_status == 'Rented'
@@ -180,7 +186,8 @@
                                 @endif
                                 <td>
                                     {!!
-                                        $item->renovation_status == 'In Progress'
+                                    !Auth::guard('developer')->check()
+                                        && $item->renovation_status == 'In Progress'
                                         && count($item->renovationPayments)
                                         && count($item->renovationPayments->where('status', 0))
                                         ? (
