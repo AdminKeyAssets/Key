@@ -134,7 +134,7 @@ class PaymentsHistoryController extends BaseController
                 $this->baseData['nextPayment'] = $payments->count() ? $payments->sum('left_amount') : 0;
             }else{
                 $payment = Payment::where('asset_id', $assetId)
-                    ->where('status', 0)->orderByDesc('id')->first();
+                    ->where('status', 0)->orderBy('id')->first();
 
                 $this->baseData['nextPayment'] = $payment ? $payment->left_amount : 0;
             }

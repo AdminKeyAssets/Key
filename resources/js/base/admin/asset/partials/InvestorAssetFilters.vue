@@ -23,6 +23,16 @@
                     </el-date-picker>
                 </div>
 
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.payment_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Payments Start date"
+                        end-placeholder="Payments End date">
+                    </el-date-picker>
+                </div>
 
                 <div class="form-group">
                     <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>

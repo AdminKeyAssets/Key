@@ -164,7 +164,7 @@ class AssetController extends BaseController
         }
 
 
-        if ($request->agreement_date) {
+        if ($request->agreement_date && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
 
             if (isset($createdDates[0])) {
@@ -175,7 +175,7 @@ class AssetController extends BaseController
             }
         }
 
-        if ($request->payment_date) {
+        if ($request->payment_date && $request->payment_date !== 'null') {
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
             $end = $dates[1] ?? null;
@@ -237,7 +237,7 @@ class AssetController extends BaseController
             $userAssets->where('sale_status', $statusFilter);
         }
 
-        if ($request->agreement_date) {
+        if ($request->agreement_date && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
 
             if (isset($createdDates[0])) {
@@ -260,7 +260,7 @@ class AssetController extends BaseController
             $userAssets->where('type', $request->asset_type);
         }
 
-        if ($request->payment_date) {
+        if ($request->payment_date && $request->payment_date !== 'null') {
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
             $end = $dates[1] ?? null;
@@ -628,23 +628,31 @@ class AssetController extends BaseController
             if ($request->tenant) {
                 $tenantData = $request->tenant;
 
-                $tenant = Tenant::updateOrCreate([
+                $tenantDataArray = [
+                    'name' => $tenantData['name'],
                     'email' => $tenantData['email'],
                     'phone' => $tenantData['phone'],
-                ],
-                    [
-                        'name' => $tenantData['name'],
-                        'surname' => $tenantData['surname'],
-                        'id_number' => $tenantData['id_number'],
-                        'citizenship' => $tenantData['citizenship'],
-                        'agreement_date' => $tenantData['agreement_date'],
-                        'agreement_term' => $tenantData['agreement_term'],
-                        'monthly_rent' => $tenantData['monthly_rent'],
-                        'currency' => $tenantData['currency'],
-                        'prefix' => $tenantData['prefix'],
-                        'asset_id' => $asset->id,
-                        'representative' => $tenantData['representative'],
-                    ]);
+                    'surname' => $tenantData['surname'],
+                    'id_number' => $tenantData['id_number'],
+                    'citizenship' => $tenantData['citizenship'],
+                    'agreement_date' => $tenantData['agreement_date'],
+                    'agreement_term' => $tenantData['agreement_term'],
+                    'monthly_rent' => $tenantData['monthly_rent'],
+                    'currency' => $tenantData['currency'],
+                    'prefix' => $tenantData['prefix'],
+                    'asset_id' => $asset->id,
+                    'representative' => $tenantData['representative'],
+                    'status' => 1
+                ];
+                if ($tenantData['id']) {
+                    $tenant = Tenant::where('id', $tenantData['id'])->first();
+                    $tenant->update(
+                        $tenantDataArray
+                    );
+                }
+                else{
+                    $tenant = Tenant::create($tenantDataArray);
+                }
 
                 Tenant::where('asset_id', $asset->id)
                     ->where('id', '!=', $tenant->id)

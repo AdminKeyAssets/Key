@@ -470,6 +470,7 @@ export default {
             const totalPrice = price * area;
             this.updatingTotalPrice = true;
             this.$emit("update-form", { ...this.form, total_price: totalPrice });
+            this.$emit("update-form", { ...this.form, current_value: totalPrice });
             this.updatingTotalPrice = false;
         },
         updateSqmPrice() {
