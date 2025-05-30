@@ -10,6 +10,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/create', $controller . '@create')->name('create')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/create-data', $controller . '@createData')->name('create_data');
     Route::get('/edit/{id?}', $controller . '@edit')->name('edit')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::get('/developer_access/{id?}', $controller . '@developerAccess')->name('developer_access')->middleware(['auth:developer,admin']);
     Route::post('/sell/{id?}', $controller . '@sell')->name('sell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::post('/delete/sell/{id?}', $controller . '@deleteSell')->name('deleteSell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/view/{id?}', $controller . '@view')->name('view')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
@@ -29,7 +30,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/investor/filter-options', $controller . '@investorFilterOptions')
         ->name('assets.investor.filters')->middleware(['auth:investor']);
     Route::get('/export', $controller . '@export')
-        ->name('export.assets');
+        ->name('export.assets')->middleware(['auth:admin,developer,investor']);
 
     Route::get('/developer/filter-options', $controller . '@developerFilterOptions')
         ->name('assets.developer.filters')->middleware(['auth:developer']);
@@ -69,6 +70,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     //Save
     Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);
     Route::post('/{asset}/investor/comments', $commentController . '@investorStore')->name('comments.investor.store')->middleware(['auth:investor']);
+    Route::post('/{asset}/developer/comments', $commentController . '@developerStore')->name('comments.developer.store')->middleware(['auth:developer']);
     // Delete
     Route::post('/{asset}/comments/delete/{id?}', $commentController . '@destroy')->name('comments.delete')->middleware(['permission:' . getPermissionKey($commentModuleName, 'delete', true)]);
 

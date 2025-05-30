@@ -122,6 +122,16 @@
             </div>
         </div>
 
+        <div class="form-group">
+
+            <label class="col-md-1 control-label">Developer Access: </label>
+            <div class="col-md-10">
+                <el-switch v-model="form.developer_access">
+                </el-switch>
+            </div>
+
+        </div>
+
         <!-- Upload Floor Plan -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Upload Floor Plan:</label>

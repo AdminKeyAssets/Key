@@ -24,6 +24,12 @@ class AssetRequest extends FormRequest
             if ($value === 'null') {
                 $value = null;
             }
+            if ($value === 'false') {
+                $value = false;
+            }
+            if ($value === 'true') {
+                $value = true;
+            }
         });
 
         $this->merge($data);

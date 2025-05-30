@@ -28,10 +28,10 @@ class SaveDeveloperRequest extends FormRequest
 //dd($this->request->all());
         return [
             'name' => 'required',
-            'id_code' => ['required', !empty($this->request->all()['id']) ? Rule::unique('developers', 'id_code')->ignore($this->request->all()['id']) : 'unique:developers,id_code'],
+//            'id_code' => ['required', !empty($this->request->all()['id']) ? Rule::unique('developers', 'id_code')->ignore($this->request->all()['id']) : 'unique:developers,id_code'],
             'representative' => 'required',
             'tel' => 'required',
-            'representative_position' => 'required',
+//            'representative_position' => 'required',
             'username' => ['required', !empty($this->request->all()['id']) ? Rule::unique('developers', 'username')->ignore($this->request->all()['id']) : 'unique:developers,username'],
             'password' => [$passwordRequired],
 //            'logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',

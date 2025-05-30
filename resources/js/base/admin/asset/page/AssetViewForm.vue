@@ -902,6 +902,7 @@
                                         :user-id="this.userId"
                                         :is-admin="this.isAdmin"
                                         :investor-view="this.investorView"
+                                        :developer-view="this.developerView"
                                     ></AssetComments>
                                 </el-card>
                             </el-row>

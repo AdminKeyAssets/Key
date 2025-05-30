@@ -1,6 +1,6 @@
 <el-tooltip content="Investments" placement="top" effect="light">
     <a href="{{ $route }}"
-       class="btn btn-success btn-money payments-icon" style="padding: 3px">
+       class="btn btn-success btn-money payments-icon btn-investments" style="padding: 3px">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g opacity="0.4">
                 <path

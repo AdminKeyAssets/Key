@@ -428,6 +428,15 @@ fieldset[disabled] .btn-default.active {
     transition: all .3s;
 }
 
+.btn-switch {
+    background-color: orange;
+    border-color: orange;
+    transition: all .3s;
+    font-weight: bolder;
+    padding: 4px 4px !Important;
+    color: white;
+}
+
 .btn-primary.login {
     padding: 8px 44px;
     border-radius: 10px;
@@ -451,6 +460,12 @@ fieldset[disabled] .btn-default.active {
     padding: 3px 3px !Important;
     background-color: #AAD178;
     border-color: #AAD178;
+}
+
+.text-center .btn-success.btn-money.payments-icon.btn-investments {
+    padding: 3px 3px !Important;
+    background-color: #567331FF;
+    border-color: #567331FF;
 }
 
 .text-center .btn-success.btn-home.renovations-icon {
@@ -1277,4 +1292,8 @@ table thead th {
 }
 .cell{
     word-break: break-word !important;
+}
+
+.table-developers th, .table-developers td{
+    text-align: center;
 }

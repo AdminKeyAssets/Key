@@ -121,6 +121,10 @@ export default {
         investorView: {
             type: [Boolean, Number],
             default: false
+        },
+        developerView: {
+            type: [Boolean, Number],
+            default: false
         }
     },
     data() {
@@ -243,9 +247,13 @@ export default {
             if (this.attachment) {
                 formData.append('attachment', this.attachment);
             }
-            const url = this.investorView
-                ? `/assets/${this.id}/investor/comments`
-                : `/assets/${this.id}/comments`;
+            let url = `/assets/${this.id}/comments`;
+            if(this.investorView){
+                url = `/assets/${this.id}/investor/comments`;
+            }else if(this.developerView){
+                url = `/assets/${this.id}/developer/comments`;
+            }
+
             try {
                 const response = await axios.post(url, formData);
                 responseParse(response);

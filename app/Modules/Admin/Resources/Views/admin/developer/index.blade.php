@@ -27,16 +27,13 @@
                 <br><h3 class="text-center">@lang('Developer Not Found')</h3><br>
             @else
                 <div class="table-responsive">
-                    <table class="table table-vcenter table-striped">
+                    <table class="table table-vcenter table-striped table-developers">
                         <thead>
                         <tr>
                             <th>Developer Name</th>
-                            <th>ID Code</th>
+                            <th>Profile Picture</th>
                             <th>Representative</th>
-                            <th>Position</th>
-                            <th>Tel</th>
-                            <th>Logo</th>
-                            <th>Username</th>
+                            <th>Cell</th>
                             @if(auth()->user()->getRolesNameAttribute() == 'administrator')
                                 <th class="developer-assets"> Assets</th>
                             @endif
@@ -48,16 +45,13 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->id_code }}</td>
-                                <td>{{ $item->representative }}</td>
-                                <td>{{ $item->representative_position }}</td>
-                                <td>{{ $item->tel }}</td>
                                 <td>
                                     @if($item->logo)
                                         <img src="{{ $item->logo }}" alt="{{ $item->name }}" width="50">
                                     @endif
                                 </td>
-                                <td>{{ $item->username }}</td>
+                                <td>{{ $item->representative }} - {{ $item->representative_position }}</td>
+                                <td>{{ $item->tel }}</td>
                                 @if(auth()->user()->getRolesNameAttribute() == 'administrator')
                                     @php
                                     $assetNameList = $item->assets->pluck('asset_name')->toArray();

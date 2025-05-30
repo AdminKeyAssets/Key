@@ -23,6 +23,16 @@
                     </el-date-picker>
                 </div>
 
+                <div class="form-group date-filter">
+                    <el-date-picker
+                        v-model="form.payment_date"
+                        type="daterange"
+                        format="yyyy/MM/dd"
+                        value-format="yyyy/MM/dd"
+                        start-placeholder="Payments Start date"
+                        end-placeholder="Payments End date">
+                    </el-date-picker>
+                </div>
 
                 <div class="form-group">
                     <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
@@ -71,6 +81,52 @@
                     </el-select>
                 </div>
 
+                <div class="form-group">
+                    <el-select v-model="form.city" filterable placeholder="City" v-remove-readonly>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="city in cities"
+                            :key="city.city"
+                            :label="city.city"
+                            :value="city.city"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.investor" filterable placeholder="Investor" v-remove-readonly>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="investor in investors"
+                            :key="investor.name + ' ' + investor.surname"
+                            :label="investor.name + ' ' + investor.surname"
+                            :value="investor.name + ' ' + investor.surname"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+                <div class="form-group">
+                    <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
+                        <el-option
+                            label="All"
+                            value="all"
+                        ></el-option>
+                        <el-option
+                            v-for="manager in managers"
+                            :key="manager.name + ' ' + manager.surname"
+                            :label="manager.name + ' ' + manager.surname"
+                            :value="manager.name + ' ' + manager.surname"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+
                 <el-button type="primary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
                 <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
             </el-row>
@@ -91,10 +147,16 @@ export default {
                 asset_type: '',
                 agreement_status: '',
                 asset: '',
+                manager: '',
+                investor: '',
+                city: ''
             },
             showFilters: false,
             assets: [],
             types: [],
+            managers: [],
+            investors: [],
+            cities: [],
         };
     },
     mounted() {
@@ -106,7 +168,10 @@ export default {
             this.form.status !== 'active' ||
             this.form.asset ||
             this.form.asset_status ||
-            this.form.agreement_status) {
+            this.form.agreement_status ||
+            this.form.manager ||
+            this.form.investor ||
+            this.form.city) {
             this.showFilters = true;
         }
     },
@@ -119,6 +184,9 @@ export default {
             this.form.agreement_status = urlParams.get('agreement_status') || '';
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
             this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
+            this.form.investor = urlParams.get('investor') || '';
+            this.form.manager = urlParams.get('manager') || '';
+            this.form.city = urlParams.get('city') || '';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -132,6 +200,9 @@ export default {
             this.form.asset_type = '';
             this.form.asset = '';
             this.form.agreement_status = '';
+            this.form.investor = '';
+            this.form.manager = '';
+            this.form.city = '';
             this.applyFilters();
         },
         fetchAssetFilters() {
@@ -147,10 +218,19 @@ export default {
                         if (data.types) {
                             this.types = data.types;
                         }
+                        if (data.investors) {
+                            this.investors = data.investors;
+                        }
+                        if (data.managers) {
+                            this.managers = data.managers;
+                        }
+                        if (data.cities) {
+                            this.cities = data.cities;
+                        }
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching managers:', error);
+                    console.error('Error fetching data:', error);
                 });
         }
     }

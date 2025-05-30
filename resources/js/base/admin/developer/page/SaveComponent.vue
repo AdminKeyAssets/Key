@@ -52,7 +52,7 @@
 
                 <!-- Tel -->
                 <div class="form-group">
-                    <label class="col-md-2 control-label">Tel: <span class="text-danger">*</span></label>
+                    <label class="col-md-2 control-label">Cell: <span class="text-danger">*</span></label>
                     <div class="col-md-6">
                         <el-input
                             type="tel"
@@ -93,7 +93,7 @@
 
                 <!-- Logo -->
                 <div class="form-group dashed">
-                    <label class="col-md-2 control-label">Logo:</label>
+                    <label class="col-md-2 control-label">Profile Picture:</label>
                     <div class="col-md-6">
                         <input type="file" accept="image/*" @change="onLogoChange" />
                         <div v-if="form.logoPreview">
@@ -214,7 +214,6 @@ export default {
                 username: '',
                 password: '',
                 service_agreement: null,
-                service_agreement: '',
                 logo: null,
                 logoPreview: null,
                 stamp: null,

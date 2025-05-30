@@ -23,14 +23,23 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
     public function collection()
     {
         $user = auth()->user();
+//        dd(auth()->user());
         $userId = $user->getAuthIdentifier();
 
         $query = Asset::query()->orderByDesc('id');
 
-        if (auth()->user()->getRolesNameAttribute() != 'administrator') {
+
+        if (\Auth::guard('admin')->check() &&auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
         }
 
+        if(\Auth::guard('investor')->check()){
+            $query = $user->assets()->orderByDesc('id');
+        }
+
+        if(\Auth::guard('developer')->check()){
+            $query->whereIn('project_name', $user->assets()->pluck('asset_name')->toArray());
+        }
         // Apply filters as in your index function.
         if (!empty($this->filters['asset']) && $this->filters['asset'] != 'all') {
             $query->where('project_name', 'like', '%' . $this->filters['asset'] . '%');

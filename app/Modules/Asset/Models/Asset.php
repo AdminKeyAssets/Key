@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Models;
 
+use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Investor;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,7 +55,8 @@ class Asset extends Model
         'sale_price',
         'sale_agreement',
         'purchaser',
-        'status'
+        'status',
+        'developer_access'
     ];
 
     public function informations()
@@ -132,5 +134,10 @@ class Asset extends Model
     public function gallery()
     {
         return $this->hasMany(AssetGallery::class);
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
     }
 }

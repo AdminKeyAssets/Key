@@ -142,8 +142,12 @@ class AssetController extends BaseController
             $managerUser = Admin::where('name', $managerFirstName)
                 ->where('surname', $managerSurname)->
                 first();
-            if (isset($managerUser->id)) {
-                $query->where('admin_id', $managerUser->id);
+            $investorIds = $managerUser->investors->pluck('id')->toArray();
+
+            if (!empty($investorIds)) {
+                $query->whereHas('investors', function ($q) use ($investorIds) {
+                    $q->whereIn('investors.id', $investorIds);
+                });
             }
         }
 
@@ -227,7 +231,7 @@ class AssetController extends BaseController
         if (Auth::guard('developer')->check()) {
             $developer = Auth::guard('developer')->user();
             // For developers, find assets with matching names
-            $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())
+            $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
                 ->orderByDesc('id');
         } else {
             // For investors, use the relationship
@@ -250,6 +254,10 @@ class AssetController extends BaseController
 
         if ($request->agreement_status && $request->agreement_status != 'all') {
             $userAssets->where('agreement_status', $request->agreement_status);
+        }
+
+        if ($request->city && $request->city != 'all') {
+            $userAssets->where('city', $request->city);
         }
 
         if ($request->asset && $request->asset != 'all') {
@@ -285,12 +293,60 @@ class AssetController extends BaseController
             });
         }
 
+        if ($request->investor && $request->investor != 'all') {
+            $investorNamesArray = explode(' ', $request->investor);
+
+            // The first part is the name
+            $firstName = array_shift($investorNamesArray);
+
+            // The remaining parts are the surname
+            $surname = implode(' ', $investorNamesArray);
+
+//            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $firstName)
+                ->where('surname', $surname)->first();
+
+            if (isset($investorUser->id)) {
+                $userAssets->whereHas('investors', function ($q) use ($investorUser) {
+                    $q->where('id', $investorUser->id);
+                });
+            }
+        }
+
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            $investorIds = $managerUser->investors->pluck('id')->toArray();
+
+            if (!empty($investorIds)) {
+                $userAssets->whereHas('investors', function ($q) use ($investorIds) {
+                    $q->whereIn('investors.id', $investorIds);
+                });
+            }
+        }
+
+
         if ($userAssets->count() > 0) {
             $this->baseData['allData'] = $userAssets->paginate(25);
         } else {
-            $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
+            $this->baseData['allData'] = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
+                ->where('sale_status', 'sold')
+                ->orderByDesc('id')->paginate(25);
+            if (Auth::guard('investor')->check()) {
+                $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
+            }
         }
+        if (Auth::guard('developer')->check()) {
 
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index_developer', $this->baseData);
+        }
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -531,6 +587,7 @@ class AssetController extends BaseController
 
         }
 
+
         $assetData = [
             'address' => $request->address,
             'cadastral_number' => $request->cadastral_number,
@@ -571,6 +628,7 @@ class AssetController extends BaseController
             'renovation_total_price' => $request->renovation_total_price ?? null,
             'renovation_status' => $request->renovation_status ?? 'Completed',
             'status' => 'completed',
+            'developer_access' => $request->developer_access ?? 0,
         ];
 
         if (!$request->id) {
@@ -649,8 +707,7 @@ class AssetController extends BaseController
                     $tenant->update(
                         $tenantDataArray
                     );
-                }
-                else{
+                } else {
                     $tenant = Tenant::create($tenantDataArray);
                 }
 
@@ -1168,19 +1225,40 @@ class AssetController extends BaseController
     {
         $user = \auth()->user();
         $developerAssetNames = $user->assets()->pluck('asset_name')->toArray();
-        $this->baseData['assets'] = Asset::query()
-            ->whereIn('project_name', $developerAssetNames)
+
+        $assets = Asset::whereIn('project_name', $developerAssetNames)->where('developer_access', true);
+
+        $this->baseData['assets'] = (clone $assets)
             ->select('project_name', DB::raw('MAX(id) as max_id'))
             ->groupBy('project_name')
             ->orderBy('project_name')
             ->get();
 
-        $this->baseData['types'] = Asset::query()
-            ->whereIn('project_name', $developerAssetNames)
+        $this->baseData['types'] = (clone $assets)
             ->select('type', DB::raw('MAX(id) as max_id'))
             ->groupBy('type')
             ->orderBy('type')
             ->get();
+
+        $this->baseData['cities'] = (clone $assets)
+            ->select('city', DB::raw('MAX(id) as max_id'))
+            ->groupBy('city')
+            ->orderBy('city')
+            ->get();
+
+        $assetIds = $assets->pluck('id')->unique();
+
+        $investors = Investor::whereHas('assets', function ($q) use ($assetIds) {
+            $q->whereIn('assets.id', $assetIds);
+        })->get();
+        $this->baseData['investors'] = $investors->toArray();
+
+        $managers = [];
+        foreach ($investors as $investor) {
+            $managers[$investor->admin->id] = $investor->admin->toArray();
+        }
+
+        $this->baseData['managers'] = $managers;
 
         return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
 
@@ -1341,5 +1419,13 @@ class AssetController extends BaseController
         } catch (\Exception $ex) {
             return ServiceResponse::jsonNotification($ex->getMessage(), 500);
         }
+    }
+
+    public function developerAccess(Request $request, $assetId)
+    {
+        $asset = Asset::where('id', $assetId)->first();
+        $asset->update(['developer_access' => !$asset->developer_access]);
+
+        return redirect()->back();
     }
 }

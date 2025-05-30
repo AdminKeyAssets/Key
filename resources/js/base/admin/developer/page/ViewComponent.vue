@@ -31,7 +31,7 @@
 
         <!-- Tel -->
         <div class="form-group">
-          <label class="col-md-2 control-label">Tel:</label>
+          <label class="col-md-2 control-label">Cell:</label>
           <div class="col-md-6">{{ form.tel }}</div>
         </div>
 
@@ -51,7 +51,7 @@
 
         <!-- Logo -->
         <div class="form-group dashed" v-if="form.logo">
-          <label class="col-md-2 control-label">Logo:</label>
+          <label class="col-md-2 control-label">Profile Picture:</label>
           <div class="col-md-6">
             <ImageModal
                 :thumbnail="form.logo"
