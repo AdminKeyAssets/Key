@@ -58,6 +58,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
         Route::get('filter-options', $developerController . '@filterOptions')
             ->name('filters');
 
+        Route::post('asset-investors', $developerController . '@developerAssetsInvestors')
+            ->name('asset.investors');
+
         Route::post('update-asset', $developerController . '@updateAssets')->name('update.assets')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 
     });

@@ -4,9 +4,11 @@ namespace App\Modules\Admin\Http\Controllers\User;
 
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Http\Requests\Developer\SaveDeveloperRequest;
+use App\Modules\Admin\Models\DeveloperAgreement;
 use App\Modules\Admin\Models\User\Admin;
 use App\Modules\Admin\Models\User\Developer;
 use App\Modules\Asset\Models\Asset;
+use App\Modules\Asset\Models\DeveloperAsset;
 use App\Utilities\ServiceResponse;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -42,8 +44,8 @@ class DeveloperController extends BaseController
 
         if ($request->search && $request->search != 'all') {
             $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('representative', 'like', '%' . $request->search . '%')
-                  ->orWhere('id_code', 'like', '%' . $request->search . '%');
+                ->orWhere('representative', 'like', '%' . $request->search . '%')
+                ->orWhere('id_code', 'like', '%' . $request->search . '%');
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -122,7 +124,14 @@ class DeveloperController extends BaseController
             if ($request->get('id')) {
                 $developer = Developer::findOrFail($request->get('id'));
                 $this->baseData['item'] = $developer;
+                $this->baseData['item']['agreements'] = $developer->agreements()->get();
+                $this->baseData['item']['assets'] = $developer->assets()->pluck('asset_name')->toArray();
             }
+            $this->baseData['assets'] = Asset::where('developer_access', 1)
+                ->groupBy('project_name')
+                ->orderBy('project_name')
+                ->pluck('project_name')
+                ->toArray();
         } catch (\Exception $ex) {
             Log::error('Error during developer create data', ['message' => $ex->getMessage(), 'data' => $request->all()]);
             return ServiceResponse::jsonNotification($ex->getMessage(), $ex->getCode(), []);
@@ -141,7 +150,6 @@ class DeveloperController extends BaseController
             $logo = null;
             $stamp = null;
             $signature = null;
-            $serviceAgreement = null;
 
             if (isset($request->id)) {
                 $developer = Developer::where('id', $request->id)->first();
@@ -192,21 +200,6 @@ class DeveloperController extends BaseController
                     $signature = $request->input('signature');
                 }
 
-                if ($request->hasFile('service_agreement')) {
-                    if ($developer->service_agreement && Storage::disk('public')->exists($developer->service_agreement)) {
-                        Storage::disk('public')->delete($developer->service_agreement);
-                    }
-                    $serviceAgreementFile = $request->file('service_agreement');
-                    $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
-                    $serviceAgreement = Storage::url($serviceAgreement);
-                } else if ($request->input('service_agreement') === null) {
-                    if ($developer->service_agreement && Storage::disk('public')->exists($developer->service_agreement)) {
-                        Storage::disk('public')->delete($developer->service_agreement);
-                    }
-                } else {
-                    $serviceAgreement = $request->input('service_agreement');
-                }
-
             } else {
                 if ($request->hasFile('logo')) {
                     $logoFile = $request->file('logo');
@@ -223,11 +216,6 @@ class DeveloperController extends BaseController
                     $signature = $signatureFile->store('uploads', 'public');
                     $signature = Storage::url($signature);
                 }
-                if ($request->hasFile('service_agreement')) {
-                    $serviceAgreementFile = $request->file('service_agreement');
-                    $serviceAgreement = $serviceAgreementFile->store('uploads', 'public');
-                    $serviceAgreement = Storage::url($serviceAgreement);
-                }
             }
 
             $data = [
@@ -240,18 +228,53 @@ class DeveloperController extends BaseController
                 'logo' => $logo,
                 'stamp' => $stamp,
                 'signature' => $signature,
-                'service_agreement' => $serviceAgreement,
             ];
 
-            // Only hash and update password if a new password is provided
             if ($request->filled('password')) {
                 $data['password'] = $request->password;
             }
+            if ($request->id) {
+                $developer = Developer::where('id', $request->id)->first();
+                $developer->update($data);
+            } else {
+                $developer = Developer::create($data);
+            }
 
-            Developer::updateOrCreate(
-                ['id' => $request->id],
-                $data
-            );
+
+            $developer->agreements()->delete();
+
+            if (!empty($request->agreements)) {
+                foreach ($request->agreements as $agreement) {
+                    $agreementAttachmentPath = null;
+//dd($agreement);
+                    if (isset($agreement['path']) && gettype($agreement['path']) == 'object') {
+                        $agreementAttachmentFile = $agreement['path'];
+                        $originalFileName = time() . '_' . $agreementAttachmentFile->getClientOriginalName();
+                        $agreementAttachmentPath = $agreementAttachmentFile->storeAs('uploads', $originalFileName, 'public');
+                        $agreementAttachmentPath = Storage::url($agreementAttachmentPath);
+                    } else {
+                        $agreementAttachmentPath = $agreement['path'] ?? null;
+                    }
+//                    dd($agreement['name'], $agreementAttachmentPath);
+                    DeveloperAgreement::create([
+                        'name' => $agreement['name'],
+                        'path' => $agreementAttachmentPath,
+                        'developer_id' => $developer->id
+                    ]);
+
+                }
+            }
+
+            $developer->assets()->delete();
+
+            if(!empty($request->assets)) {
+                foreach ($request->assets as $asset) {
+                   $developerAsset = DeveloperAsset::create([
+                        'asset_name' => $asset,
+                        'developer_id' => $developer->id
+                    ]);
+                }
+            }
 
         } catch (\Exception $ex) {
             Log::error('Error during developer save', ['message' => $ex->getMessage(), 'data' => $request->all()]);
@@ -311,12 +334,35 @@ class DeveloperController extends BaseController
         return ServiceResponse::jsonNotification(__('Asset List'), 200, $this->baseData);
     }
 
+    public function developerAssetsInvestors(Request $request)
+    {
+        $assetName = $request->asset;
+        $developerId = $request->developer_id;
+        $developer = Developer::where('id', $developerId)->first();
+        $assets = Asset::where('developer_access', 1)
+            ->where('project_name', $assetName)
+            ->get();
+        $investorsArray = [];
+        foreach ($assets as $asset) {
+            $investors = $asset->investors;
+            foreach ($investors as $investor) {
+                $investorName = $investor->name . ' ' . $investor->surname;
+                if (!in_array($investorName, $investorsArray))
+                    $investorsArray[] = $investorName;
+            }
+        }
+
+        $this->baseData['investors'] = $investorsArray;
+
+        return ServiceResponse::jsonNotification(__('Investor List'), 200, $this->baseData);
+    }
+
     public function updateAssets(Request $request)
     {
         $developer = Developer::find($request->developer_id);
 
         $developer->assets()->delete();
-        foreach($request->assets as $asset){
+        foreach ($request->assets as $asset) {
             $developer->assets()->create(['asset_name' => $asset]);
         }
 

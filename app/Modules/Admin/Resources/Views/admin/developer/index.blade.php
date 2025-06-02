@@ -31,7 +31,7 @@
                         <thead>
                         <tr>
                             <th>Developer Name</th>
-                            <th>Profile Picture</th>
+                            <th>Profile Pic</th>
                             <th>Representative</th>
                             <th>Cell</th>
                             @if(auth()->user()->getRolesNameAttribute() == 'administrator')
@@ -54,13 +54,16 @@
                                 <td>{{ $item->tel }}</td>
                                 @if(auth()->user()->getRolesNameAttribute() == 'administrator')
                                     @php
-                                    $assetNameList = $item->assets->pluck('asset_name')->toArray();
+                                        $assetNameList = $item->assets->pluck('asset_name')->toArray();
                                     @endphp
+
                                     <td class="developer-assets">
-                                        <update-developer-asset
-                                            :asset-name='@json($assetNameList)'
-                                            :developer-id="{{ $item->id }}">
-                                        </update-developer-asset>
+                                        @foreach($assetNameList as $assetName)
+                                            <developer-assets-investors
+                                                asset-name="{{$assetName}}"
+                                                :developer-id="{{ $item->id }}">
+                                            </developer-assets-investors>
+                                        @endforeach
                                     </td>
                                 @endif
                                 <td class="text-center">

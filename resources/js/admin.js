@@ -53,7 +53,8 @@ Vue.component('admin-role-save-component', require('./base/admin/role/page/SaveC
 // Developer
 Vue.component('developer-save-component', require('./base/admin/developer/page/SaveComponent').default);
 Vue.component('developer-view-component', require('./base/admin/developer/page/ViewComponent').default);
-Vue.component('update-developer-asset', require('./base/admin/developer/partials/UpdateDeveloperAsset').default);
+// Vue.component('update-developer-asset', require('./base/admin/developer/partials/UpdateDeveloperAsset').default);
+Vue.component('developer-assets-investors', require('./base/admin/developer/partials/DeveloperAssetsInvestors').default);
 
 
 //Base Component

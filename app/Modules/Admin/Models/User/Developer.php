@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Models\User;
 
+use App\Modules\Admin\Models\DeveloperAgreement;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\DeveloperAsset;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -35,5 +36,10 @@ class Developer extends Authenticatable
     public function assets()
     {
         return $this->hasMany(DeveloperAsset::class);
+    }
+
+    public function agreements()
+    {
+        return $this->hasMany(DeveloperAgreement::class);
     }
 }

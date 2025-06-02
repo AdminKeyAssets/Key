@@ -1276,7 +1276,7 @@ table thead th {
     min-width: 90%;
 }
 @media (orientation: landscape) {
-    .table-responsive>.table>tbody>tr>td{
+    .table-responsive:not(.table-roles)>.table>tbody>tr>td{
         white-space: nowrap;
     }
 }
@@ -1296,4 +1296,10 @@ table thead th {
 
 .table-developers th, .table-developers td{
     text-align: center;
+}
+.investors-wrapper{
+    text-align: left!important;
+}
+.investor-item{
+    padding-bottom: 10px;
 }

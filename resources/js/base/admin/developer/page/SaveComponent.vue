@@ -13,7 +13,7 @@
 
                 <!-- Developer Name -->
                 <div class="form-group">
-                    <label class="col-md-2 control-label">Developer   Name: <span class="text-danger">*</span></label>
+                    <label class="col-md-2 control-label">Developer Name: <span class="text-danger">*</span></label>
                     <div class="col-md-6">
                         <el-input
                             v-model="form.name"
@@ -26,7 +26,7 @@
 
                 <!-- ID Code -->
                 <div class="form-group">
-                    <label class="col-md-2 control-label">ID Code: <span class="text-danger">*</span></label>
+                    <label class="col-md-2 control-label">ID Code: </label>
                     <div class="col-md-6">
                         <el-input
                             v-model="form.id_code"
@@ -64,7 +64,7 @@
 
                 <!-- Representative Position -->
                 <div class="form-group">
-                    <label class="col-md-2 control-label">Representative Position: <span class="text-danger">*</span></label>
+                    <label class="col-md-2 control-label">Representative Position: </label>
                     <div class="col-md-6">
                         <el-input
                             v-model="form.representative_position"
@@ -76,18 +76,59 @@
                 </div>
 
                 <!-- Service Agreement -->
-                <div class="form-group dashed">
-                    <label class="col-md-2 control-label">Service Agreement:</label>
-                    <div class="col-md-6">
-                        <input type="file" @change="onServiceAgreementChange" />
-                        <div v-if="form.service_agreement">
-                            <el-button
-                                icon="el-icon-delete-solid"
-                                size="small"
-                                type="danger"
-                                @click="removeServiceAgreement"
-                            />
-                        </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Upload Service Agreement(s):</label>
+                    <div class="col-md-8">
+                        <el-form-item
+                            v-for="(agreement, index) in form.agreements"
+                            :key="agreement.id"
+                        >
+                            <div class="col-md-3">
+                                <el-input
+                                    class="col-md-12"
+                                    v-model="agreement.name"
+                                    placeholder="Name for Agreement"
+                                />
+                            </div>
+                            <div class="col-md-3">
+                                <input
+                                    type="file"
+                                    @change="onAgreementFileChange($event, index)"
+                                    v-if="!agreement.path"
+                                />
+                                <div v-else>
+                                    <img
+                                        v-if="agreement.path.preview"
+                                        :src="agreement.path.preview"
+                                        alt="preview"
+                                        style="max-width: 100px;"
+                                    />
+                                    <a
+                                        v-else
+                                        :href="agreement.path"
+                                        target="_blank"
+                                    >
+                                        {{ agreement.name }}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <el-button
+                                    icon="el-icon-delete-solid"
+                                    size="small"
+                                    type="danger"
+                                    @click.prevent="removeAgreement(agreement)"
+                                />
+                            </div>
+                        </el-form-item>
+                        <el-button
+                            type="primary"
+                            size="medium"
+                            icon="el-icon-plus"
+                            @click="addAgreement"
+                        >
+                            Add Agreement
+                        </el-button>
                     </div>
                 </div>
 
@@ -95,9 +136,9 @@
                 <div class="form-group dashed">
                     <label class="col-md-2 control-label">Profile Picture:</label>
                     <div class="col-md-6">
-                        <input type="file" accept="image/*" @change="onLogoChange" />
+                        <input type="file" accept="image/*" @change="onLogoChange"/>
                         <div v-if="form.logoPreview">
-                            <img :src="form.logoPreview" style="max-width:100px;" />
+                            <img :src="form.logoPreview" style="max-width:100px;"/>
                             <el-button
                                 icon="el-icon-delete-solid"
                                 size="small"
@@ -112,9 +153,9 @@
                 <div class="form-group dashed">
                     <label class="col-md-2 control-label">Stamp:</label>
                     <div class="col-md-6">
-                        <input type="file" accept="image/*" @change="onStampChange" />
+                        <input type="file" accept="image/*" @change="onStampChange"/>
                         <div v-if="form.stampPreview">
-                            <img :src="form.stampPreview" style="max-width:100px;" />
+                            <img :src="form.stampPreview" style="max-width:100px;"/>
                             <el-button
                                 icon="el-icon-delete-solid"
                                 size="small"
@@ -129,9 +170,9 @@
                 <div class="form-group dashed">
                     <label class="col-md-2 control-label">Signature:</label>
                     <div class="col-md-6">
-                        <input type="file" accept="image/*" @change="onSignatureChange" />
+                        <input type="file" accept="image/*" @change="onSignatureChange"/>
                         <div v-if="form.signaturePreview">
-                            <img :src="form.signaturePreview" style="max-width:100px;" />
+                            <img :src="form.signaturePreview" style="max-width:100px;"/>
                             <el-button
                                 icon="el-icon-delete-solid"
                                 size="small"
@@ -139,6 +180,21 @@
                                 @click="removeSignature"
                             />
                         </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Select Assets: </label>
+                    <div class="col-md-6">
+                        <el-select v-model="form.assets" placeholder="Select Asset" multiple filterable v-remove-readonly>
+                            <el-option
+                                v-for="asset in assets"
+                                :key="asset"
+                                :label="asset"
+                                :value="asset"
+                            ></el-option>
+                        </el-select>
+
                     </div>
                 </div>
 
@@ -195,8 +251,8 @@
 
 <script>
 import axios from 'axios'
-import { responseParse } from '../../../mixins/responseParse'
-import { getData } from '../../../mixins/getData'
+import {responseParse} from '../../../mixins/responseParse'
+import {getData} from '../../../mixins/getData'
 
 export default {
     props: ['getSaveDataRoute', 'id'],
@@ -220,7 +276,10 @@ export default {
                 stampPreview: null,
                 signature: null,
                 signaturePreview: null,
-            }
+                agreements: {},
+                assets: {},
+            },
+            assets: {}
         }
     },
     created() {
@@ -248,38 +307,54 @@ export default {
                 }
                 this.routes = res.data.data.routes
             }
-            this.loading = false
+            if (res.status === 200 && res.data.data.assets){
+                this.assets = res.data.data.assets;
+            }
+                this.loading = false
         },
 
         async save() {
 
-          this.loading = true;
-          let formData = new FormData();
+            this.loading = true;
+            let formData = new FormData();
+            for (let key in this.form) {
+                if (['service_agreement', 'logo', 'stamp', 'signature'].includes(key) && this.form[key]) {
+                    formData.append(key, this.form[key]);
+                } else if (key === 'agreements') {
+                    this.form.agreements.forEach((agreement, index) => {
+                        formData.append(`agreements[${index}][name]`, agreement.name);
+                        if (agreement.path) {
+                            if (agreement.path.file) {
+                                formData.append(`agreements[${index}][path]`, agreement.path.file);
+                            } else {
+                                formData.append(`agreements[${index}][path]`, agreement.path);
+                            }
+                        }
+                    });
+                }else if(key === 'assets'){
+                    this.form.assets.forEach(assetValue => {
+                        formData.append('assets[]', assetValue);
+                    });
+                }
+                else {
+                    formData.append(key, this.form[key]);
+                }
+            }
 
-          for (let key in this.form) {
-            if (['service_agreement','logo','stamp','signature'].includes(key) && this.form[key]) {
-              formData.append(key, this.form[key]);
-            }
-            else {
-              formData.append(key, this.form[key]);
-            }
-          }
-
-          await axios.post('/admin/developers/save', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }).then(response => {
-            console.log(response)
-            this.loading = false;
-            responseParse(response);
-            setTimeout(() => {
-              window.location.href = '/admin/developers';
-            }, 1000);
-          }).catch(error => {
-            this.loading = false;
-            responseParse(error.response);
-          });
+            await axios.post('/admin/developers/save', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                this.loading = false;
+                responseParse(response);
+                setTimeout(() => {
+                    window.location.href = '/admin/developers';
+                }, 1000);
+            }).catch(error => {
+                this.loading = false;
+                responseParse(error.response);
+            });
         },
 
         generatePassword() {
@@ -292,12 +367,35 @@ export default {
         },
 
         // file handlers
-        onServiceAgreementChange(e) {
-            this.form.service_agreement = e.target.files[0] || null
+        onAgreementFileChange(e, i) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const ags = [...this.form.agreements];
+                    ags[i].path = {
+                        file,
+                        preview: file.type.startsWith('image/') ? ev.target.result : null,
+                        name: file.name
+                    };
+                    this.form.agreements = ags;
+                };
+                reader.readAsDataURL(file);
+            }
         },
-        removeServiceAgreement() {
-            this.form.service_agreement = null
-            this.form.service_agreement = ''
+
+        addAgreement() {
+            const ags = Array.isArray(this.form.agreements) ? [...this.form.agreements] : [];
+            ags.push({id: Date.now(), name: '', path: null});
+            this.form.agreements = ags;
+            console.log(1234)
+        },
+
+        removeAgreement(item) {
+            const ags = Array.isArray(this.form.agreements)
+                ? this.form.agreements.filter(a => a.id !== item.id)
+                : [];
+            this.form.agreements = ags;
         },
 
         onLogoChange(e) {
