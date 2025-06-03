@@ -12,31 +12,31 @@
             <el-row>
 
                 <!-- Developer Name -->
-                <div class="form-group">
+                <div class="form-group" v-if="form.name">
                     <label class="col-md-2 control-label">Developer Name:</label>
                     <div class="col-md-6">{{ form.name }}</div>
                 </div>
 
                 <!-- ID Code -->
-                <div class="form-group">
+                <div class="form-group" v-if="form.id_code">
                     <label class="col-md-2 control-label">ID Code:</label>
                     <div class="col-md-6">{{ form.id_code }}</div>
                 </div>
 
                 <!-- Representative -->
-                <div class="form-group">
+                <div class="form-group" v-if="form.representative">
                     <label class="col-md-2 control-label">Representative:</label>
                     <div class="col-md-6">{{ form.representative }}</div>
                 </div>
 
                 <!-- Tel -->
-                <div class="form-group">
+                <div class="form-group" v-if="form.tel">
                     <label class="col-md-2 control-label">Cell:</label>
                     <div class="col-md-6">{{ form.tel }}</div>
                 </div>
 
                 <!-- Representative Position -->
-                <div class="form-group">
+                <div class="form-group" v-if="form.representative_position">
                     <label class="col-md-2 control-label">Representative Position:</label>
                     <div class="col-md-6">{{ form.representative_position }}</div>
                 </div>
@@ -93,7 +93,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" v-if="form.assets && form.assets.length">
                     <label class="col-md-2 control-label">Assets: </label>
                     <div class="col-md-6">
                         <el-select v-model="form.assets" placeholder="Select Asset" multiple disabled>
@@ -109,7 +109,7 @@
                 </div>
 
                 <!-- Username -->
-                <div class="form-group">
+                <div class="form-group" v-if="form.username">
                     <label class="col-md-2 control-label">Username:</label>
                     <div class="col-md-6">{{ form.username }}</div>
                 </div>
