@@ -226,9 +226,9 @@ class AssetController extends BaseController
         $userId = $user->getAuthIdentifier();
 
         $statusFilter = $request->status ?? 'active';
-
+        $isDeveloper = Auth::guard('developer')->check();
         // Check if the user is a developer
-        if (Auth::guard('developer')->check()) {
+        if ($isDeveloper) {
             $developer = Auth::guard('developer')->user();
             // For developers, find assets with matching names
             $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
@@ -272,20 +272,23 @@ class AssetController extends BaseController
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
             $end = $dates[1] ?? null;
-            $userAssets->where(function ($userAssets) use ($start, $end) {
-                $userAssets->where('created_at', '>=', $start)
-                    ->orWhereHas('rentals', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
-                    })
-                    ->orWhereHas('payments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
-                    })
-                    ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
+            $userAssets->where(function ($userAssets) use ($start, $end, $isDeveloper) {
+                if (!$isDeveloper) {
+                    $userAssets->where('created_at', '>=', $start)
+                        ->orWhereHas('rentals', function ($q) use ($start, $end) {
+                            $q->where('payment_date', '>=', $start);
+                            $q->where('payment_date', '<=', $end);
+                        });
+                    $userAssets->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
                         $q->where('payment_date', '>=', $start);
                         $q->where('payment_date', '<=', $end);
                     });
+                }
+                $userAssets->orWhereHas('payments', function ($q) use ($start, $end) {
+                    $q->where('payment_date', '>=', $start);
+                    $q->where('payment_date', '<=', $end);
+                });
+
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
 //                        $q->where('date', '>=', $start);
 //                        $q->where('date', '<=', $end);

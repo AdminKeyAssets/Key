@@ -64,7 +64,7 @@
                             <th> Investor</th>
                             <th> Asset Type / Size</th>
                             <th> Purchase Price</th>
-{{--                            <th> Paid</th>--}}
+                            {{--                            <th> Paid</th>--}}
                             <th> Agreement Status</th>
                             <th> Next Installment</th>
                             <th> Current Value</th>
@@ -112,7 +112,7 @@
                                     @endif
                                 </td>
                                 <td>{!! number_format($item->total_price) !!}$</td>
-{{--                                <td>{!! number_format(0) !!}$</td>--}}
+                                {{--                                <td>{!! number_format(0) !!}$</td>--}}
                                 <td>{!! $item->agreement_status !!}</td>
 
                                 <td>
@@ -142,7 +142,12 @@
                                 <td>{!! number_format($item->current_value - $item->total_price) !!}$</td>
                                 <td>{!! $item->investors->first()->admin->name !!} {!! $item->investors->first()->admin->surname !!}</td>
                                 <td class="text-center">
-                                    @include('admin::includes.actions.developer-access',['title' => 'Remove', 'route' => route($moduleKey . '.developer_access', [ $item->id ])])
+                                    @include('admin::includes.actions.developer-access',
+                                    [
+                                        'title' => 'Switch Developer Access to ',
+                                        'route' => route($moduleKey . '.developer_access', [ $item->id ]),
+                                        'developerAccess' => $item->developer_access
+                                    ])
                                 </td>
                             </tr>
                         @endforeach

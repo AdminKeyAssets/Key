@@ -429,12 +429,21 @@ fieldset[disabled] .btn-default.active {
 }
 
 .btn-switch {
-    background-color: orange;
-    border-color: orange;
     transition: all .3s;
     font-weight: bolder;
     padding: 4px 4px !Important;
     color: white;
+}
+.btn-switch:hover{
+    color: white !important;
+}
+.btn-switch.disabled-icon{
+    border-color: orange;
+    background-color: orange;
+}
+.btn-switch.active-icon{
+    border-color: #106910;
+    background-color: #106910;
 }
 
 .btn-primary.login {

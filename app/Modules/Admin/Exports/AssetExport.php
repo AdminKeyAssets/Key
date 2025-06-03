@@ -29,16 +29,16 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
         $query = Asset::query()->orderByDesc('id');
 
 
-        if (\Auth::guard('admin')->check() &&auth()->user()->getRolesNameAttribute() != 'administrator') {
+        if (\Auth::guard('admin')->check() && auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
         }
 
-        if(\Auth::guard('investor')->check()){
+        if (\Auth::guard('investor')->check()) {
             $query = $user->assets()->orderByDesc('id');
         }
 
-        if(\Auth::guard('developer')->check()){
-            $query->whereIn('project_name', $user->assets()->pluck('asset_name')->toArray());
+        if (\Auth::guard('developer')->check()) {
+            $query->whereIn('project_name', $user->assets()->pluck('asset_name')->toArray())->where('developer_access', 1);
         }
         // Apply filters as in your index function.
         if (!empty($this->filters['asset']) && $this->filters['asset'] != 'all') {
@@ -133,7 +133,7 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                         \Carbon\Carbon::parse($asset->payments->where('status', 0)->first()->payment_date)->format('Y/m/d')
                         . ' - ' . number_format(
                             $asset->payments->where('status', 0)
-                                ->filter(function($payment) {
+                                ->filter(function ($payment) {
                                     return strtotime($payment->payment_date) < time();
                                 })->sum('left_amount'), 0, ".", ",") . '$'
                         :
@@ -152,7 +152,7 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                         \Carbon\Carbon::parse($asset->rentals->where('status', 0)->first()->payment_date)->format('Y/m/d')
                         . ' - ' . number_format(
                             $asset->rentals->where('status', 0)
-                                ->filter(function($rental) {
+                                ->filter(function ($rental) {
                                     return strtotime($rental->payment_date) < time();
                                 })->sum('left_amount'), 0, ".", ",") . '$'
                         :

@@ -236,7 +236,13 @@
                                             @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
                                         @endcan
                                         @if(\Auth::guard('admin')->check())
-                                                @include('admin::includes.actions.developer-access',['title' => 'Remove', 'route' => route($moduleKey . '.developer_access', [ $item->id ])])                                        @endif
+                                            @include('admin::includes.actions.developer-access',
+                                            [
+                                                'title' => 'Switch Developer Access to ',
+                                                'route' => route($moduleKey . '.developer_access', [ $item->id ]),
+                                                'developerAccess' => $item->developer_access
+                                            ])
+                                        @endif
                                         @can(getPermissionKey($moduleKey, 'delete', true))
                                             <delete-component
                                                 :url="'{{ route($moduleKey . '.delete') }}'"
