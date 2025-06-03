@@ -64,7 +64,7 @@
                             <th> Investor</th>
                             <th> Asset Type / Size</th>
                             <th> Purchase Price</th>
-                            {{--                            <th> Paid</th>--}}
+                            <th> Paid</th>
                             <th> Agreement Status</th>
                             <th> Next Installment</th>
                             <th> Current Value</th>
@@ -112,7 +112,9 @@
                                     @endif
                                 </td>
                                 <td>{!! number_format($item->total_price) !!}$</td>
-                                {{--                                <td>{!! number_format(0) !!}$</td>--}}
+                                <td>
+                                    {!! $item->paid_formatted !!}
+                                </td>
                                 <td>{!! $item->agreement_status !!}</td>
 
                                 <td>

@@ -346,6 +346,10 @@ class AssetController extends BaseController
                 $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
             }
         }
+
+        // Calculate the "Paid" amount for each asset
+        $this->calculatePaidAmounts($this->baseData['allData'], $request);
+
         if (Auth::guard('developer')->check()) {
 
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index_developer', $this->baseData);
@@ -1430,5 +1434,56 @@ class AssetController extends BaseController
         $asset->update(['developer_access' => !$asset->developer_access]);
 
         return redirect()->back();
+    }
+
+    /**
+     * Calculate the paid amounts for each asset in the collection
+     *
+     * @param \Illuminate\Pagination\LengthAwarePaginator $assets
+     * @param Request $request
+     * @return void
+     */
+    private function calculatePaidAmounts($assets, Request $request)
+    {
+        foreach ($assets as $asset) {
+            $payments = $asset->paymentsHistories ?: collect([]);
+
+            // Check if date filters are active
+            if($request->has('agreement_date') && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
+                $dateRange = explode(',', $request->agreement_date);
+                $startDate = isset($dateRange[0]) ? date('Y-m-d', strtotime($dateRange[0])) : null;
+                $endDate = isset($dateRange[1]) ? date('Y-m-d', strtotime($dateRange[1])) : null;
+
+                if($startDate) {
+                    $payments = $payments->filter(function($payment) use ($startDate) {
+                        return isset($payment->payment_date) && strtotime($payment->payment_date) >= strtotime($startDate);
+                    });
+                }
+
+                if($endDate) {
+                    $payments = $payments->filter(function($payment) use ($endDate) {
+                        return isset($payment->payment_date) && strtotime($payment->payment_date) <= strtotime($endDate);
+                    });
+                }
+            }
+
+            if ($asset->agreement_status === 'Installments') {
+                $paid = $payments->sum('amount');
+            } else {
+                $paid = $asset->total_price;
+            }
+
+            // Calculate percentage
+            $paidPercent = $asset->total_price > 0
+                ? (fmod(($paid / $asset->total_price) * 100, 1) == 0
+                    ? number_format(($paid / $asset->total_price) * 100, 0)
+                    : number_format(($paid / $asset->total_price) * 100, 2))
+                : '0';
+
+            // Store calculated values with the asset
+            $asset->paid_amount = $paid;
+            $asset->paid_percent = $paidPercent;
+            $asset->paid_formatted = number_format($paid, 0, ".", ",") . '$ - ' . $paidPercent . '%';
+        }
     }
 }
