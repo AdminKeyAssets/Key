@@ -1318,6 +1318,7 @@ class AssetController extends BaseController
     {
         $filters = $request->only([
             'agreement_date',
+            'payment_date',
             'investor',
             'status',
             'asset',

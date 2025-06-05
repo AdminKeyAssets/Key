@@ -179,8 +179,8 @@ export default {
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
-            this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
+            this.form.agreement_date = urlParams.get('agreement_date') && urlParams.get('agreement_date') !== 'null' ? urlParams.get('agreement_date').split(',') : '';
+            this.form.payment_date = urlParams.get('payment_date') && urlParams.get('payment_date') !== 'null' ? urlParams.get('payment_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
             this.form.asset = urlParams.get('asset') || '';
             this.form.asset_status = urlParams.get('asset_status') || '';
