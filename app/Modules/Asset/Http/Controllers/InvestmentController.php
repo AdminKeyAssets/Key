@@ -50,12 +50,7 @@ class InvestmentController extends BaseController
 
         $asset = Asset::where('id', $assetId)->first();
 //        $investor = Investor::where('id', $asset->investor_id)->first();
-        $investors = $asset->investors;
-        $investorNames = [];
-        foreach ($investors as $investor) {
-            $investorNames[] = $investor->name . ' ' . $investor->surname;
-        }
-        $investorNames = implode(' / ', $investorNames);
+        $investorNames = $this->getFormattedInvestorNames($asset);
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
             'asset_route' => route('asset.view', [$asset->id]),
@@ -75,12 +70,7 @@ class InvestmentController extends BaseController
 
         $asset = Asset::where('id', $assetId)->first();
 //        $investor = Investor::where('id', $asset->investor_id)->first();
-        $investors = $asset->investors;
-        $investorNames = [];
-        foreach ($investors as $investor) {
-            $investorNames[] = $investor->name . ' ' . $investor->surname;
-        }
-        $investorNames = implode(' / ', $investorNames);
+        $investorNames = $this->getFormattedInvestorNames($asset);
 
         $this->baseData['extra'] = [
             'asset_name' => $asset->project_name,
@@ -226,12 +216,7 @@ class InvestmentController extends BaseController
 
             $asset = Asset::where('id', $assetId)->first();
 //            $investor = Investor::where('id', $asset->investor_id)->first();
-            $investors = $asset->investors;
-            $investorNames = [];
-            foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
-            }
-            $investorNames = implode(' / ', $investorNames);
+            $investorNames = $this->getFormattedInvestorNames($asset);
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
@@ -259,12 +244,7 @@ class InvestmentController extends BaseController
 
             $asset = Asset::where('id', $assetId)->first();
 //            $investor = Investor::where('id', $asset->investor_id)->first();
-            $investors = $asset->investors;
-            $investorNames = [];
-            foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
-            }
-            $investorNames = implode(' / ', $investorNames);
+            $investorNames = $this->getFormattedInvestorNames($asset);
 
             $this->baseData['extra'] = [
                 'asset_name' => $asset->project_name,
@@ -308,5 +288,21 @@ class InvestmentController extends BaseController
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
+    }
+
+    /**
+     * Helper method to get formatted investor names
+     * 
+     * @param Asset $asset
+     * @return string
+     */
+    private function getFormattedInvestorNames(Asset $asset)
+    {
+        $investors = $asset->investors;
+        $investorNames = [];
+        foreach ($investors as $investor) {
+            $investorNames[] = $investor->full_name ?: ($investor->name . ' ' . $investor->surname);
+        }
+        return implode(' / ', $investorNames);
     }
 }

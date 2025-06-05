@@ -17,6 +17,7 @@ class Investor  extends Authenticatable
         'phone',
         'name',
         'surname',
+        'full_name',
         'pid',
         'citizenship',
         'address',
@@ -30,6 +31,36 @@ class Investor  extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Get the investor's full name.
+     * 
+     * @return string
+     */
+    public function getFullNameAttribute($value)
+    {
+        if (!empty($value)) {
+            return $value;
+        }
+        
+        return trim($this->name . ' ' . $this->surname);
+    }
+
+    /**
+     * Set the investor's full name.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setFullNameAttribute($value)
+    {
+        $this->attributes['full_name'] = $value;
+        
+        // For backward compatibility, also set name and surname
+        $nameParts = explode(' ', $value, 2);
+        $this->attributes['name'] = $nameParts[0] ?? '';
+        $this->attributes['surname'] = $nameParts[1] ?? '';
+    }
 
     public function setPasswordAttribute($password)
     {

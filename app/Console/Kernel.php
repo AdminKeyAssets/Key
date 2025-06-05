@@ -24,7 +24,11 @@ class Kernel extends ConsoleKernel
     {
         parent::__construct($app, $events);
 
-        $this->commands = array_merge($this->commands, [MakeModuleCommand::class]);
+        $this->commands = array_merge($this->commands, [
+            MakeModuleCommand::class,
+            \App\Console\Commands\CombineNameSurnameFields::class,
+            \App\Console\Commands\FinalizeNameSurnameFields::class
+        ]);
 
     }
 

@@ -54,9 +54,16 @@ class LeadsManagerImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-        $manager = Admin::where('name', $row['manager_name'])
-            ->where('surname', $row['manager_surname'])
-            ->first();
+        // Try to find manager by full_name first
+        $fullName = ($row['manager_name'] ?? '') . ' ' . ($row['manager_surname'] ?? '');
+        $manager = Admin::where('full_name', trim($fullName))->first();
+        
+        // Fall back to legacy search if not found
+        if (!$manager) {
+            $manager = Admin::where('name', $row['manager_name'])
+                ->where('surname', $row['manager_surname'])
+                ->first();
+        }
 
         Lead::where('name', $row['name'])
             ->where('surname', $row['surname'])

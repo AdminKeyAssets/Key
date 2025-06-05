@@ -297,17 +297,20 @@ class AssetController extends BaseController
         }
 
         if ($request->investor && $request->investor != 'all') {
-            $investorNamesArray = explode(' ', $request->investor);
+            // First try to find by full_name
+            $investorUser = Investor::where('full_name', $request->investor)->first();
 
-            // The first part is the name
-            $firstName = array_shift($investorNamesArray);
+            if (!$investorUser) {
+                // For backward compatibility, try with name and surname
+                $investorNamesArray = explode(' ', $request->investor);
+                // The first part is the name
+                $firstName = array_shift($investorNamesArray);
+                // The remaining parts are the surname
+                $surname = implode(' ', $investorNamesArray);
 
-            // The remaining parts are the surname
-            $surname = implode(' ', $investorNamesArray);
-
-//            $investorNamesArray = explode(' ', $request->investor);
-            $investorUser = Investor::where('name', $firstName)
-                ->where('surname', $surname)->first();
+                $investorUser = Investor::where('name', $firstName)
+                    ->where('surname', $surname)->first();
+            }
 
             if (isset($investorUser->id)) {
                 $userAssets->whereHas('investors', function ($q) use ($investorUser) {
@@ -317,21 +320,26 @@ class AssetController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
 
-            $managerFirstName = array_shift($managerNamesArray);
+            if (!$managerUser) {
+                // For backward compatibility, try with name and surname
+                $managerNamesArray = explode(' ', $request->manager);
+                $managerFirstName = array_shift($managerNamesArray);
+                $managerSurname = implode(' ', $managerNamesArray);
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
 
-            $managerSurname = implode(' ', $managerNamesArray);
+            if ($managerUser) {
+                $investorIds = $managerUser->investors->pluck('id')->toArray();
 
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
-            $investorIds = $managerUser->investors->pluck('id')->toArray();
-
-            if (!empty($investorIds)) {
-                $userAssets->whereHas('investors', function ($q) use ($investorIds) {
-                    $q->whereIn('investors.id', $investorIds);
-                });
+                if (!empty($investorIds)) {
+                    $userAssets->whereHas('investors', function ($q) use ($investorIds) {
+                        $q->whereIn('investors.id', $investorIds);
+                    });
+                }
             }
         }
 
@@ -1147,13 +1155,13 @@ class AssetController extends BaseController
         $this->baseData['investors'] = [];
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                $this->baseData['investors'] = Investor::orderBy('name')
-                    ->orderBy('surname')
+                $this->baseData['investors'] = Investor::orderBy('full_name')
+                    ->orderByRaw('COALESCE(full_name, CONCAT(name, " ", surname))')
                     ->get();
                 $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
                     $query->where('name', 'like', '%asset%manager%');
-                })->orderBy('name')
-                    ->orderBy('surname')
+                })->orderBy('full_name')
+                    ->orderByRaw('COALESCE(full_name, CONCAT(name, " ", surname))')
                     ->get();
 
                 $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
@@ -1172,8 +1180,8 @@ class AssetController extends BaseController
                     ->get();
             } else {
                 $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
-                    ->orderBy('name')
-                    ->orderBy('surname')
+                    ->orderBy('full_name')
+                    ->orderByRaw('COALESCE(full_name, CONCAT(name, " ", surname))')
                     ->get();
                 $this->baseData['managers'] = [];
 

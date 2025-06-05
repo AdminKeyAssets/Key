@@ -124,22 +124,28 @@ class InvestorController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            if (!$managerUser) {
+                // For backward compatibility, try name and surname
+                $managerNamesArray = explode(' ', $request->manager);
+                $managerFirstName = array_shift($managerNamesArray);
+                $managerSurname = implode(' ', $managerNamesArray);
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)
+                    ->first();
+            }
+            
             if (isset($managerUser->id)) {
                 $query->where('admin_id', $managerUser->id);
             }
         }
 
         if ($request->search && $request->search != 'all') {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            $query->where(function($q) use ($request) {
+                $q->where('full_name', 'LIKE', '%' . $request->search . '%')
+                  ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            });
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -323,6 +329,7 @@ class InvestorController extends BaseController
             $data = [
                 'name' => $request->name,
                 'surname' => $request->surname,
+                'full_name' => trim($request->name . ' ' . $request->surname), // Set full_name
                 'email' => $request->email,
                 'prefix' => $request->prefix,
                 'phone' => $request->phone,
@@ -401,15 +408,15 @@ class InvestorController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
         })
-            ->orderBy('name')
-            ->orderBy('surname')
+            ->orderBy('full_name')
+            ->orderByRaw('COALESCE(full_name, CONCAT(name, " ", surname))')
             ->get();
 
 
         if (auth()->user()->getRolesNameAttribute() == 'administrator') {
             $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
-            $this->baseData['investors'] = Investor::orderBy('name')
-                ->orderBy('surname')
+            $this->baseData['investors'] = Investor::orderBy('full_name')
+                ->orderByRaw('COALESCE(full_name, CONCAT(name, " ", surname))')
                 ->get();
         } else {
             $this->baseData['countries'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())

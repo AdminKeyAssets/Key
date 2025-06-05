@@ -78,10 +78,23 @@ class LeadController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-            $managerUser = Admin::where('name', $managerNamesArray[0])
-                ->where('surname', $managerNamesArray[1])->first();
-            $query->where('leads.admin_id', '=', $managerUser->id);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            if (!$managerUser) {
+                // For backward compatibility, try with name and surname
+                $managerNamesArray = explode(' ', $request->manager);
+                if (count($managerNamesArray) >= 2) {
+                    $managerFirstName = array_shift($managerNamesArray);
+                    $managerSurname = implode(' ', $managerNamesArray);
+                    $managerUser = Admin::where('name', $managerFirstName)
+                        ->where('surname', $managerSurname)->first();
+                }
+            }
+            
+            if ($managerUser) {
+                $query->where('leads.admin_id', '=', $managerUser->id);
+            }
         }
 
         if ($request->marketing_channel && $request->marketing_channel != 'all') {

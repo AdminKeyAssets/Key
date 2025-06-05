@@ -104,9 +104,9 @@
                         ></el-option>
                         <el-option
                             v-for="investor in investors"
-                            :key="investor.name + ' ' + investor.surname"
-                            :label="investor.name + ' ' + investor.surname"
-                            :value="investor.name + ' ' + investor.surname"
+                            :key="investor.id"
+                            :label="investor.full_name || (investor.name + ' ' + investor.surname)"
+                            :value="investor.full_name || (investor.name + ' ' + investor.surname)"
                         ></el-option>
                     </el-select>
                 </div>
@@ -119,9 +119,9 @@
                         ></el-option>
                         <el-option
                             v-for="manager in managers"
-                            :key="manager.name + ' ' + manager.surname"
-                            :label="manager.name + ' ' + manager.surname"
-                            :value="manager.name + ' ' + manager.surname"
+                            :key="manager.id"
+                            :label="manager.full_name || (manager.name + ' ' + manager.surname)"
+                            :value="manager.full_name || (manager.name + ' ' + manager.surname)"
                         ></el-option>
                     </el-select>
                 </div>

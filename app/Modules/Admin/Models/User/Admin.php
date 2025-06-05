@@ -22,7 +22,7 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
      * @var array
      */
     protected $fillable = [
-        'name', 'surname', 'email', 'prefix', 'phone', 'pid', 'profile_picture', 'password'
+        'name', 'surname', 'full_name', 'email', 'prefix', 'phone', 'pid', 'profile_picture', 'password'
     ];
 
     /**
@@ -41,6 +41,36 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
         'rolesName',
         'rolesId',
     ];
+
+    /**
+     * Get the admin's full name.
+     * 
+     * @return string
+     */
+    public function getFullNameAttribute($value)
+    {
+        if (!empty($value)) {
+            return $value;
+        }
+        
+        return trim($this->name . ' ' . $this->surname);
+    }
+
+    /**
+     * Set the admin's full name.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setFullNameAttribute($value)
+    {
+        $this->attributes['full_name'] = $value;
+        
+        // For backward compatibility, also set name and surname
+        $nameParts = explode(' ', $value, 2);
+        $this->attributes['name'] = $nameParts[0] ?? '';
+        $this->attributes['surname'] = $nameParts[1] ?? '';
+    }
 
     /**
      * @return array

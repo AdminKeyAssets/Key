@@ -51,7 +51,7 @@ class NotificationController extends BaseController
                 $investors = $payment->asset->investors;
                 $investorNames = [];
                 foreach ($investors as $investor) {
-                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                    $investorNames[] = $investor->full_name ?: ($investor->name . ' ' . $investor->surname);
                 }
                 $investorNames = implode(' / ', $investorNames);
 //                $investor = Investor::where('id', $payment->asset->investor_id)->first();
