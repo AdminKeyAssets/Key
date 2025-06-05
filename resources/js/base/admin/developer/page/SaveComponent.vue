@@ -276,8 +276,8 @@ export default {
                 stampPreview: null,
                 signature: null,
                 signaturePreview: null,
-                agreements: {},
-                assets: {},
+                agreements: [],
+                assets: [],
             },
             assets: {}
         }
