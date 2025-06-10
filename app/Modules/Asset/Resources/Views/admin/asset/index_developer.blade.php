@@ -118,24 +118,45 @@
                                 <td>{!! $item->agreement_status !!}</td>
 
                                 <td>
+                                    @php
+                                    // Check if we're filtering by payment_date
+                                    $paymentDateFilter = request()->payment_date && request()->payment_date !== 'null' ? 
+                                        explode(',', request()->payment_date) : null;
+                                    
+                                    $paymentsQuery = $item->payments->where('status', 0);
+                                    
+                                    // Filter payments by payment_date if filter is active
+                                    if ($paymentDateFilter) {
+                                        $startDate = $paymentDateFilter[0] ?? null;
+                                        $endDate = $paymentDateFilter[1] ?? null;
+                                        
+                                        if ($startDate && $endDate) {
+                                            $paymentsQuery = $paymentsQuery->filter(function($payment) use ($startDate, $endDate) {
+                                                $paymentDate = strtotime($payment->payment_date);
+                                                return $paymentDate >= strtotime($startDate) && $paymentDate <= strtotime($endDate);
+                                            });
+                                        }
+                                    }
+                                    @endphp
+                                    
                                     {!!
                                         $item->agreement_status == 'Installments'
                                         && count($item->payments)
-                                        && count($item->payments->where('status', 0))
+                                        && count($paymentsQuery)
                                         ? (
-                                            strtotime($item->payments->where('status', 0)->first()->payment_date) < time()
+                                            strtotime($paymentsQuery->first()->payment_date) < time()
                                             ?
                                                 // Overdue: display formatted overdue date & sum of overdue left_amount
-                                                \Carbon\Carbon::parse($item->payments->where('status', 0)->first()->payment_date)->format('Y/m/d')
+                                                \Carbon\Carbon::parse($paymentsQuery->first()->payment_date)->format('Y/m/d')
                                                 . ' - ' . number_format(
-                                                    $item->payments->where('status', 0)
+                                                    $paymentsQuery
                                                         ->filter(function($payment) {
                                                             return strtotime($payment->payment_date) < time();
                                                         })->sum('left_amount'), 2, ".", ",") . '$'
                                             :
                                                 // Not overdue: display the first record's payment_date and left_amount
-                                                $item->payments->where('status', 0)->first()->payment_date
-                                                . ' - ' . number_format($item->payments->where('status', 0)->first()->left_amount, 2, ".", ",") . '$'
+                                                $paymentsQuery->first()->payment_date
+                                                . ' - ' . number_format($paymentsQuery->first()->left_amount, 2, ".", ",") . '$'
                                           )
                                         : ''
                                     !!}
