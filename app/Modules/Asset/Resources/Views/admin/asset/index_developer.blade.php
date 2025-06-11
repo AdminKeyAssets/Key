@@ -61,7 +61,6 @@
                             <th> Name</th>
                             <th> Photo</th>
                             <th> City</th>
-                            <th> Investor</th>
                             <th> Asset Type / Size</th>
                             <th> Purchase Price</th>
                             <th> Paid</th>
@@ -91,16 +90,7 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>
-                                {{--                                @if(Auth::guard('admin')->check())--}}
-                                <td>
-                                    @foreach($item->investors as $investor)
-                                        {!! $investor->name !!} {!! $investor->surname !!}
-                                        @if(!$loop->last)
-                                            /<br>
-                                        @endif
-                                    @endforeach
-                                </td>
-                                {{--                                @endif--}}
+
                                 <td>
 
                                     {!! $item->type !!}
@@ -120,16 +110,16 @@
                                 <td>
                                     @php
                                     // Check if we're filtering by payment_date
-                                    $paymentDateFilter = request()->payment_date && request()->payment_date !== 'null' ? 
+                                    $paymentDateFilter = request()->payment_date && request()->payment_date !== 'null' ?
                                         explode(',', request()->payment_date) : null;
-                                    
+
                                     $paymentsQuery = $item->payments->where('status', 0);
-                                    
+
                                     // Filter payments by payment_date if filter is active
                                     if ($paymentDateFilter) {
                                         $startDate = $paymentDateFilter[0] ?? null;
                                         $endDate = $paymentDateFilter[1] ?? null;
-                                        
+
                                         if ($startDate && $endDate) {
                                             $paymentsQuery = $paymentsQuery->filter(function($payment) use ($startDate, $endDate) {
                                                 $paymentDate = strtotime($payment->payment_date);
@@ -138,7 +128,7 @@
                                         }
                                     }
                                     @endphp
-                                    
+
                                     {!!
                                         $item->agreement_status == 'Installments'
                                         && count($item->payments)
