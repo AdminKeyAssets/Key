@@ -633,6 +633,14 @@
                                                             style="margin-bottom: 2rem; margin-right: 3rem;"
                                                             type="secondary"
                                                             class="pull-right"
+                                                            @click="exportDeptStatement">Dept Statement
+                                                        </el-button>
+
+                                                        <el-button
+                                                            icon="el-icon-document"
+                                                            style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                            type="secondary"
+                                                            class="pull-right"
                                                             @click="exportPaymentSchedule">Export Schedule
                                                         </el-button>
                                                     </div>
@@ -1195,6 +1203,22 @@ export default {
                 link.click();
             } catch (error) {
                 console.error('Error exporting payments:', error);
+            }
+        },
+        async exportDeptStatement() {
+            try {
+                const response = await axios.get(`/assets/${this.id}/dept-statement/export`, {
+                    params: this.filters,
+                    responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'dept_statement.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting Dept Statement:', error);
             }
         },
 

@@ -54,6 +54,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
         ->name('export');
     Route::get('/{asset}/payments-history/export', $paymentController . '@exportHistory')
         ->name('export.history');
+    Route::get('/{asset}/dept-statement/export', $paymentController . '@deptStatement')
+        ->name('export.dept_statement');
 
     // Agreement Details Export
     $agreementDetailsController = 'AgreementDetailsExportController';
