@@ -26,15 +26,37 @@
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Developer Not Found')</h3><br>
             @else
+                @php
+                    // Check if any columns have data to determine which columns to show
+                    $hasProfilePic = false;
+                    $hasRepresentative = false;
+                    $hasCell = false;
+                    $hasAssets = false;
+                    
+                    foreach($allData as $item) {
+                        if(!empty($item->logo)) {
+                            $hasProfilePic = true;
+                        }
+                        if(!empty($item->representative) || !empty($item->representative_position)) {
+                            $hasRepresentative = true;
+                        }
+                        if(!empty($item->tel)) {
+                            $hasCell = true;
+                        }
+                        if(auth()->user()->getRolesNameAttribute() == 'administrator' && count($item->assets) > 0) {
+                            $hasAssets = true;
+                        }
+                    }
+                @endphp
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped table-developers">
                         <thead>
                         <tr>
                             <th>Developer Name</th>
-                            <th>Profile Pic</th>
-                            <th>Representative</th>
-                            <th>Cell</th>
-                            @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                            @if($hasProfilePic)<th>Profile Pic</th>@endif
+                            @if($hasRepresentative)<th>Representative</th>@endif
+                            @if($hasCell)<th>Cell</th>@endif
+                            @if(auth()->user()->getRolesNameAttribute() == 'administrator' && $hasAssets)
                                 <th class="developer-assets"> Assets</th>
                             @endif
                             <th width="10%" class="text-center">Actions</th>
@@ -45,14 +67,20 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{{ $item->name }}</td>
+                                @if($hasProfilePic)
                                 <td>
                                     @if($item->logo)
                                         <img src="{{ $item->logo }}" alt="{{ $item->name }}" width="50">
                                     @endif
                                 </td>
-                                <td>{{ $item->representative }} - {{ $item->representative_position }}</td>
+                                @endif
+                                @if($hasRepresentative)
+                                <td>{{ $item->representative }} @if($item->representative_position) - {{ $item->representative_position }} @endif</td>
+                                @endif
+                                @if($hasCell)
                                 <td>{{ $item->tel }}</td>
-                                @if(auth()->user()->getRolesNameAttribute() == 'administrator')
+                                @endif
+                                @if(auth()->user()->getRolesNameAttribute() == 'administrator' && $hasAssets)
                                     @php
                                         $assetNameList = $item->assets->pluck('asset_name')->toArray();
                                     @endphp
