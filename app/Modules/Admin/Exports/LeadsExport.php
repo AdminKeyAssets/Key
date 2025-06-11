@@ -75,6 +75,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             'status',
             'marketing_channel',
             'admin_id',
+            'created_at',
             'id'
         )->get();
 
@@ -101,11 +102,12 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
 
             return [
                 'name' => $lead->name . ' ' . $lead->surname,
-                'status' => $lead->status,
                 'email' => $lead->email,
                 'phone' => '"' . $lead->prefix . $lead->phone . '"',
-                'marketing_channel' => $lead->marketing_channel,
                 'manager' => $manager,
+                'status' => $lead->status,
+                'created_at' => $lead->created_at->toDateString(),
+                'marketing_channel' => $lead->marketing_channel,
                 'comments' => $comments,
             ];
         });
@@ -117,11 +119,12 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
     {
         return [
             'Name',
-            'Status',
             'Email',
             'Phone',
-            'Marketing Channel',
             'Manager',
+            'Status',
+            'Created At',
+            'Marketing Channel',
             'Comments'
         ];
     }
