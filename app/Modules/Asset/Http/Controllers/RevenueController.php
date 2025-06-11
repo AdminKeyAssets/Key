@@ -325,6 +325,29 @@ class RevenueController extends BaseController
             }
         }
 
+        if ($request->investor && $request->investor != 'all') {
+            $investorNamesArray = explode(' ', $request->investor);
+
+            // The first part is the name
+            $firstName = array_shift($investorNamesArray);
+
+            // The remaining parts are the surname
+            $surname = implode(' ', $investorNamesArray);
+
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $firstName)
+                ->where('surname', $surname)->first();
+
+            if (isset($investorUser->id)) {
+                $paginatedAssets->whereHas('investors', function ($query) use ($investorUser) {
+                    $query->where('id', $investorUser->id);
+                });
+                $allAssets->whereHas('investors', function ($query) use ($investorUser) {
+                    $query->where('id', $investorUser->id);
+                });
+            }
+        }
+
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
@@ -791,5 +814,39 @@ class RevenueController extends BaseController
     {
         return Excel::download(new RevenueAssetValueExport(['asset_id' => $assetId]), 'asset_values.xlsx');
 
+    }
+
+    public function investorFilterOptions()
+    {
+        $user = auth()->user();
+        
+        $this->baseData['assets'] = Asset::query()
+            ->whereHas('investors', function ($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('project_name', 'sale_status', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name', 'sale_status')
+            ->orderBy('project_name')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__('Filter options loaded successfully'), 200, $this->baseData);
+    }
+
+    public function adminFilterOptions()
+    {
+        if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['assets'] = Asset::select('project_name', 'sale_status', DB::raw('MAX(id) as max_id'))
+                ->groupBy('project_name', 'sale_status')
+                ->orderBy('project_name')
+                ->get();
+        } else {
+            $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                ->select('project_name', 'sale_status', DB::raw('MAX(id) as max_id'))
+                ->groupBy('project_name', 'sale_status')
+                ->orderBy('project_name')
+                ->get();
+        }
+
+        return ServiceResponse::jsonNotification(__('Filter options loaded successfully'), 200, $this->baseData);
     }
 }

@@ -131,6 +131,10 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/revenues/create-data', $revenueController . '@createData')->name('revenue_create_form_data');
     Route::get('/revenues/filter-options', $revenueController . '@filterOptions')
         ->name('revenues.filters');
+    Route::get('/revenues/admin/filter-options', $revenueController . '@adminFilterOptions')
+        ->name('revenues.admin.filters')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
+    Route::get('/revenues/investor/filter-options', $revenueController . '@investorFilterOptions')
+        ->name('revenues.investor.filters')->middleware(['auth:investor']);
     Route::post('/revenues/rental/delete/{id?}', $revenueController . '@deleteRental');
 
     Route::get('/revenues/{id?}/rentals/export', $revenueController . '@exportRentals')

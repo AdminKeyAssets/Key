@@ -339,9 +339,12 @@ class AssetController extends BaseController
         if ($userAssets->count() > 0) {
             $this->baseData['allData'] = $userAssets->paginate(25);
         } else {
-            $this->baseData['allData'] = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
-                ->where('sale_status', 'sold')
-                ->orderByDesc('id')->paginate(25);
+            if (Auth::guard('developer')->check()) {
+                $developer = Auth::guard('developer')->user();
+                $this->baseData['allData'] = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
+                    ->where('sale_status', 'sold')
+                    ->orderByDesc('id')->paginate(25);
+            }
             if (Auth::guard('investor')->check()) {
                 $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
             }
@@ -1450,19 +1453,19 @@ class AssetController extends BaseController
             $payments = $asset->paymentsHistories ?: collect([]);
 
             // Check if date filters are active
-            if($request->has('agreement_date') && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
+            if ($request->has('agreement_date') && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
                 $dateRange = explode(',', $request->agreement_date);
                 $startDate = isset($dateRange[0]) ? date('Y-m-d', strtotime($dateRange[0])) : null;
                 $endDate = isset($dateRange[1]) ? date('Y-m-d', strtotime($dateRange[1])) : null;
 
-                if($startDate) {
-                    $payments = $payments->filter(function($payment) use ($startDate) {
+                if ($startDate) {
+                    $payments = $payments->filter(function ($payment) use ($startDate) {
                         return isset($payment->payment_date) && strtotime($payment->payment_date) >= strtotime($startDate);
                     });
                 }
 
-                if($endDate) {
-                    $payments = $payments->filter(function($payment) use ($endDate) {
+                if ($endDate) {
+                    $payments = $payments->filter(function ($payment) use ($endDate) {
                         return isset($payment->payment_date) && strtotime($payment->payment_date) <= strtotime($endDate);
                     });
                 }
