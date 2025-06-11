@@ -709,7 +709,7 @@ class AssetController extends BaseController
                     'representative' => $tenantData['representative'],
                     'status' => 1
                 ];
-                if ($tenantData['id']) {
+                if (isset($tenantData['id'])) {
                     $tenant = Tenant::where('id', $tenantData['id'])->first();
                     $tenant->update(
                         $tenantDataArray
