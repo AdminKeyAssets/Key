@@ -3,6 +3,7 @@
 namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Exports\AssetExport;
+use App\Modules\Admin\Exports\DeveloperAssetExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -187,18 +188,18 @@ class AssetController extends BaseController
                 $query->where('created_at', '>=', $start)
                     ->orWhereHas('rentals', function ($q) use ($start, $end) {
                         $q->where('status', 0)
-                          ->where('payment_date', '>=', $start)
-                          ->where('payment_date', '<=', $end);
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     })
                     ->orWhereHas('payments', function ($q) use ($start, $end) {
                         $q->where('status', 0)
-                          ->where('payment_date', '>=', $start)
-                          ->where('payment_date', '<=', $end);
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     })
                     ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
                         $q->where('status', 0)
-                          ->where('payment_date', '>=', $start)
-                          ->where('payment_date', '<=', $end);
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     });
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
 //                        $q->where('date', '>=', $start);
@@ -280,19 +281,19 @@ class AssetController extends BaseController
                     $userAssets->where('created_at', '>=', $start)
                         ->orWhereHas('rentals', function ($q) use ($start, $end) {
                             $q->where('status', 0)
-                              ->where('payment_date', '>=', $start)
-                              ->where('payment_date', '<=', $end);
+                                ->where('payment_date', '>=', $start)
+                                ->where('payment_date', '<=', $end);
                         });
                     $userAssets->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
                         $q->where('status', 0)
-                          ->where('payment_date', '>=', $start)
-                          ->where('payment_date', '<=', $end);
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     });
                 }
                 $userAssets->orWhereHas('payments', function ($q) use ($start, $end) {
                     $q->where('status', 0)
-                      ->where('payment_date', '>=', $start)
-                      ->where('payment_date', '<=', $end);
+                        ->where('payment_date', '>=', $start)
+                        ->where('payment_date', '<=', $end);
                 });
 
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
@@ -1336,6 +1337,10 @@ class AssetController extends BaseController
             'asset_type',
             'agreement_status',
         ]);
+        if (Auth::guard('developer')->check()) {
+            return Excel::download(new DeveloperAssetExport($filters), 'assets.xlsx');
+        }
+
         return Excel::download(new AssetExport($filters), 'assets.xlsx');
     }
 
