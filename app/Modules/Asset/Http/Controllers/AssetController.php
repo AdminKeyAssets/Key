@@ -113,58 +113,108 @@ class AssetController extends BaseController
 
         // Apply filters if provided in the request
         if ($request->investor && $request->investor != 'all') {
-            $investorNamesArray = explode(' ', $request->investor);
-
-            // The first part is the name
-            $firstName = array_shift($investorNamesArray);
-
-            // The remaining parts are the surname
-            $surname = implode(' ', $investorNamesArray);
-
-//            $investorNamesArray = explode(' ', $request->investor);
-            $investorUser = Investor::where('name', $firstName)
-                ->where('surname', $surname)->first();
-
-            if (isset($investorUser->id)) {
-                $query->whereHas('investors', function ($q) use ($investorUser) {
-                    $q->where('id', $investorUser->id);
-                });
+            $investors = explode(',', $request->investor);
+            $investorIds = [];
+            
+            // If "all" is included in the array, skip filtering by investor
+            if (!in_array('all', $investors)) {
+                foreach ($investors as $investor) {
+                    $investorNamesArray = explode(' ', $investor);
+                    
+                    // The first part is the name
+                    $firstName = array_shift($investorNamesArray);
+                    
+                    // The remaining parts are the surname
+                    $surname = implode(' ', $investorNamesArray);
+                    
+                    $investorUser = Investor::where('name', $firstName)
+                        ->where('surname', $surname)->first();
+                    
+                    if (isset($investorUser->id)) {
+                        $investorIds[] = $investorUser->id;
+                    }
+                }
+                
+                if (!empty($investorIds)) {
+                    $query->whereHas('investors', function ($q) use ($investorIds) {
+                        $q->whereIn('id', $investorIds);
+                    });
+                }
             }
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
-            $investorIds = $managerUser->investors->pluck('id')->toArray();
-
-            if (!empty($investorIds)) {
-                $query->whereHas('investors', function ($q) use ($investorIds) {
-                    $q->whereIn('investors.id', $investorIds);
-                });
+            $managers = explode(',', $request->manager);
+            $allInvestorIds = [];
+            
+            // If "all" is included in the array, skip filtering by manager
+            if (!in_array('all', $managers)) {
+                foreach ($managers as $manager) {
+                    $managerNamesArray = explode(' ', $manager);
+                    
+                    $managerFirstName = array_shift($managerNamesArray);
+                    
+                    $managerSurname = implode(' ', $managerNamesArray);
+                    
+                    $managerUser = Admin::where('name', $managerFirstName)
+                        ->where('surname', $managerSurname)->first();
+                    
+                    if ($managerUser) {
+                        $investorIds = $managerUser->investors->pluck('id')->toArray();
+                        $allInvestorIds = array_merge($allInvestorIds, $investorIds);
+                    }
+                }
+                
+                if (!empty($allInvestorIds)) {
+                    $query->whereHas('investors', function ($q) use ($allInvestorIds) {
+                        $q->whereIn('investors.id', $allInvestorIds);
+                    });
+                }
             }
         }
 
         if ($request->asset && $request->asset != 'all') {
-            $query->where('project_name', 'like', '%' . $request->asset . '%');
+            $assets = explode(',', $request->asset);
+            
+            // If "all" is included in the array, skip filtering by asset
+            if (!in_array('all', $assets)) {
+                $query->where(function($q) use ($assets) {
+                    foreach ($assets as $index => $asset) {
+                        if ($index === 0) {
+                            $q->where('project_name', 'like', '%' . $asset . '%');
+                        } else {
+                            $q->orWhere('project_name', 'like', '%' . $asset . '%');
+                        }
+                    }
+                });
+            }
         }
 
         if ($request->asset_type && $request->asset_type != 'all') {
-            $query->where('type', $request->asset_type);
+            $assetTypes = explode(',', $request->asset_type);
+            
+            // If "all" is included in the array, skip filtering by asset type
+            if (!in_array('all', $assetTypes)) {
+                $query->whereIn('type', $assetTypes);
+            }
         }
 
         if ($request->asset_status && $request->asset_status != 'all') {
-            $query->where('asset_status', $request->asset_status);
+            $assetStatuses = explode(',', $request->asset_status);
+            
+            // If "all" is included in the array, skip filtering by asset status
+            if (!in_array('all', $assetStatuses)) {
+                $query->whereIn('asset_status', $assetStatuses);
+            }
         }
 
         if ($request->agreement_status && $request->agreement_status != 'all') {
-            $query->where('agreement_status', $request->agreement_status);
+            $agreementStatuses = explode(',', $request->agreement_status);
+            
+            // If "all" is included in the array, skip filtering by agreement status
+            if (!in_array('all', $agreementStatuses)) {
+                $query->whereIn('agreement_status', $agreementStatuses);
+            }
         }
 
 
