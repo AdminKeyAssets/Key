@@ -186,16 +186,19 @@ class AssetController extends BaseController
             $query->where(function ($query) use ($start, $end) {
                 $query->where('created_at', '>=', $start)
                     ->orWhereHas('rentals', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                          ->where('payment_date', '>=', $start)
+                          ->where('payment_date', '<=', $end);
                     })
                     ->orWhereHas('payments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                          ->where('payment_date', '>=', $start)
+                          ->where('payment_date', '<=', $end);
                     })
                     ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                          ->where('payment_date', '>=', $start)
+                          ->where('payment_date', '<=', $end);
                     });
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
 //                        $q->where('date', '>=', $start);
@@ -276,17 +279,20 @@ class AssetController extends BaseController
                 if (!$isDeveloper) {
                     $userAssets->where('created_at', '>=', $start)
                         ->orWhereHas('rentals', function ($q) use ($start, $end) {
-                            $q->where('payment_date', '>=', $start);
-                            $q->where('payment_date', '<=', $end);
+                            $q->where('status', 0)
+                              ->where('payment_date', '>=', $start)
+                              ->where('payment_date', '<=', $end);
                         });
                     $userAssets->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                          ->where('payment_date', '>=', $start)
+                          ->where('payment_date', '<=', $end);
                     });
                 }
                 $userAssets->orWhereHas('payments', function ($q) use ($start, $end) {
-                    $q->where('payment_date', '>=', $start);
-                    $q->where('payment_date', '<=', $end);
+                    $q->where('status', 0)
+                      ->where('payment_date', '>=', $start)
+                      ->where('payment_date', '<=', $end);
                 });
 
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
