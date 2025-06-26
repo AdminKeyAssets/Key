@@ -74,6 +74,7 @@
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
+                        <el-option label="Archived" value="archived"></el-option>
                     </el-select>
                 </div>
 

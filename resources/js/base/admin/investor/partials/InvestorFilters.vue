@@ -65,6 +65,13 @@
                               show-word-limit
                               v-model="form.assets"></el-input>
                 </div>
+                <div class="form-group">
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
+                        <el-option label="Active" value="active"></el-option>
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Archived" value="archived"></el-option>
+                    </el-select>
+                </div>
                 <div class="button-wrapper">
                     <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
                     <el-button type="danger" icon="el-icon-delete" @click="clearFilters">Clear Filters</el-button>
@@ -89,6 +96,7 @@ export default {
                 create_date: '',
                 citizenship: '',
                 manager: '',
+                status: 'active', // Default to active
             },
             countries: [],
             managers: [],
@@ -116,6 +124,7 @@ export default {
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.citizenship = urlParams.get('citizenship') || '';
             this.form.manager = urlParams.get('manager') || '';
+            this.form.status = urlParams.get('status') || 'active';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -128,6 +137,7 @@ export default {
             this.form.create_date = '';
             this.form.citizenship = '';
             this.form.manager = '';
+            this.form.status = 'active';
             this.applyFilters(); // Optionally apply cleared filters
         },
 

@@ -63,6 +63,20 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
         Route::post('update-manager', $investorController . '@updateManager')->name('update.manager')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
 
+        /**
+         * Archive investor
+         */
+        Route::post('archive/{id}', $investorController . '@archive')
+            ->name('archive')
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
+        /**
+         * Unarchive investor
+         */
+        Route::post('unarchive/{id}', $investorController . '@unarchive')
+            ->name('unarchive')
+            ->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+
     });
 
 

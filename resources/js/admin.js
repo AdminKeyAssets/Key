@@ -112,6 +112,8 @@ Vue.component('admin-investor-component', require('./base/admin/investor/partial
 Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 Vue.component('investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
 Vue.component('update-investor-manager', require('./base/admin/investor/partials/UpdateInvestorManager').default);
+Vue.component('archive-investor-component', require('./components/investor/ArchiveInvestorComponent').default);
+Vue.component('archive-asset-component', require('./components/asset/ArchiveAssetComponent').default);
 
 //Lead
 Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').default);

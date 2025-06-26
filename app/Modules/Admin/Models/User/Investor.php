@@ -24,6 +24,7 @@ class Investor  extends Authenticatable
         'passport',
         'admin_id',
         'is_demo',
+        'is_archived',
         'service_agreement',
     ];
 

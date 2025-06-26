@@ -306,6 +306,12 @@
                                                 'developerAccess' => $item->developer_access
                                             ])
                                         @endif
+                                        @can(getPermissionKey($moduleKey, 'update', true))
+                                            <archive-asset-component
+                                                :asset-id="{{ $item->id }}"
+                                                :is-archived="{{ $item->is_archived ? 'true' : 'false' }}"
+                                            ></archive-asset-component>
+                                        @endcan
                                         @can(getPermissionKey($moduleKey, 'delete', true))
                                             <delete-component
                                                 :url="'{{ route($moduleKey . '.delete') }}'"

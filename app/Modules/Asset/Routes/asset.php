@@ -25,6 +25,9 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/save-project-details', $controller . '@saveProjectDetails')->name('save-project-details')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
+    // Archive and Unarchive
+    Route::post('/archive/{id}', $controller . '@archive')->name('archive')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('/unarchive/{id}', $controller . '@unarchive')->name('unarchive')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
     Route::get('/investor/filter-options', $controller . '@investorFilterOptions')

@@ -111,6 +111,17 @@ class AssetController extends BaseController
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
         }
+        
+        // Handle status filtering based on status parameter
+        if ($statusFilter === 'active') {
+            $query->where('is_archived', false);
+            $query->where('sale_status', 'active');
+        } elseif ($statusFilter === 'archived') {
+            $query->where('is_archived', true);
+        } elseif ($statusFilter === 'sold') {
+            $query->where('sale_status', 'sold');
+        }
+        // 'all' status will not apply any filters
 
         // Apply filters if provided in the request
         if ($request->investor && $request->investor != 'all') {
@@ -208,10 +219,6 @@ class AssetController extends BaseController
             });
         }
 
-        if ($statusFilter !== 'all') {
-            $query->where('sale_status', $statusFilter);
-        }
-
         // Order by descending asset ID
         $this->baseData['allData'] = $query->orderByDesc('id')->paginate(25);
 
@@ -241,9 +248,17 @@ class AssetController extends BaseController
             // For investors, use the relationship
             $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
         }
-        if ($statusFilter !== 'all') {
-            $userAssets->where('sale_status', $statusFilter);
+        
+        // Handle status filtering based on status parameter
+        if ($statusFilter === 'active') {
+            $userAssets->where('is_archived', false);
+            $userAssets->where('sale_status', 'active');
+        } elseif ($statusFilter === 'archived') {
+            $userAssets->where('is_archived', true);
+        } elseif ($statusFilter === 'sold') {
+            $userAssets->where('sale_status', 'sold');
         }
+        // 'all' status will not apply any filters
 
         if ($request->agreement_date && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
@@ -1111,6 +1126,60 @@ class AssetController extends BaseController
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
+    }
+
+    /**
+     * Archive an asset
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function archive($id)
+    {
+        try {
+            $asset = Asset::findOrFail($id);
+            
+            // Archive the asset
+            $asset->is_archived = true;
+            $asset->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Asset has been archived successfully.',
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Unarchive an asset
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unarchive($id)
+    {
+        try {
+            $asset = Asset::findOrFail($id);
+            
+            // Unarchive the asset
+            $asset->is_archived = false;
+            $asset->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Asset has been unarchived successfully.',
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
     }
 
     public function generatePaymentsList($firstPaymentDate, $period, $totalAmount)

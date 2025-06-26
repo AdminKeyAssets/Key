@@ -459,6 +459,10 @@ fieldset[disabled] .btn-default.active {
     border-color: #3855F7;
 }
 
+.text-center .btn-archive {
+    padding: 4px 4px !Important;
+}
+
 .text-center .btn-success.btn-home.renals-icon {
     padding: 3px 3px !Important;
     background-color: #6C93F5;

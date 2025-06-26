@@ -56,6 +56,7 @@ class Asset extends Model
         'sale_agreement',
         'purchaser',
         'status',
+        'is_archived',
         'developer_access'
     ];
 
