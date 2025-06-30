@@ -23,22 +23,33 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
 
     public function collection()
     {
-        $user = auth()->user();
-        $userId = $user->getAuthIdentifier();
         $query = Asset::query()->orderByDesc('id');
-
+        
+        // Get the developer user
+        $user = \Auth::guard('developer')->user();
         $query->whereIn('project_name', $user->assets()->pluck('asset_name')->toArray())
             ->where('developer_access', 1);
-        $isDeveloper = true;
-
+        
+        // Apply status filtering like in the myassets method
+        if (!empty($this->filters['status']) && $this->filters['status'] !== 'all') {
+            $statusFilter = $this->filters['status'];
+            if ($statusFilter === 'active') {
+                $query->where('is_archived', false);
+                $query->where('sale_status', 'active');
+            } elseif ($statusFilter === 'archived') {
+                $query->where('is_archived', true);
+            } elseif ($statusFilter === 'sold') {
+                $query->where('sale_status', 'sold');
+            }
+        } else {
+            // Default behavior if no status filter (match active assets)
+            $query->where('is_archived', false);
+            $query->where('sale_status', 'active');
+        }
 
         // Apply asset‐level filters
         if (!empty($this->filters['asset']) && $this->filters['asset'] !== 'all') {
             $query->where('project_name', 'like', '%' . $this->filters['asset'] . '%');
-        }
-
-        if (!empty($this->filters['status']) && $this->filters['status'] !== 'all') {
-            $query->where('sale_status', $this->filters['status']);
         }
 
         if (!empty($this->filters['manager']) && $this->filters['manager'] !== 'all') {
@@ -55,6 +66,10 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
 
         if (!empty($this->filters['asset_type']) && $this->filters['asset_type'] !== 'all') {
             $query->where('type', $this->filters['asset_type']);
+        }
+        
+        if (!empty($this->filters['city']) && $this->filters['city'] !== 'all') {
+            $query->where('city', $this->filters['city']);
         }
 
         if (!empty($this->filters['asset_status']) && $this->filters['asset_status'] !== 'all') {
@@ -118,6 +133,7 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
             'investors',
             'rentals',
             'payments',
+            'paymentsHistories',
             'investments',
             'renovationPayments',
         ]);
@@ -129,9 +145,13 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                 ->map(fn($inv) => $inv->name . ' ' . $inv->surname)
                 ->implode(' / ');
 
+            // Calculate paid amount and percentage
+            $payments = $asset->paymentsHistories ?: collect([]);
+
             // Check if payment_date filter is active
             $paymentFilter = isset($this->filters['payment_date']) &&
                 $this->filters['payment_date'] !== 'null';
+
             if ($paymentFilter) {
                 if (!is_array($this->filters['payment_date'])) {
                     $parts = explode(',', $this->filters['payment_date']);
@@ -140,9 +160,38 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                 }
                 $start = $parts[0] ?? null;
                 $end = $parts[1] ?? null;
+
+                // Apply date filtering to payments if needed
+                if ($start) {
+                    $payments = $payments->filter(function ($payment) use ($start) {
+                        return isset($payment->payment_date) && strtotime($payment->payment_date) >= strtotime($start);
+                    });
+                }
+                if ($end) {
+                    $payments = $payments->filter(function ($payment) use ($end) {
+                        return isset($payment->payment_date) && strtotime($payment->payment_date) <= strtotime($end);
+                    });
+                }
             } else {
                 $start = $end = null;
             }
+
+            // Calculate paid amount based on agreement status
+            if ($asset->agreement_status === 'Installments') {
+                $paid = $payments->sum('amount');
+            } else {
+                $paid = $asset->total_price;
+            }
+
+            // Calculate percentage
+            $paidPercent = $asset->total_price > 0
+                ? (fmod(($paid / $asset->total_price) * 100, 1) == 0
+                    ? number_format(($paid / $asset->total_price) * 100, 0)
+                    : number_format(($paid / $asset->total_price) * 100, 2))
+                : '0';
+
+            // Create paid_formatted string
+            $paid_formatted = number_format($paid, 0, ".", ",") . '$ - ' . $paidPercent . '%';
 
             //
             // Next Installment (only first payment within range, or fallback to existing logic)
@@ -200,7 +249,7 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                     ($asset->flat_number ? ' N' . $asset->flat_number . ' - ' : '') .
                     ($asset->area ? $asset->area . ' sq.m' : ''),
                 'Purchase Price' => number_format($asset->total_price) . '$',
-                'Paid' => $asset->paid_formatted,
+                'Paid' => $paid_formatted,
                 'Agreement Status' => $asset->agreement_status,
                 'Next Installment' => $nextInstallment,
                 'Current Value' => number_format($asset->current_value) . '$',
