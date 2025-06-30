@@ -1316,3 +1316,7 @@ table thead th {
 .investor-item{
     padding-bottom: 10px;
 }
+.export-row .col-md-2{
+    float: right !important;
+    overflow: hidden;
+}
