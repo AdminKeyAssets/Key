@@ -633,7 +633,7 @@
                                                             style="margin-bottom: 2rem; margin-right: 3rem;"
                                                             type="secondary"
                                                             class="pull-right"
-                                                            @click="exportDeptStatement">Dept Statement
+                                                            @click="exportDeptStatement">Debt Statement
                                                         </el-button>
 
                                                         <el-button
@@ -1218,7 +1218,7 @@ export default {
                 document.body.appendChild(link);
                 link.click();
             } catch (error) {
-                console.error('Error exporting Dept Statement:', error);
+                console.error('Error exporting Debt Statement:', error);
             }
         },
 
