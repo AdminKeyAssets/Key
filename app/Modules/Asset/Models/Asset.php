@@ -141,4 +141,9 @@ class Asset extends Model
     {
         return $this->belongsTo(Admin::class);
     }
+
+    public function manager()
+    {
+        return $this->belongsTo(Admin::class, 'manager_id');
+    }
 }

@@ -121,6 +121,13 @@
                 </el-select>
             </div>
         </div>
+        
+        <!-- Select Asset Manager -->
+        <ManagerSelection 
+            v-model="form.manager_id"
+            :asset-id="form.id" 
+            @input="updateManagerId"
+        />
 
         <div class="form-group">
 
@@ -345,11 +352,12 @@
 <script>
 import ImageModal from "../../../../components/admin/ImageModal.vue";
 import TenantDetails from "./TenantDetails.vue";
+import ManagerSelection from "./ManagerSelection.vue";
 import axios from "axios";
 
 export default {
     name: "AssetFormComponent",
-    components: { ImageModal, TenantDetails },
+    components: { ImageModal, TenantDetails, ManagerSelection },
     props: [
         "form",
         "loading",
@@ -544,6 +552,10 @@ export default {
             } finally {
                 this.completeRentDialog = false;
             }
+        },
+        
+        updateManagerId(managerId) {
+            this.$emit("update-form", { ...this.form, manager_id: managerId });
         }
     }
 };

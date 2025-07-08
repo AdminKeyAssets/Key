@@ -49,6 +49,7 @@ class AssetRequest extends FormRequest
             'cadastral_number' => 'required',
 //            'investor_id' => 'required',
             'investor_ids' => 'required',
+            'manager_ids' => 'nullable',
             'city' => 'required',
             'currency' => 'required',
             'area' => ['required', 'numeric'],

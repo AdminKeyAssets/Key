@@ -30,6 +30,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/unarchive/{id}', $controller . '@unarchive')->name('unarchive')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
+    Route::get('/available-managers', $controller . '@getAvailableManagers')
+        ->name('available.managers')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
     Route::get('/investor/filter-options', $controller . '@investorFilterOptions')
         ->name('assets.investor.filters')->middleware(['auth:investor']);
     Route::get('/export', $controller . '@export')
