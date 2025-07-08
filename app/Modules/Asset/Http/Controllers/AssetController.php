@@ -410,7 +410,12 @@ class AssetController extends BaseController
 
                 $salesManager = null;
 
-                if ($asset->investors->isNotEmpty()) {
+                // Get the manager from the direct relationship
+                if ($asset->manager) {
+                    $salesManager = $asset->manager;
+                } 
+                // Fallback to old method if no manager is assigned
+                else if ($asset->investors->isNotEmpty()) {
                     $investor = $asset->investors->first();
                     $salesManager = Admin::find($investor->admin_id);
                 }
@@ -425,6 +430,16 @@ class AssetController extends BaseController
                 $investorNames = implode(' / ', $investorNames);
                 $this->baseData['item']['investor_ids'] = $investors->pluck('id')->toArray();
                 $this->baseData['item']['investorNames'] = $investorNames;
+                
+                // Get manager data
+                if ($asset->manager) {
+                    $this->baseData['item']['manager_id'] = $asset->manager_id;
+                    $this->baseData['item']['managerName'] = $asset->manager->name . ' ' . $asset->manager->surname;
+                } else {
+                    $this->baseData['item']['manager_id'] = null;
+                    $this->baseData['item']['managerName'] = '';
+                }
+                
                 $this->baseData['item']['attachments'] = AssetAttachment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['extraDetails'] = AssetInformation::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['agreements'] = AssetAgreement::where('asset_id', $asset->id)->get();
@@ -670,8 +685,17 @@ class AssetController extends BaseController
         $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
 
         $investorIds = explode(',', $request->investor_ids);
-
+        
         $asset->investors()->sync($investorIds);
+        
+        // Set the asset manager
+        if ($request->filled('manager_id')) {
+            $asset->manager_id = $request->manager_id;
+        } else if (!$request->id) {
+            // If no manager specified for new asset, use the current admin as the manager
+            $asset->manager_id = Auth::user()->getAuthIdentifier();
+        }
+        $asset->save();
 
         if ($request->agreement_status === 'Installments') {
             if ($asset->payments) {
@@ -1076,6 +1100,12 @@ class AssetController extends BaseController
                 $investorNames[] = $investor->name . ' ' . $investor->surname;
             }
             $investorNames = implode(' / ', $investorNames);
+            
+            // Get the manager assigned to this asset
+            $managerName = '';
+            if ($asset->manager) {
+                $managerName = $asset->manager->name . ' ' . $asset->manager->surname;
+            }
 
             $this->baseData['extra'] = [
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
@@ -1084,6 +1114,7 @@ class AssetController extends BaseController
                 'investments_route' => route('asset.investment.index', [$asset->id]),
                 'renovation_route' => $asset->renovation_status === 'In Progress' ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
+                'manager_name' => $managerName,
                 'asset_id' => $asset->id
             ];
 
@@ -1229,6 +1260,46 @@ class AssetController extends BaseController
         return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
     }
 
+    /**
+     * Get available asset managers for assignment
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAvailableManagers(Request $request)
+    {
+        try {
+            $assetId = $request->input('asset_id');
+            
+            $managers = Admin::whereHas('roles', function ($query) {
+                    $query->where('name', 'like', '%asset%manager%')
+                        ->orWhere('name', 'administrator');
+                })
+                ->orderBy('name')
+                ->orderBy('surname')
+                ->get(['id', 'name', 'surname', 'email']);
+                
+            // If asset_id is provided, also mark the currently assigned manager
+            if ($assetId) {
+                $asset = Asset::find($assetId);
+                if ($asset && $asset->manager_id) {
+                    // Add an 'assigned' property to each manager
+                    $managers->each(function($manager) use ($asset) {
+                        $manager->assigned = ($manager->id == $asset->manager_id);
+                    });
+                }
+            }
+            
+            return response()->json([
+                'success' => true,
+                'managers' => $managers
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
     public function filterOptions()
     {
         $this->baseData['investors'] = [];
@@ -1238,7 +1309,8 @@ class AssetController extends BaseController
                     ->orderBy('surname')
                     ->get();
                 $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
-                    $query->where('name', 'like', '%asset%manager%');
+                    $query->where('name', 'like', '%asset%manager%')
+                        ->orWhere('name', 'administrator');
                 })->orderBy('name')
                     ->orderBy('surname')
                     ->get();
@@ -1481,6 +1553,16 @@ class AssetController extends BaseController
             if ($request->filled('investor_ids')) {
                 $investorIds = explode(',', $request->investor_ids);
                 $asset->investors()->sync($investorIds);
+            }
+            
+            // Set the asset manager
+            if ($request->filled('manager_id')) {
+                $asset->manager_id = $request->manager_id;
+                $asset->save();
+            } else if (!$request->id) {
+                // If no manager specified for new asset, use the current admin as the manager
+                $asset->manager_id = Auth::user()->getAuthIdentifier();
+                $asset->save();
             }
 
             // Handle gallery files

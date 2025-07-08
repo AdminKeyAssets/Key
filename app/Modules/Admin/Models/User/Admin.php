@@ -67,4 +67,9 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
         return $this->hasMany(Reminder::class);
     }
 
+    public function managedAssets()
+    {
+        return $this->hasMany('App\Modules\Asset\Models\Asset', 'manager_id');
+    }
+
 }

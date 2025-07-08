@@ -219,6 +219,17 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+                                        
+                                        <el-row class="row-item" v-if="form.managerName">
+                                            <el-col :span="24">
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Asset Manager: </label>
+                                                    <div class="col-md-10 uppercase-medium">
+                                                        {{ form.managerName }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
 
                                     </el-row>
 
@@ -1007,6 +1018,8 @@
                                     </p>
                                 </div>
                             </el-card>
+                            
+
                         </div>
                     </div>
 
@@ -1067,7 +1080,8 @@ export default {
             options: {},
             /** Form data*/
             form: {
-                id: this.id
+                id: this.id,
+                managerName: ''
             },
             investors: {},
             salesManager: {},
