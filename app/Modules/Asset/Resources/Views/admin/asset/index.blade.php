@@ -68,7 +68,7 @@
                             <th> Photo</th>
                             <th> City</th>
                             {{--                            @if(Auth::guard('admin')->check())--}}
-{{--                            <th> Investor</th>--}}
+                            <th> Investor</th>
                             {{--                            @endif--}}
                             <th> Asset Type / Size</th>
                             <th> Agreement Status</th>
@@ -112,14 +112,14 @@
                                 </td>
                                 <td>{!! $item->city !!}</td>
                                 {{--                                @if(Auth::guard('admin')->check())--}}
-{{--                                <td>--}}
-{{--                                    @foreach($item->investors as $investor)--}}
-{{--                                        {!! $investor->name !!} {!! $investor->surname !!}--}}
-{{--                                        @if(!$loop->last)--}}
-{{--                                            /<br>--}}
-{{--                                        @endif--}}
-{{--                                    @endforeach--}}
-{{--                                </td>--}}
+                                <td>
+                                    @foreach($item->investors as $investor)
+                                        {!! $investor->name !!} {!! $investor->surname !!}
+                                        @if(!$loop->last)
+                                            /<br>
+                                        @endif
+                                    @endforeach
+                                </td>
                                 {{--                                @endif--}}
                                 <td>
 

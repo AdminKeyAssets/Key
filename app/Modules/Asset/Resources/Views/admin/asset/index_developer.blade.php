@@ -61,6 +61,7 @@
                             <th> Name</th>
                             <th> Photo</th>
                             <th> City</th>
+                            <th> Investor</th>
                             <th> Asset Type / Size</th>
                             <th> Purchase Price</th>
                             <th> Paid</th>
@@ -90,7 +91,14 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>
-
+                                <td>
+                                    @foreach($item->investors as $investor)
+                                        {!! $investor->name !!} {!! $investor->surname !!}
+                                        @if(!$loop->last)
+                                            /<br>
+                                        @endif
+                                    @endforeach
+                                </td>
                                 <td>
 
                                     {!! $item->type !!}

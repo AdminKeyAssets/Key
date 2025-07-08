@@ -74,6 +74,19 @@ class InvestorLoginController extends \App\Http\Controllers\Auth\LoginController
      */
     protected function attemptInvestorLogin(Request $request)
     {
+        // Check if the investor exists and is not archived
+        $credentials = $request->only($this->username(), 'password');
+        
+        // Add a custom check for archived status
+        $investor = \App\Modules\Admin\Models\User\Investor::where($this->username(), $credentials[$this->username()])->first();
+        
+        // If investor is archived, prevent login
+        if ($investor && $investor->is_archived) {
+            $this->incrementLoginAttempts($request);
+            return $this->sendFailedLoginResponse($request, 'This account has been archived. Please contact support.');
+        }
+        
+        // Continue with normal login attempt
         if ($this->attemptLogin($request)) {
             return $this->sendLoginResponse($request);
         }
@@ -94,6 +107,24 @@ class InvestorLoginController extends \App\Http\Controllers\Auth\LoginController
             $this->username() => 'required|string',
             'password' => 'required|string',
         ]);
+    }
+    
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|null  $message
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function sendFailedLoginResponse(Request $request, $message = null)
+    {
+        $message = $message ?? trans('auth.failed');
+        
+        return redirect()->back()
+            ->withInput($request->only($this->username(), 'remember'))
+            ->withErrors([
+                $this->username() => $message,
+            ]);
     }
 
     /**

@@ -1169,10 +1169,18 @@ class AssetController extends BaseController
             // Unarchive the asset
             $asset->is_archived = false;
             $asset->save();
+            
+            // Automatically unarchive all associated investors if they are archived
+            foreach ($asset->investors as $investor) {
+                if ($investor->is_archived) {
+                    $investor->is_archived = false;
+                    $investor->save();
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Asset has been unarchived successfully.',
+                'message' => 'Asset has been unarchived successfully. Associated investors were unarchived if needed.',
             ]);
         } catch (\Exception $ex) {
             return response()->json([
