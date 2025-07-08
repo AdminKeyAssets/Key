@@ -53,6 +53,56 @@
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
             @else
+                @php
+                    // Helper function to check if a column should be hidden (all rows empty)
+                    function hasEmptyColumn($collection, $checkFunction) {
+                        return $collection->every(function($item) use ($checkFunction) {
+                            return empty($checkFunction($item));
+                        });
+                    }
+                    
+                    // Check if the investor column should be hidden (no investors for any assets)
+                    $hideInvestorColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->investors->count();
+                    });
+                    
+                    // Check if other columns should be hidden
+                    $hideTypeColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->type;
+                    }) && hasEmptyColumn($allData, function($item) {
+                        return $item->flat_number;
+                    }) && hasEmptyColumn($allData, function($item) {
+                        return $item->area;
+                    });
+                    
+                    $hidePurchasePriceColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->total_price;
+                    });
+                    
+                    $hidePaidColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->paid_formatted;
+                    });
+                    
+                    $hideAgreementStatusColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->agreement_status;
+                    });
+                    
+                    $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->agreement_status == 'Installments' && count($item->payments) > 0;
+                    });
+                    
+                    $hideCurrentValueColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->current_value;
+                    });
+                    
+                    $hideCapitalGainColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->current_value - $item->total_price;
+                    });
+                    
+                    $hideManagerColumn = hasEmptyColumn($allData, function($item) {
+                        return isset($item->investors->first()->admin);
+                    });
+                @endphp
 
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">
@@ -61,16 +111,33 @@
                             <th> Name</th>
                             <th> Photo</th>
                             <th> City</th>
+                            @if(!$hideInvestorColumn)
                             <th> Investor</th>
+                            @endif
+                            @if(!$hideTypeColumn)
                             <th> Asset Type / Size</th>
+                            @endif
+                            @if(!$hidePurchasePriceColumn)
                             <th> Purchase Price</th>
+                            @endif
+                            @if(!$hidePaidColumn)
                             <th> Paid</th>
+                            @endif
+                            @if(!$hideAgreementStatusColumn)
                             <th> Agreement Status</th>
+                            @endif
+                            @if(!$hideNextInstallmentColumn)
                             <th> Next Installment</th>
+                            @endif
+                            @if(!$hideCurrentValueColumn)
                             <th> Current Value</th>
+                            @endif
+                            @if(!$hideCapitalGainColumn)
                             <th> Capital Gain</th>
+                            @endif
+                            @if(!$hideManagerColumn)
                             <th> Manager</th>
-
+                            @endif
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -91,6 +158,7 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>
+                                @if(!$hideInvestorColumn)
                                 <td>
                                     @foreach($item->investors as $investor)
                                         {!! $investor->name !!} {!! $investor->surname !!}
@@ -99,6 +167,8 @@
                                         @endif
                                     @endforeach
                                 </td>
+                                @endif
+                                @if(!$hideTypeColumn)
                                 <td>
 
                                     {!! $item->type !!}
@@ -109,12 +179,19 @@
                                         {!! $item->area !!} sq.m
                                     @endif
                                 </td>
+                                @endif
+                                @if(!$hidePurchasePriceColumn)
                                 <td>{!! number_format($item->total_price) !!}$</td>
+                                @endif
+                                @if(!$hidePaidColumn)
                                 <td>
                                     {!! $item->paid_formatted !!}
                                 </td>
+                                @endif
+                                @if(!$hideAgreementStatusColumn)
                                 <td>{!! $item->agreement_status !!}</td>
-
+                                @endif
+                                @if(!$hideNextInstallmentColumn)
                                 <td>
                                     @php
                                     // Check if we're filtering by payment_date
@@ -159,9 +236,16 @@
                                         : ''
                                     !!}
                                 </td>
+                                @endif
+                                @if(!$hideCurrentValueColumn)
                                 <td>{!! number_format($item->current_value) !!}$</td>
+                                @endif
+                                @if(!$hideCapitalGainColumn)
                                 <td>{!! number_format($item->current_value - $item->total_price) !!}$</td>
-                                <td>{!! $item->investors->first()->admin->name !!} {!! $item->investors->first()->admin->surname !!}</td>
+                                @endif
+                                @if(!$hideManagerColumn)
+                                <td>{!! $item->investors->first()->admin->name ?? '' !!} {!! $item->investors->first()->admin->surname ?? '' !!}</td>
+                                @endif
                                 <td class="text-center">
                                     @include('admin::includes.actions.developer-access',
                                     [

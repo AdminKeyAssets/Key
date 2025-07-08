@@ -54,11 +54,66 @@
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
             @else
                 @php
+                    // Helper function to check if a column should be hidden (all rows empty)
+                    function hasEmptyColumn($collection, $checkFunction) {
+                        return $collection->every(function($item) use ($checkFunction) {
+                            return empty($checkFunction($item));
+                        });
+                    }
+
+                    // Check if there are any rented assets
                     $showNextRent = $allData
                         ->filter(function($item) {
                             return $item->asset_status === 'Rented';
                         })
                         ->isNotEmpty();
+
+                    // Check if we should hide the investor column
+                    $hideInvestorColumn = false;
+                    
+                    // Scenario 1: Logged-in investor is the only investor for all assets
+                    if (\Auth::guard('investor')->check()) {
+                        $investorId = \Auth::guard('investor')->user()->id;
+                        $hideInvestorColumn = $allData->every(function($item) use ($investorId) {
+                            // Check if the asset has exactly one investor and it's the logged-in user
+                            return $item->investors->count() === 1 && $item->investors->first()->id === $investorId;
+                        });
+                    }
+                    
+                    // Scenario 2: All assets have no investors or all investor entries would be empty after filtering
+                    if (!$hideInvestorColumn && \Auth::guard('investor')->check()) {
+                        $investorId = \Auth::guard('investor')->user()->id;
+                        $hideInvestorColumn = hasEmptyColumn($allData, function($item) use ($investorId) {
+                            return $item->investors->filter(function($investor) use ($investorId) {
+                                return $investor->id !== $investorId;
+                            })->count();
+                        });
+                    } else if (!$hideInvestorColumn) {
+                        $hideInvestorColumn = hasEmptyColumn($allData, function($item) {
+                            return $item->investors->count();
+                        });
+                    }
+                    
+                    // Check if we should hide other columns
+                    $hideTypeColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->type;
+                    }) && hasEmptyColumn($allData, function($item) {
+                        return $item->flat_number;
+                    }) && hasEmptyColumn($allData, function($item) {
+                        return $item->area;
+                    });
+                    
+                    $hideAgreementStatusColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->agreement_status;
+                    });
+                    
+                    $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->agreement_status == 'Installments' && count($item->payments) > 0;
+                    });
+                    
+                    $hideNextRenovationColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->renovation_status == 'In Progress' && count($item->renovationPayments) > 0;
+                    });
                 @endphp
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">
@@ -67,16 +122,22 @@
                             <th> Name</th>
                             <th> Photo</th>
                             <th> City</th>
-                            {{--                            @if(Auth::guard('admin')->check())--}}
+                            @if(!$hideInvestorColumn)
                             <th> Investor</th>
-                            {{--                            @endif--}}
+                            @endif
+                            @if(!$hideTypeColumn)
                             <th> Asset Type / Size</th>
+                            @endif
+                            @if(!$hideAgreementStatusColumn)
                             <th> Agreement Status</th>
+                            @endif
+                            @if(!$hideNextInstallmentColumn)
                             <th> Next Installment</th>
+                            @endif
                             @if($showNextRent && !Auth::guard('developer')->check())
                                 <th> Next Rent</th>
                             @endif
-                            @if(!Auth::guard('developer')->check())
+                            @if(!$hideNextRenovationColumn && !Auth::guard('developer')->check())
                                 <th> Next Renovation</th>
                             @endif
                             @if(!Auth::guard('investor')->check() && !Auth::guard('developer')->check())
@@ -111,18 +172,29 @@
                                     @endif
                                 </td>
                                 <td>{!! $item->city !!}</td>
-                                {{--                                @if(Auth::guard('admin')->check())--}}
+                                @if(!$hideInvestorColumn)
                                 <td>
-                                    @foreach($item->investors as $investor)
+                                    @php
+                                    // Filter out logged-in investor from the investors array
+                                    $displayInvestors = $item->investors;
+                                    if (\Auth::guard('investor')->check()) {
+                                        $investorId = \Auth::guard('investor')->user()->id;
+                                        $displayInvestors = $displayInvestors->filter(function($investor) use ($investorId) {
+                                            return $investor->id !== $investorId;
+                                        });
+                                    }
+                                    @endphp
+
+                                    @foreach($displayInvestors as $investor)
                                         {!! $investor->name !!} {!! $investor->surname !!}
                                         @if(!$loop->last)
                                             /<br>
                                         @endif
                                     @endforeach
                                 </td>
-                                {{--                                @endif--}}
+                                @endif
+                                @if(!$hideTypeColumn)
                                 <td>
-
                                     {!! $item->type !!}
                                     @if($item->flat_number)
                                         N{!! $item->flat_number !!} -
@@ -131,8 +203,11 @@
                                         {!! $item->area !!} sq.m
                                     @endif
                                 </td>
+                                @endif
+                                @if(!$hideAgreementStatusColumn)
                                 <td>{!! $item->agreement_status !!}</td>
-
+                                @endif
+                                @if(!$hideNextInstallmentColumn)
                                 <td>
                                     @php
                                     // Check if we're filtering by payment_date
@@ -177,6 +252,7 @@
                                         : ''
                                     !!}
                                 </td>
+                                @endif
 
                                 @if($showNextRent && !Auth::guard('developer')->check())
                                     <td>
@@ -224,6 +300,7 @@
                                         !!}
                                     </td>
                                 @endif
+                                @if(!$hideNextRenovationColumn && !Auth::guard('developer')->check())
                                 <td>
                                     @php
                                     // Check if we're filtering by payment_date
@@ -269,7 +346,7 @@
                                         : ''
                                     !!}
                                 </td>
-
+                                @endif
 
                                 <td class="text-center">
                                     @if($item->sale_status !== 'sold')
