@@ -76,7 +76,6 @@
             <label class="col-md-1 control-label">M2 Price:</label>
             <div class="col-md-7 uppercase-medium">
                 <el-input-number
-                    type="number"
                     :disabled="loading"
                     v-model="form.price"
                     :controls="false"

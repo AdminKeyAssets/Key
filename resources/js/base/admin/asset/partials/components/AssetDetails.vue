@@ -48,8 +48,7 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Area (m2):</label>
             <div class="col-md-10 uppercase-medium">
-                <input
-                    type="number"
+                <el-input-number
                     :disabled="loading"
                     v-model="form.area"
                     :controls="false"
