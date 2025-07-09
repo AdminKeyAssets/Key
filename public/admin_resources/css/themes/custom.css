@@ -1320,3 +1320,6 @@ table thead th {
     float: right !important;
     overflow: hidden;
 }
+.el-input-number.is-without-controls input {
+    text-align: left !important;
+}

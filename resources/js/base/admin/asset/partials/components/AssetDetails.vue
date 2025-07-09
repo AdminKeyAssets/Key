@@ -49,10 +49,13 @@
             <label class="col-md-1 control-label">Area (m2):</label>
             <div class="col-md-10 uppercase-medium">
                 <input
-                    class="form-control"
                     type="number"
                     :disabled="loading"
                     v-model="form.area"
+                    :controls="false"
+                    size="large"
+                    :precision="2"
+                    :min="0"
                 />
             </div>
         </div>
@@ -121,11 +124,11 @@
                 </el-select>
             </div>
         </div>
-        
+
         <!-- Select Asset Manager -->
-        <ManagerSelection 
+        <ManagerSelection
             v-model="form.manager_id"
-            :asset-id="form.id" 
+            :asset-id="form.id"
             @input="updateManagerId"
         />
 
@@ -553,7 +556,7 @@ export default {
                 this.completeRentDialog = false;
             }
         },
-        
+
         updateManagerId(managerId) {
             this.$emit("update-form", { ...this.form, manager_id: managerId });
         }
