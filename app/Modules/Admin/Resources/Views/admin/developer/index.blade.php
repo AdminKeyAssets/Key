@@ -87,10 +87,9 @@
 
                                     <td class="developer-assets">
                                         @foreach($assetNameList as $assetName)
-                                            <developer-assets-investors
-                                                asset-name="{{$assetName}}"
-                                                :developer-id="{{ $item->id }}">
-                                            </developer-assets-investors>
+                                            <a href="{{ url('/assets/list?asset=' . urlencode($assetName) . '&status=all') }}" style="cursor: pointer">
+                                                {{ $assetName }}
+                                            </a><br>
                                         @endforeach
                                     </td>
                                 @endif
