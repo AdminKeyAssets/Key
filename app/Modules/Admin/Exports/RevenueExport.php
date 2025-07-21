@@ -202,7 +202,7 @@ class RevenueExport implements FromCollection, WithHeadings, WithEvents
                 $currentValueDisplay = $asset->current_value;
             } else {
                 $capitalGain = $asset->sale_price - $totalInvestment;
-                $netCashBalance = $asset->sale_price + $rentSum - $totalInvestment;
+                $netCashBalance = ($asset->sale_price - $asset->total_price) + ($rentSum - $otherInvestments);
                 $currentValueDisplay = $asset->sale_price;
             }
 

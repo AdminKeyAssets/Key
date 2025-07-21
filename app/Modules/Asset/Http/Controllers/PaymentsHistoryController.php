@@ -63,7 +63,7 @@ class PaymentsHistoryController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = PaymentsHistory::where('asset_id', $assetId)->paginate(25);
+        $this->baseData['allData'] = PaymentsHistory::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();

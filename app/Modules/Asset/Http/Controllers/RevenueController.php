@@ -447,7 +447,7 @@ class RevenueController extends BaseController
             if ($asset->sale_status !== 'sold') {
                 $netCashBalance = $rent - $otherInvestments;
             } else {
-                $netCashBalance = $asset->sale_price + $rent - $allInvestments;
+                $netCashBalance = ($asset->sale_price - $asset->total_price) + ($rent - $otherInvestments);
             }
             $totalNetCashBalance += $netCashBalance;
         }
@@ -502,10 +502,10 @@ class RevenueController extends BaseController
             }
 
             if ($asset->sale_status !== 'sold') {
-                $asset->net_cache_balance = $asset->rent - $otherInvestments;
+                $asset->net_cash_balance = $asset->rent - $otherInvestments;
                 $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
             } else {
-                $asset->net_cache_balance = $asset->sale_price + $asset->rent - $asset->total_investment;
+                $asset->net_cash_balance = ($asset->sale_price - $asset->total_price) + ($asset->rent - $otherInvestments);
                 $asset->capital_gain = $asset->sale_price - $asset->total_investment;
             }
             $asset->other_investment = $otherInvestments;
@@ -685,7 +685,7 @@ class RevenueController extends BaseController
                     //                    dd([$asset->sale_price,$rent,$allInvestments]);
 
                     $this->baseData['item']['total_investment'] = $totalInvestments;
-                    $this->baseData['item']['net_cash_balance'] = $asset->sale_price + $rent - $totalInvestments;
+                    $this->baseData['item']['net_cash_balance'] = ($asset->sale_price - $asset->total_price) + ($rent - $otherInvestments);
 
                     $this->baseData['item']['capital_gain'] = $asset->sale_price - $totalInvestments;
 

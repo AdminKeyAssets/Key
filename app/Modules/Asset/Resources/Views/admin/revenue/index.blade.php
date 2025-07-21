@@ -110,7 +110,7 @@
                                 @endif
                                 <td>{!! number_format($item->capital_gain,0,".",",") !!}$</td>
                                 <td>{!! number_format($item->rent,0,".",",") !!}$</td>
-                                <td>{!! number_format($item->net_cache_balance,0,".",",") !!}$</td>
+                                <td>{!! number_format($item->net_cash_balance,0,".",",") !!}$</td>
                             </tr>
                         @endforeach
                         </tbody>
