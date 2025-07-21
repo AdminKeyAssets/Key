@@ -1,5 +1,15 @@
 @extends('admin::layouts.admin')
 
+@php
+// Helper function to preserve existing query parameters when sorting
+function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
+    $params = request()->except(['sort_by', 'sort_order']);
+    $params['sort_by'] = $sortBy;
+    $params['sort_order'] = ($currentSortBy == $sortBy && $currentSortOrder == 'asc') ? 'desc' : 'asc';
+    return request()->url() . '?' . http_build_query($params);
+}
+@endphp
+
 @section('main')
     <!-- Page content -->
     <div id="page-content">
@@ -60,6 +70,9 @@
                             return empty($checkFunction($item));
                         });
                     }
+                    
+                    // Get the current sort field from the view data if available
+                    $currentSortField = $sortField ?? request()->sort_by ?? 'id';
 
                     // Check if there are any rented assets
                     $showNextRent = $allData
@@ -102,18 +115,39 @@
                     }) && hasEmptyColumn($allData, function($item) {
                         return $item->area;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'type') {
+                        $hideTypeColumn = false;
+                    }
                     
                     $hideAgreementStatusColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'agreement_status') {
+                        $hideAgreementStatusColumn = false;
+                    }
                     
                     $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status == 'Installments' && count($item->payments) > 0;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'next_installment') {
+                        $hideNextInstallmentColumn = false;
+                    }
                     
                     $hideNextRenovationColumn = hasEmptyColumn($allData, function($item) {
                         return $item->renovation_status == 'In Progress' && count($item->renovationPayments) > 0;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'next_renovation') {
+                        $hideNextRenovationColumn = false;
+                    }
+                    
+                    // Always show next rent column if it's being sorted
+                    if ($currentSortField === 'next_rent') {
+                        $showNextRent = true;
+                    }
                 @endphp
                 <div class="table-responsive">
                     <table class="table table-vcenter table-striped">
@@ -126,19 +160,64 @@
                             <th> Investor</th>
                             @endif
                             @if(!$hideTypeColumn)
-                            <th> Asset Type / Size</th>
+                            <th>
+                                <a href="{{ getUrlWithSortParams('type', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Asset Type / Size
+                                    @if(request()->sort_by == 'type')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
                             @endif
                             @if(!$hideAgreementStatusColumn)
-                            <th> Agreement Status</th>
+                            <th>
+                                <a href="{{ getUrlWithSortParams('agreement_status', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Agreement Status
+                                    @if(request()->sort_by == 'agreement_status')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
                             @endif
                             @if(!$hideNextInstallmentColumn)
-                            <th> Next Installment</th>
+                            <th>
+                                <a href="{{ getUrlWithSortParams('next_installment', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Next Installment
+                                    @if(request()->sort_by == 'next_installment')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
                             @endif
                             @if($showNextRent && !Auth::guard('developer')->check())
-                                <th> Next Rent</th>
+                                <th>
+                                    <a href="{{ getUrlWithSortParams('next_rent', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                        Next Rent
+                                        @if(request()->sort_by == 'next_rent')
+                                            <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                        @else
+                                            <i class="fa fa-sort"></i>
+                                        @endif
+                                    </a>
+                                </th>
                             @endif
                             @if(!$hideNextRenovationColumn && !Auth::guard('developer')->check())
-                                <th> Next Renovation</th>
+                                <th>
+                                    <a href="{{ getUrlWithSortParams('next_renovation', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                        Next Renovation
+                                        @if(request()->sort_by == 'next_renovation')
+                                            <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                        @else
+                                            <i class="fa fa-sort"></i>
+                                        @endif
+                                    </a>
+                                </th>
                             @endif
                             @if(!Auth::guard('investor')->check() && !Auth::guard('developer')->check())
                                 <th width="10%" class="text-center">@lang('Action')</th>
@@ -406,6 +485,13 @@
                 </div>
             @endif
 
+            @php
+                // Make sure pagination links maintain the sort parameters
+                $allData->appends([
+                    'sort_by' => $currentSortField,
+                    'sort_order' => request()->sort_order ?? 'desc'
+                ]);
+            @endphp
             @include('admin::includes.paginate', ['data' => $allData ])
 
             <br>

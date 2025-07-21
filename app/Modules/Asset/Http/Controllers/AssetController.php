@@ -34,6 +34,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -107,6 +108,16 @@ class AssetController extends BaseController
 //        $query->where('sale_status', 'active');
 
         $statusFilter = $request->status ?? 'active';
+        
+        // Handle sorting
+        $sortField = $request->sort_by ?? 'id';
+        // Default to descending order, especially for date-based columns to show nearest dates first
+        $sortOrder = $request->sort_order ?? 'desc';
+        
+        // Always use descending order for date-based columns by default if no order specified
+        if (!$request->has('sort_order') && in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
+            $sortOrder = 'desc';
+        }
 
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
@@ -219,8 +230,97 @@ class AssetController extends BaseController
             });
         }
 
-        // Order by descending asset ID
-        $this->baseData['allData'] = $query->orderByDesc('id')->paginate(25);
+        // Apply sorting logic
+        switch ($sortField) {
+            case 'type':
+                $query->orderBy('type', $sortOrder);
+                break;
+            case 'agreement_status':
+                $query->orderBy('agreement_status', $sortOrder);
+                break;
+            case 'next_installment':
+                // For installment sorting, we order by the first upcoming payment date
+                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
+                $query->select('assets.*')
+                      ->selectSub(function($query) {
+                          $query->select('payment_date')
+                                ->from('payments')
+                                ->whereColumn('assets.id', 'payments.asset_id')
+                                ->where('status', 0)
+                                ->orderBy('payment_date')
+                                ->limit(1);
+                      }, 'next_payment_date')
+                      ->orderBy('next_payment_date', $sortOrder);
+                break;
+            case 'next_rent':
+                // For rent sorting, we order by the first upcoming rental payment date
+                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
+                $query->select('assets.*')
+                      ->selectSub(function($query) {
+                          $query->select('payment_date')
+                                ->from('rentals')
+                                ->whereColumn('assets.id', 'rentals.asset_id')
+                                ->where('status', 0)
+                                ->orderBy('payment_date')
+                                ->limit(1);
+                      }, 'next_rent_date')
+                      ->orderBy('next_rent_date', $sortOrder);
+                break;
+            case 'next_renovation':
+                // For renovation sorting, we order by the first upcoming renovation payment date
+                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
+                $query->select('assets.*')
+                      ->selectSub(function($query) {
+                          $query->select('payment_date')
+                                ->from('renovation_payments')
+                                ->whereColumn('assets.id', 'renovation_payments.asset_id')
+                                ->where('status', 0)
+                                ->orderBy('payment_date')
+                                ->limit(1);
+                      }, 'next_renovation_date')
+                      ->orderBy('next_renovation_date', $sortOrder);
+                break;
+            default:
+                // Default sorting by ID descending
+                $query->orderBy($sortField, $sortOrder);
+                break;
+        }
+
+        // Ensure we always have a base query with just asset records before pagination
+        // For complex sorting cases, we need to make sure we get the order right
+        if (in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
+            // Get a list of all asset IDs in the correct order
+            $assetIds = $query->pluck('assets.id');
+            
+            // Then create a new query that selects assets in this order
+            if (count($assetIds) > 0) {
+                $newQuery = Asset::whereIn('id', $assetIds);
+                
+                // Use a case statement to preserve the order
+                $orderByCase = "CASE";
+                foreach ($assetIds as $index => $id) {
+                    $orderByCase .= " WHEN id = $id THEN $index";
+                }
+                $orderByCase .= " END";
+                
+                $this->baseData['allData'] = $newQuery->orderByRaw($orderByCase)->paginate(25);
+            } else {
+                $this->baseData['allData'] = collect([])->paginate(25);
+            }
+        } else {
+            // For simple sorting, just use the query directly
+            $this->baseData['allData'] = $query->paginate(25);
+        }
+        
+        // Add sorting parameters to pagination links
+        $this->baseData['allData']->appends([
+            'sort_by' => $sortField,
+            'sort_order' => $sortOrder,
+        ]);
+        
+        // Add sorting info to view data so we can prevent hiding sorted columns
+        $this->baseData['sortField'] = $sortField;
+        $this->baseData['sortOrder'] = $sortOrder;
 
         // Return view with filtered data
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -238,6 +338,16 @@ class AssetController extends BaseController
 
         $statusFilter = $request->status ?? 'active';
         $isDeveloper = Auth::guard('developer')->check();
+        
+        // Handle sorting
+        $sortField = $request->sort_by ?? 'id';
+        $sortOrder = $request->sort_order ?? 'desc';
+        
+        // Always use descending order for date-based columns by default if no order specified
+        if (!$request->has('sort_order') && in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
+            $sortOrder = 'desc';
+        }
+        
         // Check if the user is a developer
         if ($isDeveloper) {
             $developer = Auth::guard('developer')->user();
@@ -358,25 +468,146 @@ class AssetController extends BaseController
         }
 
 
-        if ($userAssets->count() > 0) {
-            $this->baseData['allData'] = $userAssets->paginate(25);
-        } else {
-            if (Auth::guard('developer')->check()) {
-                $developer = Auth::guard('developer')->user();
-                $this->baseData['allData'] = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
-                    ->where('sale_status', 'sold')
-                    ->orderByDesc('id')->paginate(25);
+        // Apply sorting logic
+        switch ($sortField) {
+            case 'type':
+                $userAssets->orderBy('type', $sortOrder);
+                break;
+            case 'agreement_status':
+                $userAssets->orderBy('agreement_status', $sortOrder);
+                break;
+            case 'next_installment':
+                // For installment sorting, we order by the first upcoming payment date
+                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
+                $userAssets->select('assets.*')
+                      ->selectSub(function($query) {
+                          $query->select('payment_date')
+                                ->from('payments')
+                                ->whereColumn('assets.id', 'payments.asset_id')
+                                ->where('status', 0)
+                                ->orderBy('payment_date')
+                                ->limit(1);
+                      }, 'next_payment_date')
+                      ->orderBy('next_payment_date', $sortOrder);
+                break;
+            case 'next_rent':
+                // For rent sorting, we order by the first upcoming rental payment date
+                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
+                $userAssets->select('assets.*')
+                      ->selectSub(function($query) {
+                          $query->select('payment_date')
+                                ->from('rentals')
+                                ->whereColumn('assets.id', 'rentals.asset_id')
+                                ->where('status', 0)
+                                ->orderBy('payment_date')
+                                ->limit(1);
+                      }, 'next_rent_date')
+                      ->orderBy('next_rent_date', $sortOrder);
+                break;
+            case 'next_renovation':
+                // For renovation sorting, we order by the first upcoming renovation payment date
+                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
+                $userAssets->select('assets.*')
+                      ->selectSub(function($query) {
+                          $query->select('payment_date')
+                                ->from('renovation_payments')
+                                ->whereColumn('assets.id', 'renovation_payments.asset_id')
+                                ->where('status', 0)
+                                ->orderBy('payment_date')
+                                ->limit(1);
+                      }, 'next_renovation_date')
+                      ->orderBy('next_renovation_date', $sortOrder);
+                break;
+            default:
+                // Default sorting by ID
+                $userAssets->orderBy($sortField, $sortOrder);
+                break;
+        }
+        
+        // Handle complex sorting to avoid GROUP BY issues
+        if (in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
+            // Get all asset IDs in the correct order
+            $assetIds = $userAssets->pluck('assets.id')->toArray();
+            $hasAssets = count($assetIds) > 0;
+            
+            if ($hasAssets) {
+                // Create a new query to get the assets in the correct order
+                $newQuery = Asset::whereIn('id', $assetIds);
+                
+                // Use CASE statement to preserve the exact order
+                if (count($assetIds) > 0) {
+                    $orderCase = "CASE assets.id ";
+                    foreach ($assetIds as $index => $id) {
+                        $orderCase .= "WHEN $id THEN $index ";
+                    }
+                    $orderCase .= "END";
+                    
+                    $paginatedAssets = $newQuery->orderByRaw($orderCase)
+                        ->paginate(25)
+                        ->appends([
+                            'sort_by' => $sortField,
+                            'sort_order' => $sortOrder,
+                        ]);
+                        
+                    $this->baseData['allData'] = $paginatedAssets;
+                }
+            } else {
+                // Handle no results case
+                $this->baseData['allData'] = new LengthAwarePaginator([], 0, 25);
+                $this->baseData['allData']->appends([
+                    'sort_by' => $sortField, 
+                    'sort_order' => $sortOrder
+                ]);
             }
-            if (Auth::guard('investor')->check()) {
-                $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
+        } else {
+            // For simple sorting, use a more direct approach
+            $countQuery = clone $userAssets;
+            $countQuery = $countQuery->getQuery()->cloneWithout(['orders', 'columns']);
+            $countQuery->columns = ['assets.id'];
+            
+            // Create a new builder to count results
+            $countBuilder = Asset::query()->fromSub($countQuery, 'count_query');
+            $hasAssets = $countBuilder->count() > 0;
+            
+            if ($hasAssets) {
+                $this->baseData['allData'] = $userAssets->paginate(25);
+                // Add sorting parameters to pagination links
+                $this->baseData['allData']->appends([
+                    'sort_by' => $sortField,
+                    'sort_order' => $sortOrder,
+                ]);
+            } else {
+                if (Auth::guard('developer')->check()) {
+                    $developer = Auth::guard('developer')->user();
+                    $this->baseData['allData'] = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
+                        ->where('sale_status', 'sold')
+                        ->orderBy($sortField, $sortOrder)
+                        ->paginate(25)
+                        ->appends([
+                            'sort_by' => $sortField,
+                            'sort_order' => $sortOrder,
+                        ]);
+                }
+                if (Auth::guard('investor')->check()) {
+                    $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')
+                        ->orderBy($sortField, $sortOrder)
+                        ->paginate(25)
+                        ->appends([
+                            'sort_by' => $sortField,
+                            'sort_order' => $sortOrder,
+                        ]);
+                }
             }
         }
 
         // Calculate the "Paid" amount for each asset
         $this->calculatePaidAmounts($this->baseData['allData'], $request);
+        
+        // Add sorting info to view data so we can prevent hiding sorted columns
+        $this->baseData['sortField'] = $sortField;
+        $this->baseData['sortOrder'] = $sortOrder;
 
         if (Auth::guard('developer')->check()) {
-
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index_developer', $this->baseData);
         }
 

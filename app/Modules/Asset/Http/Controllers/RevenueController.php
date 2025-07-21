@@ -819,7 +819,7 @@ class RevenueController extends BaseController
     public function investorFilterOptions()
     {
         $user = auth()->user();
-        
+
         $this->baseData['assets'] = Asset::query()
             ->whereHas('investors', function ($q) use ($user) {
                 $q->where('investor_id', $user->id);

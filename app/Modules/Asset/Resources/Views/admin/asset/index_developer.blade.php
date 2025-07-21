@@ -1,5 +1,15 @@
 @extends('admin::layouts.admin')
 
+@php
+// Helper function to preserve existing query parameters when sorting
+function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
+    $params = request()->except(['sort_by', 'sort_order']);
+    $params['sort_by'] = $sortBy;
+    $params['sort_order'] = ($currentSortBy == $sortBy && $currentSortOrder == 'asc') ? 'desc' : 'asc';
+    return request()->url() . '?' . http_build_query($params);
+}
+@endphp
+
 @section('main')
     <!-- Page content -->
     <div id="page-content">
@@ -61,6 +71,9 @@
                         });
                     }
                     
+                    // Get the current sort field from the view data if available
+                    $currentSortField = $sortField ?? request()->sort_by ?? 'id';
+                    
                     // Check if the investor column should be hidden (no investors for any assets)
                     $hideInvestorColumn = hasEmptyColumn($allData, function($item) {
                         return $item->investors->count();
@@ -74,6 +87,10 @@
                     }) && hasEmptyColumn($allData, function($item) {
                         return $item->area;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'type') {
+                        $hideTypeColumn = false;
+                    }
                     
                     $hidePurchasePriceColumn = hasEmptyColumn($allData, function($item) {
                         return $item->total_price;
@@ -86,10 +103,18 @@
                     $hideAgreementStatusColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'agreement_status') {
+                        $hideAgreementStatusColumn = false;
+                    }
                     
                     $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status == 'Installments' && count($item->payments) > 0;
                     });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'next_installment') {
+                        $hideNextInstallmentColumn = false;
+                    }
                     
                     $hideCurrentValueColumn = hasEmptyColumn($allData, function($item) {
                         return $item->current_value;
@@ -115,7 +140,16 @@
                             <th> Investor</th>
                             @endif
                             @if(!$hideTypeColumn)
-                            <th> Asset Type / Size</th>
+                            <th>
+                                <a href="{{ getUrlWithSortParams('type', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Asset Type / Size
+                                    @if(request()->sort_by == 'type')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
                             @endif
                             @if(!$hidePurchasePriceColumn)
                             <th> Purchase Price</th>
@@ -124,10 +158,28 @@
                             <th> Paid</th>
                             @endif
                             @if(!$hideAgreementStatusColumn)
-                            <th> Agreement Status</th>
+                            <th>
+                                <a href="{{ getUrlWithSortParams('agreement_status', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Agreement Status
+                                    @if(request()->sort_by == 'agreement_status')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
                             @endif
                             @if(!$hideNextInstallmentColumn)
-                            <th> Next Installment</th>
+                            <th>
+                                <a href="{{ getUrlWithSortParams('next_installment', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Next Installment
+                                    @if(request()->sort_by == 'next_installment')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
                             @endif
                             @if(!$hideCurrentValueColumn)
                             <th> Current Value</th>
@@ -261,6 +313,13 @@
                 </div>
             @endif
 
+            @php
+                // Make sure pagination links maintain the sort parameters
+                $allData->appends([
+                    'sort_by' => $currentSortField,
+                    'sort_order' => request()->sort_order ?? 'desc'
+                ]);
+            @endphp
             @include('admin::includes.paginate', ['data' => $allData ])
 
             <br>
