@@ -233,52 +233,58 @@ class AssetController extends BaseController
         // Apply sorting logic
         switch ($sortField) {
             case 'type':
-                $query->orderBy('type', $sortOrder);
+                // Sort by area (size) for Asset Type/Size column
+                // Handle NULL values by putting them at the end
+                if ($sortOrder === 'asc') {
+                    $query->orderByRaw('ISNULL(area), area ASC');
+                } else {
+                    $query->orderByRaw('ISNULL(area), area DESC');
+                }
                 break;
             case 'agreement_status':
                 $query->orderBy('agreement_status', $sortOrder);
                 break;
             case 'next_installment':
-                // For installment sorting, we order by the first upcoming payment date
-                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
-                $query->select('assets.*')
-                      ->selectSub(function($query) {
-                          $query->select('payment_date')
-                                ->from('payments')
-                                ->whereColumn('assets.id', 'payments.asset_id')
-                                ->where('status', 0)
-                                ->orderBy('payment_date')
-                                ->limit(1);
-                      }, 'next_payment_date')
-                      ->orderBy('next_payment_date', $sortOrder);
+                // For installment sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $query->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
                 break;
             case 'next_rent':
-                // For rent sorting, we order by the first upcoming rental payment date
-                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
-                $query->select('assets.*')
-                      ->selectSub(function($query) {
-                          $query->select('payment_date')
-                                ->from('rentals')
-                                ->whereColumn('assets.id', 'rentals.asset_id')
-                                ->where('status', 0)
-                                ->orderBy('payment_date')
-                                ->limit(1);
-                      }, 'next_rent_date')
-                      ->orderBy('next_rent_date', $sortOrder);
+                // For rent sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $query->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
                 break;
             case 'next_renovation':
-                // For renovation sorting, we order by the first upcoming renovation payment date
-                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
-                $query->select('assets.*')
-                      ->selectSub(function($query) {
-                          $query->select('payment_date')
-                                ->from('renovation_payments')
-                                ->whereColumn('assets.id', 'renovation_payments.asset_id')
-                                ->where('status', 0)
-                                ->orderBy('payment_date')
-                                ->limit(1);
-                      }, 'next_renovation_date')
-                      ->orderBy('next_renovation_date', $sortOrder);
+                // For renovation sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $query->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
                 break;
             default:
                 // Default sorting by ID descending
@@ -286,31 +292,8 @@ class AssetController extends BaseController
                 break;
         }
 
-        // Ensure we always have a base query with just asset records before pagination
-        // For complex sorting cases, we need to make sure we get the order right
-        if (in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
-            // Get a list of all asset IDs in the correct order
-            $assetIds = $query->pluck('assets.id');
-            
-            // Then create a new query that selects assets in this order
-            if (count($assetIds) > 0) {
-                $newQuery = Asset::whereIn('id', $assetIds);
-                
-                // Use a case statement to preserve the order
-                $orderByCase = "CASE";
-                foreach ($assetIds as $index => $id) {
-                    $orderByCase .= " WHEN id = $id THEN $index";
-                }
-                $orderByCase .= " END";
-                
-                $this->baseData['allData'] = $newQuery->orderByRaw($orderByCase)->paginate(25);
-            } else {
-                $this->baseData['allData'] = collect([])->paginate(25);
-            }
-        } else {
-            // For simple sorting, just use the query directly
-            $this->baseData['allData'] = $query->paginate(25);
-        }
+        // For simple pagination without complex ordering logic
+        $this->baseData['allData'] = $query->paginate(25);
         
         // Add sorting parameters to pagination links
         $this->baseData['allData']->appends([
@@ -352,11 +335,10 @@ class AssetController extends BaseController
         if ($isDeveloper) {
             $developer = Auth::guard('developer')->user();
             // For developers, find assets with matching names
-            $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
-                ->orderByDesc('id');
+            $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1);
         } else {
             // For investors, use the relationship
-            $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
+            $userAssets = $user->assets()->where('status', 'completed');
         }
         
         // Handle status filtering based on status parameter
@@ -468,137 +450,76 @@ class AssetController extends BaseController
         }
 
 
-        // Apply sorting logic
+        // Apply sorting logic after all filters
         switch ($sortField) {
             case 'type':
-                $userAssets->orderBy('type', $sortOrder);
+                // Sort by area (size) for Asset Type/Size column
+                // Handle NULL values by putting them at the end
+                if ($sortOrder === 'asc') {
+                    $userAssets->orderByRaw('ISNULL(area), area ASC');
+                } else {
+                    $userAssets->orderByRaw('ISNULL(area), area DESC');
+                }
                 break;
             case 'agreement_status':
                 $userAssets->orderBy('agreement_status', $sortOrder);
                 break;
             case 'next_installment':
-                // For installment sorting, we order by the first upcoming payment date
-                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
-                $userAssets->select('assets.*')
-                      ->selectSub(function($query) {
-                          $query->select('payment_date')
-                                ->from('payments')
-                                ->whereColumn('assets.id', 'payments.asset_id')
-                                ->where('status', 0)
-                                ->orderBy('payment_date')
-                                ->limit(1);
-                      }, 'next_payment_date')
-                      ->orderBy('next_payment_date', $sortOrder);
+                // For installment sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $userAssets->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
                 break;
             case 'next_rent':
-                // For rent sorting, we order by the first upcoming rental payment date
-                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
-                $userAssets->select('assets.*')
-                      ->selectSub(function($query) {
-                          $query->select('payment_date')
-                                ->from('rentals')
-                                ->whereColumn('assets.id', 'rentals.asset_id')
-                                ->where('status', 0)
-                                ->orderBy('payment_date')
-                                ->limit(1);
-                      }, 'next_rent_date')
-                      ->orderBy('next_rent_date', $sortOrder);
+                // For rent sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $userAssets->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
                 break;
             case 'next_renovation':
-                // For renovation sorting, we order by the first upcoming renovation payment date
-                // Using a subquery to avoid GROUP BY issues with MySQL ONLY_FULL_GROUP_BY mode
-                $userAssets->select('assets.*')
-                      ->selectSub(function($query) {
-                          $query->select('payment_date')
-                                ->from('renovation_payments')
-                                ->whereColumn('assets.id', 'renovation_payments.asset_id')
-                                ->where('status', 0)
-                                ->orderBy('payment_date')
-                                ->limit(1);
-                      }, 'next_renovation_date')
-                      ->orderBy('next_renovation_date', $sortOrder);
+                // For renovation sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $userAssets->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
                 break;
             default:
                 // Default sorting by ID
                 $userAssets->orderBy($sortField, $sortOrder);
                 break;
         }
+
+        // Simple pagination for all sorting cases
+        $this->baseData['allData'] = $userAssets->paginate(25);
         
-        // Handle complex sorting to avoid GROUP BY issues
-        if (in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
-            // Get all asset IDs in the correct order
-            $assetIds = $userAssets->pluck('assets.id')->toArray();
-            $hasAssets = count($assetIds) > 0;
-            
-            if ($hasAssets) {
-                // Create a new query to get the assets in the correct order
-                $newQuery = Asset::whereIn('id', $assetIds);
-                
-                // Use CASE statement to preserve the exact order
-                if (count($assetIds) > 0) {
-                    $orderCase = "CASE assets.id ";
-                    foreach ($assetIds as $index => $id) {
-                        $orderCase .= "WHEN $id THEN $index ";
-                    }
-                    $orderCase .= "END";
-                    
-                    $paginatedAssets = $newQuery->orderByRaw($orderCase)
-                        ->paginate(25)
-                        ->appends([
-                            'sort_by' => $sortField,
-                            'sort_order' => $sortOrder,
-                        ]);
-                        
-                    $this->baseData['allData'] = $paginatedAssets;
-                }
-            } else {
-                // Handle no results case
-                $this->baseData['allData'] = new LengthAwarePaginator([], 0, 25);
-                $this->baseData['allData']->appends([
-                    'sort_by' => $sortField, 
-                    'sort_order' => $sortOrder
-                ]);
-            }
-        } else {
-            // For simple sorting, use a more direct approach
-            $countQuery = clone $userAssets;
-            $countQuery = $countQuery->getQuery()->cloneWithout(['orders', 'columns']);
-            $countQuery->columns = ['assets.id'];
-            
-            // Create a new builder to count results
-            $countBuilder = Asset::query()->fromSub($countQuery, 'count_query');
-            $hasAssets = $countBuilder->count() > 0;
-            
-            if ($hasAssets) {
-                $this->baseData['allData'] = $userAssets->paginate(25);
-                // Add sorting parameters to pagination links
-                $this->baseData['allData']->appends([
-                    'sort_by' => $sortField,
-                    'sort_order' => $sortOrder,
-                ]);
-            } else {
-                if (Auth::guard('developer')->check()) {
-                    $developer = Auth::guard('developer')->user();
-                    $this->baseData['allData'] = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1)
-                        ->where('sale_status', 'sold')
-                        ->orderBy($sortField, $sortOrder)
-                        ->paginate(25)
-                        ->appends([
-                            'sort_by' => $sortField,
-                            'sort_order' => $sortOrder,
-                        ]);
-                }
-                if (Auth::guard('investor')->check()) {
-                    $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')
-                        ->orderBy($sortField, $sortOrder)
-                        ->paginate(25)
-                        ->appends([
-                            'sort_by' => $sortField,
-                            'sort_order' => $sortOrder,
-                        ]);
-                }
-            }
-        }
+        // Add sorting parameters to pagination links
+        $this->baseData['allData']->appends([
+            'sort_by' => $sortField,
+            'sort_order' => $sortOrder,
+        ]);
 
         // Calculate the "Paid" amount for each asset
         $this->calculatePaidAmounts($this->baseData['allData'], $request);
