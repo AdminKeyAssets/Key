@@ -125,7 +125,7 @@
                                 <el-option
                                     v-for="manager in this.managers"
                                     :key="manager.id"
-                                    :label="manager.name + ' ' + manager.surname"
+                                    :label="manager.full_name || (manager.name + ' ' + manager.surname)"
                                     :value="manager.id"
                                 ></el-option>
                             </el-select>

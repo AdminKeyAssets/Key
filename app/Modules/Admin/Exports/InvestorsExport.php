@@ -49,29 +49,38 @@ class InvestorsExport implements FromCollection, WithHeadings, WithEvents
         }
 
         if (!empty($this->filters['manager']) && $this->filters['manager'] != 'all') {
-            $managerNamesArray = explode(' ', $this->filters['manager']);
-
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $this->filters['manager'])->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $this->filters['manager']);
+                
+                $managerFirstName = array_shift($managerNamesArray);
+                
+                $managerSurname = implode(' ', $managerNamesArray);
+                
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
+            
             if (isset($managerUser->id)) {
                 $query->where('admin_id', $managerUser->id);
             }
         }
 
         if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+            $query->where(function($q) {
+                $q->where('full_name', 'LIKE', '%' . $this->filters['search'] . '%')
+                  ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+            });
         }
 
-        $investors = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'citizenship', 'address', 'created_at')->get();
+        $investors = $query->select('name', 'surname', 'full_name', 'pid', 'email', 'prefix', 'phone', 'citizenship', 'address', 'created_at')->get();
 
         $investors->transform(function ($investor) {
             return [
-                'name' => $investor->name . ' ' . $investor->surname,
+                'name' => $investor->full_name ?? ($investor->name . ' ' . $investor->surname),
                 'id' => '"' . $investor->pid . '"',
                 'citizenship' => $investor->citizenship,
                 'address' => $investor->address,

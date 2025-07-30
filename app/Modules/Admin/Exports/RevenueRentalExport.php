@@ -45,7 +45,7 @@ class RevenueRentalExport implements FromCollection, WithHeadings, WithEvents
             $investmentsAmount = $investments->sum('amount');
 
             return [
-                'tenant_name' => $tenant->name . ' ' . $tenant->surname,
+                'tenant_name' => $tenant->full_name ?? ($tenant->name . ' ' . $tenant->surname),
                 'rent_date' => $tenant->agreement_date,
                 'rent_period' => $period,
                 'total_rent_payments' => $tenantRentalPaymentsAmount,

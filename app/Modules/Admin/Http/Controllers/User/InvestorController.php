@@ -134,22 +134,31 @@ class InvestorController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
+                
+                $managerFirstName = array_shift($managerNamesArray);
+                
+                $managerSurname = implode(' ', $managerNamesArray);
+                
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
+            
             if (isset($managerUser->id)) {
                 $query->where('admin_id', $managerUser->id);
             }
         }
 
         if ($request->search && $request->search != 'all') {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            $query->where(function($q) use ($request) {
+                $q->where('full_name', 'LIKE', '%' . $request->search . '%')
+                  ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            });
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -411,22 +420,19 @@ class InvestorController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
         })
-            ->orderBy('name')
-            ->orderBy('surname')
+            ->orderBy('full_name')
             ->get();
 
 
         if (auth()->user()->getRolesNameAttribute() == 'administrator') {
             $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
-            $this->baseData['investors'] = Investor::orderBy('name')
-                ->orderBy('surname')
+            $this->baseData['investors'] = Investor::orderBy('full_name')
                 ->get();
         } else {
             $this->baseData['countries'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
                 ->distinct()->orderBy('citizenship')->pluck('citizenship');
             $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
-                ->orderBy('name')
-                ->orderBy('surname')
+                ->orderBy('full_name')
                 ->get();
         }
 

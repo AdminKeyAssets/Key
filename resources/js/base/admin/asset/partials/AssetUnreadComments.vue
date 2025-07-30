@@ -10,10 +10,10 @@
                 <div class="comment-wrapper" v-for="comment in unreadComments" :key="comment.id">
                     <el-card class="box-card" v-bind:class="(comment.read)?'read-comment':'unread-comment'">
                         <div slot="header" class="clearfix" v-if="comment.admin">
-                            <span>{{ comment.admin.name }} {{ comment.admin.surname }}</span>
+                            <span>{{ comment.admin.full_name || (comment.admin.name + ' ' + comment.admin.surname) }}</span>
                         </div>
                         <div slot="header" class="clearfix" v-else-if="comment.investor">
-                            <span>{{ comment.investor.name }} {{ comment.investor.surname }}</span>
+                            <span>{{ comment.investor.full_name || (comment.investor.name + ' ' + comment.investor.surname) }}</span>
                         </div>
                         <div class="text item">
                             <div class="comment-body">

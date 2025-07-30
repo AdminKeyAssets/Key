@@ -36,8 +36,9 @@ class LeadRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'surname' => 'required',
+            // 'name' => 'required',
+            // 'surname' => 'required',
+            'full_name' => 'required',
             'phone' => 'required',
             'prefix' => 'required',
             'marketing_channel' => 'required',
@@ -47,8 +48,8 @@ class LeadRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Name can not be empty.',
-            'surname.required' => 'Surname can not be empty.',
+            'full_name.required' => 'Name can not be empty.',
+//            'surname.required' => 'Surname can not be empty.',
             'email.required' => 'Email can not be empty.',
             'phone.required' => 'Phone Number can not be empty.',
             'prefix.required' => 'Prefix can not be empty.',

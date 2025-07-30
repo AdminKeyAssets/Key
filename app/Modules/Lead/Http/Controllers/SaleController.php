@@ -72,10 +72,26 @@ class SaleController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-            $managerUser = Admin::where('name', $managerNamesArray[0])
-                ->where('surname', $managerNamesArray[1])->first();
-            $query->where('sales.admin_id', '=', $managerUser->id);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
+                
+                // Make sure we handle cases with multiple name parts correctly
+                if (count($managerNamesArray) >= 2) {
+                    $managerFirstName = $managerNamesArray[0];
+                    $managerSurname = implode(' ', array_slice($managerNamesArray, 1));
+                    
+                    $managerUser = Admin::where('name', $managerFirstName)
+                        ->where('surname', $managerSurname)->first();
+                }
+            }
+            
+            if ($managerUser) {
+                $query->where('sales.admin_id', '=', $managerUser->id);
+            }
         }
 
         if ($request->marketing_channel && $request->marketing_channel != 'all') {
@@ -122,7 +138,7 @@ class SaleController extends BaseController
             }
 
             $this->baseData['investors'] = Investor::get()->map(function ($investor) {
-                return ['value' => $investor->name . ' ' . $investor->surname];
+                return ['value' => $investor->full_name ?? ($investor->name . ' ' . $investor->surname)];
             });
 
             $this->baseData['projects'] = Asset::get()->map(function ($project) {
@@ -282,8 +298,7 @@ class SaleController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%sale%manager%');
         })
-            ->orderBy('name')
-            ->orderBy('surname')
+            ->orderBy('full_name')
             ->get();
 
         if (\Auth::user()->getRolesNameAttribute() == 'administrator') {

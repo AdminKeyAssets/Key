@@ -308,7 +308,7 @@
                                                      class="form-group">
                                                     <label class="col-md-4 control-label">Tenant Name:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.name }} {{ form.tenant.surname }}
+                                                        {{ form.tenant.full_name || (form.tenant.name + ' ' + form.tenant.surname) }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -949,7 +949,7 @@
                                 </div>
                                 <div class="text item">
                                     <p v-if="salesManager.name || salesManager.surname">
-                                        {{ salesManager.name }} {{ salesManager.surname }}
+                                        {{ salesManager.full_name || (salesManager.name + ' ' + salesManager.surname) }}
                                     </p>
                                     <p v-if="salesManager.phone">
                                         <a :href="whatsappLink" target="_blank" class="phone-container">

@@ -136,17 +136,22 @@ class AssetController extends BaseController
 
         // Apply filters if provided in the request
         if ($request->investor && $request->investor != 'all') {
-            $investorNamesArray = explode(' ', $request->investor);
-
-            // The first part is the name
-            $firstName = array_shift($investorNamesArray);
-
-            // The remaining parts are the surname
-            $surname = implode(' ', $investorNamesArray);
-
-//            $investorNamesArray = explode(' ', $request->investor);
-            $investorUser = Investor::where('name', $firstName)
-                ->where('surname', $surname)->first();
+            // First try to find by full_name
+            $investorUser = Investor::where('full_name', $request->investor)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$investorUser) {
+                $investorNamesArray = explode(' ', $request->investor);
+                
+                // The first part is the name
+                $firstName = array_shift($investorNamesArray);
+                
+                // The remaining parts are the surname
+                $surname = implode(' ', $investorNamesArray);
+                
+                $investorUser = Investor::where('name', $firstName)
+                    ->where('surname', $surname)->first();
+            }
 
             if (isset($investorUser->id)) {
                 $query->whereHas('investors', function ($q) use ($investorUser) {
@@ -156,16 +161,21 @@ class AssetController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
-            $investorIds = $managerUser->investors->pluck('id')->toArray();
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
+                
+                $managerFirstName = array_shift($managerNamesArray);
+                
+                $managerSurname = implode(' ', $managerNamesArray);
+                
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
+            $investorIds = $managerUser ? $managerUser->investors->pluck('id')->toArray() : [];
 
             if (!empty($investorIds)) {
                 $query->whereHas('investors', function ($q) use ($investorIds) {
@@ -655,7 +665,7 @@ class AssetController extends BaseController
                 $investors = $asset->investors;
                 $investorNames = [];
                 foreach ($investors as $investor) {
-                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                    $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
                 }
 
                 $investorNames = implode(' / ', $investorNames);
@@ -665,7 +675,7 @@ class AssetController extends BaseController
                 // Get manager data
                 if ($asset->manager) {
                     $this->baseData['item']['manager_id'] = $asset->manager_id;
-                    $this->baseData['item']['managerName'] = $asset->manager->name . ' ' . $asset->manager->surname;
+                    $this->baseData['item']['managerName'] = $asset->manager->full_name ?? ($asset->manager->name . ' ' . $asset->manager->surname);
                 } else {
                     $this->baseData['item']['manager_id'] = null;
                     $this->baseData['item']['managerName'] = '';
@@ -707,9 +717,9 @@ class AssetController extends BaseController
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
             if (\Auth::guard('admin')->check()) {
                 if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                    $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+                    $this->baseData['investors'] = Investor::get(['name', 'surname', 'full_name', 'id']);
                 } else {
-                    $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'id']);
+                    $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'full_name', 'id']);
                 }
             }
         } catch (\Exception $ex) {
@@ -1335,7 +1345,7 @@ class AssetController extends BaseController
             // Get the manager assigned to this asset
             $managerName = '';
             if ($asset->manager) {
-                $managerName = $asset->manager->name . ' ' . $asset->manager->surname;
+                $managerName = $asset->manager->full_name ?? ($asset->manager->name . ' ' . $asset->manager->surname);
             }
 
             $this->baseData['extra'] = [

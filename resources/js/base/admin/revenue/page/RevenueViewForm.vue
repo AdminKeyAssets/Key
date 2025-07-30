@@ -235,7 +235,7 @@
                                                          @click="tenant.showDetails = !tenant.showDetails"
                                                          style="cursor: pointer;">
                                                         <div style="width: 98%">
-                                                            <span>{{ tenant.name }} {{ tenant.surname }}</span>
+                                                            <span>{{ tenant.full_name || (tenant.name + ' ' + tenant.surname) }}</span>
                                                             <span>
                                                                 <span>{{ tenant.agreement_date }}</span>
                                                                 <span v-if="tenant.rent_end_date"> - {{ tenant.rent_end_date }}</span>

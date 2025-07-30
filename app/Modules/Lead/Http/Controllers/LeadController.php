@@ -12,6 +12,7 @@ use App\Modules\Lead\Exports\SampleLeadsExport;
 use App\Modules\Lead\Exports\SampleLeadsManagersExport;
 use App\Modules\Lead\Exports\SampleLeadsStatusExport;
 use App\Modules\Lead\Http\Requests\LeadRequest;
+use App\Modules\Lead\Http\Requests\LeadRequestApi;
 use App\Modules\Lead\Http\Requests\UpdateManagerRequest;
 use App\Modules\Lead\Imports\LeadsImport;
 use App\Modules\Lead\Imports\LeadsManagerImport;
@@ -57,7 +58,7 @@ class LeadController extends BaseController
     {
         $query = Lead::query()
             ->leftJoin('admins', 'leads.admin_id', '=', 'admins.id')
-            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname')
+            ->select('leads.*', 'admins.name as manager_name', 'admins.surname as manager_surname', 'admins.full_name as manager_full_name',)
             ->orderByDesc('leads.id');
 
         $query->orderByDesc('id');
@@ -78,10 +79,26 @@ class LeadController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-            $managerUser = Admin::where('name', $managerNamesArray[0])
-                ->where('surname', $managerNamesArray[1])->first();
-            $query->where('leads.admin_id', '=', $managerUser->id);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
+
+                // Make sure we handle cases with multiple name parts correctly
+                if (count($managerNamesArray) >= 2) {
+                    $managerFirstName = $managerNamesArray[0];
+                    $managerSurname = implode(' ', array_slice($managerNamesArray, 1));
+
+                    $managerUser = Admin::where('name', $managerFirstName)
+                        ->where('surname', $managerSurname)->first();
+                }
+            }
+
+            if ($managerUser) {
+                $query->where('leads.admin_id', '=', $managerUser->id);
+            }
         }
 
         if ($request->marketing_channel && $request->marketing_channel != 'all') {
@@ -101,7 +118,10 @@ class LeadController extends BaseController
         }
 
         if ($request->search && $request->search != 'all') {
-            $query->whereRaw("CONCAT(leads.name, ' ', leads.surname) LIKE ?", ['%' . $request->search . '%']);
+            $query->where(function($q) use ($request) {
+                $q->where('leads.full_name', 'LIKE', '%' . $request->search . '%')
+                  ->orWhereRaw("CONCAT(leads.name, ' ', leads.surname) LIKE ?", ['%' . $request->search . '%']);
+            });
         }
 
         $this->baseData['allData'] = $query->paginate(50);
@@ -160,12 +180,16 @@ class LeadController extends BaseController
 //            ]);
 //        }
 
+        // Calculate the full name from name and surname
+        $fullName = trim($request->name . ' ' . $request->surname);
+
         if ($request->id) {
             $lead = Lead::where('id', $request->id)->first();
             $lead->update(
                 [
-                    'name' => $request->name,
-                    'surname' => $request->surname,
+//                    'name' => $request->name,
+//                    'surname' => $request->surname,
+                    'full_name' => $fullName,
                     'phone' => $request->phone,
                     'email' => $request->email,
                     'prefix' => $request->prefix,
@@ -176,8 +200,9 @@ class LeadController extends BaseController
         } else {
             $lead = Lead::create(
                 [
-                    'name' => $request->name,
-                    'surname' => $request->surname,
+//                    'name' => $request->name,
+//                    'surname' => $request->surname,
+                    'full_name' => $fullName,
                     'phone' => $request->phone,
                     'email' => $request->email,
                     'prefix' => $request->prefix,
@@ -192,15 +217,14 @@ class LeadController extends BaseController
     }
 
     /**
-     * @param LeadRequest $request
+     * @param LeadRequestApi $request
      * @return JsonResponse
      */
-    public function storeApi(LeadRequest $request)
+    public function storeApi(LeadRequestApi $request)
     {
         $lead = Lead::updateOrCreate(['email' => $request->email],
             [
-                'name' => $request->name,
-                'surname' => $request->surname,
+                'full_name' => $request->name . ' ' . $request->surname,
                 'phone' => $request->phone,
                 'prefix' => $request->prefix
             ]);
@@ -210,15 +234,14 @@ class LeadController extends BaseController
     }
 
     /**
-     * @param LeadRequest $request
+     * @param LeadRequestApi $request
      * @return JsonResponse
      */
-    public function storeWeb(LeadRequest $request)
+    public function storeWeb(LeadRequestApi $request)
     {
         $lead = Lead::updateOrCreate(['email' => $request->email],
             [
-                'name' => $request->name,
-                'surname' => $request->surname,
+                'full_name' => $request->name . ' ' . $request->surname,
                 'phone' => $request->phone,
                 'prefix' => $request->prefix
             ]);
@@ -303,19 +326,18 @@ class LeadController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%sale%manager%');
         })
-            ->orderBy('name')
-            ->orderBy('surname')
+            ->orderBy('full_name')
             ->get();
 
         if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
-            $this->baseData['leads'] = Lead::select('name', 'surname', DB::raw('COUNT(*) as total'))
-                ->groupBy('name', 'surname')
-                ->orderBy('surname')
+            $this->baseData['leads'] = Lead::select('name', 'surname', 'full_name', DB::raw('COUNT(*) as total'))
+                ->groupBy('full_name')
+                ->orderBy('full_name')
                 ->get();
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');
         } else {
-            $this->baseData['leads'] = Lead::where('admin_id', '=', \Auth::user()->getAuthIdentifier())->orderBy('name')
-                ->orderBy('surname')
+            $this->baseData['leads'] = Lead::where('admin_id', '=', \Auth::user()->getAuthIdentifier())->orderBy('full_name')
+                ->orderBy('full_name')
                 ->get();
             $this->baseData['marketingChannels'] = Lead::where('marketing_channel', '!=', null)
                 ->where('admin_id', '=', \Auth::user()->getAuthIdentifier())->groupBy('marketing_channel')->orderBy('marketing_channel')->get('marketing_channel');

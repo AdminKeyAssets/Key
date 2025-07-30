@@ -30,9 +30,9 @@
                         ></el-option>
                         <el-option
                             v-for="user in users"
-                            :key="user.name + (user.surname ? ' ' + user.surname : '')"
-                            :label="user.name + (user.surname ? ' ' + user.surname : '')"
-                            :value="user.name + (user.surname ? ' ' + user.surname : '')"
+                            :key="user.full_name || (user.name + (user.surname ? ' ' + user.surname : ''))"
+                            :label="user.full_name || (user.name + (user.surname ? ' ' + user.surname : ''))"
+                            :value="user.full_name || (user.name + (user.surname ? ' ' + user.surname : ''))"
                         ></el-option>
 
                     </el-select>
