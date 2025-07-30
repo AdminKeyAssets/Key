@@ -92,7 +92,10 @@ class UserController extends BaseController
         }
 
         if ($request->search && $request->search != 'all') {
-            $query->whereRaw("CONCAT_WS(' ', name, surname) LIKE ?", ['%' . $request->search . '%']);
+            $query->where(function($q) use ($request) {
+                $q->where('full_name', 'LIKE', '%' . $request->search . '%')
+                  ->orWhereRaw("CONCAT_WS(' ', name, surname) LIKE ?", ['%' . $request->search . '%']);
+            });
         }
 
         $this->baseData['allData'] = $query->paginate();

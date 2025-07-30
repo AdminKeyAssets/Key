@@ -117,7 +117,7 @@
                     <el-option
                         v-for="item in investors"
                         :key="item.id"
-                        :label="item.name + ' ' + item.surname"
+                        :label="item.full_name || (item.name + ' ' + item.surname)"
                         :value="item.id"
                     ></el-option>
                 </el-select>

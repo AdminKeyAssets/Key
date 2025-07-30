@@ -208,7 +208,7 @@ class RevenueExport implements FromCollection, WithHeadings, WithEvents
 
             // Concatenate investor names.
             $investors = $asset->investors->map(function ($investor) {
-                return $investor->name . ' ' . $investor->surname;
+                return $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
             })->implode(' / ');
 
             return [

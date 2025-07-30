@@ -71,7 +71,7 @@ class PaymentsHistoryController extends BaseController
         $investors = $asset->investors;
         $investorNames = [];
         foreach ($investors as $investor) {
-            $investorNames[] = $investor->name . ' ' . $investor->surname;
+            $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
         }
         $investorNames = implode(' / ', $investorNames);
 
@@ -98,7 +98,7 @@ class PaymentsHistoryController extends BaseController
         $investors = $asset->investors;
         $investorNames = [];
         foreach ($investors as $investor) {
-            $investorNames[] = $investor->name . ' ' . $investor->surname;
+            $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
         }
         $investorNames = implode(' / ', $investorNames);
 
@@ -285,7 +285,7 @@ class PaymentsHistoryController extends BaseController
             $investors = $asset->investors;
             $investorNames = [];
             foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
             }
             $investorNames = implode(' / ', $investorNames);
 
@@ -322,7 +322,7 @@ class PaymentsHistoryController extends BaseController
             $investors = $asset->investors;
             $investorNames = [];
             foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
             }
             $investorNames = implode(' / ', $investorNames);
 

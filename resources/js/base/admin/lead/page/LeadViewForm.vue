@@ -15,7 +15,7 @@
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Name:</label>
                                     <div class="col-md-10 uppercase-medium">
-                                        <span v-if="form.name">{{ form.name }}</span> <span v-if="form.surname">{{ form.surname }}</span>
+                                        <span>{{ form.full_name || ((form.name ? form.name : '') + (form.surname ? ' ' + form.surname : '')) }}</span>
                                     </div>
                                 </div>
 
@@ -38,7 +38,7 @@
                                 <div v-if="form.admin_id && managers.length && selectedManager" class="form-group dashed">
                                     <label class="col-md-1 control-label">Sales Manager: </label>
                                     <div class="col-md-10 uppercase-medium">
-                                        <span v-if="selectedManager.name">{{ selectedManager.name }}</span> <span v-if="selectedManager.surname">{{ selectedManager.surname }}</span>
+                                        <span>{{ selectedManager.full_name || ((selectedManager.name ? selectedManager.name : '') + (selectedManager.surname ? ' ' + selectedManager.surname : '')) }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group dashed" v-if="form.marketing_channel">

@@ -51,14 +51,17 @@ class AdminsExport implements FromCollection, WithHeadings, WithColumnFormatting
         }
 
         if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
-            $query->whereRaw("CONCAT_WS(' ', name, surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+            $query->where(function($q) {
+                $q->where('full_name', 'LIKE', '%' . $this->filters['search'] . '%')
+                  ->orWhereRaw("CONCAT_WS(' ', name, surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+            });
         }
 
-        $admins = $query->select('name', 'surname', 'pid', 'email', 'prefix', 'phone', 'created_at')->get();
+        $admins = $query->select('name', 'surname', 'full_name', 'pid', 'email', 'prefix', 'phone', 'created_at')->get();
 
         $admins->transform(function ($admin) {
             return [
-                'name' => $admin->name . ' ' . $admin->surname,
+                'name' => $admin->full_name ?? ($admin->name . ' ' . $admin->surname),
                 'id' => $admin->pid,  // Keep the PID as a text value
                 'email' => $admin->email,
                 'full_phone' => $admin->prefix . $admin->phone, // Concatenate prefix and phone

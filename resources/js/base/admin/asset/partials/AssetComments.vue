@@ -15,10 +15,10 @@
             {{ comment.author_name }}
           </span>
                     <span class="comment-user" v-else-if="comment.admin">
-            {{ comment.admin.name }} {{ comment.admin.surname }}
+            {{ comment.admin.full_name || (comment.admin.name + ' ' + comment.admin.surname) }}
           </span>
                     <span class="comment-user" v-else-if="comment.investor">
-            {{ comment.investor.name }} {{ comment.investor.surname }}
+            {{ comment.investor.full_name || (comment.investor.name + ' ' + comment.investor.surname) }}
           </span>
                     <span class="comment-date">
             {{ formatDate(comment.created_at) }}

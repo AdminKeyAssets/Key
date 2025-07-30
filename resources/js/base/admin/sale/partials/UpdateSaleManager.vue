@@ -16,7 +16,7 @@
                         <el-option
                             v-for="manager in managers"
                             :key="manager.id"
-                            :label="`${manager.name} ${manager.surname}`"
+                            :label="manager.full_name || `${manager.name} ${manager.surname}`"
                             :value="manager.id"
                         ></el-option>
                     </el-select>
@@ -104,7 +104,7 @@ export default {
                     let data = response.data.data;
                     if (data.manager) {
                         // Update local manager name instead of mutating the prop
-                        this.localManagerName = data.manager.name + ' ' + data.manager.surname;
+                        this.localManagerName = data.manager.full_name || (data.manager.name + ' ' + data.manager.surname);
                         this.handleClose();
                     }
                 }
