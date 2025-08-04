@@ -16,14 +16,7 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label">Name: </label>
                     <div class="col-md-6">
-                        {{ form.name }}
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Surname: </label>
-                    <div class="col-md-6">
-                        {{ form.surname }}
+                        {{ form.full_name }}
                     </div>
                 </div>
 

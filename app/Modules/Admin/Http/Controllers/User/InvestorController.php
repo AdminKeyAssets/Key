@@ -73,7 +73,7 @@ class InvestorController extends BaseController
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', auth()->user()->getAuthIdentifier());
         }
-        
+
         // Handle the archive filter
         $statusFilter = $request->status ?? 'active';
         if ($statusFilter === 'active') {
@@ -82,7 +82,7 @@ class InvestorController extends BaseController
             $query->where('is_archived', true);
         }
         // 'all' status will show all investors
-        
+
         if ($request->citizenship) {
             $query->where('citizenship', '=', $request->input('citizenship'));
         }
@@ -136,19 +136,19 @@ class InvestorController extends BaseController
         if ($request->manager && $request->manager != 'all') {
             // First try to find by full_name
             $managerUser = Admin::where('full_name', $request->manager)->first();
-            
+
             // If not found, try with the old name/surname approach
             if (!$managerUser) {
                 $managerNamesArray = explode(' ', $request->manager);
-                
+
                 $managerFirstName = array_shift($managerNamesArray);
-                
+
                 $managerSurname = implode(' ', $managerNamesArray);
-                
+
                 $managerUser = Admin::where('name', $managerFirstName)
                     ->where('surname', $managerSurname)->first();
             }
-            
+
             if (isset($managerUser->id)) {
                 $query->where('admin_id', $managerUser->id);
             }
@@ -342,6 +342,7 @@ class InvestorController extends BaseController
             $data = [
                 'name' => $request->name,
                 'surname' => $request->surname,
+                'full_name' => $request->full_name,
                 'email' => $request->email,
                 'prefix' => $request->prefix,
                 'phone' => $request->phone,
@@ -472,16 +473,16 @@ class InvestorController extends BaseController
     {
         try {
             $investor = Investor::findOrFail($id);
-            
+
             // Archive the investor
             $investor->is_archived = true;
             $investor->save();
-            
+
             // Archive all assets associated with this investor
             $assets = Asset::whereHas('investors', function ($query) use ($investor) {
                 $query->where('id', $investor->id);
             })->get();
-            
+
             foreach ($assets as $asset) {
                 $asset->is_archived = true;
                 $asset->save();
@@ -509,16 +510,16 @@ class InvestorController extends BaseController
     {
         try {
             $investor = Investor::findOrFail($id);
-            
+
             // Unarchive the investor
             $investor->is_archived = false;
             $investor->save();
-            
+
             // Unarchive all assets associated with this investor
             $assets = Asset::whereHas('investors', function ($query) use ($investor) {
                 $query->where('id', $investor->id);
             })->get();
-            
+
             foreach ($assets as $asset) {
                 $asset->is_archived = false;
                 $asset->save();
