@@ -13,6 +13,8 @@ use App\Modules\Asset\Http\Requests\PaymentRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
+use App\Modules\Asset\Models\DeveloperAsset;
+use App\Modules\Admin\Models\User\Developer;
 use App\Utilities\ServiceResponse;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
@@ -413,12 +415,36 @@ class PaymentsHistoryController extends BaseController
             }
             $investorNames = implode(' / ', $investorNames);
 
-            // Get developer/admin information
-            $admin = $asset->admin;
-            $developerName = $admin ? ($admin->full_name ?? ($admin->name . ' ' . $admin->surname)) : 'N/A';
-            $developerContact = $admin ? ($admin->email . ($admin->phone ? ' - ' . $admin->prefix . $admin->phone : '')) : '';
+            // Get developer information (who owns this asset)
+            $developerAsset = DeveloperAsset::where('asset_name', $asset->project_name)->first();
+            $developer = $developerAsset ? $developerAsset->developer : null;
+            
+            $developerName = 'N/A';
+            $developerContact = '';
+            
+            if ($developer) {
+                $developerName = $developer->name ?? 'N/A';
+                $developerContact = '';
+                
+                if ($developer->tel) {
+                    $developerContact .= $developer->tel;
+                }
+                
+                // Add representative info if available
+                if ($developer->representative) {
+                    $representativeInfo = $developer->representative;
+                    if ($developer->representative_position) {
+                        $representativeInfo .= ' (' . $developer->representative_position . ')';
+                    }
+                    if ($developerContact) {
+                        $developerContact .= ' - ' . $representativeInfo;
+                    } else {
+                        $developerContact = $representativeInfo;
+                    }
+                }
+            }
 
-            // Get manager information
+            // Get manager information (for asset manager details)
             $manager = $asset->manager;
             $managerName = $manager ? ($manager->full_name ?? ($manager->name . ' ' . $manager->surname)) : '';
             $managerContact = $manager ? ($manager->email . ($manager->phone ? ' - ' . $manager->prefix . $manager->phone : '')) : '';
