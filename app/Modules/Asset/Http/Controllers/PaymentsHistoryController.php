@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
+use PDF;
 
 class PaymentsHistoryController extends BaseController
 {
@@ -382,9 +383,75 @@ class PaymentsHistoryController extends BaseController
 
     public function deptStatement(Request $request, $assetId)
     {
+        try {
+            // Get asset information
+            $asset = Asset::with(['investors', 'admin', 'manager'])->findOrFail($assetId);
+            
+            // Get overdue payments
+            $overduePayments = Payment::where('asset_id', $assetId)
+                ->where('status', 0)
+                ->where('payment_date', '<=', now()->format('Y/m/d'))
+                ->select('payment_date', 'amount', 'left_amount')
+                ->get()
+                ->map(function ($payment) {
+                    return [
+                        'payment_date' => $payment->payment_date,
+                        'amount' => $payment->amount,
+                        'paid_amount' => $payment->amount - $payment->left_amount,
+                        'left_amount' => $payment->left_amount,
+                    ];
+                });
 
-        $filters = ['asset_id' => $assetId];
+            // Calculate total outstanding
+            $totalOutstanding = $overduePayments->sum('left_amount');
 
-        return Excel::download(new DeptStatementExport($filters), 'dept_statement.xlsx');
+            // Get investor names
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
+            }
+            $investorNames = implode(' / ', $investorNames);
+
+            // Get developer/admin information
+            $admin = $asset->admin;
+            $developerName = $admin ? ($admin->full_name ?? ($admin->name . ' ' . $admin->surname)) : 'N/A';
+            $developerContact = $admin ? ($admin->email . ($admin->phone ? ' - ' . $admin->prefix . $admin->phone : '')) : '';
+
+            // Get manager information
+            $manager = $asset->manager;
+            $managerName = $manager ? ($manager->full_name ?? ($manager->name . ' ' . $manager->surname)) : '';
+            $managerContact = $manager ? ($manager->email . ($manager->phone ? ' - ' . $manager->prefix . $manager->phone : '')) : '';
+
+            // Prepare data for PDF
+            $data = [
+                'investorNames' => $investorNames,
+                'assetName' => $asset->project_name,
+                'flatNumber' => $asset->flat_number,
+                'developerName' => $developerName,
+                'projectName' => $asset->project_name,
+                'currentDate' => now()->format('F j, Y'),
+                'overduePayments' => $overduePayments,
+                'totalOutstanding' => $totalOutstanding,
+                'developerContact' => $developerContact,
+                'managerName' => $managerName,
+                'managerContact' => $managerContact,
+            ];
+
+            // Generate PDF
+            $pdf = PDF::loadView('asset::admin.payment.debt_statement_pdf', $data);
+
+            // Set PDF options
+            $pdf->setPaper('a4', 'portrait');
+
+            // Generate filename
+            $filename = 'debt_statement_' . $assetId . '_' . date('Y-m-d_H-i-s') . '.pdf';
+
+            // Return the PDF for download
+            return $pdf->download($filename);
+
+        } catch (\Exception $ex) {
+            throw new Exception($ex->getMessage(), $ex->getCode());
+        }
     }
 }
