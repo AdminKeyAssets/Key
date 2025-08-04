@@ -58,6 +58,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
             @endif
 
             @include('admin::includes.success')
+            @include('admin::includes.error')
 
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
@@ -299,12 +300,12 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                                 <td>{!! $item->investors->first()->admin->name ?? '' !!} {!! $item->investors->first()->admin->surname ?? '' !!}</td>
                                 @endif
                                 <td class="text-center">
-                                    @include('admin::includes.actions.developer-access',
-                                    [
-                                        'title' => 'Switch Developer Access to ',
-                                        'route' => route($moduleKey . '.developer_access', [ $item->id ]),
-                                        'developerAccess' => $item->developer_access
-                                    ])
+                                    <developer-access-component
+                                        :asset-id="{{ $item->id }}"
+                                        :developer-access="{{ $item->developer_access ? 'true' : 'false' }}"
+                                        title="Switch Developer Access to"
+                                        route="{{ route($moduleKey . '.developer_access', [ $item->id ]) }}"
+                                    ></developer-access-component>
                                 </td>
                             </tr>
                         @endforeach

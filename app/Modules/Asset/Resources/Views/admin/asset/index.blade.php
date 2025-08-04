@@ -58,6 +58,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
             @endif
 
             @include('admin::includes.success')
+            @include('admin::includes.error')
 
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
@@ -455,12 +456,12 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                                             @include('admin::includes.actions.investment',['route' => route('asset.investment.index', [ $item->id ])])
                                         @endcan
                                         @if(\Auth::guard('admin')->check())
-                                            @include('admin::includes.actions.developer-access',
-                                            [
-                                                'title' => 'Switch Developer Access to ',
-                                                'route' => route($moduleKey . '.developer_access', [ $item->id ]),
-                                                'developerAccess' => $item->developer_access
-                                            ])
+                                            <developer-access-component
+                                                :asset-id="{{ $item->id }}"
+                                                :developer-access="{{ $item->developer_access ? 'true' : 'false' }}"
+                                                title="Switch Developer Access to"
+                                                route="{{ route($moduleKey . '.developer_access', [ $item->id ]) }}"
+                                            ></developer-access-component>
                                         @endif
                                         @can(getPermissionKey($moduleKey, 'update', true))
                                             <archive-asset-component

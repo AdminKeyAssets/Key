@@ -127,8 +127,7 @@ class DeveloperController extends BaseController
                 $this->baseData['item']['agreements'] = $developer->agreements()->get();
                 $this->baseData['item']['assets'] = $developer->assets()->pluck('asset_name')->toArray();
             }
-            $this->baseData['assets'] = Asset::where('developer_access', 1)
-                ->groupBy('project_name')
+            $this->baseData['assets'] = Asset::groupBy('project_name')
                 ->orderBy('project_name')
                 ->pluck('project_name')
                 ->toArray();

@@ -26,6 +26,7 @@ use App\Modules\Asset\Models\RenovationPaymentsHistory;
 use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
+use App\Modules\Asset\Models\DeveloperAsset;
 use App\Modules\Asset\Services\AssetCompareService;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
@@ -1766,10 +1767,34 @@ class AssetController extends BaseController
 
     public function developerAccess(Request $request, $assetId)
     {
-        $asset = Asset::where('id', $assetId)->first();
-        $asset->update(['developer_access' => !$asset->developer_access]);
+        try {
+            $asset = Asset::where('id', $assetId)->first();
+            
+            if (!$asset) {
+                return ServiceResponse::jsonNotification('Asset not found.', 500);
+            }
+            
+            // If trying to enable developer access (current state is false), check if developer is attached
+            if (!$asset->developer_access) {
+                $isDeveloperAttached = DeveloperAsset::where('asset_name', $asset->project_name)->exists();
+                
+                if (!$isDeveloperAttached) {
+                    return ServiceResponse::jsonNotification('There is no developer attached to asset "' . $asset->project_name . '", so developer access cannot be enabled.', 500);
+                }
+            }
+            
+            $asset->update(['developer_access' => !$asset->developer_access]);
 
-        return redirect()->back();
+            // Prepare success message
+            $message = $asset->developer_access 
+                ? 'Developer access enabled for "' . $asset->project_name . '"' 
+                : 'Developer access disabled for "' . $asset->project_name . '"';
+                
+            return ServiceResponse::jsonNotification($message, 200);
+            
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification($ex->getMessage(), 500);
+        }
     }
 
     /**
