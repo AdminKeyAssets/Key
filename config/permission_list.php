@@ -105,4 +105,7 @@ return [
     'renovation' => [
         'default' => $default_permissions
     ],
+    'news' => [
+        'default' => $default_permissions
+    ],
 ];

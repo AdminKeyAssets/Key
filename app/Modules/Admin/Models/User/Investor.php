@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Models\User;
 
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Comment;
+use App\Modules\News\Models\News;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -45,5 +46,10 @@ class Investor  extends Authenticatable
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+
+    public function news()
+    {
+        return $this->belongsToMany(News::class, 'news_investor');
     }
 }

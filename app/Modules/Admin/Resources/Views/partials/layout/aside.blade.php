@@ -92,4 +92,12 @@
                 <span class="sidebar-nav-mini-hide">Email Templates</span></a>
         </li>
     @endif
+
+    @can ( getPermissionKey('news', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'admin.news.') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('admin.news.index')}}"><i class="el-icon-news sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">News</span></a>
+        </li>
+    @endif
 </ul>

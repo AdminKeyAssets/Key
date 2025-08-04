@@ -4,6 +4,7 @@ namespace App\Modules\Admin\Models\User;
 
 use App\Modules\Admin\Models\Reminder;
 use App\Modules\Asset\Models\Comment;
+use App\Modules\News\Models\News;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -70,6 +71,11 @@ class Admin extends Authenticatable implements \OwenIt\Auditing\Contracts\Audita
     public function managedAssets()
     {
         return $this->hasMany('App\Modules\Asset\Models\Asset', 'manager_id');
+    }
+
+    public function news()
+    {
+        return $this->hasMany(News::class);
     }
 
 }

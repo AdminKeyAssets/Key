@@ -206,6 +206,11 @@ return [
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
 
+        /*
+         * Module Service Providers...
+         */
+        App\Modules\News\Providers\NewsServiceProvider::class,
+
 
     ],
 

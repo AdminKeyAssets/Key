@@ -50,6 +50,10 @@ Vue.component('admin-user-filter-component', require('./base/admin/user/partials
 // User role
 Vue.component('admin-role-save-component', require('./base/admin/role/page/SaveComponent').default);
 
+// News
+Vue.component('admin-news-save-component', require('./base/admin/news/page/SaveComponent').default);
+Vue.component('news-view-component', require('./base/admin/news/page/ViewComponent').default);
+
 // Developer
 Vue.component('developer-save-component', require('./base/admin/developer/page/SaveComponent').default);
 Vue.component('developer-view-component', require('./base/admin/developer/page/ViewComponent').default);
