@@ -35,7 +35,14 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
+                    <el-select 
+                        v-model="form.asset" 
+                        filterable 
+                        placeholder="Asset Name" 
+                        v-remove-readonly 
+                        multiple 
+                        collapse-tags
+                        @change="handleAllOptionSelect('asset')">
                         <el-option
                             label="All"
                             value="all"
@@ -50,7 +57,14 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
+                    <el-select 
+                        v-model="form.status" 
+                        filterable 
+                        placeholder="Status" 
+                        v-remove-readonly 
+                        multiple 
+                        collapse-tags
+                        @change="handleAllOptionSelect('status')">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
@@ -58,7 +72,14 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset_type" filterable placeholder="Asset Type" v-remove-readonly>
+                    <el-select 
+                        v-model="form.asset_type" 
+                        filterable 
+                        placeholder="Asset Type" 
+                        v-remove-readonly 
+                        multiple 
+                        collapse-tags
+                        @change="handleAllOptionSelect('asset_type')">
                         <el-option
                             label="All"
                             value="all"
@@ -73,8 +94,14 @@
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.agreement_status" filterable placeholder="Agreement Status"
-                               v-remove-readonly>
+                    <el-select 
+                        v-model="form.agreement_status" 
+                        filterable 
+                        placeholder="Agreement Status"
+                        v-remove-readonly 
+                        multiple 
+                        collapse-tags
+                        @change="handleAllOptionSelect('agreement_status')">
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Complete" value="Complete"></el-option>
                         <el-option label="Installments" value="Installments"></el-option>
@@ -95,12 +122,12 @@ export default {
     data() {
         return {
             form: {
-                status: 'active',
+                status: ['active'],
                 agreement_date: '',
                 payment_date: '',
-                asset_type: '',
-                agreement_status: '',
-                asset: '',
+                asset_type: [],
+                agreement_status: [],
+                asset: [],
             },
             showFilters: false,
             assets: [],
@@ -120,28 +147,72 @@ export default {
             this.showFilters = true;
         }
     },
+    watch: {
+        // Watch for changes in select fields that have "All" option
+        'form.asset': function(val) {
+            if (val && val.includes('all')) {
+                this.form.asset = ['all'];
+            }
+        },
+        'form.status': function(val) {
+            if (val && val.includes('all')) {
+                this.form.status = ['all'];
+            }
+        },
+        'form.asset_type': function(val) {
+            if (val && val.includes('all')) {
+                this.form.asset_type = ['all'];
+            }
+        },
+        'form.agreement_status': function(val) {
+            if (val && val.includes('all')) {
+                this.form.agreement_status = ['all'];
+            }
+        }
+    },
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            this.form.status = urlParams.get('status') || 'active';
-            this.form.asset = urlParams.get('asset') || '';
-            this.form.asset_type = urlParams.get('asset_type') || '';
-            this.form.agreement_status = urlParams.get('agreement_status') || '';
+            this.form.status = urlParams.get('status') ? urlParams.get('status').split(',') : ['active'];
+            this.form.asset = urlParams.get('asset') ? urlParams.get('asset').split(',') : [];
+            this.form.asset_type = urlParams.get('asset_type') ? urlParams.get('asset_type').split(',') : [];
+            this.form.agreement_status = urlParams.get('agreement_status') ? urlParams.get('agreement_status').split(',') : [];
             this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
             this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
         },
         applyFilters() {
-            const queryParams = new URLSearchParams(this.form).toString();
+            // Create a copy of the form data for serialization
+            const formData = {};
+            
+            // Handle arrays by joining with commas for the URL
+            Object.keys(this.form).forEach(key => {
+                if (Array.isArray(this.form[key])) {
+                    formData[key] = this.form[key].join(',');
+                } else {
+                    formData[key] = this.form[key];
+                }
+            });
+            
+            const queryParams = new URLSearchParams(formData).toString();
             window.location.search = queryParams;
         },
+        
+        // Method to handle "All" option selection
+        handleAllOptionSelect(field) {
+            // If 'all' is in the selection, make it the only selection
+            if (this.form[field].includes('all')) {
+                this.form[field] = ['all'];
+            }
+        },
+        
         // Clear filters and reset status to default (active)
         clearFilters() {
-            this.form.status = 'active';
+            this.form.status = ['active'];
             this.form.agreement_date = '';
             this.form.payment_date = '';
-            this.form.asset_type = '';
-            this.form.asset = '';
-            this.form.agreement_status = '';
+            this.form.asset_type = [];
+            this.form.asset = [];
+            this.form.agreement_status = [];
             this.applyFilters();
         },
         fetchAssetFilters() {

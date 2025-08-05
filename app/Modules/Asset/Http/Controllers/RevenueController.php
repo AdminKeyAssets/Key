@@ -91,53 +91,106 @@ class RevenueController extends BaseController
         }
 
         if ($request->asset && $request->asset != 'all') {
-            $paginatedAssets->where('project_name', 'like', '%' . $request->asset . '%');
-            $allAssets->where('project_name', 'like', '%' . $request->asset . '%');
+            $assets = explode(',', $request->asset);
+            
+            // If "all" is included in the array, skip filtering by asset
+            if (!in_array('all', $assets)) {
+                $paginatedAssets->where(function($q) use ($assets) {
+                    foreach ($assets as $index => $asset) {
+                        if ($index === 0) {
+                            $q->where('project_name', 'like', '%' . $asset . '%');
+                        } else {
+                            $q->orWhere('project_name', 'like', '%' . $asset . '%');
+                        }
+                    }
+                });
+                
+                $allAssets->where(function($q) use ($assets) {
+                    foreach ($assets as $index => $asset) {
+                        if ($index === 0) {
+                            $q->where('project_name', 'like', '%' . $asset . '%');
+                        } else {
+                            $q->orWhere('project_name', 'like', '%' . $asset . '%');
+                        }
+                    }
+                });
+            }
         }
 
 
         if ($statusFilter !== 'all') {
-            $paginatedAssets->where('sale_status', $statusFilter);
-            $allAssets->where('sale_status', $statusFilter);
+            $statuses = explode(',', $statusFilter);
+            
+            // If "all" is included in the array, skip filtering by status
+            if (!in_array('all', $statuses)) {
+                $paginatedAssets->whereIn('sale_status', $statuses);
+                $allAssets->whereIn('sale_status', $statuses);
+            }
         }
 
 
         if ($request->manager && $request->manager != 'all') {
-            // First try to find by full_name
-            $managerUser = Admin::where('full_name', $request->manager)->first();
+            $managers = explode(',', $request->manager);
+            $managerIds = [];
             
-            // If not found, try with the old name/surname approach
-            if (!$managerUser) {
-                $managerNamesArray = explode(' ', $request->manager);
+            // If "all" is included in the array, skip filtering by manager
+            if (!in_array('all', $managers)) {
+                foreach ($managers as $manager) {
+                    // First try to find by full_name
+                    $managerUser = Admin::where('full_name', $manager)->first();
+                    
+                    // If not found, try with the old name/surname approach
+                    if (!$managerUser) {
+                        $managerNamesArray = explode(' ', $manager);
+                        
+                        $managerFirstName = array_shift($managerNamesArray);
+                        $managerSurname = implode(' ', $managerNamesArray);
+                        
+                        $managerUser = Admin::where('name', $managerFirstName)
+                            ->where('surname', $managerSurname)->first();
+                    }
+                        
+                    if (isset($managerUser->id)) {
+                        $managerIds[] = $managerUser->id;
+                    }
+                }
                 
-                $managerFirstName = array_shift($managerNamesArray);
-                
-                $managerSurname = implode(' ', $managerNamesArray);
-                
-                $managerUser = Admin::where('name', $managerFirstName)
-                    ->where('surname', $managerSurname)->first();
-            }
-            
-            if (isset($managerUser->id)) {
-                $paginatedAssets->where('admin_id', $managerUser->id);
-                $allAssets->where('admin_id', $managerUser->id);
+                if (!empty($managerIds)) {
+                    $paginatedAssets->whereIn('admin_id', $managerIds);
+                    $allAssets->whereIn('admin_id', $managerIds);
+                }
             }
         }
 
 
         if ($request->asset_type && $request->asset_type != 'all') {
-            $paginatedAssets->where('type', $request->asset_type);
-            $allAssets->where('type', $request->asset_type);
+            $assetTypes = explode(',', $request->asset_type);
+            
+            // If "all" is included in the array, skip filtering by asset type
+            if (!in_array('all', $assetTypes)) {
+                $paginatedAssets->whereIn('type', $assetTypes);
+                $allAssets->whereIn('type', $assetTypes);
+            }
         }
 
         if ($request->asset_status && $request->asset_status != 'all') {
-            $paginatedAssets->where('asset_status', $request->asset_status);
-            $allAssets->where('asset_status', $request->asset_status);
+            $assetStatuses = explode(',', $request->asset_status);
+            
+            // If "all" is included in the array, skip filtering by asset status
+            if (!in_array('all', $assetStatuses)) {
+                $paginatedAssets->whereIn('asset_status', $assetStatuses);
+                $allAssets->whereIn('asset_status', $assetStatuses);
+            }
         }
 
         if ($request->agreement_status && $request->agreement_status != 'all') {
-            $paginatedAssets->where('agreement_status', $request->agreement_status);
-            $allAssets->where('agreement_status', $request->agreement_status);
+            $agreementStatuses = explode(',', $request->agreement_status);
+            
+            // If "all" is included in the array, skip filtering by agreement status
+            if (!in_array('all', $agreementStatuses)) {
+                $paginatedAssets->whereIn('agreement_status', $agreementStatuses);
+                $allAssets->whereIn('agreement_status', $agreementStatuses);
+            }
         }
 
 
