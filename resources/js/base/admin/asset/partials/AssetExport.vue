@@ -16,6 +16,7 @@ export default {
             investors: {},
             filters: {
                 agreement_date: '',
+                payment_date: '',
                 investor: '',
                 status: 'active',
                 asset: '',
@@ -47,8 +48,11 @@ export default {
         },
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            this.filters.agreement_date = urlParams.get('agreement_date')
+            this.filters.agreement_date = urlParams.get('agreement_date') && urlParams.get('agreement_date') !== 'null'
                 ? urlParams.get('agreement_date').split(',')
+                : '';
+            this.filters.payment_date = urlParams.get('payment_date') && urlParams.get('payment_date') !== 'null'
+                ? urlParams.get('payment_date').split(',')
                 : '';
             this.filters.investor = urlParams.get('investor') || '';
             this.filters.status = urlParams.get('status') || 'active';

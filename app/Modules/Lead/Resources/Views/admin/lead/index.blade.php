@@ -16,7 +16,7 @@
                 </div>
             @endcan
 
-            <div>
+            <div class="export-row">
                 @can(getPermissionKey($moduleKey, 'export', false))
                     <leads-export-component>
                     </leads-export-component>

@@ -15,10 +15,10 @@
             {{ comment.author_name }}
           </span>
                     <span class="comment-user" v-else-if="comment.admin">
-            {{ comment.admin.name }} {{ comment.admin.surname }}
+            {{ comment.admin.full_name || (comment.admin.name + ' ' + comment.admin.surname) }}
           </span>
                     <span class="comment-user" v-else-if="comment.investor">
-            {{ comment.investor.name }} {{ comment.investor.surname }}
+            {{ comment.investor.full_name || (comment.investor.name + ' ' + comment.investor.surname) }}
           </span>
                     <span class="comment-date">
             {{ formatDate(comment.created_at) }}
@@ -119,6 +119,10 @@ export default {
             default: false
         },
         investorView: {
+            type: [Boolean, Number],
+            default: false
+        },
+        developerView: {
             type: [Boolean, Number],
             default: false
         }
@@ -243,9 +247,13 @@ export default {
             if (this.attachment) {
                 formData.append('attachment', this.attachment);
             }
-            const url = this.investorView
-                ? `/assets/${this.id}/investor/comments`
-                : `/assets/${this.id}/comments`;
+            let url = `/assets/${this.id}/comments`;
+            if(this.investorView){
+                url = `/assets/${this.id}/investor/comments`;
+            }else if(this.developerView){
+                url = `/assets/${this.id}/developer/comments`;
+            }
+
             try {
                 const response = await axios.post(url, formData);
                 responseParse(response);

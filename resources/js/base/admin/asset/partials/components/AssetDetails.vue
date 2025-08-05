@@ -48,11 +48,13 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Area (m2):</label>
             <div class="col-md-10 uppercase-medium">
-                <input
-                    class="form-control"
-                    type="number"
+                <el-input-number
                     :disabled="loading"
                     v-model="form.area"
+                    :controls="false"
+                    size="large"
+                    :precision="2"
+                    :min="0"
                 />
             </div>
         </div>
@@ -115,11 +117,28 @@
                     <el-option
                         v-for="item in investors"
                         :key="item.id"
-                        :label="item.name + ' ' + item.surname"
+                        :label="item.full_name || (item.name + ' ' + item.surname)"
                         :value="item.id"
                     ></el-option>
                 </el-select>
             </div>
+        </div>
+
+        <!-- Select Asset Manager -->
+        <ManagerSelection
+            v-model="form.manager_id"
+            :asset-id="form.id"
+            @input="updateManagerId"
+        />
+
+        <div class="form-group">
+
+            <label class="col-md-1 control-label">Developer Access: </label>
+            <div class="col-md-10">
+                <el-switch v-model="form.developer_access">
+                </el-switch>
+            </div>
+
         </div>
 
         <!-- Upload Floor Plan -->
@@ -335,11 +354,12 @@
 <script>
 import ImageModal from "../../../../components/admin/ImageModal.vue";
 import TenantDetails from "./TenantDetails.vue";
+import ManagerSelection from "./ManagerSelection.vue";
 import axios from "axios";
 
 export default {
     name: "AssetFormComponent",
-    components: { ImageModal, TenantDetails },
+    components: { ImageModal, TenantDetails, ManagerSelection },
     props: [
         "form",
         "loading",
@@ -534,6 +554,10 @@ export default {
             } finally {
                 this.completeRentDialog = false;
             }
+        },
+
+        updateManagerId(managerId) {
+            this.$emit("update-form", { ...this.form, manager_id: managerId });
         }
     }
 };

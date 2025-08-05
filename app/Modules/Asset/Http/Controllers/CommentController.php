@@ -127,6 +127,46 @@ class CommentController extends BaseController
         return ServiceResponse::jsonNotification('Comment Added successfully', 200, $comments);
     }
 
+
+    /**
+     * @param Request $request
+     * @param $assetId
+     * @return JsonResponse
+     */
+    public function developerStore(Request $request, $assetId)
+    {
+        $path = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $originalFilename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('uploads', $originalFilename, 'public');
+        }
+
+        $user = Auth::user();
+        Comment::create([
+            'comment' => $request->comment,
+            'asset_id' => $assetId,
+            'admin_id' => null,
+            'investor_id' => null,
+            'attachment' => $path ? Storage::url($path) : null,
+            'author_name' => $user->representative,
+
+        ]);
+
+        $comments = Comment::query()
+            ->with(['admin' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->with(['investor' => function ($query) {
+                $query->select('id', 'name', 'surname');
+            }])
+            ->where('asset_id', $assetId)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return ServiceResponse::jsonNotification('Comment Added successfully', 200, $comments);
+    }
+
     /**
      * @param Request $request
      * @param $assetId

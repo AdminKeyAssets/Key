@@ -44,8 +44,8 @@ class SaveInvestorRequest extends FormRequest
         }
 
         return [
-            'name'  => 'required',
-            'surname'  => 'required',
+//            'name'  => 'required',
+            'full_name'  => 'required',
             'email' => ['required', !empty($this->request->all()['id']) ? Rule::unique('investors', 'pid')->ignore($this->request->all()['id']) : 'unique:investors,email', 'email'],
             'pid' => ['required', !empty($this->request->all()['id']) ? Rule::unique('investors', 'pid')->ignore($this->request->all()['id']) : 'unique:investors,pid'],
             'phone' => 'required',
@@ -66,7 +66,7 @@ class SaveInvestorRequest extends FormRequest
     {
         return [
             'name.required' => 'Name can not be empty.',
-            'surname.required' => 'Surname can not be empty.',
+            'full_name.required' => 'Full Name can not be empty.',
             'email.required' => 'Email can not be empty.',
             'admin_id.required' => 'Please Select manager.',
             'email.email' => 'Missing @ in Email.',

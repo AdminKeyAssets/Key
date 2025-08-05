@@ -9,18 +9,10 @@
             <el-row>
 
                 <div class="form-group">
-                    <label class="col-md-2 control-label">Name: <span class="text-danger">*</span>:</label>
+                    <label class="col-md-2 control-label">Full Name: <span class="text-danger">*</span>:</label>
                     <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                      v-model="form.name" @input="capitalizeFirstLetter('name')"></el-input>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Surname: <span class="text-danger">*</span>:</label>
-                    <div class="col-md-6">
-                        <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                  v-model="form.surname" @input="capitalizeFirstLetter('surname')"></el-input>
+                                      v-model="form.full_name" @input="capitalizeFullName"></el-input>
                     </div>
                 </div>
 
@@ -160,14 +152,13 @@
                 this.options.roles.forEach((item) => {
                    this.data.push({
                         key: item.id,
-                       label: item.name
+                        label: item.full_name || (item.name + (item.surname ? ' ' + item.surname : ''))
                    });
                 });
 
                 this.form = {
                     id: this.user? this.user.id : '',
-                    name: this.user ? this.user.name : '',
-                    surname: this.user ? this.user.surname : '',
+                    full_name: this.user ? this.user.full_name || `${this.user.name} ${this.user.surname}` : '',
                     email: this.user ? this.user.email : '',
                     prefix: this.user ? this.user.prefix : '',
                     phone: this.user ? this.user.phone : '',
@@ -281,9 +272,12 @@
                 this.form.profile_picture = null;
                 this.form.profilePicturePreview = null;
             },
-            capitalizeFirstLetter(field) {
-                if (this.form[field]) {
-                    this.form[field] = this.form[field].charAt(0).toUpperCase() + this.form[field].slice(1);
+            capitalizeFullName() {
+                if (this.form.full_name) {
+                    // Split the full name into words and capitalize each word
+                    this.form.full_name = this.form.full_name.split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
                 }
             },
         }

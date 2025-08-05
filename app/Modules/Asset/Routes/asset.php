@@ -10,26 +10,35 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::get('/create', $controller . '@create')->name('create')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/create-data', $controller . '@createData')->name('create_data');
     Route::get('/edit/{id?}', $controller . '@edit')->name('edit')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::get('/developer_access/{id?}', $controller . '@developerAccess')->name('developer_access')->middleware(['auth:developer,admin']);
     Route::post('/sell/{id?}', $controller . '@sell')->name('sell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::post('/delete/sell/{id?}', $controller . '@deleteSell')->name('deleteSell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/view/{id?}', $controller . '@view')->name('view')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
     Route::get('/names', $controller . '@getAssetsToClone')->name('assets.to.clone')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
     Route::post('/clone/{name?}', $controller . '@clone')->name('clone')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);
 
-    //For investor
-    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor']);
-    Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor']);
+    //For investor and developer
+    Route::get('', $controller . '@myassets')->name('myassets')->middleware(['auth:investor,developer']);
+    Route::get('/details/{id?}', $controller . '@investorView')->name('details')->middleware(['auth:investor,developer']);
     //Save
     Route::post('/store', $controller . '@store')->name('store')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     Route::post('/save-project-details', $controller . '@saveProjectDetails')->name('save-project-details')->middleware(['permission:' . getPermissionKey($moduleName, 'create', true)]);
     // Delete
     Route::post('/delete', $controller . '@destroy')->name('delete')->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
+    // Archive and Unarchive
+    Route::post('/archive/{id}', $controller . '@archive')->name('archive')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
+    Route::post('/unarchive/{id}', $controller . '@unarchive')->name('unarchive')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/filter-options', $controller . '@filterOptions')
         ->name('assets.filters');
+    Route::get('/available-managers', $controller . '@getAvailableManagers')
+        ->name('available.managers')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
     Route::get('/investor/filter-options', $controller . '@investorFilterOptions')
         ->name('assets.investor.filters')->middleware(['auth:investor']);
     Route::get('/export', $controller . '@export')
-        ->name('export.assets');
+        ->name('export.assets')->middleware(['auth:admin,developer,investor']);
+
+    Route::get('/developer/filter-options', $controller . '@developerFilterOptions')
+        ->name('assets.developer.filters')->middleware(['auth:developer']);
 
     $paymentController = 'PaymentsHistoryController';
     $paymentModuleName = 'payment';
@@ -50,6 +59,8 @@ Route::prefix('assets')->name('asset.')->group(function () {
         ->name('export');
     Route::get('/{asset}/payments-history/export', $paymentController . '@exportHistory')
         ->name('export.history');
+    Route::get('/{asset}/dept-statement/export', $paymentController . '@deptStatement')
+        ->name('export.dept_statement');
 
     // Agreement Details Export
     $agreementDetailsController = 'AgreementDetailsExportController';
@@ -66,6 +77,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     //Save
     Route::post('/{asset}/comments', $commentController . '@store')->name('comments.store')->middleware(['permission:' . getPermissionKey($commentModuleName, 'create', true)]);
     Route::post('/{asset}/investor/comments', $commentController . '@investorStore')->name('comments.investor.store')->middleware(['auth:investor']);
+    Route::post('/{asset}/developer/comments', $commentController . '@developerStore')->name('comments.developer.store')->middleware(['auth:developer']);
     // Delete
     Route::post('/{asset}/comments/delete/{id?}', $commentController . '@destroy')->name('comments.delete')->middleware(['permission:' . getPermissionKey($commentModuleName, 'delete', true)]);
 
@@ -126,6 +138,10 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/revenues/create-data', $revenueController . '@createData')->name('revenue_create_form_data');
     Route::get('/revenues/filter-options', $revenueController . '@filterOptions')
         ->name('revenues.filters');
+    Route::get('/revenues/admin/filter-options', $revenueController . '@adminFilterOptions')
+        ->name('revenues.admin.filters')->middleware(['permission:' . getPermissionKey($moduleName, 'index', true)]);
+    Route::get('/revenues/investor/filter-options', $revenueController . '@investorFilterOptions')
+        ->name('revenues.investor.filters')->middleware(['auth:investor']);
     Route::post('/revenues/rental/delete/{id?}', $revenueController . '@deleteRental');
 
     Route::get('/revenues/{id?}/rentals/export', $revenueController . '@exportRentals')

@@ -23,7 +23,7 @@
                             </div>
                         </div>
                         <div class="text item">
-                            <i class="el-icon-user-solid"> {{ rental.tenant_name }} {{ rental.tenant_surname }}</i>
+                            <i class="el-icon-user-solid"> {{ rental.tenant_full_name || (rental.tenant_name + ' ' + rental.tenant_surname) }}</i>
                         </div>
                     </el-card>
                 </div>

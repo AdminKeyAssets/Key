@@ -40,10 +40,25 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
         }
 
         if (!empty($this->filters['manager']) && $this->filters['manager'] != 'all') {
-            $managerNamesArray = explode(' ', $this->filters['manager']);
-            $managerUser = Admin::where('name', $managerNamesArray[0])
-                ->where('surname', $managerNamesArray[1])->first();
-            $query->where('admin_id', '=', $managerUser->id);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $this->filters['manager'])->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $this->filters['manager']);
+                
+                if (count($managerNamesArray) >= 2) {
+                    $managerFirstName = $managerNamesArray[0];
+                    $managerSurname = implode(' ', array_slice($managerNamesArray, 1));
+                    
+                    $managerUser = Admin::where('name', $managerFirstName)
+                        ->where('surname', $managerSurname)->first();
+                }
+            }
+            
+            if ($managerUser) {
+                $query->where('admin_id', '=', $managerUser->id);
+            }
         }
 
         if (!empty($this->filters['marketing_channel']) && $this->filters['marketing_channel'] != 'all') {
@@ -63,18 +78,23 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
         }
 
         if (!empty($this->filters['search']) && $this->filters['search'] != 'all') {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+            $query->where(function($q) {
+                $q->where('full_name', 'LIKE', '%' . $this->filters['search'] . '%')
+                  ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $this->filters['search'] . '%']);
+            });
         }
 
         $leads = $query->select(
             'name',
             'surname',
+            'full_name',
             'email',
             'phone',
             'prefix',
             'status',
             'marketing_channel',
             'admin_id',
+            'created_at',
             'id'
         )->get();
 
@@ -83,7 +103,7 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             if($lead->admin_id){
                 $managerObj = Admin::where('id', $lead->admin_id)->first();
                 if($managerObj){
-                    $manager = $managerObj->name . ' ' . $managerObj->surname;
+                    $manager = $managerObj->full_name ?? ($managerObj->name . ' ' . $managerObj->surname);
                 }
             }
 
@@ -100,12 +120,13 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
             $comments = implode("\n", $commentLines);
 
             return [
-                'name' => $lead->name . ' ' . $lead->surname,
-                'status' => $lead->status,
+                'name' => $lead->full_name ?? ($lead->name . ' ' . $lead->surname),
                 'email' => $lead->email,
                 'phone' => '"' . $lead->prefix . $lead->phone . '"',
-                'marketing_channel' => $lead->marketing_channel,
                 'manager' => $manager,
+                'status' => $lead->status,
+                'created_at' => $lead->created_at->toDateString(),
+                'marketing_channel' => $lead->marketing_channel,
                 'comments' => $comments,
             ];
         });
@@ -117,11 +138,12 @@ class LeadsExport implements FromCollection, WithHeadings, WithEvents
     {
         return [
             'Name',
-            'Status',
             'Email',
             'Phone',
-            'Marketing Channel',
             'Manager',
+            'Status',
+            'Created At',
+            'Marketing Channel',
             'Comments'
         ];
     }

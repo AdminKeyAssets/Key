@@ -27,15 +27,20 @@
                         <el-option label="All" value="all"></el-option>
                         <el-option
                             v-for="investor in investors"
-                            :key="investor.name + ' ' + investor.surname"
-                            :label="investor.name + ' ' + investor.surname"
-                            :value="investor.name + ' ' + investor.surname">
+                            :key="investor.id"
+                            :label="investor.full_name || (investor.name + ' ' + investor.surname)"
+                            :value="investor.full_name || (investor.name + ' ' + investor.surname)">
                         </el-option>
                     </el-select>
                 </div>
 
                 <div class="form-group">
-                    <el-select v-model="form.asset" filterable placeholder="Asset Name" v-remove-readonly>
+                    <el-select
+                        v-model="form.asset"
+                        filterable
+                        placeholder="Asset Name"
+                        v-remove-readonly
+                        @change="onAssetChange">
                         <el-option
                             label="All"
                             value="all"
@@ -64,9 +69,9 @@
                         ></el-option>
                         <el-option
                             v-for="manager in managers"
-                            :key="manager.name + ' ' + manager.surname"
-                            :label="manager.name + ' ' + manager.surname"
-                            :value="manager.name + ' ' + manager.surname"
+                            :key="manager.id"
+                            :label="manager.full_name || (manager.name + ' ' + manager.surname)"
+                            :value="manager.full_name || (manager.name + ' ' + manager.surname)"
                         ></el-option>
                     </el-select>
                 </div>
@@ -140,6 +145,7 @@ export default {
             managers: [],
             types: [],
             statuses: [],
+            assetStatusMap: {}, // Will store the sale_status for each asset
         };
     },
     mounted() {
@@ -200,6 +206,8 @@ export default {
                         }
                         if (data.assets) {
                             this.assets = data.assets;
+                            // Fetch asset statuses for automatic filtering
+                            this.fetchAssetStatuses();
                         }
                         if (data.managers) {
                             this.managers = data.managers;
@@ -215,6 +223,58 @@ export default {
                 .catch(error => {
                     console.error('Error fetching filters:', error);
                 });
+        },
+        fetchAssetStatuses() {
+            // Get status for each asset
+            axios.get('/assets/revenues/admin/filter-options')
+                .then(response => {
+                    responseParse(response, false);
+                    if (response.status === 200 && response.data.data && response.data.data.assets) {
+                        const assets = response.data.data.assets;
+
+                        // Create a map of asset names to their sale status
+                        assets.forEach(asset => {
+                            if (asset.sale_status) {
+                                if (!this.assetStatusMap[asset.project_name]) {
+                                    this.assetStatusMap[asset.project_name] = [];
+                                }
+                                this.assetStatusMap[asset.project_name].push(asset.sale_status);
+                            }
+                        });
+
+                        // If an asset is already selected on page load, update status accordingly
+                        if (this.form.asset && this.form.asset !== 'all') {
+                            this.onAssetChange(this.form.asset);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching asset statuses:', error);
+                });
+        },
+        onAssetChange(assetName) {
+            if (assetName === 'all') {
+                // If 'all' is selected, don't change the status filter
+                return;
+            }
+
+            // Check if we have status information for this asset
+            if (this.assetStatusMap[assetName]) {
+                const statuses = this.assetStatusMap[assetName];
+
+                // If asset appears in both "sold" and "active" statuses, set filter to "all"
+                if (statuses.includes('sold') && statuses.includes('active')) {
+                    this.form.status = 'all';
+                }
+                // If asset is only "sold", update status filter to "sold"
+                else if (statuses.includes('sold')) {
+                    this.form.status = 'sold';
+                }
+                // If asset is only in active status, you might keep the current status or set it to "active"
+                else if (statuses.includes('active')) {
+                    this.form.status = 'active';
+                }
+            }
         }
     }
 };

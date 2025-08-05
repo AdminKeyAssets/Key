@@ -1,0 +1,84 @@
+<template>
+    <div class="col-md-6">
+        <el-select v-model="form.asset" placeholder="Select Asset" multiple filterable v-remove-readonly>
+            <el-option
+                v-for="asset in assets"
+                :key="asset"
+                :label="asset"
+                :value="asset"
+            ></el-option>
+        </el-select>
+
+    </div>
+</template>
+
+<script>
+import {responseParse} from "../../../mixins/responseParse";
+import {getData} from "../../../mixins/getData";
+
+export default {
+    props: {
+        developerId: {
+            type: [String, Number],
+            required: true
+        }
+    },
+    data() {
+        return {
+            form: {
+                asset: ''
+            },
+            showModal: false,
+            assets: [],
+        };
+    },
+
+    methods: {
+        openModal() {
+            this.form.asset = [...this.assetName];
+            this.showModal = true;
+            this.fetchAssets();
+        },
+        handleClose() {
+            this.showModal = false;
+        },
+        fetchAssets() {
+            axios.get('/admin/developers/filter-options')
+                .then(response => {
+                    responseParse(response, false);
+                    if (response.status === 200) {
+                        let data = response.data.data;
+
+                        if (data.assets) {
+                            this.assets = data.assets;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching assets:', error);
+                });
+        },
+        async changeAsset() {
+            await getData({
+                method: 'POST',
+                config: {
+                    headers: {'content-type': 'multipart/form-data'}
+                },
+                url: '/admin/developers/update-asset',
+                data: {
+                    assets: this.form.asset,
+                    developer_id: this.developerId
+                }
+            }).then(response => {
+                responseParse(response, true);
+
+                if (response.status === 200) {
+                    let data = response.data.data;
+                    data.assets.length ? this.localAssetName = data.assets.join(", ") : 'Assign Asset';
+                    this.handleClose();
+                }
+            });
+        }
+    }
+};
+</script>

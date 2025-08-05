@@ -75,11 +75,13 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">M2 Price:</label>
             <div class="col-md-7 uppercase-medium">
-                <input
-                    class="form-control"
-                    type="text"
+                <el-input-number
                     :disabled="loading"
-                    v-model="priceDisplay"
+                    v-model="form.price"
+                    :controls="false"
+                    size="large"
+                    :precision="2"
+                    :min="0"
                 />
             </div>
         </div>
@@ -88,11 +90,14 @@
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Total Price:</label>
             <div class="col-md-10 uppercase-medium">
-                <input
-                    class="form-control"
+                <el-input-number
                     type="number"
                     :disabled="loading"
                     v-model="form.total_price"
+                    :controls="false"
+                    size="large"
+                    :precision="2"
+                    :min="0"
                 />
             </div>
         </div>
@@ -194,7 +199,7 @@
 
             <div v-if="form.payments && form.payments.length">
                 <el-table :data="form.payments" style="width: 100%">
-                    <el-table-column prop="number" label="Payment" width="150" />
+                    <el-table-column prop="number" label="Payment" width="150"/>
                     <el-table-column prop="payment_date" label="Payment Date" width="180">
                         <template #default="{ row, $index }">
                             <el-date-picker
@@ -222,7 +227,7 @@
 </template>
 
 <script>
-import { Notification } from 'element-ui';
+import {Notification} from 'element-ui';
 
 export default {
     name: 'AgreementFormComponent',
@@ -246,7 +251,7 @@ export default {
             set(val) {
                 const num = parseFloat(val);
                 if (!isNaN(num)) {
-                    this.$emit('update-form', { ...this.form, price: num });
+                    this.$emit('update-form', {...this.form, price: num});
                 }
             }
         }
@@ -255,15 +260,15 @@ export default {
     mounted() {
         // default currency
         if (this.form && !this.form.currency) {
-            this.$emit('update-form', { ...this.form, currency: 'USD' });
+            this.$emit('update-form', {...this.form, currency: 'USD'});
         }
         this.previousAgreementStatus = this.form.agreement_status;
     },
 
     watch: {
-        'form.price': { handler: 'updateTotalPrice' },
-        'form.area':  { handler: 'updateTotalPrice' },
-        'form.total_price': { handler: 'updateSqmPrice' },
+        'form.price': {handler: 'updateTotalPrice'},
+        'form.area': {handler: 'updateTotalPrice'},
+        'form.total_price': {handler: 'updateSqmPrice'},
 
         'form.agreement_status'(newStatus) {
             if (
@@ -274,7 +279,7 @@ export default {
                 const totalPayments = this.form.payments_histories.reduce((sum, h) => sum + h.amount, 0);
                 if (totalPayments < this.form.agreement_price) {
                     this.form.agreement_status = 'Installments';
-                    Notification.error({ message: 'Total payments are less than the agreement price!' });
+                    Notification.error({message: 'Total payments are less than the agreement price!'});
                 }
             }
         }
@@ -296,7 +301,7 @@ export default {
             }
         },
         removeOwnershipCertificate() {
-            this.$emit('update-form', { ...this.form, ownership_certificate: null, ownershipCertificatePreview: null });
+            this.$emit('update-form', {...this.form, ownership_certificate: null, ownershipCertificatePreview: null});
         },
 
         generatePayments() {
@@ -311,18 +316,21 @@ export default {
             for (let i = 0; i < period; i++) {
                 const dt = new Date(firstDate);
                 dt.setMonth(dt.getMonth() + i);
-                payments.push({ number: i + 1, payment_date: this.formatDate(dt), amount: amountPer });
+                payments.push({number: i + 1, payment_date: this.formatDate(dt), amount: amountPer});
             }
             this.updateFinalPaymentAmount(payments);
             this.$set(this.form, 'payments', payments);
         },
 
         updatePaymentDate(index, date) {
-            this.$set(this.form.payments, index, { ...this.form.payments[index], payment_date: date });
+            this.$set(this.form.payments, index, {...this.form.payments[index], payment_date: date});
         },
 
         updatePaymentAmount(index) {
-            this.$set(this.form.payments, index, { ...this.form.payments[index], amount: parseFloat(this.form.payments[index].amount) });
+            this.$set(this.form.payments, index, {
+                ...this.form.payments[index],
+                amount: parseFloat(this.form.payments[index].amount)
+            });
             this.updateFinalPaymentAmount(this.form.payments);
         },
 
@@ -330,7 +338,7 @@ export default {
             const total = parseFloat(this.form.total_price);
             const sum = payments.slice(0, -1).reduce((s, p) => s + parseFloat(p.amount), 0);
             const finalAmt = (total - sum).toFixed(2);
-            this.$set(payments, payments.length - 1, { ...payments[payments.length - 1], amount: finalAmt });
+            this.$set(payments, payments.length - 1, {...payments[payments.length - 1], amount: finalAmt});
         },
 
         formatDate(date) {
@@ -347,7 +355,7 @@ export default {
             if (isNaN(price) || isNaN(area)) return;
             this.updatingTotalPrice = true;
             const totalPrice = price * area;
-            const payload = { ...this.form, total_price: totalPrice };
+            const payload = {...this.form, total_price: totalPrice};
             if (!this.form.id) payload.current_value = totalPrice;
             this.$emit('update-form', payload);
             this.updatingTotalPrice = false;
@@ -360,7 +368,7 @@ export default {
             if (isNaN(totalPrice) || isNaN(area) || area === 0) return;
             this.updatingSqmPrice = true;
             const rawPrice = totalPrice / area;
-            this.$emit('update-form', { ...this.form, price: rawPrice });
+            this.$emit('update-form', {...this.form, price: rawPrice});
             this.updatingSqmPrice = false;
         },
 
@@ -375,7 +383,7 @@ export default {
                         preview: file.type.startsWith('image/') ? ev.target.result : null,
                         name: file.name
                     };
-                    this.$emit('update-form', { ...this.form, agreements: ags });
+                    this.$emit('update-form', {...this.form, agreements: ags});
                 };
                 reader.readAsDataURL(file);
             }
@@ -383,15 +391,15 @@ export default {
 
         addAgreement() {
             const ags = Array.isArray(this.form.agreements) ? [...this.form.agreements] : [];
-            ags.push({ id: Date.now(), name: '', attachment: null });
-            this.$emit('update-form', { ...this.form, agreements: ags });
+            ags.push({id: Date.now(), name: '', attachment: null});
+            this.$emit('update-form', {...this.form, agreements: ags});
         },
 
         removeAgreement(item) {
             const ags = Array.isArray(this.form.agreements)
                 ? this.form.agreements.filter(a => a.id !== item.id)
                 : [];
-            this.$emit('update-form', { ...this.form, agreements: ags });
+            this.$emit('update-form', {...this.form, agreements: ags});
         }
     }
 };

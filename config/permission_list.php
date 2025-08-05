@@ -64,6 +64,9 @@ return [
         'default' => $default_permissions,
         'custom' => $custom_permissions
     ],
+    'developer' => [
+        'default' => $default_permissions
+    ],
     'investment' => [
         'default' => $default_permissions
     ],

@@ -44,8 +44,8 @@ class SaveUserRequest extends FormRequest
         }
 
         return [
-            'name' => 'required',
-            'surname' => 'required',
+//            'name' => 'required',
+            'full_name' => 'required',
             'email' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,email', 'email'],
             'pid' => ['required', !empty($this->request->all()['id']) ? Rule::unique('admins', 'pid')->ignore($this->request->all()['id']) : 'unique:admins,pid'],
             'phone' => 'required',
