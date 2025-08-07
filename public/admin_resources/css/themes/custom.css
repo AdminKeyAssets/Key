@@ -1323,6 +1323,6 @@ table thead th {
 .el-input-number.is-without-controls input {
     text-align: left !important;
 }
-th .text-dark{
+th a.text-dark{
     color: white !important;
 }
