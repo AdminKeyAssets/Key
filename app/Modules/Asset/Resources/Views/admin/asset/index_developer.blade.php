@@ -59,7 +59,9 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
 
             @include('admin::includes.success')
             @include('admin::includes.error')
-
+            @php
+                $currentSortField = 'id';
+            @endphp
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
@@ -71,15 +73,15 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                             return empty($checkFunction($item));
                         });
                     }
-                    
+
                     // Get the current sort field from the view data if available
                     $currentSortField = $sortField ?? request()->sort_by ?? 'id';
-                    
+
                     // Check if the investor column should be hidden (no investors for any assets)
                     $hideInvestorColumn = hasEmptyColumn($allData, function($item) {
                         return $item->investors->count();
                     });
-                    
+
                     // Check if other columns should be hidden
                     $hideTypeColumn = hasEmptyColumn($allData, function($item) {
                         return $item->type;
@@ -92,15 +94,15 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'type') {
                         $hideTypeColumn = false;
                     }
-                    
+
                     $hidePurchasePriceColumn = hasEmptyColumn($allData, function($item) {
                         return $item->total_price;
                     });
-                    
+
                     $hidePaidColumn = hasEmptyColumn($allData, function($item) {
                         return $item->paid_formatted;
                     });
-                    
+
                     $hideAgreementStatusColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status;
                     });
@@ -108,7 +110,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'agreement_status') {
                         $hideAgreementStatusColumn = false;
                     }
-                    
+
                     $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status == 'Installments' && count($item->payments) > 0;
                     });
@@ -116,15 +118,15 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'next_installment') {
                         $hideNextInstallmentColumn = false;
                     }
-                    
+
                     $hideCurrentValueColumn = hasEmptyColumn($allData, function($item) {
                         return $item->current_value;
                     });
-                    
+
                     $hideCapitalGainColumn = hasEmptyColumn($allData, function($item) {
                         return $item->current_value - $item->total_price;
                     });
-                    
+
                     $hideManagerColumn = hasEmptyColumn($allData, function($item) {
                         return isset($item->investors->first()->admin);
                     });
