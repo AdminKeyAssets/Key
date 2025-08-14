@@ -447,7 +447,13 @@ class RevenueController extends BaseController
             $totalRenovationPrice += $renovationInvestment;
             $totalPurchasePrice += $asset->total_price;
             $totalCurrentValue += $asset->current_value;
-            $totalPaid += $paid;
+            
+            // Calculate paid amount based on agreement status
+            if ($asset->agreement_status === 'Installments') {
+                $totalPaid += $paid;
+            } else {
+                $totalPaid += $asset->total_price;
+            }
 
             // Net cash balance
             if ($asset->sale_status !== 'sold') {
