@@ -397,44 +397,73 @@ class NewsController extends BaseController
      */
     private function handleNewsImages(News $news, Request $request)
     {
-        // Delete existing images
-        $news->images()->each(function ($image) {
+        if (!$request->has('gallery')) {
+            // No gallery data provided, keep existing images
+            return;
+        }
+
+        // Get existing images for comparison
+        $existingImages = $news->images->keyBy('image');
+        $imagesToKeep = [];
+        $newImages = [];
+
+        // Process gallery data to determine what to keep and what's new
+        foreach ($request->gallery as $index => $file) {
+            if (gettype($file) == 'string') {
+                // This is an existing image URL - keep it
+                $imagesToKeep[] = $file;
+            } else {
+                // This is a new file upload
+                $newImages[$index] = $file;
+            }
+        }
+
+        // Delete images that are no longer in the gallery
+        $imagesToDelete = $existingImages->reject(function ($image) use ($imagesToKeep) {
+            return in_array($image->image, $imagesToKeep);
+        });
+
+        foreach ($imagesToDelete as $image) {
             if ($image->image && Storage::disk('public')->exists(str_replace('/storage/', '', $image->image))) {
                 Storage::disk('public')->delete(str_replace('/storage/', '', $image->image));
             }
             $image->delete();
-        });
+        }
 
-        if ($request->has('gallery')) {
-            foreach ($request->gallery as $index => $file) {
-                $imagePath = null;
-                $fileName = null;
+        // Update order for existing images and add new images
+        foreach ($request->gallery as $index => $file) {
+            $imagePath = null;
+            $fileName = null;
 
-                if (gettype($file) == 'string') {
-                    // Existing image URL
+            if (gettype($file) == 'string') {
+                // Existing image URL - update order only
+                $existingImage = $existingImages->get($file);
+                if ($existingImage) {
+                    $existingImage->update([
+                        'order' => $index,
+                        'is_thumbnail' => $index === 0
+                    ]);
                     $imagePath = $file;
-                    $explodedFile = explode('/', $file);
-                    $fileName = end($explodedFile);
-                } else {
-                    // New file upload
-                    $originalFileName = time() . '_' . $index . '_' . $file->getClientOriginalName();
-                    $imagePath = $file->storeAs('uploads/news', $originalFileName, 'public');
-                    $imagePath = Storage::url($imagePath);
-                    $fileName = $originalFileName;
                 }
+            } else {
+                // New file upload
+                $originalFileName = time() . '_' . $index . '_' . $file->getClientOriginalName();
+                $imagePath = $file->storeAs('uploads/news', $originalFileName, 'public');
+                $imagePath = Storage::url($imagePath);
+                $fileName = $originalFileName;
 
-                $newsImage = NewsImage::create([
+                NewsImage::create([
                     'news_id' => $news->id,
                     'image' => $imagePath,
                     'name' => $fileName,
                     'order' => $index,
-                    'is_thumbnail' => $index === 0 // First image is thumbnail
+                    'is_thumbnail' => $index === 0
                 ]);
+            }
 
-                // Set thumbnail on news model
-                if ($index === 0) {
-                    $news->update(['thumbnail' => $imagePath]);
-                }
+            // Set thumbnail on news model (first image)
+            if ($index === 0 && $imagePath) {
+                $news->update(['thumbnail' => $imagePath]);
             }
         }
     }
@@ -589,20 +618,17 @@ class NewsController extends BaseController
      */
     public function developerView($id)
     {
-        $this->baseData['moduleKey'] = 'developer_news';
-        $this->baseData['baseRouteName'] = 'developer.news.';
+        try {
+            $this->baseData['routes']['create_form_data'] = route('developer.news.create_form_data');
+            $this->baseData['id'] = $id;
+            $this->baseData['moduleKey'] = 'developer_news';
+            $this->baseData['baseRouteName'] = 'developer.news.';
 
-        $developerId = auth('developer')->id();
-        
-        // Ensure developer can only view their own news
-        $news = News::forDeveloper($developerId)
-            ->with(['admin', 'developer', 'manager', 'images'])
-            ->findOrFail($id);
+        } catch (\Exception $ex) {
+            return view('admin::admin.news.developer_view', ServiceResponse::error($ex->getMessage()));
+        }
 
-        $all_data_variables = ['news'];
-        $this->baseData = array_merge($this->baseData, compact($all_data_variables));
-
-        return view('admin::admin.news.developer_view', $this->baseData);
+        return view('admin::admin.news.developer_view', ServiceResponse::success($this->baseData));
     }
 
     /**
@@ -729,8 +755,6 @@ class NewsController extends BaseController
             'content' => 'required|string',
             'status' => 'required|in:draft,published',
             'thumbnail' => 'nullable|string',
-            'gallery.*' => 'nullable|file|image|max:10240', // Only validate new uploads
-            'existing_images' => 'nullable|string', // JSON string of existing images
             'investor_ids' => 'nullable|string', // Comma-separated investor IDs
         ]);
 
@@ -761,6 +785,9 @@ class NewsController extends BaseController
             }
 
             $news->save();
+
+            // Handle image uploads for developers
+            $this->handleNewsImages($news, request());
 
             // Handle investor attachments for developers
             if (!empty($input['investor_ids'])) {
@@ -853,20 +880,79 @@ class NewsController extends BaseController
      */
     public function investorView($id)
     {
-        $this->baseData['moduleKey'] = 'investor_news';
-        $this->baseData['baseRouteName'] = 'investor.news.';
+        try {
+            $this->baseData['routes']['create_form_data'] = route('investor.news.create_form_data');
+            $this->baseData['id'] = $id;
+            $this->baseData['moduleKey'] = 'investor_news';
+            $this->baseData['baseRouteName'] = 'investor.news.';
 
+        } catch (\Exception $ex) {
+            return view('admin::admin.news.investor_view', ServiceResponse::error($ex->getMessage()));
+        }
+
+        return view('admin::admin.news.investor_view', ServiceResponse::success($this->baseData));
+    }
+
+    /**
+     * Get news data for investor viewing
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function investorGetCreateData(Request $request)
+    {
         $investorId = auth('investor')->id();
-        
-        // Ensure investor can only view news attached to them
-        $news = News::published()
-            ->with(['admin', 'manager', 'images'])
-            ->forInvestor($investorId)
-            ->findOrFail($id);
+        $id = $request->input('id');
 
-        $all_data_variables = ['news'];
-        $this->baseData = array_merge($this->baseData, compact($all_data_variables));
+        try {
+            if ($id) {
+                // Load existing news for viewing (only published news attached to investor)
+                $news = News::published()
+                    ->with(['admin', 'manager', 'images', 'investors'])
+                    ->forInvestor($investorId)
+                    ->findOrFail($id);
 
-        return view('admin::admin.news.investor_view', $this->baseData);
+                $item = $news->toArray();
+                
+                // Format images for frontend
+                if ($news->images) {
+                    $item['images'] = $news->images->map(function ($image) {
+                        return [
+                            'id' => $image->id,
+                            'image' => $image->image,
+                            'preview' => $image->image,
+                            'name' => $image->name,
+                            'fileName' => $image->name,
+                            'is_thumbnail' => $image->is_thumbnail
+                        ];
+                    })->toArray();
+                }
+
+                // Format investors for frontend
+                if ($news->investors) {
+                    $item['investor_ids'] = $news->investors->pluck('id')->toArray();
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'item' => $item,
+                        'investors' => [],
+                        'managers' => []
+                    ]
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'News not found'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading news: ' . $e->getMessage()
+            ]);
+        }
     }
 }

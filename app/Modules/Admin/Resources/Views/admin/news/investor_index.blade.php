@@ -30,10 +30,6 @@
                             <th>Thumbnail</th>
                             <th>Title</th>
                             <th>Status</th>
-                            <th>Created By</th>
-                            <th>Manager</th>
-                            <th>Published At</th>
-                            <th>Created At</th>
                             <th width="15%" class="text-center">Actions</th>
                         </tr>
                         </thead>
@@ -63,19 +59,6 @@
                                         <span class="badge badge-warning">Draft</span>
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $item->created_by_name }}
-                                    @if($item->created_by_type)
-                                        <br><small class="text-muted">({{ ucfirst($item->created_by_type) }})</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    {{ $item->manager_name ?: '-' }}
-                                </td>
-                                <td>
-                                    {{ $item->published_at ? $item->published_at->format('Y-m-d H:i') : '-' }}
-                                </td>
-                                <td>{{ $item->created_at->format('Y-m-d H:i') }}</td>
                                 <td class="text-center">
                                     @include('admin::includes.actions.view', ['route' => route('investor.news.view', $item->id)])
                                 </td>

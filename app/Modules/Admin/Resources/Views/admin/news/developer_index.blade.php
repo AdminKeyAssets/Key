@@ -39,11 +39,7 @@
                             <th>Thumbnail</th>
                             <th>Title</th>
                             <th>Status</th>
-                            <th>Created By</th>
-                            <th>Manager</th>
                             <th>Investors</th>
-                            <th>Published At</th>
-                            <th>Created At</th>
                             <th width="15%" class="text-center">Actions</th>
                         </tr>
                         </thead>
@@ -74,15 +70,6 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $item->created_by_name }}
-                                    @if($item->created_by_type)
-                                        <br><small class="text-muted">({{ ucfirst($item->created_by_type) }})</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    {{ $item->manager_name ?: '-' }}
-                                </td>
-                                <td>
                                     @if($item->investors && $item->investors->count() > 0)
                                         <span class="badge badge-info">{{ $item->investors->count() }} investor(s)</span>
                                         <br>
@@ -96,10 +83,6 @@
                                         <span class="text-muted">No investors</span>
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $item->published_at ? $item->published_at->format('Y-m-d H:i') : '-' }}
-                                </td>
-                                <td>{{ $item->created_at->format('Y-m-d H:i') }}</td>
                                 <td class="text-center">
                                     @include('admin::includes.actions.view', ['route' => route('developer.news.view', $item->id)])
                                     @include('admin::includes.actions.edit', ['route' => route('developer.news.edit', $item->id)])

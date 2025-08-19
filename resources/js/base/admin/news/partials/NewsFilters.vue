@@ -135,9 +135,17 @@ export default {
         },
 
         fetchNewsFilters() {
-            axios.get('/admin/news/filter-options')
+            // Determine the correct endpoint based on user role
+            let endpoint = '/admin/news/filter-options';
+            if (this.isDeveloper) {
+                endpoint = '/developer/news/filter-options';
+            }
+
+            axios.get(endpoint)
                 .then(response => {
                     responseParse(response, false);
+                    console.log(response);
+                    
                     if (response.status === 200) {
                         // Response data.
                         let data = response.data.data;

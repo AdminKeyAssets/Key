@@ -1,43 +1,43 @@
 <template>
-    <div class="block">
-        <el-form v-loading="loading"
-                 element-loading-text="Loading..."
-                 element-loading-spinner="el-icon-loading"
-                 element-loading-background="rgba(0, 0, 0, 0.8)"
-                 ref="form" :model="form" class="form-horizontal form-bordered">
+    <div>
+        <div class="block">
+            <div class="form-horizontal form-bordered">
 
-            <el-row>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Title: <span class="text-danger">*</span></label>
+                <div class="form-group dashed">
+                    <label class="col-md-2 control-label">Title:</label>
                     <div class="col-md-10">
-                        <el-input class="el-input--is-round"
-                            maxlength="255"
-                            show-word-limit
+                        <input
+                            class="form-control"
                             :disabled="loading || isSubmitting"
                             v-model="form.title"
                             placeholder="Enter news title" />
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Content: <span class="text-danger">*</span></label>
+                <div class="form-group dashed">
+                    <label class="col-md-2 control-label">Content:</label>
                     <div class="col-md-10">
-                        <div class="editor-container">
+                        <div ref="editorContainer" v-if="!loading && domReady">
                             <ckeditor
-                                ref="ckeditor"
+                                :key="'ckeditor-' + (form.id || 'new')"
                                 :editor="editor"
                                 v-model="form.content"
-                                :config="editorConfig">
+                                :disabled="isSubmitting"
+                                :config="editorConfig"
+                                @ready="onEditorReady"
+                                @destroy="onEditorDestroy">
                             </ckeditor>
+                        </div>
+                        <div v-else class="text-center" style="padding: 50px;">
+                            <i class="fa fa-spinner fa-spin"></i> Loading editor...
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group dashed">
                     <label class="col-md-2 control-label">Status:</label>
-                    <div class="col-md-6">
-                        <el-select v-model="form.status" :disabled="loading || isSubmitting" v-remove-readonly>
+                    <div class="col-md-10">
+                        <el-select v-model="form.status" :disabled="loading || isSubmitting">
                             <el-option label="Draft" value="draft"></el-option>
                             <el-option label="Published" value="published"></el-option>
                         </el-select>
@@ -45,14 +45,13 @@
                 </div>
 
                 <!-- Manager Selection (only for administrators) -->
-                <div v-if="canAssignManager" class="form-group">
+                <div v-if="isAdmin && managers.length > 0" class="form-group dashed">
                     <label class="col-md-2 control-label">Assign Manager:</label>
-                    <div class="col-md-6">
+                    <div class="col-md-10">
                         <el-select
                             v-model="form.manager_id"
                             :disabled="loading || isSubmitting"
                             placeholder="Select a manager (optional)"
-                            v-remove-readonly
                             clearable>
                             <el-option
                                 v-for="manager in managers"
@@ -62,21 +61,17 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <div class="col-md-4">
-                        <small class="text-muted">Assign a manager to this news article</small>
-                    </div>
                 </div>
 
                 <!-- Investor Selection -->
-                <div v-if="showInvestorSelection" class="form-group">
+                <div class="form-group dashed">
                     <label class="col-md-2 control-label">Attach to Investors:</label>
-                    <div class="col-md-6">
+                    <div class="col-md-10">
                         <el-select
                             v-model="form.investor_ids"
                             :disabled="loading || isSubmitting"
                             multiple
                             filterable
-                            v-remove-readonly
                             placeholder="Select investors">
                             <el-option
                                 v-for="investor in investors"
@@ -85,16 +80,12 @@
                                 :value="investor.id">
                             </el-option>
                         </el-select>
-                    </div>
-                    <div class="col-md-4">
-                        <small class="text-muted">
-                            {{ isDeveloper ? 'Select investors from your assets' : 'Select which investors should receive this news' }}
-                        </small>
+                        <small class="text-muted">Select which investors should receive this news</small>
                     </div>
                 </div>
 
                 <!-- Image Gallery Section -->
-                <div class="form-group">
+                <div class="form-group dashed">
                     <label class="col-md-2 control-label">Images:</label>
                     <div class="col-md-10">
                         <div class="upload-container">
@@ -134,15 +125,17 @@
                 <!-- Action Buttons -->
                 <div class="form-group">
                     <div class="col-md-12 text-right">
-                        <button @click="saveNews" class="btn btn-primary" :disabled="loading || isSubmitting">
+                        <button @click="goBack" class="btn btn-secondary" :disabled="isSubmitting">
+                            Cancel
+                        </button>
+                        <button @click="saveNews" class="btn btn-primary" :disabled="loading || isSubmitting" style="margin-left: 10px;">
                             <i v-if="isSubmitting" class="fa fa-spinner fa-spin"></i>
                             {{ isSubmitting ? 'Saving...' : (form.id ? 'Update News' : 'Create News') }}
                         </button>
                     </div>
                 </div>
-
-            </el-row>
-        </el-form>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -151,12 +144,16 @@ import axios from 'axios';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
-    props: ['newsId', 'getSaveDataRoute', 'saveRoute', 'backRoute', 'isAdmin', 'isDeveloper', 'isUpdate'],
+    props: ['newsId', 'getSaveDataRoute', 'saveRoute', 'backRoute'],
     data() {
         return {
             loading: false,
             isSubmitting: false,
+            isDestroying: false,
+            domReady: false,
+            isAdmin: false,
             editor: ClassicEditor,
+            editorInstance: null,
             editorConfig: {
                 toolbar: [
                     'heading', '|',
@@ -165,8 +162,7 @@ export default {
                     'indent', 'outdent', '|',
                     'blockQuote', 'insertTable', '|',
                     'undo', 'redo'
-                ],
-                placeholder: 'Enter news content...'
+                ]
             },
             form: {
                 id: null,
@@ -184,35 +180,97 @@ export default {
         };
     },
     mounted() {
+        // Ensure DOM is fully ready before initializing editor
         this.$nextTick(() => {
-            this.loadData();
+            setTimeout(() => {
+                this.domReady = true;
+                this.loadData();
+            }, 100); // Small delay to ensure DOM stability
         });
     },
-    computed: {
-        editorDisabled() {
-            return this.loading || this.isSubmitting;
-        },
-        canAssignManager() {
-            return this.isAdmin && this.managers && this.managers.length > 0;
-        },
-        showInvestorSelection() {
-            return this.isAdmin || this.isDeveloper;
+    watch: {
+        'form.content'(newVal, oldVal) {
+            // Safely handle content changes
+            if (this.editorInstance && newVal !== oldVal && !this.isDestroying) {
+                try {
+                    // Check if editor is still valid and attached to DOM
+                    if (this.editorInstance.sourceElement && this.editorInstance.sourceElement.parentNode) {
+                        // Only update if the editor content is different
+                        const currentData = this.editorInstance.getData();
+                        if (currentData !== newVal) {
+                            this.editorInstance.setData(newVal || '');
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Editor content update failed:', error);
+                }
+            }
+        }
+    },
+    beforeDestroy() {
+        // Set flags to prevent operations during destruction
+        this.isDestroying = true;
+        this.domReady = false;
+        
+        // Clean up editor instance
+        if (this.editorInstance) {
+            try {
+                // Check if editor is still valid before destroying
+                if (this.editorInstance.sourceElement && this.editorInstance.sourceElement.parentNode) {
+                    this.editorInstance.destroy()
+                        .catch(error => {
+                            console.error('Error destroying editor:', error);
+                        });
+                }
+            } catch (error) {
+                console.error('Error during editor cleanup:', error);
+            } finally {
+                this.editorInstance = null;
+            }
         }
     },
     methods: {
+        onEditorReady(editor) {
+            if (!this.isDestroying && this.$refs.editorContainer) {
+                try {
+                    // Verify the editor container is still in the DOM
+                    if (this.$refs.editorContainer.parentNode) {
+                        this.editorInstance = editor;
+                        console.log('Editor is ready to use!', editor);
+                    } else {
+                        console.warn('Editor container not properly attached to DOM');
+                    }
+                } catch (error) {
+                    console.error('Error in onEditorReady:', error);
+                }
+            }
+        },
+
+        onEditorDestroy() {
+            this.editorInstance = null;
+            console.log('Editor was destroyed');
+        },
+
         async loadData() {
+            if (this.isDestroying) {
+                return; // Don't load data if component is being destroyed
+            }
+            
             this.loading = true;
             try {
                 const response = await axios.post(this.getSaveDataRoute, {
                     id: this.newsId
                 });
-
-                if (response.status == 200) {
+                
+                if (response.data.data && !this.isDestroying) {
                     const data = response.data.data;
-
+                    
+                    // Always load investors and managers data
                     this.investors = data.investors || [];
                     this.managers = data.managers || [];
+                    this.isAdmin = data.managers && data.managers.length > 0;
 
+                    // Load existing item data if editing
                     if (data.item) {
                         this.form = {
                             id: data.item.id,
@@ -226,9 +284,12 @@ export default {
 
                         if (data.item.gallery) {
                             this.files = data.item.gallery.map(file => ({
-                                ...file,
-                                preview: file.preview || file.image || '',
-                                name: file.name || file.fileName || ''
+                                id: file.id,
+                                image: file.image || file.preview,
+                                preview: file.preview || file.image,
+                                name: file.name || file.fileName || '',
+                                fileName: file.fileName || file.name || '',
+                                is_thumbnail: file.is_thumbnail
                             }));
                         }
                     }
@@ -282,22 +343,17 @@ export default {
                     formData.append('investor_ids', this.form.investor_ids.join(','));
                 }
 
-                // Handle gallery files - only send new file uploads
-                const newFiles = this.files.filter(file => file.file);
-                if (newFiles.length > 0) {
-                    newFiles.forEach((file, index) => {
-                        formData.append(`gallery[${index}]`, file.file);
+                // Handle gallery files
+                if (this.files.length > 0) {
+                    this.files.forEach((file, index) => {
+                        if (file.file) {
+                            // New file upload
+                            formData.append(`gallery[${index}]`, file.file);
+                        } else if (file.image) {
+                            // Existing image URL
+                            formData.append(`gallery[${index}]`, file.image);
+                        }
                     });
-                }
-
-                // Send existing image IDs/URLs separately if needed
-                const existingImages = this.files.filter(file => !file.file && (file.id || file.image));
-                if (existingImages.length > 0) {
-                    formData.append('existing_images', JSON.stringify(existingImages.map(img => ({
-                        id: img.id,
-                        image: img.image,
-                        name: img.name
-                    }))));
                 }
 
                 const response = await axios.post(this.saveRoute, formData, {
@@ -306,38 +362,15 @@ export default {
                     }
                 });
 
-                if (response.status == 200) {
-                    // Handle both admin (ServiceResponse) and developer response structures
-                    const isSuccess = response.data.status === true || response.data.success === true;
-                    const message = response.data.message || 
-                                  (response.data.data && response.data.data.message) || 
-                                  'News saved successfully';
-                    
-                    if (isSuccess) {
-                        this.$notify({
-                            title: 'Success',
-                            message: message,
-                            type: 'success'
-                        });
+                if (response.data.status) {
+                    this.$notify({
+                        title: 'Success',
+                        message: response.data.message || 'News saved successfully',
+                        type: 'success'
+                    });
 
-                        // Redirect to news index page after successful save
-                        setTimeout(() => {
-                            if (response.data.redirect) {
-                                window.location.href = response.data.redirect;
-                            } else if (this.backRoute) {
-                                window.location.href = this.backRoute;
-                            } else {
-                                // Fallback redirect logic based on user type
-                                if (this.isDeveloper) {
-                                    window.location.href = '/developer/news';
-                                } else {
-                                    window.location.href = '/admin/news';
-                                }
-                            }
-                        }, 1500); // Wait 1.5 seconds to show success message
-                    } else {
-                        throw new Error(message);
-                    }
+                    // Redirect after successful save
+                    window.location.href = this.backRoute;
                 } else {
                     throw new Error(response.data.message || 'Failed to save news');
                 }
@@ -445,6 +478,10 @@ export default {
             }
 
             this.dragIndex = null;
+        },
+
+        goBack() {
+            window.location.href = this.backRoute;
         }
     }
 }
@@ -532,16 +569,21 @@ export default {
     font-weight: bold;
 }
 
-.editor-loading {
-    padding: 40px;
-    text-align: center;
-    color: #666;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.form-group.dashed {
+    border-bottom: 1px dashed #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
 }
 
-.editor-container {
-    min-height: 200px;
+.block {
+    background: white;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.control-label {
+    font-weight: 600;
+    color: #2c3e50;
 }
 </style>

@@ -113,6 +113,12 @@ Route::group(['prefix' => 'developer', 'middleware' => ['auth:developer']], func
          */
         Route::post('delete', $newsController . '@developerDelete')
             ->name('delete');
+
+        /**
+         * Get filter options for developers
+         */
+        Route::get('filter-options', $newsController . '@filterOptions')
+            ->name('filters');
     });
 });
 
@@ -132,5 +138,11 @@ Route::group(['prefix' => 'investor', 'middleware' => ['auth:investor']], functi
          */
         Route::get('view/{id?}', $newsController . '@investorView')
             ->name('view');
+
+        /**
+         * Get news data for investor viewing
+         */
+        Route::post('create-form-data', $newsController . '@investorGetCreateData')
+            ->name('create_form_data');
     });
 });

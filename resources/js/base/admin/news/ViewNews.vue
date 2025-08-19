@@ -2,13 +2,6 @@
     <div>
         <div class="block">
             <div class="form-horizontal form-bordered">
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <button v-if="canEdit" @click="goToEdit" class="btn btn-primary">
-                            <i class="fa fa-edit"></i> Edit News
-                        </button>
-                    </div>
-                </div>
 
                 <div v-if="loading" class="text-center">
                     <i class="fa fa-spinner fa-spin fa-2x"></i>
@@ -24,7 +17,7 @@
                         </div>
                     </div>
 
-                    <!-- Status and dates -->
+                    <!-- Status -->
                     <div class="form-group dashed">
                         <div class="col-md-6">
                             <label class="control-label">Status:</label>
@@ -32,27 +25,6 @@
                                 <span v-if="news.status === 'published'" class="badge badge-success">Published</span>
                                 <span v-else class="badge badge-warning">Draft</span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label">Published At:</label>
-                            <div>
-                                {{ news.published_at ? formatDate(news.published_at) : 'Not published' }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Creator and Manager info -->
-                    <div class="form-group dashed">
-                        <div class="col-md-6">
-                            <label class="control-label">Created By:</label>
-                            <div>
-                                {{ news.created_by_name }}
-                                <br><small class="text-muted">({{ ucfirst(news.created_by_type) }})</small>
-                            </div>
-                        </div>
-                        <div class="col-md-6" v-if="news.manager_name">
-                            <label class="control-label">Assigned Manager:</label>
-                            <div>{{ news.manager_name }}</div>
                         </div>
                     </div>
 
@@ -72,13 +44,10 @@
                     <div v-if="news.images && news.images.length > 0" class="form-group dashed">
                         <label class="col-md-2 control-label">Images:</label>
                         <div class="col-md-10">
-                            <div class="image-gallery">
-                                <div v-for="(image, index) in news.images" :key="image.id" class="image-item">
-                                    <img :src="image.image" :alt="image.name" class="gallery-image" @click="openImageModal(image.image)">
-                                    <div v-if="image.is_thumbnail" class="thumbnail-badge">Thumbnail</div>
-                                    <div class="image-name">{{ image.name }}</div>
-                                </div>
-                            </div>
+                            <ImageBox
+                                :slides-count="3"
+                                :initial-main-image="news.images[0].image"
+                                :images="news.images"></ImageBox>
                         </div>
                     </div>
 
@@ -90,17 +59,6 @@
                         </div>
                     </div>
 
-                    <!-- Metadata -->
-                    <div class="form-group">
-                        <div class="col-md-6">
-                            <label class="control-label">Created At:</label>
-                            <div>{{ formatDate(news.created_at) }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label">Last Updated:</label>
-                            <div>{{ formatDate(news.updated_at) }}</div>
-                        </div>
-                    </div>
                 </div>
 
                 <div v-else class="text-center">
@@ -110,24 +68,25 @@
         </div>
 
         <!-- Image Modal -->
-        <el-dialog :visible.sync="imageModalVisible" class="image-modal">
+        <!--<el-dialog :visible.sync="imageModalVisible" class="image-modal">
             <img :src="selectedImage" alt="News Image" style="width: 100%; height: auto;">
-        </el-dialog>
+        </el-dialog>-->
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ImageBox from '../../components/admin/ImageBox.vue';
 
 export default {
-    props: ['newsId', 'getDataRoute', 'backRoute', 'userId'],
+    components: {
+        ImageBox
+    },
+    props: ['newsId', 'getDataRoute', 'backRoute'],
     data() {
         return {
             loading: false,
-            news: null,
-            imageModalVisible: false,
-            selectedImage: '',
-            canEdit: false
+            news: null
         };
     },
     mounted() {
@@ -140,17 +99,8 @@ export default {
                 const response = await axios.post(this.getDataRoute, {
                     id: this.newsId
                 });
-
-                if (response.data.success && response.data.data.item) {
+                if (response.data.data.item) {
                     this.news = response.data.data.item;
-                    
-                    // Check if user can edit this news
-                    // Administrators can edit any news
-                    // Creators can edit their own news
-                    // Assigned managers can edit news assigned to them
-                    this.canEdit = response.data.data.can_edit || 
-                                   this.news.admin_id == this.userId || 
-                                   this.news.manager_id == this.userId;
                 } else {
                     this.$notify.error({
                         title: 'Error',
@@ -174,14 +124,8 @@ export default {
             return date.toLocaleString();
         },
 
-        ucfirst(str) {
-            if (!str) return '';
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        },
-
-        openImageModal(imageUrl) {
-            this.selectedImage = imageUrl;
-            this.imageModalVisible = true;
+        goBack() {
+            window.location.href = this.backRoute;
         },
 
         goToEdit() {
@@ -251,55 +195,6 @@ export default {
     font-weight: 500;
 }
 
-.image-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.image-item {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.gallery-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-.gallery-image:hover {
-    transform: scale(1.05);
-}
-
-.thumbnail-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: #27ae60;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.image-name {
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 8px;
-    font-size: 12px;
-    text-align: center;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
 .content-area {
     background-color: #f8f9fa;
     padding: 20px;
@@ -352,15 +247,5 @@ export default {
 .content-area >>> table th {
     background-color: #34495e;
     color: white;
-}
-</style>
-
-<style>
-.image-modal .el-dialog {
-    margin-top: 5vh !important;
-}
-
-.image-modal .el-dialog__body {
-    padding: 0;
 }
 </style>
