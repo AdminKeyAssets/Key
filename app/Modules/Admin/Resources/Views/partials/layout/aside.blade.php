@@ -59,12 +59,22 @@
                 <a href="{{route('asset.revenue.investor')}}"><i class="el-icon-house sidebar-nav-icon"></i>
                     <span class="sidebar-nav-mini-hide">Revenues</span></a>
             </li>
+            <li
+                {!! strpos(request()->route()->getName(), 'investor.news.') !== false ? ' class="active"' : '' !!}>
+                <a href="{{route('investor.news.index')}}"><i class="el-icon-news sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-mini-hide">News</span></a>
+            </li>
         @endif
             @if(Auth::guard('developer')->check())
                 <li
                     {!! strpos(request()->route()->getName(), 'assets.developer.managers') !== false ? ' class="active"' : '' !!}>
                     <a href="{{route('assets.developer.managers')}}"><i class="el-icon-s-custom sidebar-nav-icon"></i>
                         <span class="sidebar-nav-mini-hide">Managers</span></a>
+                </li>
+                <li
+                    {!! strpos(request()->route()->getName(), 'developer.news.') !== false ? ' class="active"' : '' !!}>
+                    <a href="{{route('developer.news.index')}}"><i class="el-icon-news sidebar-nav-icon"></i>
+                        <span class="sidebar-nav-mini-hide">News</span></a>
                 </li>
             @endif
     @endif
@@ -90,6 +100,14 @@
             {!! strpos(request()->route()->getName(), 'admin.template.') !== false ? ' class="active"' : '' !!}>
             <a href="{{route('template.index')}}"><i class="el-icon-user sidebar-nav-icon"></i>
                 <span class="sidebar-nav-mini-hide">Email Templates</span></a>
+        </li>
+    @endif
+
+    @can ( getPermissionKey('news', 'index', true))
+        <li
+            {!! strpos(request()->route()->getName(), 'admin.news.') !== false ? ' class="active"' : '' !!}>
+            <a href="{{route('admin.news.index')}}"><i class="el-icon-news sidebar-nav-icon"></i>
+                <span class="sidebar-nav-mini-hide">News</span></a>
         </li>
     @endif
 </ul>

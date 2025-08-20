@@ -59,7 +59,9 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
 
             @include('admin::includes.success')
             @include('admin::includes.error')
-
+            @php
+                $currentSortField = 'id';
+            @endphp
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
@@ -71,7 +73,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                             return empty($checkFunction($item));
                         });
                     }
-                    
+
                     // Get the current sort field from the view data if available
                     $currentSortField = $sortField ?? request()->sort_by ?? 'id';
 
@@ -84,7 +86,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
 
                     // Check if we should hide the investor column
                     $hideInvestorColumn = false;
-                    
+
                     // Scenario 1: Logged-in investor is the only investor for all assets
                     if (\Auth::guard('investor')->check()) {
                         $investorId = \Auth::guard('investor')->user()->id;
@@ -93,7 +95,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                             return $item->investors->count() === 1 && $item->investors->first()->id === $investorId;
                         });
                     }
-                    
+
                     // Scenario 2: All assets have no investors or all investor entries would be empty after filtering
                     if (!$hideInvestorColumn && \Auth::guard('investor')->check()) {
                         $investorId = \Auth::guard('investor')->user()->id;
@@ -107,7 +109,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                             return $item->investors->count();
                         });
                     }
-                    
+
                     // Check if we should hide other columns
                     $hideTypeColumn = hasEmptyColumn($allData, function($item) {
                         return $item->type;
@@ -120,7 +122,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'type') {
                         $hideTypeColumn = false;
                     }
-                    
+
                     $hideAgreementStatusColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status;
                     });
@@ -128,7 +130,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'agreement_status') {
                         $hideAgreementStatusColumn = false;
                     }
-                    
+
                     $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status == 'Installments' && count($item->payments) > 0;
                     });
@@ -136,7 +138,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'next_installment') {
                         $hideNextInstallmentColumn = false;
                     }
-                    
+
                     $hideNextRenovationColumn = hasEmptyColumn($allData, function($item) {
                         return $item->renovation_status == 'In Progress' && count($item->renovationPayments) > 0;
                     });
@@ -144,7 +146,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                     if ($currentSortField === 'next_renovation') {
                         $hideNextRenovationColumn = false;
                     }
-                    
+
                     // Always show next rent column if it's being sorted
                     if ($currentSortField === 'next_rent') {
                         $showNextRent = true;
