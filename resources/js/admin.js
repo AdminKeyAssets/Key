@@ -138,6 +138,11 @@ Vue.component('sale-filter-component', require('./base/admin/sale/partials/SaleF
 //Email Templates
 Vue.component('email-page-form', require('./base/admin/template/page/EmailForm').default);
 
+//News
+Vue.component('admin-news-save-component', require('./base/admin/news/SaveNews').default);
+Vue.component('admin-news-view-component', require('./base/admin/news/ViewNews').default);
+Vue.component('admin-news-filter-component', require('./base/admin/news/partials/NewsFilters').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

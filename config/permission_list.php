@@ -90,6 +90,10 @@ return [
     'template' => [
         'default' => $default_permissions,
     ],
+    'news' => [
+        'default' => $default_permissions,
+        'custom' => $custom_permissions
+    ],
     'revenue' => [
         'default' => [
             'index' => [
@@ -104,5 +108,9 @@ return [
     ],
     'renovation' => [
         'default' => $default_permissions
+    ],
+    'news' => [
+        'default' => $default_permissions,
+        'custom' => $custom_permissions
     ],
 ];
