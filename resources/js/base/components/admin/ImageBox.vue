@@ -1,9 +1,10 @@
 <template>
-    <div class="image-box">
-        <CustomImagePreview :mainImage="mainImage" :images="srcList" @update-main-image="setMainImage" />
-        <div class="thumbnail-carousel-container">
-            <!-- Previous Button -->
-            <span @click="slidePrev" class="carousel-button prev-button">❮</span>
+    <div class="image-box-wrapper" :class="{ 'align-left': alignLeft }">
+        <div class="image-box">
+            <CustomImagePreview :mainImage="mainImage" :images="srcList" @update-main-image="setMainImage" />
+            <div class="thumbnail-carousel-container">
+                <!-- Previous Button -->
+                <span @click="slidePrev" class="carousel-button prev-button">❮</span>
 
             <!-- Swiper Element for Thumbnails -->
             <swiper-container
@@ -30,6 +31,7 @@
 
             <!-- Next Button -->
             <span @click="slideNext" class="carousel-button next-button">❯</span>
+        </div>
         </div>
     </div>
 </template>
@@ -59,6 +61,10 @@ export default {
             type: [Number, String],
             required: true
         },
+        alignLeft: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -86,6 +92,16 @@ export default {
 </script>
 
 <style scoped>
+.image-box-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.image-box-wrapper.align-left {
+    justify-content: flex-start;
+}
+
 .image-box {
     display: flex;
     flex-direction: column;

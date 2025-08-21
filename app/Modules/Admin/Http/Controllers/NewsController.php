@@ -195,6 +195,16 @@ class NewsController extends BaseController
             $this->baseData['routes']['create_form_data'] = route('admin.news.create_form_data');
             $this->baseData['id'] = $id;
 
+            // Load news to get the title for the header
+            $news = News::findOrFail($id);
+            
+            // Check permissions
+            if (!$this->canAccessNews($news)) {
+                abort(403, 'Unauthorized');
+            }
+            
+            $this->baseData['news_title'] = $news->title;
+
         } catch (\Exception $ex) {
             return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.view', ServiceResponse::error($ex->getMessage()));
         }
@@ -624,6 +634,11 @@ class NewsController extends BaseController
             $this->baseData['moduleKey'] = 'developer_news';
             $this->baseData['baseRouteName'] = 'developer.news.';
 
+            // Load news to get the title for the header
+            $developerId = auth('developer')->id();
+            $news = News::forDeveloper($developerId)->findOrFail($id);
+            $this->baseData['news_title'] = $news->title;
+
         } catch (\Exception $ex) {
             return view('admin::admin.news.developer_view', ServiceResponse::error($ex->getMessage()));
         }
@@ -885,6 +900,11 @@ class NewsController extends BaseController
             $this->baseData['id'] = $id;
             $this->baseData['moduleKey'] = 'investor_news';
             $this->baseData['baseRouteName'] = 'investor.news.';
+
+            // Load news to get the title for the header
+            $investorId = auth('investor')->id();
+            $news = News::published()->forInvestor($investorId)->findOrFail($id);
+            $this->baseData['news_title'] = $news->title;
 
         } catch (\Exception $ex) {
             return view('admin::admin.news.investor_view', ServiceResponse::error($ex->getMessage()));

@@ -16039,15 +16039,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     ImageBox: _components_admin_ImageBox_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
-  props: ['newsId', 'getDataRoute', 'backRoute'],
+  props: ['newsId', 'getDataRoute', 'backRoute', 'isInvestor'],
   data: function data() {
     return {
       loading: false,
@@ -16109,6 +16107,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee, null, [[1, 8, 12, 15]]);
       }))();
+    },
+    openImageModal: function openImageModal(imageSrc) {
+      // Simple image modal - you can enhance this with a proper modal component
+      window.open(imageSrc, '_blank');
     },
     formatDate: function formatDate(dateString) {
       if (!dateString) return '';
@@ -22744,6 +22746,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
 // Importing the Swiper Web Component
 
 
@@ -22765,6 +22769,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     slidesCount: {
       type: [Number, String],
       required: true
+    },
+    alignLeft: {
+      type: Boolean,
+      "default": false
     }
   },
   data: function data() {
@@ -30279,7 +30287,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.block[data-v-10548918] {\n    background: white;\n    padding: 30px;\n    border-radius: 5px;\n    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n}\n.form-group.dashed[data-v-10548918] {\n    border-bottom: 1px dashed #ddd;\n    padding-bottom: 20px;\n    margin-bottom: 20px;\n}\n.control-label[data-v-10548918] {\n    font-weight: 600;\n    color: #2c3e50;\n    margin-bottom: 10px;\n    display: block;\n}\n.news-content h3[data-v-10548918] {\n    color: #2c3e50;\n    margin: 0;\n    font-weight: 600;\n}\n.badge[data-v-10548918] {\n    padding: 6px 12px;\n    border-radius: 20px;\n    font-size: 12px;\n    font-weight: 600;\n    text-transform: uppercase;\n}\n.badge-success[data-v-10548918] {\n    background-color: #27ae60;\n    color: white;\n}\n.badge-warning[data-v-10548918] {\n    background-color: #f39c12;\n    color: white;\n}\n.investor-list[data-v-10548918] {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 8px;\n}\n.investor-badge[data-v-10548918] {\n    background-color: #3498db;\n    color: white;\n    padding: 4px 8px;\n    border-radius: 12px;\n    font-size: 12px;\n    font-weight: 500;\n}\n.content-area[data-v-10548918] {\n    background-color: #f8f9fa;\n    padding: 20px;\n    border-radius: 5px;\n    border: 1px solid #e9ecef;\n    min-height: 200px;\n    line-height: 1.6;\n}\n.content-area[data-v-10548918] h1,\n.content-area[data-v-10548918] h2,\n.content-area[data-v-10548918] h3,\n.content-area[data-v-10548918] h4,\n.content-area[data-v-10548918] h5,\n.content-area[data-v-10548918] h6 {\n    color: #2c3e50;\n    margin-top: 0;\n}\n.content-area[data-v-10548918] p {\n    margin-bottom: 15px;\n}\n.content-area[data-v-10548918] img {\n    max-width: 100%;\n    height: auto;\n    border-radius: 5px;\n}\n.content-area[data-v-10548918] blockquote {\n    border-left: 4px solid #3498db;\n    margin: 20px 0;\n    padding: 10px 20px;\n    background-color: #ecf0f1;\n}\n.content-area[data-v-10548918] table {\n    width: 100%;\n    border-collapse: collapse;\n    margin: 20px 0;\n}\n.content-area[data-v-10548918] table th,\n.content-area[data-v-10548918] table td {\n    border: 1px solid #bdc3c7;\n    padding: 8px 12px;\n    text-align: left;\n}\n.content-area[data-v-10548918] table th {\n    background-color: #34495e;\n    color: white;\n}\n", ""]);
+exports.push([module.i, "\n.block[data-v-10548918] {\n    background: white;\n    padding: 30px;\n    border-radius: 5px;\n    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n}\n.form-group.dashed[data-v-10548918] {\n    border-bottom: 1px dashed #ddd;\n    padding-bottom: 20px;\n    margin-bottom: 20px;\n}\n.control-label[data-v-10548918] {\n    font-weight: 600;\n    color: #2c3e50;\n    margin-bottom: 10px;\n    display: block;\n}\n.news-content h3[data-v-10548918] {\n    color: #2c3e50;\n    margin: 0;\n    font-weight: 600;\n}\n.badge[data-v-10548918] {\n    padding: 6px 12px;\n    border-radius: 20px;\n    font-size: 12px;\n    font-weight: 600;\n    text-transform: uppercase;\n}\n.badge-success[data-v-10548918] {\n    background-color: #27ae60;\n    color: white;\n}\n.badge-warning[data-v-10548918] {\n    background-color: #f39c12;\n    color: white;\n}\n.investor-list[data-v-10548918] {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 8px;\n}\n.investor-badge[data-v-10548918] {\n    background-color: #3498db;\n    color: white;\n    padding: 4px 8px;\n    border-radius: 12px;\n    font-size: 12px;\n    font-weight: 500;\n}\n.content-area[data-v-10548918] {\n    background-color: #f8f9fa;\n    padding: 20px;\n    border-radius: 5px;\n    border: 1px solid #e9ecef;\n    min-height: 200px;\n    line-height: 1.6;\n}\n.content-area[data-v-10548918] h1,\n.content-area[data-v-10548918] h2,\n.content-area[data-v-10548918] h3,\n.content-area[data-v-10548918] h4,\n.content-area[data-v-10548918] h5,\n.content-area[data-v-10548918] h6 {\n    color: #2c3e50;\n    margin-top: 0;\n}\n.content-area[data-v-10548918] p {\n    margin-bottom: 15px;\n}\n.content-area[data-v-10548918] img {\n    max-width: 100%;\n    height: auto;\n    border-radius: 5px;\n}\n.content-area[data-v-10548918] blockquote {\n    border-left: 4px solid #3498db;\n    margin: 20px 0;\n    padding: 10px 20px;\n    background-color: #ecf0f1;\n}\n.content-area[data-v-10548918] table {\n    width: 100%;\n    border-collapse: collapse;\n    margin: 20px 0;\n}\n.content-area[data-v-10548918] table th,\n.content-area[data-v-10548918] table td {\n    border: 1px solid #bdc3c7;\n    padding: 8px 12px;\n    text-align: left;\n}\n.content-area[data-v-10548918] table th {\n    background-color: #34495e;\n    color: white;\n}\n.status-section[data-v-10548918] {\n    margin-bottom: 10px;\n}\n.single-image-container[data-v-10548918] {\n    display: flex;\n    justify-content: flex-start;\n    margin: 20px 0;\n}\n.single-news-image[data-v-10548918] {\n    max-width: 100%;\n    max-height: 400px;\n    width: auto;\n    height: auto;\n    border-radius: 8px;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);\n    cursor: pointer;\n    transition: transform 0.2s ease, box-shadow 0.2s ease;\n}\n.single-news-image[data-v-10548918]:hover {\n    transform: scale(1.02);\n    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);\n}\n", ""]);
 
 // exports
 
@@ -30545,7 +30553,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.image-box[data-v-7777a829] {\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n}\n.thumbnail-carousel-container[data-v-7777a829] {\n    display: flex;\n    align-items: center;\n    position: relative;\n    width: 100%;\n    max-width: 600px;\n}\n.carousel-button[data-v-7777a829] {\n    background-color: rgba(0, 0, 0, 0.5);\n    border: none;\n    color: white;\n    font-size: 1.5em;\n    cursor: pointer;\n    padding: 10px;\n    transition: background-color 0.3s;\n    z-index: 10;\n}\n.carousel-button[data-v-7777a829]:hover {\n    background-color: rgba(0, 0, 0, 0.8);\n}\n.prev-button[data-v-7777a829] {\n    position: absolute;\n    left: -20px;\n    width: 40px;\n    height: 40px;\n    line-height: 18px;\n    border-radius: 50%;\n    text-align: center;\n}\n.next-button[data-v-7777a829] {\n    position: absolute;\n    right: -20px;\n    width: 40px;\n    height: 40px;\n    line-height: 18px;\n    border-radius: 50%;\n    text-align: center;\n}\n.thumbnail-carousel[data-v-7777a829] {\n    width: 100%;\n    overflow: hidden;\n}\n.thumbnail-item[data-v-7777a829] {\n    height: 104px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: transform 0.5s;\n}\n.carousel-thumbnail-item[data-v-7777a829] {\n    width: 100%;\n    height: auto;\n    max-height: 100px;\n    -o-object-fit: cover;\n       object-fit: cover;\n    border-radius: 5px;\n    cursor: pointer;\n    transition: border-color 0.3s;\n}\n.thumbnail-item.active[data-v-7777a829] {\n    border-color: #000;\n}\n.thumbnail-item[data-v-7777a829] {\n    border: 2px solid transparent;\n    border-radius: 10px;\n    transition: border-color 0.3s;\n}\n", ""]);
+exports.push([module.i, "\n.image-box-wrapper[data-v-7777a829] {\n    display: flex;\n    justify-content: center;\n    width: 100%;\n}\n.image-box-wrapper.align-left[data-v-7777a829] {\n    justify-content: flex-start;\n}\n.image-box[data-v-7777a829] {\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n}\n.thumbnail-carousel-container[data-v-7777a829] {\n    display: flex;\n    align-items: center;\n    position: relative;\n    width: 100%;\n    max-width: 600px;\n}\n.carousel-button[data-v-7777a829] {\n    background-color: rgba(0, 0, 0, 0.5);\n    border: none;\n    color: white;\n    font-size: 1.5em;\n    cursor: pointer;\n    padding: 10px;\n    transition: background-color 0.3s;\n    z-index: 10;\n}\n.carousel-button[data-v-7777a829]:hover {\n    background-color: rgba(0, 0, 0, 0.8);\n}\n.prev-button[data-v-7777a829] {\n    position: absolute;\n    left: -20px;\n    width: 40px;\n    height: 40px;\n    line-height: 18px;\n    border-radius: 50%;\n    text-align: center;\n}\n.next-button[data-v-7777a829] {\n    position: absolute;\n    right: -20px;\n    width: 40px;\n    height: 40px;\n    line-height: 18px;\n    border-radius: 50%;\n    text-align: center;\n}\n.thumbnail-carousel[data-v-7777a829] {\n    width: 100%;\n    overflow: hidden;\n}\n.thumbnail-item[data-v-7777a829] {\n    height: 104px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: transform 0.5s;\n}\n.carousel-thumbnail-item[data-v-7777a829] {\n    width: 100%;\n    height: auto;\n    max-height: 100px;\n    -o-object-fit: cover;\n       object-fit: cover;\n    border-radius: 5px;\n    cursor: pointer;\n    transition: border-color 0.3s;\n}\n.thumbnail-item.active[data-v-7777a829] {\n    border-color: #000;\n}\n.thumbnail-item[data-v-7777a829] {\n    border: 2px solid transparent;\n    border-radius: 10px;\n    transition: border-color 0.3s;\n}\n", ""]);
 
 // exports
 
@@ -138591,22 +138599,8 @@ var render = function() {
           : _vm.news
           ? _c("div", { staticClass: "news-content" }, [
               _c("div", { staticClass: "form-group dashed" }, [
-                _c("label", { staticClass: "col-md-2 control-label" }, [
-                  _vm._v("Title:")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-md-10" }, [
-                  _c("h3", [_vm._v(_vm._s(_vm.news.title))])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group dashed" }, [
                 _c("div", { staticClass: "col-md-6" }, [
-                  _c("label", { staticClass: "control-label" }, [
-                    _vm._v("Status:")
-                  ]),
-                  _vm._v(" "),
-                  _c("div", [
+                  _c("div", { staticClass: "status-section" }, [
                     _vm.news.status === "published"
                       ? _c("span", { staticClass: "badge badge-success" }, [
                           _vm._v("Published")
@@ -138618,13 +138612,11 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm.news.investors && _vm.news.investors.length > 0
+              !_vm.isInvestor &&
+              _vm.news.investors &&
+              _vm.news.investors.length > 0
                 ? _c("div", { staticClass: "form-group dashed" }, [
-                    _c("label", { staticClass: "col-md-2 control-label" }, [
-                      _vm._v("Attached Investors:")
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-10" }, [
+                    _c("div", { staticClass: "col-md-12" }, [
                       _c(
                         "div",
                         { staticClass: "investor-list" },
@@ -138652,21 +138644,39 @@ var render = function() {
               _vm._v(" "),
               _vm.news.images && _vm.news.images.length > 0
                 ? _c("div", { staticClass: "form-group dashed" }, [
-                    _c("label", { staticClass: "col-md-2 control-label" }, [
-                      _vm._v("Images:")
-                    ]),
-                    _vm._v(" "),
                     _c(
                       "div",
-                      { staticClass: "col-md-10" },
+                      { staticClass: "col-md-12" },
                       [
-                        _c("ImageBox", {
-                          attrs: {
-                            "slides-count": 3,
-                            "initial-main-image": _vm.news.images[0].image,
-                            images: _vm.news.images
-                          }
-                        })
+                        _vm.news.images.length === 1
+                          ? _c(
+                              "div",
+                              { staticClass: "single-image-container" },
+                              [
+                                _c("img", {
+                                  staticClass: "single-news-image",
+                                  attrs: {
+                                    src: _vm.news.images[0].image,
+                                    alt: _vm.news.title
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.openImageModal(
+                                        _vm.news.images[0].image
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            )
+                          : _c("ImageBox", {
+                              attrs: {
+                                "slides-count": 3,
+                                "initial-main-image": _vm.news.images[0].image,
+                                images: _vm.news.images,
+                                "align-left": true
+                              }
+                            })
                       ],
                       1
                     )
@@ -138674,11 +138684,7 @@ var render = function() {
                 : _vm._e(),
               _vm._v(" "),
               _c("div", { staticClass: "form-group dashed" }, [
-                _c("label", { staticClass: "col-md-2 control-label" }, [
-                  _vm._v("Content:")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-md-10" }, [
+                _c("div", { staticClass: "col-md-12" }, [
                   _c("div", {
                     staticClass: "content-area",
                     domProps: { innerHTML: _vm._s(_vm.news.content) }
@@ -147229,77 +147235,86 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "image-box" },
+    {
+      staticClass: "image-box-wrapper",
+      class: { "align-left": _vm.alignLeft }
+    },
     [
-      _c("CustomImagePreview", {
-        attrs: { mainImage: _vm.mainImage, images: _vm.srcList },
-        on: { "update-main-image": _vm.setMainImage }
-      }),
-      _vm._v(" "),
       _c(
         "div",
-        { staticClass: "thumbnail-carousel-container" },
+        { staticClass: "image-box" },
         [
-          _c(
-            "span",
-            {
-              staticClass: "carousel-button prev-button",
-              on: { click: _vm.slidePrev }
-            },
-            [_vm._v("❮")]
-          ),
+          _c("CustomImagePreview", {
+            attrs: { mainImage: _vm.mainImage, images: _vm.srcList },
+            on: { "update-main-image": _vm.setMainImage }
+          }),
           _vm._v(" "),
           _c(
-            "swiper-container",
-            {
-              ref: "swiperRef",
-              staticClass: "thumbnail-carousel",
-              attrs: {
-                "slides-per-view": _vm.slidesCount,
-                "space-between": "10",
-                "free-mode": "",
-                loop: ""
-              }
-            },
-            _vm._l(_vm.srcList, function(imageItem, index) {
-              return _c(
-                "swiper-slide",
+            "div",
+            { staticClass: "thumbnail-carousel-container" },
+            [
+              _c(
+                "span",
                 {
-                  key: imageItem.id,
-                  class: [
-                    "thumbnail-item",
-                    { active: imageItem.image === _vm.mainImage }
-                  ]
+                  staticClass: "carousel-button prev-button",
+                  on: { click: _vm.slidePrev }
                 },
-                [
-                  _c("img", {
-                    staticClass: "carousel-thumbnail-item",
-                    attrs: { src: imageItem.image, alt: "Thumbnail" },
-                    on: {
-                      click: function($event) {
-                        return _vm.setMainImage(imageItem.image)
-                      }
-                    }
-                  })
-                ]
+                [_vm._v("❮")]
+              ),
+              _vm._v(" "),
+              _c(
+                "swiper-container",
+                {
+                  ref: "swiperRef",
+                  staticClass: "thumbnail-carousel",
+                  attrs: {
+                    "slides-per-view": _vm.slidesCount,
+                    "space-between": "10",
+                    "free-mode": "",
+                    loop: ""
+                  }
+                },
+                _vm._l(_vm.srcList, function(imageItem, index) {
+                  return _c(
+                    "swiper-slide",
+                    {
+                      key: imageItem.id,
+                      class: [
+                        "thumbnail-item",
+                        { active: imageItem.image === _vm.mainImage }
+                      ]
+                    },
+                    [
+                      _c("img", {
+                        staticClass: "carousel-thumbnail-item",
+                        attrs: { src: imageItem.image, alt: "Thumbnail" },
+                        on: {
+                          click: function($event) {
+                            return _vm.setMainImage(imageItem.image)
+                          }
+                        }
+                      })
+                    ]
+                  )
+                }),
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "carousel-button next-button",
+                  on: { click: _vm.slideNext }
+                },
+                [_vm._v("❯")]
               )
-            }),
+            ],
             1
-          ),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass: "carousel-button next-button",
-              on: { click: _vm.slideNext }
-            },
-            [_vm._v("❯")]
           )
         ],
         1
       )
-    ],
-    1
+    ]
   )
 }
 var staticRenderFns = []

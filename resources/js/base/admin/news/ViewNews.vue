@@ -9,29 +9,19 @@
                 </div>
 
                 <div v-else-if="news" class="news-content">
-                    <!-- Title -->
-                    <div class="form-group dashed">
-                        <label class="col-md-2 control-label">Title:</label>
-                        <div class="col-md-10">
-                            <h3>{{ news.title }}</h3>
-                        </div>
-                    </div>
-
                     <!-- Status -->
                     <div class="form-group dashed">
                         <div class="col-md-6">
-                            <label class="control-label">Status:</label>
-                            <div>
+                            <div class="status-section">
                                 <span v-if="news.status === 'published'" class="badge badge-success">Published</span>
                                 <span v-else class="badge badge-warning">Draft</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Attached Investors -->
-                    <div v-if="news.investors && news.investors.length > 0" class="form-group dashed">
-                        <label class="col-md-2 control-label">Attached Investors:</label>
-                        <div class="col-md-10">
+                    <!-- Attached Investors (hidden for investor users) -->
+                    <div v-if="!isInvestor && news.investors && news.investors.length > 0" class="form-group dashed">
+                        <div class="col-md-12">
                             <div class="investor-list">
                                 <span v-for="investor in news.investors" :key="investor.id" class="investor-badge">
                                     {{ investor.full_name || (investor.name + ' ' + investor.surname) }}
@@ -42,19 +32,27 @@
 
                     <!-- Images Gallery -->
                     <div v-if="news.images && news.images.length > 0" class="form-group dashed">
-                        <label class="col-md-2 control-label">Images:</label>
-                        <div class="col-md-10">
-                            <ImageBox
+                        <div class="col-md-12">
+                            <!-- Single image display -->
+                            <div v-if="news.images.length === 1" class="single-image-container">
+                                <img :src="news.images[0].image" 
+                                     :alt="news.title" 
+                                     class="single-news-image"
+                                     @click="openImageModal(news.images[0].image)">
+                            </div>
+                            <!-- Multiple images - use ImageBox -->
+                            <ImageBox v-else
                                 :slides-count="3"
                                 :initial-main-image="news.images[0].image"
-                                :images="news.images"></ImageBox>
+                                :images="news.images"
+                                :align-left="true">
+                            </ImageBox>
                         </div>
                     </div>
 
                     <!-- Content -->
                     <div class="form-group dashed">
-                        <label class="col-md-2 control-label">Content:</label>
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <div class="content-area" v-html="news.content"></div>
                         </div>
                     </div>
@@ -82,7 +80,7 @@ export default {
     components: {
         ImageBox
     },
-    props: ['newsId', 'getDataRoute', 'backRoute'],
+    props: ['newsId', 'getDataRoute', 'backRoute', 'isInvestor'],
     data() {
         return {
             loading: false,
@@ -116,6 +114,11 @@ export default {
             } finally {
                 this.loading = false;
             }
+        },
+
+        openImageModal(imageSrc) {
+            // Simple image modal - you can enhance this with a proper modal component
+            window.open(imageSrc, '_blank');
         },
 
         formatDate(dateString) {
@@ -247,5 +250,31 @@ export default {
 .content-area >>> table th {
     background-color: #34495e;
     color: white;
+}
+
+.status-section {
+    margin-bottom: 10px;
+}
+
+.single-image-container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px 0;
+}
+
+.single-news-image {
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.single-news-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 </style>
