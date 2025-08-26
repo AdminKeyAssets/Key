@@ -73,6 +73,17 @@
                             multiple
                             filterable
                             placeholder="Select investors">
+                            <!-- Select All Option -->
+                            <el-option
+                                v-if="investors.length > 0"
+                                key="select_all"
+                                label="Select All Investors"
+                                value="select_all"
+                                @click.native="toggleSelectAll">
+                                <span style="font-weight: bold; color: #409EFF;">
+                                    <i class="el-icon-check"></i> Select All Investors
+                                </span>
+                            </el-option>
                             <el-option
                                 v-for="investor in investors"
                                 :key="investor.id"
@@ -80,7 +91,7 @@
                                 :value="investor.id">
                             </el-option>
                         </el-select>
-                        <small class="text-muted">Select which investors should receive this news</small>
+                        <small class="text-muted">Select which investors should receive this news. Use "Select All" to choose all investors at once.</small>
                     </div>
                 </div>
 
@@ -205,6 +216,17 @@ export default {
                     console.warn('Editor content update failed:', error);
                 }
             }
+        },
+        
+        'form.investor_ids': {
+            handler(newVal) {
+                // Remove "select_all" if it somehow gets into the array
+                if (newVal && newVal.includes('select_all')) {
+                    const index = newVal.indexOf('select_all');
+                    newVal.splice(index, 1);
+                }
+            },
+            deep: true
         }
     },
     beforeDestroy() {
@@ -249,6 +271,29 @@ export default {
         onEditorDestroy() {
             this.editorInstance = null;
             console.log('Editor was destroyed');
+        },
+
+        toggleSelectAll() {
+            // Prevent the "select_all" value from being added to the array
+            this.$nextTick(() => {
+                // Remove "select_all" if it was added
+                const selectAllIndex = this.form.investor_ids.indexOf('select_all');
+                if (selectAllIndex > -1) {
+                    this.form.investor_ids.splice(selectAllIndex, 1);
+                }
+
+                // Check if all investors are currently selected
+                const allInvestorIds = this.investors.map(investor => investor.id);
+                const isAllSelected = allInvestorIds.every(id => this.form.investor_ids.includes(id));
+
+                if (isAllSelected) {
+                    // Deselect all
+                    this.form.investor_ids = [];
+                } else {
+                    // Select all
+                    this.form.investor_ids = [...allInvestorIds];
+                }
+            });
         },
 
         async loadData() {
@@ -585,5 +630,15 @@ export default {
 .control-label {
     font-weight: 600;
     color: #2c3e50;
+}
+
+/* Select All Investors styling */
+.el-select-dropdown__item[data-value="select_all"] {
+    border-bottom: 1px solid #e4e7ed;
+    margin-bottom: 8px;
+}
+
+.el-select-dropdown__item[data-value="select_all"]:hover {
+    background-color: #f5f7fa;
 }
 </style>
