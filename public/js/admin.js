@@ -15359,6 +15359,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2__);
 
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -15371,10 +15375,17 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -15577,6 +15588,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           console.warn('Editor content update failed:', error);
         }
       }
+    },
+    'form.investor_ids': {
+      handler: function handler(newVal) {
+        // Remove "select_all" if it somehow gets into the array
+        if (newVal && newVal.includes('select_all')) {
+          var index = newVal.indexOf('select_all');
+          newVal.splice(index, 1);
+        }
+      },
+      deep: true
     }
   },
   beforeDestroy: function beforeDestroy() {
@@ -15619,15 +15640,45 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.editorInstance = null;
       console.log('Editor was destroyed');
     },
-    loadData: function loadData() {
+    toggleSelectAll: function toggleSelectAll() {
       var _this2 = this;
+
+      // Prevent the "select_all" value from being added to the array
+      this.$nextTick(function () {
+        // Remove "select_all" if it was added
+        var selectAllIndex = _this2.form.investor_ids.indexOf('select_all');
+
+        if (selectAllIndex > -1) {
+          _this2.form.investor_ids.splice(selectAllIndex, 1);
+        } // Check if all investors are currently selected
+
+
+        var allInvestorIds = _this2.investors.map(function (investor) {
+          return investor.id;
+        });
+
+        var isAllSelected = allInvestorIds.every(function (id) {
+          return _this2.form.investor_ids.includes(id);
+        });
+
+        if (isAllSelected) {
+          // Deselect all
+          _this2.form.investor_ids = [];
+        } else {
+          // Select all
+          _this2.form.investor_ids = _toConsumableArray(allInvestorIds);
+        }
+      });
+    },
+    loadData: function loadData() {
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var response, data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              if (!_this2.isDestroying) {
+              if (!_this3.isDestroying) {
                 _context.next = 2;
                 break;
               }
@@ -15635,25 +15686,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return _context.abrupt("return");
 
             case 2:
-              _this2.loading = true;
+              _this3.loading = true;
               _context.prev = 3;
               _context.next = 6;
-              return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this2.getSaveDataRoute, {
-                id: _this2.newsId
+              return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this3.getSaveDataRoute, {
+                id: _this3.newsId
               });
 
             case 6:
               response = _context.sent;
 
-              if (response.data.data && !_this2.isDestroying) {
+              if (response.data.data && !_this3.isDestroying) {
                 data = response.data.data; // Always load investors and managers data
 
-                _this2.investors = data.investors || [];
-                _this2.managers = data.managers || [];
-                _this2.isAdmin = data.managers && data.managers.length > 0; // Load existing item data if editing
+                _this3.investors = data.investors || [];
+                _this3.managers = data.managers || [];
+                _this3.isAdmin = data.managers && data.managers.length > 0; // Load existing item data if editing
 
                 if (data.item) {
-                  _this2.form = {
+                  _this3.form = {
                     id: data.item.id,
                     title: data.item.title || '',
                     content: data.item.content || '',
@@ -15664,7 +15715,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   };
 
                   if (data.item.gallery) {
-                    _this2.files = data.item.gallery.map(function (file) {
+                    _this3.files = data.item.gallery.map(function (file) {
                       return {
                         id: file.id,
                         image: file.image || file.preview,
@@ -15686,14 +15737,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _context.t0 = _context["catch"](3);
               console.error('Error loading data:', _context.t0);
 
-              _this2.$notify.error({
+              _this3.$notify.error({
                 title: 'Error',
                 message: 'Failed to load news data'
               });
 
             case 14:
               _context.prev = 14;
-              _this2.loading = false;
+              _this3.loading = false;
               return _context.finish(14);
 
             case 17:
@@ -15704,7 +15755,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     saveNews: function saveNews() {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         var formData, response, _error$response;
@@ -15712,12 +15763,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (_this3.form.title.trim()) {
+              if (_this4.form.title.trim()) {
                 _context2.next = 3;
                 break;
               }
 
-              _this3.$notify.error({
+              _this4.$notify.error({
                 title: 'Validation Error',
                 message: 'Title is required'
               });
@@ -15725,12 +15776,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return _context2.abrupt("return");
 
             case 3:
-              if (_this3.form.content.trim()) {
+              if (_this4.form.content.trim()) {
                 _context2.next = 6;
                 break;
               }
 
-              _this3.$notify.error({
+              _this4.$notify.error({
                 title: 'Validation Error',
                 message: 'Content is required'
               });
@@ -15738,29 +15789,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return _context2.abrupt("return");
 
             case 6:
-              _this3.isSubmitting = true;
+              _this4.isSubmitting = true;
               _context2.prev = 7;
               formData = new FormData();
 
-              if (_this3.form.id) {
-                formData.append('id', _this3.form.id);
+              if (_this4.form.id) {
+                formData.append('id', _this4.form.id);
               }
 
-              formData.append('title', _this3.form.title);
-              formData.append('content', _this3.form.content);
-              formData.append('status', _this3.form.status);
+              formData.append('title', _this4.form.title);
+              formData.append('content', _this4.form.content);
+              formData.append('status', _this4.form.status);
 
-              if (_this3.form.manager_id) {
-                formData.append('manager_id', _this3.form.manager_id);
+              if (_this4.form.manager_id) {
+                formData.append('manager_id', _this4.form.manager_id);
               }
 
-              if (_this3.form.investor_ids.length > 0) {
-                formData.append('investor_ids', _this3.form.investor_ids.join(','));
+              if (_this4.form.investor_ids.length > 0) {
+                formData.append('investor_ids', _this4.form.investor_ids.join(','));
               } // Handle gallery files
 
 
-              if (_this3.files.length > 0) {
-                _this3.files.forEach(function (file, index) {
+              if (_this4.files.length > 0) {
+                _this4.files.forEach(function (file, index) {
                   if (file.file) {
                     // New file upload
                     formData.append("gallery[".concat(index, "]"), file.file);
@@ -15772,7 +15823,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               _context2.next = 18;
-              return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this3.saveRoute, formData, {
+              return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this4.saveRoute, formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data'
                 }
@@ -15786,14 +15837,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 break;
               }
 
-              _this3.$notify({
+              _this4.$notify({
                 title: 'Success',
                 message: response.data.message || 'News saved successfully',
                 type: 'success'
               }); // Redirect after successful save
 
 
-              window.location.href = _this3.backRoute;
+              window.location.href = _this4.backRoute;
               _context2.next = 25;
               break;
 
@@ -15809,14 +15860,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _context2.t0 = _context2["catch"](7);
               console.error('Error saving news:', _context2.t0);
 
-              _this3.$notify.error({
+              _this4.$notify.error({
                 title: 'Error',
                 message: ((_error$response = _context2.t0.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to save news'
               });
 
             case 31:
               _context2.prev = 31;
-              _this3.isSubmitting = false;
+              _this4.isSubmitting = false;
               return _context2.finish(31);
 
             case 34:
@@ -15831,7 +15882,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$refs.fileInput.click();
     },
     handleFiles: function handleFiles(e) {
-      var _this4 = this;
+      var _this5 = this;
 
       var files = e.target.files;
 
@@ -15848,13 +15899,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               name: file.name
             };
 
-            _this4.files.push(fileData);
+            _this5.files.push(fileData);
 
-            if (!_this4.form.gallery || !Array.isArray(_this4.form.gallery)) {
-              _this4.form.gallery = [];
+            if (!_this5.form.gallery || !Array.isArray(_this5.form.gallery)) {
+              _this5.form.gallery = [];
             }
 
-            _this4.form.gallery.push(fileData);
+            _this5.form.gallery.push(fileData);
           };
 
           reader.readAsDataURL(file);
@@ -15866,7 +15917,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     handleDrop: function handleDrop(event) {
-      var _this5 = this;
+      var _this6 = this;
 
       var dataTransfer = event.dataTransfer;
 
@@ -15876,13 +15927,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           if (item.kind === 'file' && item.type.startsWith('image/')) {
             var file = item.getAsFile();
 
-            _this5.addFile(file);
+            _this6.addFile(file);
           }
         });
       }
     },
     addFile: function addFile(file) {
-      var _this6 = this;
+      var _this7 = this;
 
       var reader = new FileReader();
 
@@ -15893,13 +15944,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           name: file.name
         };
 
-        _this6.files.push(fileData);
+        _this7.files.push(fileData);
 
-        if (!_this6.form.gallery || !Array.isArray(_this6.form.gallery)) {
-          _this6.form.gallery = [];
+        if (!_this7.form.gallery || !Array.isArray(_this7.form.gallery)) {
+          _this7.form.gallery = [];
         }
 
-        _this6.form.gallery.push(fileData);
+        _this7.form.gallery.push(fileData);
       };
 
       reader.readAsDataURL(file);
@@ -30268,7 +30319,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.upload-container[data-v-05abea4c] {\n    margin: 20px 0;\n    padding: 20px;\n    border: 1px solid #ccc;\n    border-radius: 5px;\n}\n.drop-area[data-v-05abea4c] {\n    padding: 40px;\n    border: 2px dashed #ccc;\n    text-align: center;\n    cursor: pointer;\n    border-radius: 5px;\n    transition: background-color 0.3s;\n}\n.drop-area[data-v-05abea4c]:hover {\n    background-color: #f9f9f9;\n}\n.preview[data-v-05abea4c] {\n    display: flex;\n    flex-wrap: wrap;\n    margin-top: 20px;\n    gap: 10px;\n}\n.thumbnail[data-v-05abea4c] {\n    position: relative;\n    display: inline-block;\n    cursor: move;\n    border-radius: 5px;\n    overflow: hidden;\n    box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n}\n.img-thumbnail[data-v-05abea4c] {\n    width: 120px;\n    height: 120px;\n    -o-object-fit: cover;\n       object-fit: cover;\n    display: block;\n}\n.remove[data-v-05abea4c] {\n    position: absolute;\n    top: 5px;\n    right: 5px;\n    background: #e74c3c;\n    color: white;\n    cursor: pointer;\n    padding: 2px 6px;\n    border-radius: 50%;\n    font-size: 12px;\n    font-weight: bold;\n    line-height: 1;\n}\n.move-to-front[data-v-05abea4c] {\n    position: absolute;\n    bottom: 5px;\n    right: 5px;\n    background: rgba(0,0,0,0.7);\n    color: white;\n    padding: 4px 6px;\n    border-radius: 3px;\n    cursor: pointer;\n    font-size: 12px;\n}\n.thumbnail-badge[data-v-05abea4c] {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    background: #27ae60;\n    color: white;\n    padding: 2px 6px;\n    border-radius: 3px;\n    font-size: 10px;\n    font-weight: bold;\n}\n.form-group.dashed[data-v-05abea4c] {\n    border-bottom: 1px dashed #ddd;\n    padding-bottom: 20px;\n    margin-bottom: 20px;\n}\n.block[data-v-05abea4c] {\n    background: white;\n    padding: 30px;\n    border-radius: 5px;\n    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n}\n.control-label[data-v-05abea4c] {\n    font-weight: 600;\n    color: #2c3e50;\n}\n", ""]);
+exports.push([module.i, "\n.upload-container[data-v-05abea4c] {\n    margin: 20px 0;\n    padding: 20px;\n    border: 1px solid #ccc;\n    border-radius: 5px;\n}\n.drop-area[data-v-05abea4c] {\n    padding: 40px;\n    border: 2px dashed #ccc;\n    text-align: center;\n    cursor: pointer;\n    border-radius: 5px;\n    transition: background-color 0.3s;\n}\n.drop-area[data-v-05abea4c]:hover {\n    background-color: #f9f9f9;\n}\n.preview[data-v-05abea4c] {\n    display: flex;\n    flex-wrap: wrap;\n    margin-top: 20px;\n    gap: 10px;\n}\n.thumbnail[data-v-05abea4c] {\n    position: relative;\n    display: inline-block;\n    cursor: move;\n    border-radius: 5px;\n    overflow: hidden;\n    box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n}\n.img-thumbnail[data-v-05abea4c] {\n    width: 120px;\n    height: 120px;\n    -o-object-fit: cover;\n       object-fit: cover;\n    display: block;\n}\n.remove[data-v-05abea4c] {\n    position: absolute;\n    top: 5px;\n    right: 5px;\n    background: #e74c3c;\n    color: white;\n    cursor: pointer;\n    padding: 2px 6px;\n    border-radius: 50%;\n    font-size: 12px;\n    font-weight: bold;\n    line-height: 1;\n}\n.move-to-front[data-v-05abea4c] {\n    position: absolute;\n    bottom: 5px;\n    right: 5px;\n    background: rgba(0,0,0,0.7);\n    color: white;\n    padding: 4px 6px;\n    border-radius: 3px;\n    cursor: pointer;\n    font-size: 12px;\n}\n.thumbnail-badge[data-v-05abea4c] {\n    position: absolute;\n    top: 5px;\n    left: 5px;\n    background: #27ae60;\n    color: white;\n    padding: 2px 6px;\n    border-radius: 3px;\n    font-size: 10px;\n    font-weight: bold;\n}\n.form-group.dashed[data-v-05abea4c] {\n    border-bottom: 1px dashed #ddd;\n    padding-bottom: 20px;\n    margin-bottom: 20px;\n}\n.block[data-v-05abea4c] {\n    background: white;\n    padding: 30px;\n    border-radius: 5px;\n    box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n}\n.control-label[data-v-05abea4c] {\n    font-weight: 600;\n    color: #2c3e50;\n}\n\n/* Select All Investors styling */\n.el-select-dropdown__item[data-value=\"select_all\"][data-v-05abea4c] {\n    border-bottom: 1px solid #e4e7ed;\n    margin-bottom: 8px;\n}\n.el-select-dropdown__item[data-value=\"select_all\"][data-v-05abea4c]:hover {\n    background-color: #f5f7fa;\n}\n", ""]);
 
 // exports
 
@@ -138386,22 +138437,61 @@ var render = function() {
                     expression: "form.investor_ids"
                   }
                 },
-                _vm._l(_vm.investors, function(investor) {
-                  return _c("el-option", {
-                    key: investor.id,
-                    attrs: {
-                      label:
-                        investor.full_name ||
-                        investor.name + " " + investor.surname,
-                      value: investor.id
-                    }
+                [
+                  _vm.investors.length > 0
+                    ? _c(
+                        "el-option",
+                        {
+                          key: "select_all",
+                          attrs: {
+                            label: "Select All Investors",
+                            value: "select_all"
+                          },
+                          nativeOn: {
+                            click: function($event) {
+                              return _vm.toggleSelectAll($event)
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "span",
+                            {
+                              staticStyle: {
+                                "font-weight": "bold",
+                                color: "#409EFF"
+                              }
+                            },
+                            [
+                              _c("i", { staticClass: "el-icon-check" }),
+                              _vm._v(
+                                " Select All Investors\n                            "
+                              )
+                            ]
+                          )
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm._l(_vm.investors, function(investor) {
+                    return _c("el-option", {
+                      key: investor.id,
+                      attrs: {
+                        label:
+                          investor.full_name ||
+                          investor.name + " " + investor.surname,
+                        value: investor.id
+                      }
+                    })
                   })
-                }),
-                1
+                ],
+                2
               ),
               _vm._v(" "),
               _c("small", { staticClass: "text-muted" }, [
-                _vm._v("Select which investors should receive this news")
+                _vm._v(
+                  'Select which investors should receive this news. Use "Select All" to choose all investors at once.'
+                )
               ])
             ],
             1
