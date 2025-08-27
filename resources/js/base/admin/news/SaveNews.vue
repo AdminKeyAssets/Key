@@ -63,6 +63,25 @@
                     </div>
                 </div>
 
+                <!-- Developer Selection (only for administrators) -->
+                <div v-if="isAdmin && developers.length > 0" class="form-group dashed">
+                    <label class="col-md-2 control-label">Assign Developer:</label>
+                    <div class="col-md-10">
+                        <el-select
+                            v-model="form.developer_id"
+                            :disabled="loading || isSubmitting"
+                            placeholder="Select a developer (optional)"
+                            clearable>
+                            <el-option
+                                v-for="developer in developers"
+                                :key="developer.id"
+                                :label="developer.full_name || (developer.name + ' ' + developer.surname)"
+                                :value="developer.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                </div>
+
                 <!-- Investor Selection -->
                 <div class="form-group dashed">
                     <label class="col-md-2 control-label">Attach to Investors:</label>
@@ -181,12 +200,14 @@ export default {
                 content: '',
                 status: 'draft',
                 manager_id: null,
+                developer_id: null,
                 investor_ids: [],
                 gallery: []
             },
             files: [],
             investors: [],
             managers: [],
+            developers: [],
             dragIndex: null
         };
     },
@@ -310,9 +331,10 @@ export default {
                 if (response.data.data && !this.isDestroying) {
                     const data = response.data.data;
                     
-                    // Always load investors and managers data
+                    // Always load investors, managers, and developers data
                     this.investors = data.investors || [];
                     this.managers = data.managers || [];
+                    this.developers = data.developers || [];
                     this.isAdmin = data.managers && data.managers.length > 0;
 
                     // Load existing item data if editing
@@ -323,6 +345,7 @@ export default {
                             content: data.item.content || '',
                             status: data.item.status || 'draft',
                             manager_id: data.item.manager_id,
+                            developer_id: data.item.developer_id,
                             investor_ids: data.item.investor_ids || [],
                             gallery: data.item.gallery || []
                         };
@@ -382,6 +405,10 @@ export default {
 
                 if (this.form.manager_id) {
                     formData.append('manager_id', this.form.manager_id);
+                }
+
+                if (this.form.developer_id) {
+                    formData.append('developer_id', this.form.developer_id);
                 }
 
                 if (this.form.investor_ids.length > 0) {

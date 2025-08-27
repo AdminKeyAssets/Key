@@ -15,11 +15,13 @@ export default {
         };
     },
     mounted() {
+        // Fetch unread count immediately on page load
         this.fetchUnreadCount();
-        // Refresh count every 5 minutes
-        this.interval = setInterval(this.fetchUnreadCount, 300000);
         
-        // Listen for refresh events
+        // Refresh count every 2 minutes for updates
+        this.interval = setInterval(this.fetchUnreadCount, 120000);
+        
+        // Listen for refresh events (when news is viewed)
         this.$root.$on('refresh-news-count', this.fetchUnreadCount);
     },
     beforeDestroy() {
