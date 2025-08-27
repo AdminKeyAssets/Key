@@ -50,6 +50,7 @@
                             <th>Thumbnail</th>
                             <th>Title</th>
                             <th>Status</th>
+                            <th>Assigned To</th>
                             <th>Investors</th>
                             <th width="15%" class="text-center">Actions</th>
                         </tr>
@@ -78,6 +79,17 @@
                                         <span class="badge badge-success">Published</span>
                                     @else
                                         <span class="badge badge-warning">Draft</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($item->manager)
+                                        <span class="badge badge-primary">Manager</span><br>
+                                        <small>{{ $item->manager->full_name ?? ($item->manager->name . ' ' . $item->manager->surname) }}</small>
+                                    @elseif($item->developer)
+                                        <span class="badge badge-info">Developer</span><br>
+                                        <small>{{ $item->developer->name }}</small>
+                                    @else
+                                        <span class="text-muted">Not assigned</span>
                                     @endif
                                 </td>
                                 <td>
@@ -137,5 +149,8 @@
     }
     td:nth-child(2) {
         text-align: left !important;
+    }
+    td:nth-child(4) {
+        text-align: center !important;
     }
 </style>
