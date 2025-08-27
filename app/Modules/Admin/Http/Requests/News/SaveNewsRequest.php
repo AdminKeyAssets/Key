@@ -28,10 +28,54 @@ class SaveNewsRequest extends FormRequest
             'content' => 'required|string',
             'status' => 'in:draft,published',
             'manager_id' => 'nullable|exists:admins,id',
+            'developer_id' => 'nullable|exists:developers,id',
             'investor_ids' => 'nullable',
             'gallery' => 'nullable|array',
-            'gallery.*' => 'nullable|file|image|max:5120', // 5MB max per image
+            // Allow both file uploads and existing image URLs
+            'gallery.*' => 'nullable',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if ($this->has('gallery') && is_array($this->gallery)) {
+                foreach ($this->gallery as $index => $item) {
+                    // If it's a file upload, validate as image
+                    if ($this->hasFile("gallery.{$index}")) {
+                        $file = $this->file("gallery.{$index}");
+                        if (!$file->isValid()) {
+                            $validator->errors()->add("gallery.{$index}", 'The uploaded file is not valid.');
+                            continue;
+                        }
+                        
+                        // Check if it's an image
+                        $mimeType = $file->getMimeType();
+                        if (strpos($mimeType, 'image/') !== 0) {
+                            $validator->errors()->add("gallery.{$index}", 'Each gallery file must be an image.');
+                            continue;
+                        }
+                        
+                        // Check file size (5MB = 5120KB)
+                        if ($file->getSize() > 5120 * 1024) {
+                            $validator->errors()->add("gallery.{$index}", 'Each gallery image may not be greater than 5MB.');
+                        }
+                    }
+                    // If it's a string (existing image URL), validate URL format
+                    elseif (is_string($item) && !empty($item)) {
+                        if (!filter_var($item, FILTER_VALIDATE_URL) && strpos($item, '/') !== 0) {
+                            $validator->errors()->add("gallery.{$index}", 'Invalid image URL format.');
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -47,8 +91,7 @@ class SaveNewsRequest extends FormRequest
             'content.required' => 'The content field is required.',
             'status.in' => 'The status must be either draft or published.',
             'manager_id.exists' => 'The selected manager is invalid.',
-            'gallery.*.image' => 'Each gallery file must be an image.',
-            'gallery.*.max' => 'Each gallery image may not be greater than 5MB.',
+            'developer_id.exists' => 'The selected developer is invalid.',
         ];
     }
 }

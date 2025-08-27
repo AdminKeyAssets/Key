@@ -85,7 +85,7 @@ class News extends Model implements \OwenIt\Auditing\Contracts\Auditable
 
     public function scopeForDeveloper($query, $developerId)
     {
-        return $query->where('developer_id', $developerId)->where('created_by_type', 'developer');
+        return $query->where('developer_id', $developerId);
     }
 
     public function scopeForInvestor($query, $investorId)

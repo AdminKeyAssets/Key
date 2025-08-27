@@ -15527,6 +15527,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -15549,12 +15568,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         content: '',
         status: 'draft',
         manager_id: null,
+        developer_id: null,
         investor_ids: [],
         gallery: []
       },
       files: [],
       investors: [],
       managers: [],
+      developers: [],
       dragIndex: null
     };
   },
@@ -15697,10 +15718,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
               response = _context.sent;
 
               if (response.data.data && !_this3.isDestroying) {
-                data = response.data.data; // Always load investors and managers data
+                data = response.data.data; // Always load investors, managers, and developers data
 
                 _this3.investors = data.investors || [];
                 _this3.managers = data.managers || [];
+                _this3.developers = data.developers || [];
                 _this3.isAdmin = data.managers && data.managers.length > 0; // Load existing item data if editing
 
                 if (data.item) {
@@ -15710,6 +15732,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                     content: data.item.content || '',
                     status: data.item.status || 'draft',
                     manager_id: data.item.manager_id,
+                    developer_id: data.item.developer_id,
                     investor_ids: data.item.investor_ids || [],
                     gallery: data.item.gallery || []
                   };
@@ -15805,6 +15828,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 formData.append('manager_id', _this4.form.manager_id);
               }
 
+              if (_this4.form.developer_id) {
+                formData.append('developer_id', _this4.form.developer_id);
+              }
+
               if (_this4.form.investor_ids.length > 0) {
                 formData.append('investor_ids', _this4.form.investor_ids.join(','));
               } // Handle gallery files
@@ -15822,18 +15849,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 });
               }
 
-              _context2.next = 18;
+              _context2.next = 19;
               return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this4.saveRoute, formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data'
                 }
               });
 
-            case 18:
+            case 19:
               response = _context2.sent;
 
               if (!response.data.status) {
-                _context2.next = 24;
+                _context2.next = 25;
                 break;
               }
 
@@ -15845,18 +15872,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
               window.location.href = _this4.backRoute;
-              _context2.next = 25;
+              _context2.next = 26;
               break;
-
-            case 24:
-              throw new Error(response.data.message || 'Failed to save news');
 
             case 25:
-              _context2.next = 31;
+              throw new Error(response.data.message || 'Failed to save news');
+
+            case 26:
+              _context2.next = 32;
               break;
 
-            case 27:
-              _context2.prev = 27;
+            case 28:
+              _context2.prev = 28;
               _context2.t0 = _context2["catch"](7);
               console.error('Error saving news:', _context2.t0);
 
@@ -15865,16 +15892,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 message: ((_error$response = _context2.t0.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to save news'
               });
 
-            case 31:
-              _context2.prev = 31;
+            case 32:
+              _context2.prev = 32;
               _this4.isSubmitting = false;
-              return _context2.finish(31);
+              return _context2.finish(32);
 
-            case 34:
+            case 35:
             case "end":
               return _context2.stop();
           }
-        }, _callee2, null, [[7, 27, 31, 34]]);
+        }, _callee2, null, [[7, 28, 32, 35]]);
       }))();
     },
     // Image handling methods
@@ -23472,9 +23499,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   mounted: function mounted() {
-    this.fetchUnreadCount(); // Refresh count every 5 minutes
+    // Fetch unread count immediately on page load
+    this.fetchUnreadCount(); // Refresh count every 2 minutes for updates
 
-    this.interval = setInterval(this.fetchUnreadCount, 300000); // Listen for refresh events
+    this.interval = setInterval(this.fetchUnreadCount, 120000); // Listen for refresh events (when news is viewed)
 
     this.$root.$on('refresh-news-count', this.fetchUnreadCount);
   },
@@ -30742,7 +30770,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* Styles are defined in admin.scss for better integration */\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* Styles are defined in admin.scss for better integration */\n", ""]);
 
 // exports
 
@@ -138549,6 +138577,51 @@ var render = function() {
                             manager.full_name ||
                             manager.name + " " + manager.surname,
                           value: manager.id
+                        }
+                      })
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.isAdmin && _vm.developers.length > 0
+          ? _c("div", { staticClass: "form-group dashed" }, [
+              _c("label", { staticClass: "col-md-2 control-label" }, [
+                _vm._v("Assign Developer:")
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-md-10" },
+                [
+                  _c(
+                    "el-select",
+                    {
+                      attrs: {
+                        disabled: _vm.loading || _vm.isSubmitting,
+                        placeholder: "Select a developer (optional)",
+                        clearable: ""
+                      },
+                      model: {
+                        value: _vm.form.developer_id,
+                        callback: function($$v) {
+                          _vm.$set(_vm.form, "developer_id", $$v)
+                        },
+                        expression: "form.developer_id"
+                      }
+                    },
+                    _vm._l(_vm.developers, function(developer) {
+                      return _c("el-option", {
+                        key: developer.id,
+                        attrs: {
+                          label:
+                            developer.full_name ||
+                            developer.name + " " + developer.surname,
+                          value: developer.id
                         }
                       })
                     }),

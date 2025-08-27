@@ -41,7 +41,7 @@ class NewsController extends BaseController
      */
     public function index(Request $request)
     {
-        $query = News::with(['admin', 'manager', 'investors']);
+        $query = News::with(['admin', 'manager', 'developer', 'investors']);
 
         // Filter by user type
         if (Auth::user()->hasRole('developer')) {
@@ -280,8 +280,20 @@ class NewsController extends BaseController
                         'full_name' => $manager->full_name ?: ($manager->name . ' ' . $manager->surname)
                     ];
                 })->toArray();
+
+                // Get available developers
+                $developers = Developer::get(['id', 'name']);
+                $this->baseData['developers'] = $developers->map(function ($developer) {
+                    return [
+                        'id' => $developer->id,
+                        'name' => $developer->name,
+                        'surname' => '', // Developers don't have surname
+                        'full_name' => $developer->name // Use name as full_name for developers
+                    ];
+                })->toArray();
             } else {
                 $this->baseData['managers'] = [];
+                $this->baseData['developers'] = [];
             }
 
         } catch (\Exception $ex) {
@@ -311,6 +323,11 @@ class NewsController extends BaseController
             // Handle manager assignment (only for admins)
             if (Auth::user()->hasRole('administrator') && $request->manager_id) {
                 $newsData['manager_id'] = $request->manager_id;
+            }
+
+            // Handle developer assignment (only for admins)
+            if (Auth::user()->hasRole('administrator') && $request->developer_id) {
+                $newsData['developer_id'] = $request->developer_id;
             }
 
             // Set created_by_type
@@ -548,8 +565,20 @@ class NewsController extends BaseController
                         'full_name' => $manager->full_name ?: ($manager->name . ' ' . $manager->surname)
                     ];
                 })->toArray();
+
+                // Get available developers
+                $developers = Developer::get(['id', 'name']);
+                $this->baseData['developers'] = $developers->map(function ($developer) {
+                    return [
+                        'id' => $developer->id,
+                        'name' => $developer->name,
+                        'surname' => '', // Developers don't have surname
+                        'full_name' => $developer->name // Use name as full_name for developers
+                    ];
+                })->toArray();
             } else {
                 $this->baseData['managers'] = [];
+                $this->baseData['developers'] = [];
             }
 
         } catch (\Exception $ex) {
@@ -611,7 +640,7 @@ class NewsController extends BaseController
 
         $developerId = auth('developer')->id();
         
-        // Get only news created by this developer
+        // Get all news assigned to this developer (created by developer or admin)
         $this->baseData['allData'] = News::forDeveloper($developerId)
             ->with(['admin', 'developer', 'manager', 'images', 'investors'])
             ->orderBy('created_at', 'desc')
@@ -717,7 +746,9 @@ class NewsController extends BaseController
 
                 $this->baseData['item'] = $news;
                 $this->baseData['item']['investor_ids'] = $news->investors->pluck('id')->toArray();
-                $this->baseData['can_edit'] = true; // Developers can edit their own news
+                
+                // Developers can edit all news assigned to them
+                $this->baseData['can_edit'] = true;
 
                 // Format images for frontend
                 $gallery = $news->images->map(function ($image) {
