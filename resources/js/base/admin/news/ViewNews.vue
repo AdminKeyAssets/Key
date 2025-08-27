@@ -45,7 +45,7 @@
                                 :slides-count="3"
                                 :initial-main-image="news.images[0].image"
                                 :images="news.images"
-                                :align-left="true">
+                                :align-left="false">
                             </ImageBox>
                         </div>
                     </div>
