@@ -16126,7 +16126,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               response = _context.sent;
 
               if (response.data.data.item) {
-                _this.news = response.data.data.item;
+                _this.news = response.data.data.item; // Emit event to refresh notification count if this is an investor viewing news
+
+                if (_this.isInvestor) {
+                  // Add a small delay to ensure database update completes
+                  setTimeout(function () {
+                    _this.$root.$emit('refresh-news-count');
+                  }, 500);
+                }
               } else {
                 _this.$notify.error({
                   title: 'Error',
@@ -23431,6 +23438,99 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'InvestorNewsNotification',
+  data: function data() {
+    return {
+      unreadCount: 0
+    };
+  },
+  mounted: function mounted() {
+    this.fetchUnreadCount(); // Refresh count every 5 minutes
+
+    this.interval = setInterval(this.fetchUnreadCount, 300000); // Listen for refresh events
+
+    this.$root.$on('refresh-news-count', this.fetchUnreadCount);
+  },
+  beforeDestroy: function beforeDestroy() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    this.$root.$off('refresh-news-count', this.fetchUnreadCount);
+  },
+  methods: {
+    fetchUnreadCount: function fetchUnreadCount() {
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              _context.next = 3;
+              return axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/investor/news/unread-count');
+
+            case 3:
+              response = _context.sent;
+
+              if (response.data.success) {
+                _this.unreadCount = response.data.unread_count;
+              }
+
+              _context.next = 11;
+              break;
+
+            case 7:
+              _context.prev = 7;
+              _context.t0 = _context["catch"](0);
+
+              // Silently fail if investor is not authenticated or route not accessible
+              if (_context.t0.response && _context.t0.response.status !== 401 && _context.t0.response.status !== 403) {
+                console.error('Error fetching unread count:', _context.t0);
+              }
+
+              _this.unreadCount = 0;
+
+            case 11:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, null, [[0, 7]]);
+      }))();
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/asset/ArchiveAssetComponent.vue?vue&type=script&lang=js&":
 /*!**************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/asset/ArchiveAssetComponent.vue?vue&type=script&lang=js& ***!
@@ -30624,6 +30724,25 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 // module
 exports.push([module.i, "\n.image-container[data-v-0b7caa8b] {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    width: 80vw;\n    background-color: white; /* White background for empty spaces */\n}\n.image-container img[data-v-0b7caa8b] {\n    width: 100%;\n    max-width: 100%;\n    max-height: 100%;\n    -o-object-fit: contain;\n       object-fit: contain; /* Ensures the image maintains its aspect ratio and fits within the container */\n}\n.transparent-dialog .el-dialog__body[data-v-0b7caa8b] {\n    background-color: transparent;\n    padding: 0;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    width: 80vw;\n    margin: auto; /* Center the dialog */\n}\n@media (min-width: 769px) {\n.transparent-dialog .el-dialog__body[data-v-0b7caa8b], .image-container[data-v-0b7caa8b]{\n        height: 70vh;\n}\n}\n@media (max-width: 768px) {\n.transparent-dialog .el-dialog__body[data-v-0b7caa8b], .image-container[data-v-0b7caa8b]{\n        height: 30vh;\n}\n.el-dialog.transparent-dialog[data-v-0b7caa8b] {\n        margin-top: 15vh !important;\n}\n}\n.transparent-dialog .el-dialog__wrapper[data-v-0b7caa8b] {\n    width: -moz-fit-content;\n    width: fit-content; /* Dialog width is fit-content */\n}\n.transparent-dialog .el-dialog[data-v-0b7caa8b] {\n    margin: auto; /* Center the dialog */\n}\n.transparent-dialog .el-dialog__header[data-v-0b7caa8b],\n.transparent-dialog .el-dialog__footer[data-v-0b7caa8b] {\n    display: none; /* Hide the header and footer if not needed */\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css&":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* Styles are defined in admin.scss for better integration */\n", ""]);
 
 // exports
 
@@ -122163,6 +122282,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InvestorNewsNotification.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/asset/ArchiveAssetComponent.vue?vue&type=style&index=0&id=396dc756&scoped=true&lang=css&":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/asset/ArchiveAssetComponent.vue?vue&type=style&index=0&id=396dc756&scoped=true&lang=css& ***!
@@ -138764,7 +138913,7 @@ var render = function() {
                                 "slides-count": 3,
                                 "initial-main-image": _vm.news.images[0].image,
                                 images: _vm.news.images,
-                                "align-left": true
+                                "align-left": false
                               }
                             })
                       ],
@@ -147880,6 +148029,38 @@ var render = function() {
     }),
     1
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=template&id=633917f8&":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=template&id=633917f8& ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.unreadCount > 0
+    ? _c("span", { staticClass: "notification-dot" }, [
+        _vm._v(
+          "\n    " +
+            _vm._s(_vm.unreadCount > 99 ? "99+" : _vm.unreadCount) +
+            "\n"
+        )
+      ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -163064,7 +163245,9 @@ Vue.component('email-page-form', __webpack_require__(/*! ./base/admin/template/p
 
 Vue.component('admin-news-save-component', __webpack_require__(/*! ./base/admin/news/SaveNews */ "./resources/js/base/admin/news/SaveNews.vue")["default"]);
 Vue.component('admin-news-view-component', __webpack_require__(/*! ./base/admin/news/ViewNews */ "./resources/js/base/admin/news/ViewNews.vue")["default"]);
-Vue.component('admin-news-filter-component', __webpack_require__(/*! ./base/admin/news/partials/NewsFilters */ "./resources/js/base/admin/news/partials/NewsFilters.vue")["default"]);
+Vue.component('admin-news-filter-component', __webpack_require__(/*! ./base/admin/news/partials/NewsFilters */ "./resources/js/base/admin/news/partials/NewsFilters.vue")["default"]); //Investor Components
+
+Vue.component('investor-news-notification', __webpack_require__(/*! ./base/components/investor/InvestorNewsNotification */ "./resources/js/base/components/investor/InvestorNewsNotification.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -169723,6 +169906,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_perPage_vue_vue_type_template_id_44e98a7a___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_perPage_vue_vue_type_template_id_44e98a7a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/base/components/investor/InvestorNewsNotification.vue":
+/*!****************************************************************************!*\
+  !*** ./resources/js/base/components/investor/InvestorNewsNotification.vue ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _InvestorNewsNotification_vue_vue_type_template_id_633917f8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./InvestorNewsNotification.vue?vue&type=template&id=633917f8& */ "./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=template&id=633917f8&");
+/* harmony import */ var _InvestorNewsNotification_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./InvestorNewsNotification.vue?vue&type=script&lang=js& */ "./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./InvestorNewsNotification.vue?vue&type=style&index=0&lang=css& */ "./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _InvestorNewsNotification_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _InvestorNewsNotification_vue_vue_type_template_id_633917f8___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _InvestorNewsNotification_vue_vue_type_template_id_633917f8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/base/components/investor/InvestorNewsNotification.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************!*\
+  !*** ./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InvestorNewsNotification.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css&":
+/*!*************************************************************************************************************!*\
+  !*** ./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css& ***!
+  \*************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InvestorNewsNotification.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=template&id=633917f8&":
+/*!***********************************************************************************************************!*\
+  !*** ./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=template&id=633917f8& ***!
+  \***********************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_template_id_633917f8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./InvestorNewsNotification.vue?vue&type=template&id=633917f8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/base/components/investor/InvestorNewsNotification.vue?vue&type=template&id=633917f8&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_template_id_633917f8___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InvestorNewsNotification_vue_vue_type_template_id_633917f8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

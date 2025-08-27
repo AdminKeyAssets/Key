@@ -144,5 +144,11 @@ Route::group(['prefix' => 'investor', 'middleware' => ['auth:investor']], functi
          */
         Route::post('create-form-data', $newsController . '@investorGetCreateData')
             ->name('create_form_data');
+
+        /**
+         * Get unread news count for investor
+         */
+        Route::get('unread-count', $newsController . '@getUnreadCount')
+            ->name('unread_count');
     });
 });

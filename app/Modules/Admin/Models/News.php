@@ -94,4 +94,46 @@ class News extends Model implements \OwenIt\Auditing\Contracts\Auditable
             $q->where('investor_id', $investorId);
         });
     }
+
+    /**
+     * Relationship to read tracking
+     */
+    public function readByInvestors()
+    {
+        return $this->hasMany(\App\Modules\Admin\Models\InvestorNewsRead::class, 'news_id');
+    }
+
+    /**
+     * Check if news is read by specific investor
+     */
+    public function isReadByInvestor($investorId)
+    {
+        return $this->readByInvestors()->where('investor_id', $investorId)->exists();
+    }
+
+    /**
+     * Mark news as read by investor
+     */
+    public function markAsReadByInvestor($investorId)
+    {
+        return $this->readByInvestors()->firstOrCreate([
+            'investor_id' => $investorId,
+            'news_id' => $this->id
+        ], [
+            'read_at' => now()
+        ]);
+    }
+
+    /**
+     * Get count of unread news for specific investor
+     */
+    public static function getUnreadCountForInvestor($investorId)
+    {
+        return static::published()
+            ->forInvestor($investorId)
+            ->whereDoesntHave('readByInvestors', function ($query) use ($investorId) {
+                $query->where('investor_id', $investorId);
+            })
+            ->count();
+    }
 }
