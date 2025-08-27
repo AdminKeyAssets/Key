@@ -59,10 +59,14 @@
                 <a href="{{route('asset.revenue.investor')}}"><i class="el-icon-house sidebar-nav-icon"></i>
                     <span class="sidebar-nav-mini-hide">Revenues</span></a>
             </li>
-            <li
-                {!! strpos(request()->route()->getName(), 'investor.news.') !== false ? ' class="active"' : '' !!}>
-                <a href="{{route('investor.news.index')}}"><i class="el-icon-news sidebar-nav-icon"></i>
-                    <span class="sidebar-nav-mini-hide">News</span></a>
+            <li class="news-menu-item {{ strpos(request()->route()->getName(), 'investor.news.') !== false ? 'active' : '' }}">
+                <a href="{{route('investor.news.index')}}">
+                    <i class="el-icon-news sidebar-nav-icon"></i>
+                    <span class="sidebar-nav-mini-hide">News</span>
+                    @if(Auth::guard('investor')->check())
+                        <investor-news-notification></investor-news-notification>
+                    @endif
+                </a>
             </li>
         @endif
             @if(Auth::guard('developer')->check())

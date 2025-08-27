@@ -88,3 +88,14 @@
         text-align: left !important;
     }
 </style>
+
+<script>
+    // Refresh notification count when investor visits news index
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.app && window.app.$root) {
+            setTimeout(() => {
+                window.app.$root.$emit('refresh-news-count');
+            }, 1000);
+        }
+    });
+</script>

@@ -91,30 +91,38 @@ export default {
         this.loadNews();
     },
     methods: {
-        async loadNews() {
-            this.loading = true;
-            try {
-                const response = await axios.post(this.getDataRoute, {
-                    id: this.newsId
-                });
-                if (response.data.data.item) {
-                    this.news = response.data.data.item;
-                } else {
-                    this.$notify.error({
-                        title: 'Error',
-                        message: 'News not found'
-                    });
+    async loadNews() {
+        this.loading = true;
+        try {
+            const response = await axios.post(this.getDataRoute, {
+                id: this.newsId
+            });
+            if (response.data.data.item) {
+                this.news = response.data.data.item;
+                
+                // Emit event to refresh notification count if this is an investor viewing news
+                if (this.isInvestor) {
+                    // Add a small delay to ensure database update completes
+                    setTimeout(() => {
+                        this.$root.$emit('refresh-news-count');
+                    }, 500);
                 }
-            } catch (error) {
-                console.error('Error loading news:', error);
+            } else {
                 this.$notify.error({
                     title: 'Error',
-                    message: 'Failed to load news'
+                    message: 'News not found'
                 });
-            } finally {
-                this.loading = false;
             }
-        },
+        } catch (error) {
+            console.error('Error loading news:', error);
+            this.$notify.error({
+                title: 'Error',
+                message: 'Failed to load news'
+            });
+        } finally {
+            this.loading = false;
+        }
+    },
 
         openImageModal(imageSrc) {
             // Simple image modal - you can enhance this with a proper modal component
