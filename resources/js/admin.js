@@ -143,6 +143,9 @@ Vue.component('admin-news-save-component', require('./base/admin/news/SaveNews')
 Vue.component('admin-news-view-component', require('./base/admin/news/ViewNews').default);
 Vue.component('admin-news-filter-component', require('./base/admin/news/partials/NewsFilters').default);
 
+//Investor Components
+Vue.component('investor-news-notification', require('./base/components/investor/InvestorNewsNotification').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

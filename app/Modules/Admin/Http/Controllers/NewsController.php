@@ -932,6 +932,9 @@ class NewsController extends BaseController
                     ->forInvestor($investorId)
                     ->findOrFail($id);
 
+                // Mark news as read by this investor
+                $news->markAsReadByInvestor($investorId);
+
                 $item = $news->toArray();
                 
                 // Format images for frontend
@@ -974,5 +977,21 @@ class NewsController extends BaseController
                 'message' => 'Error loading news: ' . $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Get unread news count for investor
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUnreadCount()
+    {
+        $investorId = auth('investor')->id();
+        $unreadCount = News::getUnreadCountForInvestor($investorId);
+        
+        return response()->json([
+            'success' => true,
+            'unread_count' => $unreadCount
+        ]);
     }
 }
