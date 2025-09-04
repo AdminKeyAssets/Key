@@ -97,7 +97,7 @@
                                 <td>{!! $item->agreement_date !!}</td>
                                 <td>{!! number_format($item->total_price,0,".",",") !!}$</td>
                                 <td class="paid-col">{!! number_format($item->paid,0,".",",") !!}$
-                                    - {{ fmod(($item->paid/$item->total_price)*100, 1) == 0 ? number_format(($item->paid/$item->total_price)*100, 0) : number_format(($item->paid/$item->total_price)*100, 2) }}
+                                    - {{ $item->total_price > 0 ? (fmod(($item->paid/$item->total_price)*100, 1) == 0 ? number_format(($item->paid/$item->total_price)*100, 0) : number_format(($item->paid/$item->total_price)*100, 2)) : '0' }}
                                     %
                                 </td>
                                 <td>{!! number_format($item->renovation,0,".",",") !!}$</td>
