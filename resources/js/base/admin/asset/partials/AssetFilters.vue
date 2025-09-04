@@ -46,9 +46,9 @@
                         ></el-option>
                         <el-option
                             v-for="investor in investors"
-                            :key="investor.name + ' ' + investor.surname"
-                            :label="investor.name + ' ' + investor.surname"
-                            :value="investor.name + ' ' + investor.surname"
+                            :key="investor.id"
+                            :label="investor.full_name || (investor.name + ' ' + investor.surname)"
+                            :value="investor.full_name || (investor.name + ' ' + investor.surname)"
                         ></el-option>
                     </el-select>
                 </div>
@@ -74,6 +74,7 @@
                         <el-option label="All" value="all"></el-option>
                         <el-option label="Active" value="active"></el-option>
                         <el-option label="Sold" value="sold"></el-option>
+                        <el-option label="Archived" value="archived"></el-option>
                     </el-select>
                 </div>
 
@@ -85,9 +86,9 @@
                         ></el-option>
                         <el-option
                             v-for="manager in managers"
-                            :key="manager.name + ' ' + manager.surname"
-                            :label="manager.name + ' ' + manager.surname"
-                            :value="manager.name + ' ' + manager.surname"
+                            :key="manager.id"
+                            :label="manager.full_name || (manager.name + ' ' + manager.surname)"
+                            :value="manager.full_name || (manager.name + ' ' + manager.surname)"
                         ></el-option>
                     </el-select>
                 </div>
@@ -179,8 +180,8 @@ export default {
     methods: {
         loadFiltersFromQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            this.form.agreement_date = urlParams.get('agreement_date') ? urlParams.get('agreement_date').split(',') : '';
-            this.form.payment_date = urlParams.get('payment_date') ? urlParams.get('payment_date').split(',') : '';
+            this.form.agreement_date = urlParams.get('agreement_date') && urlParams.get('agreement_date') !== 'null' ? urlParams.get('agreement_date').split(',') : '';
+            this.form.payment_date = urlParams.get('payment_date') && urlParams.get('payment_date') !== 'null' ? urlParams.get('payment_date').split(',') : '';
             this.form.investor = urlParams.get('investor') || '';
             this.form.asset = urlParams.get('asset') || '';
             this.form.asset_status = urlParams.get('asset_status') || '';

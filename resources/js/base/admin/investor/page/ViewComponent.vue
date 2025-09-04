@@ -16,14 +16,7 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label">Name: </label>
                     <div class="col-md-6">
-                        {{ form.name }}
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2 control-label">Surname: </label>
-                    <div class="col-md-6">
-                        {{ form.surname }}
+                        {{ form.full_name }}
                     </div>
                 </div>
 
@@ -84,7 +77,7 @@
                             <el-option
                                 v-for="manager in this.managers"
                                 :key="manager.id"
-                                :label="manager.name + ' ' + manager.surname"
+                                :label="manager.full_name || (manager.name + ' ' + manager.surname)"
                                 :value="manager.id"
                             ></el-option>
                         </el-select>

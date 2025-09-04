@@ -31,9 +31,9 @@
                         ></el-option>
                         <el-option
                             v-for="investor in investors"
-                            :key="investor.name + ' ' + investor.surname"
-                            :label="investor.name + ' ' + investor.surname"
-                            :value="investor.name + ' ' + investor.surname"
+                            :key="investor.id"
+                            :label="investor.full_name || (investor.name + ' ' + investor.surname)"
+                            :value="investor.full_name || (investor.name + ' ' + investor.surname)"
                         ></el-option>
                     </el-select>
                 </div>
@@ -53,9 +53,9 @@
                     <el-select v-model="form.manager" filterable placeholder="Manager" v-remove-readonly>
                         <el-option
                             v-for="manager in managers"
-                            :key="manager.name + ' ' + manager.surname"
-                            :label="manager.name + ' ' + manager.surname"
-                            :value="manager.name + ' ' + manager.surname"
+                            :key="manager.id"
+                            :label="manager.full_name || (manager.name + ' ' + manager.surname)"
+                            :value="manager.full_name || (manager.name + ' ' + manager.surname)"
                         ></el-option>
                     </el-select>
                 </div>
@@ -64,6 +64,13 @@
                     <el-input class="el-input--is-round" placeholder="Number of Assets" maxlength="150"
                               show-word-limit
                               v-model="form.assets"></el-input>
+                </div>
+                <div class="form-group">
+                    <el-select v-model="form.status" filterable placeholder="Status" v-remove-readonly>
+                        <el-option label="Active" value="active"></el-option>
+                        <el-option label="All" value="all"></el-option>
+                        <el-option label="Archived" value="archived"></el-option>
+                    </el-select>
                 </div>
                 <div class="button-wrapper">
                     <el-button type="secondary" icon="el-icon-search" @click="applyFilters">Apply Filters</el-button>
@@ -89,6 +96,7 @@ export default {
                 create_date: '',
                 citizenship: '',
                 manager: '',
+                status: 'active', // Default to active
             },
             countries: [],
             managers: [],
@@ -116,6 +124,7 @@ export default {
             this.form.create_date = urlParams.get('create_date') ? urlParams.get('create_date').split(',') : '';
             this.form.citizenship = urlParams.get('citizenship') || '';
             this.form.manager = urlParams.get('manager') || '';
+            this.form.status = urlParams.get('status') || 'active';
         },
         applyFilters() {
             const queryParams = new URLSearchParams(this.form).toString();
@@ -128,6 +137,7 @@ export default {
             this.form.create_date = '';
             this.form.citizenship = '';
             this.form.manager = '';
+            this.form.status = 'active';
             this.applyFilters(); // Optionally apply cleared filters
         },
 

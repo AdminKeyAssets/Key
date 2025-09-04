@@ -62,6 +62,7 @@ export default {
                 payments: [],
                 currency: 'USD',
                 current_value: '',
+                manager_id: null,
             },
             loading: false,
             addDetailIsBtnDisabled: true,

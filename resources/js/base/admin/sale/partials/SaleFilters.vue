@@ -30,9 +30,9 @@
                         ></el-option>
                         <el-option
                             v-for="manager in managers"
-                            :key="manager.name + ' ' + manager.surname"
-                            :label="manager.name + ' ' + manager.surname"
-                            :value="manager.name + ' ' + manager.surname"
+                            :key="manager.full_name || (manager.name + ' ' + manager.surname)"
+                            :label="manager.full_name || (manager.name + ' ' + manager.surname)"
+                            :value="manager.full_name || (manager.name + ' ' + manager.surname)"
                         ></el-option>
                     </el-select>
                 </div>

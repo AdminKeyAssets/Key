@@ -16,6 +16,21 @@ class LeadsImport implements ToModel, WithHeadingRow
     protected $adminId;
 
     /**
+     * Valid statuses in the system.
+     *
+     * @var array
+     */
+    protected $validStatuses = [
+        'New',
+        'Not Responding',
+        'Communication',
+        'Proposal Sent',
+        'Refused',
+        'Signed',
+        'Archieve'
+    ];
+
+    /**
      * Constructor receives the current authenticated admin's ID.
      *
      * @param mixed $adminId
@@ -49,11 +64,20 @@ class LeadsImport implements ToModel, WithHeadingRow
      * The Excel file should have headings matching these keys:
      * name, surname, phone, email, prefix, status, admin_id, marketing_channel.
      *
+     * If a status is provided but doesn't exist in the system, the record will be skipped.
+     *
      * @param array $row
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function model(array $row)
     {
+        $status = $row['status'] ?? 'New';
+        
+        // Skip the record if a status is provided but doesn't exist in the system
+        if (isset($row['status']) && !in_array($status, $this->validStatuses)) {
+            return null;
+        }
+        
         $prefix = $row['prefix'] ?? null;
         if ($prefix && substr($prefix, 0, 1) !== '+') {
             $prefix = '+' . $prefix;
@@ -65,7 +89,7 @@ class LeadsImport implements ToModel, WithHeadingRow
             'phone'             => $row['phone'] ?? null,
             'email'             => $row['email'] ?? null,
             'prefix'            => $prefix,
-            'status'            => $row['status'] ?? 'New',
+            'status'            => $status,
             'admin_id'          => $row['admin_id'] ?? $this->adminId,
             'marketing_channel' => $row['marketing_channel'] ?? null,
         ]);

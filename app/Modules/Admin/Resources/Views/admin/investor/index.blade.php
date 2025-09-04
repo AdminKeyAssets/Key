@@ -65,7 +65,7 @@
                             <tr>
                                 <td>
                                     <a href="{{ route('admin.investor.view', $item->id) }}">
-                                        {!! $item->name !!} {!! $item->surname !!}
+                                        {!! $item->full_name !!}
                                     </a>
                                 </td>
                                 <td>
@@ -98,6 +98,10 @@
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'update', true))
                                         @include('admin::includes.actions.edit',['route' => route($baseRouteName . 'edit', [ $item->id ])])
+                                        <archive-investor-component
+                                            :investor-id="{{ $item->id }}"
+                                            :is-archived="{{ $item->is_archived ? 'true' : 'false' }}"
+                                        ></archive-investor-component>
                                     @endcan
                                     @can(getPermissionKey($moduleKey, 'delete', true))
                                         <delete-component

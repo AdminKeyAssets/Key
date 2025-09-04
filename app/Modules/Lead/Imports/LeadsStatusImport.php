@@ -16,6 +16,21 @@ class LeadsStatusImport implements ToModel, WithHeadingRow
     protected $adminId;
 
     /**
+     * Valid statuses in the system.
+     *
+     * @var array
+     */
+    protected $validStatuses = [
+        'New',
+        'Not Responding',
+        'Communication',
+        'Proposal Sent',
+        'Refused',
+        'Signed',
+        'Archieve'
+    ];
+
+    /**
      * Constructor receives the current authenticated admin's ID.
      *
      * @param mixed $adminId
@@ -47,11 +62,18 @@ class LeadsStatusImport implements ToModel, WithHeadingRow
      * The Excel file should have headings matching these keys:
      * name, surname, phone, email, prefix, status, admin_id, marketing_channel.
      *
+     * If the status doesn't exist in the system, the record will be skipped.
+     *
      * @param array $row
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function model(array $row)
     {
+        // Skip the record if status doesn't exist
+        if (!in_array($row['status'], $this->validStatuses)) {
+            return null;
+        }
+        
         Lead::where('name', $row['name'])
             ->where('surname', $row['surname'])
             ->update(['status' => $row['status']]);

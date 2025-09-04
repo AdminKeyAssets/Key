@@ -42,10 +42,21 @@ class SalesExport implements FromCollection, WithHeadings, WithEvents
         }
 
         if (!empty($this->filters['manager']) && $this->filters['manager'] != 'all') {
-            $managerNamesArray = explode(' ', $this->filters['manager']);
-            $managerUser = Admin::where('name', $managerNamesArray[0])
-                ->where('surname', $managerNamesArray[1])->first();
-            $query->where('admin_id', '=', $managerUser->id);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $this->filters['manager'])->first();
+            // If not found, fallback to name and surname
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $this->filters['manager']);
+                if (count($managerNamesArray) >= 2) {
+                    $managerFirstName = $managerNamesArray[0];
+                    $managerSurname = implode(' ', array_slice($managerNamesArray, 1));
+                    $managerUser = Admin::where('name', $managerFirstName)
+                        ->where('surname', $managerSurname)->first();
+                }
+            }
+            if ($managerUser) {
+                $query->where('admin_id', '=', $managerUser->id);
+            }
         }
 
         if (!empty($this->filters['marketing_channel']) && $this->filters['marketing_channel'] != 'all') {

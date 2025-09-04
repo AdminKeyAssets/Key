@@ -50,6 +50,13 @@ Vue.component('admin-user-filter-component', require('./base/admin/user/partials
 // User role
 Vue.component('admin-role-save-component', require('./base/admin/role/page/SaveComponent').default);
 
+// Developer
+Vue.component('developer-save-component', require('./base/admin/developer/page/SaveComponent').default);
+Vue.component('developer-view-component', require('./base/admin/developer/page/ViewComponent').default);
+// Vue.component('update-developer-asset', require('./base/admin/developer/partials/UpdateDeveloperAsset').default);
+Vue.component('developer-assets-investors', require('./base/admin/developer/partials/DeveloperAssetsInvestors').default);
+
+
 //Base Component
 Vue.component('delete-component', require('./base/components/admin/Delete').default);
 Vue.component('checkbox-list-component', require('./base/components/admin/checkboxList').default);
@@ -67,6 +74,7 @@ Vue.component('asset-filter-component', require('./base/admin/asset/partials/Ass
 Vue.component('investor-asset-filter-component', require('./base/admin/asset/partials/InvestorAssetFilters').default);
 Vue.component('register-purchase-component', require('./base/admin/asset/partials/components/AssetSaleModal').default);
 Vue.component('asset-export-component', require('./base/admin/asset/partials/AssetExport').default);
+Vue.component('developer-asset-filter-component', require('./base/admin/asset/partials/DeveloperAssetFilters').default);
 
 
 //Revenue
@@ -104,6 +112,9 @@ Vue.component('admin-investor-component', require('./base/admin/investor/partial
 Vue.component('admin-investor-filter-component', require('./base/admin/investor/partials/InvestorFilters').default);
 Vue.component('investor-profile-save-component', require('./base/admin/investor/page/ProfileSaveComponent').default);
 Vue.component('update-investor-manager', require('./base/admin/investor/partials/UpdateInvestorManager').default);
+Vue.component('archive-investor-component', require('./components/investor/ArchiveInvestorComponent').default);
+Vue.component('archive-asset-component', require('./components/asset/ArchiveAssetComponent').default);
+Vue.component('developer-access-component', require('./base/admin/asset/DeveloperAccessComponent').default);
 
 //Lead
 Vue.component('lead-page-form', require('./base/admin/lead/page/LeadForm').default);

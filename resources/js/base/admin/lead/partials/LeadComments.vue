@@ -11,10 +11,10 @@
             {{ comment.author_name }}
           </span>
                     <span class="comment-user" v-else-if="comment.admin">
-            <span v-if="comment.admin.name">{{ comment.admin.name }}</span> <span v-if="comment.admin.surname">{{ comment.admin.surname }}</span>
+            {{ comment.admin.full_name || ((comment.admin.name || '') + ' ' + (comment.admin.surname || '')) }}
           </span>
                     <span class="comment-user" v-else-if="comment.investor">
-            <span v-if="comment.investor.name">{{ comment.investor.name }}</span> <span v-if="comment.investor.surname">{{ comment.investor.surname }}</span>
+            {{ comment.investor.full_name || ((comment.investor.name || '') + ' ' + (comment.investor.surname || '')) }}
           </span>
                     <span class="comment-date">
             {{ formatDate(comment.created_at) }}

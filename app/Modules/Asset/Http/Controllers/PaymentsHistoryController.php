@@ -2,6 +2,7 @@
 
 namespace App\Modules\Asset\Http\Controllers;
 
+use App\Modules\Admin\Exports\DeptStatementExport;
 use App\Modules\Admin\Exports\PaymentHistoryExport;
 use App\Modules\Admin\Exports\PaymentScheduleExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
@@ -12,6 +13,8 @@ use App\Modules\Asset\Http\Requests\PaymentRequest;
 use App\Modules\Asset\Models\Asset;
 use App\Modules\Asset\Models\Payment;
 use App\Modules\Asset\Models\PaymentsHistory;
+use App\Modules\Asset\Models\DeveloperAsset;
+use App\Modules\Admin\Models\User\Developer;
 use App\Utilities\ServiceResponse;
 use DB;
 use Illuminate\Contracts\Foundation\Application;
@@ -22,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
+use PDF;
 
 class PaymentsHistoryController extends BaseController
 {
@@ -62,7 +66,7 @@ class PaymentsHistoryController extends BaseController
      */
     public function index(Request $request, $assetId)
     {
-        $this->baseData['allData'] = PaymentsHistory::where('asset_id', $assetId)->paginate(25);
+        $this->baseData['allData'] = PaymentsHistory::where('asset_id', $assetId)->orderByDesc('id')->paginate(25);
         $this->baseData['assetId'] = $assetId;
 
         $asset = Asset::where('id', $assetId)->first();
@@ -70,7 +74,7 @@ class PaymentsHistoryController extends BaseController
         $investors = $asset->investors;
         $investorNames = [];
         foreach ($investors as $investor) {
-            $investorNames[] = $investor->name . ' ' . $investor->surname;
+            $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
         }
         $investorNames = implode(' / ', $investorNames);
 
@@ -97,7 +101,7 @@ class PaymentsHistoryController extends BaseController
         $investors = $asset->investors;
         $investorNames = [];
         foreach ($investors as $investor) {
-            $investorNames[] = $investor->name . ' ' . $investor->surname;
+            $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
         }
         $investorNames = implode(' / ', $investorNames);
 
@@ -284,7 +288,7 @@ class PaymentsHistoryController extends BaseController
             $investors = $asset->investors;
             $investorNames = [];
             foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
             }
             $investorNames = implode(' / ', $investorNames);
 
@@ -321,7 +325,7 @@ class PaymentsHistoryController extends BaseController
             $investors = $asset->investors;
             $investorNames = [];
             foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
             }
             $investorNames = implode(' / ', $investorNames);
 
@@ -377,5 +381,103 @@ class PaymentsHistoryController extends BaseController
         $filters = ['asset_id' => $assetId];
 
         return Excel::download(new PaymentHistoryExport($filters), 'payments_history.xlsx');
+    }
+
+    public function deptStatement(Request $request, $assetId)
+    {
+        try {
+            // Get asset information
+            $asset = Asset::with(['investors', 'admin', 'manager'])->findOrFail($assetId);
+            
+            // Get overdue payments
+            $overduePayments = Payment::where('asset_id', $assetId)
+                ->where('status', 0)
+                ->where('payment_date', '<=', now()->format('Y/m/d'))
+                ->select('payment_date', 'amount', 'left_amount')
+                ->get()
+                ->map(function ($payment) {
+                    return [
+                        'payment_date' => $payment->payment_date,
+                        'amount' => $payment->amount,
+                        'paid_amount' => $payment->amount - $payment->left_amount,
+                        'left_amount' => $payment->left_amount,
+                    ];
+                });
+
+            // Calculate total outstanding
+            $totalOutstanding = $overduePayments->sum('left_amount');
+
+            // Get investor names
+            $investors = $asset->investors;
+            $investorNames = [];
+            foreach ($investors as $investor) {
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
+            }
+            $investorNames = implode(' / ', $investorNames);
+
+            // Get developer information (who owns this asset)
+            $developerAsset = DeveloperAsset::where('asset_name', $asset->project_name)->first();
+            $developer = $developerAsset ? $developerAsset->developer : null;
+            
+            $developerName = 'N/A';
+            $developerContact = '';
+            
+            if ($developer) {
+                $developerName = $developer->name ?? 'N/A';
+                $developerContact = '';
+                
+                if ($developer->tel) {
+                    $developerContact .= $developer->tel;
+                }
+                
+                // Add representative info if available
+                if ($developer->representative) {
+                    $representativeInfo = $developer->representative;
+                    if ($developer->representative_position) {
+                        $representativeInfo .= ' (' . $developer->representative_position . ')';
+                    }
+                    if ($developerContact) {
+                        $developerContact .= ' - ' . $representativeInfo;
+                    } else {
+                        $developerContact = $representativeInfo;
+                    }
+                }
+            }
+
+            // Get manager information (for asset manager details)
+            $manager = $asset->manager;
+            $managerName = $manager ? ($manager->full_name ?? ($manager->name . ' ' . $manager->surname)) : '';
+            $managerContact = $manager ? ($manager->email . ($manager->phone ? ' - ' . $manager->prefix . $manager->phone : '')) : '';
+
+            // Prepare data for PDF
+            $data = [
+                'investorNames' => $investorNames,
+                'assetName' => $asset->project_name,
+                'flatNumber' => $asset->flat_number,
+                'developerName' => $developerName,
+                'projectName' => $asset->project_name,
+                'currentDate' => now()->format('F j, Y'),
+                'overduePayments' => $overduePayments,
+                'totalOutstanding' => $totalOutstanding,
+                'developerContact' => $developerContact,
+                'managerName' => $managerName,
+                'managerContact' => $managerContact,
+            ];
+
+            // Generate PDF
+            $pdf = PDF::loadView('asset::admin.payment.debt_statement_pdf', $data);
+
+            // Set PDF options
+            $pdf->setPaper('a4', 'portrait');
+
+            // Generate filename
+            $filename = 'debt_statement_' . $assetId . '_' . date('Y-m-d_H-i-s') . '.pdf';
+
+            // Return the PDF for download
+            return $pdf->download($filename);
+
+        } catch (\Exception $ex) {
+            throw new Exception($ex->getMessage(), $ex->getCode());
+        }
     }
 }

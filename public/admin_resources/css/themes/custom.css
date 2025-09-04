@@ -428,6 +428,24 @@ fieldset[disabled] .btn-default.active {
     transition: all .3s;
 }
 
+.btn-switch {
+    transition: all .3s;
+    font-weight: bolder;
+    padding: 4px 4px !Important;
+    color: white;
+}
+.btn-switch:hover{
+    color: white !important;
+}
+.btn-switch.disabled-icon{
+    border-color: orange;
+    background-color: orange;
+}
+.btn-switch.active-icon{
+    border-color: #106910;
+    background-color: #106910;
+}
+
 .btn-primary.login {
     padding: 8px 44px;
     border-radius: 10px;
@@ -441,6 +459,10 @@ fieldset[disabled] .btn-default.active {
     border-color: #3855F7;
 }
 
+.text-center .btn-archive {
+    padding: 4px 4px !Important;
+}
+
 .text-center .btn-success.btn-home.renals-icon {
     padding: 3px 3px !Important;
     background-color: #6C93F5;
@@ -451,6 +473,12 @@ fieldset[disabled] .btn-default.active {
     padding: 3px 3px !Important;
     background-color: #AAD178;
     border-color: #AAD178;
+}
+
+.text-center .btn-success.btn-money.payments-icon.btn-investments {
+    padding: 3px 3px !Important;
+    background-color: #567331FF;
+    border-color: #567331FF;
 }
 
 .text-center .btn-success.btn-home.renovations-icon {
@@ -1261,7 +1289,7 @@ table thead th {
     min-width: 90%;
 }
 @media (orientation: landscape) {
-    .table-responsive>.table>tbody>tr>td{
+    .table-responsive:not(.table-roles)>.table>tbody>tr>td{
         white-space: nowrap;
     }
 }
@@ -1277,4 +1305,24 @@ table thead th {
 }
 .cell{
     word-break: break-word !important;
+}
+
+.table-developers th, .table-developers td{
+    text-align: center;
+}
+.investors-wrapper{
+    text-align: left!important;
+}
+.investor-item{
+    padding-bottom: 10px;
+}
+.export-row .col-md-2{
+    float: right !important;
+    overflow: hidden;
+}
+.el-input-number.is-without-controls input {
+    text-align: left !important;
+}
+th a.text-dark{
+    color: white !important;
 }

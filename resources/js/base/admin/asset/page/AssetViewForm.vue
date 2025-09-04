@@ -3,7 +3,16 @@
         <div class="col-xs-12">
             <div class="registration-btn project-title-buttons">
                 <div class="content-wrapper">
-                    <div class="block col-md-9 asset-details-wrapper form-horizontal form-bordered">
+                    <div
+                        :class="{
+                              block: true,
+                              'col-md-9': !developerView,
+                              'col-md-12': developerView,
+                              'asset-details-wrapper': true,
+                              'form-horizontal': true,
+                              'form-bordered': true
+                            }"
+                    >
                         <el-form v-loading="loading"
                                  element-loading-text="Loading..."
                                  element-loading-spinner="el-icon-loading"
@@ -210,12 +219,24 @@
                                                 </div>
                                             </el-col>
                                         </el-row>
+                                        
+                                        <el-row class="row-item" v-if="form.managerName">
+                                            <el-col :span="24">
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Asset Manager: </label>
+                                                    <div class="col-md-10 uppercase-medium">
+                                                        {{ form.managerName }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
 
                                     </el-row>
 
                                 </el-card>
                             </el-row>
 
+                            <!--                            extra details section-->
                             <el-row style="margin-bottom: 30px" v-if="form.extraDetails && form.extraDetails.length">
                                 <el-card class="box-card extra-details-card">
                                     <div slot="header" class="clearfix main-header">
@@ -241,7 +262,7 @@
                                 </el-card>
                             </el-row>
 
-
+                            <!--                            asset photos section-->
                             <el-row style="margin-bottom: 30px" v-if="form.attachments && form.attachments.length">
                                 <el-card class="box-card extra-attachments-card"
                                          :class="{ 'hidden-body': !showExtraAttachments }">
@@ -270,7 +291,9 @@
                                 </el-card>
                             </el-row>
 
-                            <el-row style="margin-bottom: 30px" v-if="form.tenant && form.asset_status === 'Rented'">
+                            <!--            tenant section-->
+                            <el-row style="margin-bottom: 30px"
+                                    v-if="form.tenant && form.asset_status === 'Rented'  && !developerView">
                                 <el-card class="box-card"
                                          :class="{ 'complete-rent-warning-card': needToCompleteRent  && !investorView }">
                                     <div slot="header" class="clearfix main-header">
@@ -285,7 +308,7 @@
                                                      class="form-group">
                                                     <label class="col-md-4 control-label">Tenant Name:</label>
                                                     <div class="col-md-6 uppercase-medium">
-                                                        {{ form.tenant.name }} {{ form.tenant.surname }}
+                                                        {{ form.tenant.full_name || (form.tenant.name + ' ' + form.tenant.surname) }}
                                                     </div>
                                                 </div>
                                             </el-col>
@@ -497,6 +520,7 @@
                                 </el-card>
                             </el-row>
 
+                            <!--                            agreement details section-->
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showAgreementDetails }">
@@ -620,6 +644,14 @@
                                                             style="margin-bottom: 2rem; margin-right: 3rem;"
                                                             type="secondary"
                                                             class="pull-right"
+                                                            @click="exportDeptStatement">Debt Statement
+                                                        </el-button>
+
+                                                        <el-button
+                                                            icon="el-icon-document"
+                                                            style="margin-bottom: 2rem; margin-right: 3rem;"
+                                                            type="secondary"
+                                                            class="pull-right"
                                                             @click="exportPaymentSchedule">Export Schedule
                                                         </el-button>
                                                     </div>
@@ -708,8 +740,9 @@
 
                                 </el-card>
                             </el-row>
-
-                            <el-row style="margin-bottom: 30px" v-if="form.renovation_payments && form.renovation_payments.length">
+                            <!--renovation payments section-->
+                            <el-row style="margin-bottom: 30px"
+                                    v-if="form.renovation_payments && form.renovation_payments.length  && !developerView">
                                 <el-card class="box-card agreement-details-card"
                                          :class="{ 'hidden-body': !showRenovationAgreementDetails }">
 
@@ -877,7 +910,7 @@
 
                                 </el-card>
                             </el-row>
-
+                            <!--comments section-->
                             <el-row style="margin-bottom: 30px">
                                 <el-card class="box-card">
                                     <div slot="header" class="clearfix main-header">
@@ -888,12 +921,13 @@
                                         :user-id="this.userId"
                                         :is-admin="this.isAdmin"
                                         :investor-view="this.investorView"
+                                        :developer-view="this.developerView"
                                     ></AssetComments>
                                 </el-card>
                             </el-row>
                         </el-form>
                     </div>
-                    <div class="block col-md-3 asset-manager-details">
+                    <div class="block col-md-3 asset-manager-details" v-if="!developerView">
                         <div v-loading="loading"
                              class="form-horizontal form-bordered">
 
@@ -915,7 +949,7 @@
                                 </div>
                                 <div class="text item">
                                     <p v-if="salesManager.name || salesManager.surname">
-                                        {{ salesManager.name }} {{ salesManager.surname }}
+                                        {{ salesManager.full_name || (salesManager.name + ' ' + salesManager.surname) }}
                                     </p>
                                     <p v-if="salesManager.phone">
                                         <a :href="whatsappLink" target="_blank" class="phone-container">
@@ -984,6 +1018,8 @@
                                     </p>
                                 </div>
                             </el-card>
+                            
+
                         </div>
                     </div>
 
@@ -1028,6 +1064,10 @@ export default {
         investorView: {
             type: [Boolean, Number],
             default: false
+        },
+        developerView: {
+            type: [Boolean, Number],
+            default: false
         }
     },
 
@@ -1040,7 +1080,8 @@ export default {
             options: {},
             /** Form data*/
             form: {
-                id: this.id
+                id: this.id,
+                managerName: ''
             },
             investors: {},
             salesManager: {},
@@ -1178,6 +1219,22 @@ export default {
                 console.error('Error exporting payments:', error);
             }
         },
+        async exportDeptStatement() {
+            try {
+                const response = await axios.get(`/assets/${this.id}/dept-statement/export`, {
+                    params: this.filters,
+                    responseType: 'blob'
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'debt_statement.pdf');
+                document.body.appendChild(link);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting Debt Statement:', error);
+            }
+        },
 
         async exportRentalPayments() {
             try {
@@ -1282,7 +1339,8 @@ export default {
             data.forEach(item => {
                 totalAmount += Number(item.amount) || 0;
             });
-            sums[1] = this.formatPrice(totalAmount) + '$';;
+            sums[1] = this.formatPrice(totalAmount) + '$';
+            ;
             sums[2] = '';
 
             return sums;
@@ -1331,7 +1389,7 @@ export default {
             return sums;
         },
 
-        tableRowClassName({ row }) {
+        tableRowClassName({row}) {
             if (!row.payment_date) return '';
 
             const [year, month, day] = row.payment_date.split('/').map(Number);
@@ -1478,6 +1536,7 @@ export default {
     -ms-overflow-style: none;
     scrollbar-width: thin;
 }
+
 .el-table .warning-row {
     background: oldlace;
 }

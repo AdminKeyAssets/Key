@@ -103,15 +103,21 @@ class RevenueController extends BaseController
 
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
-
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
+                
+                $managerFirstName = array_shift($managerNamesArray);
+                
+                $managerSurname = implode(' ', $managerNamesArray);
+                
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
+            
             if (isset($managerUser->id)) {
                 $paginatedAssets->where('admin_id', $managerUser->id);
                 $allAssets->where('admin_id', $managerUser->id);
@@ -325,6 +331,29 @@ class RevenueController extends BaseController
             }
         }
 
+        if ($request->investor && $request->investor != 'all') {
+            $investorNamesArray = explode(' ', $request->investor);
+
+            // The first part is the name
+            $firstName = array_shift($investorNamesArray);
+
+            // The remaining parts are the surname
+            $surname = implode(' ', $investorNamesArray);
+
+            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $firstName)
+                ->where('surname', $surname)->first();
+
+            if (isset($investorUser->id)) {
+                $paginatedAssets->whereHas('investors', function ($query) use ($investorUser) {
+                    $query->where('id', $investorUser->id);
+                });
+                $allAssets->whereHas('investors', function ($query) use ($investorUser) {
+                    $query->where('id', $investorUser->id);
+                });
+            }
+        }
+
         $paginatedAssets = $paginatedAssets->paginate(25);
         $allAssets = $allAssets->get();
 
@@ -418,13 +447,19 @@ class RevenueController extends BaseController
             $totalRenovationPrice += $renovationInvestment;
             $totalPurchasePrice += $asset->total_price;
             $totalCurrentValue += $asset->current_value;
-            $totalPaid += $paid;
+            
+            // Calculate paid amount based on agreement status
+            if ($asset->agreement_status === 'Installments') {
+                $totalPaid += $paid;
+            } else {
+                $totalPaid += $asset->total_price;
+            }
 
             // Net cash balance
             if ($asset->sale_status !== 'sold') {
                 $netCashBalance = $rent - $otherInvestments;
             } else {
-                $netCashBalance = $asset->sale_price + $rent - $allInvestments;
+                $netCashBalance = ($asset->sale_price - $asset->total_price) + $rent - $renovationInvestment - $otherInvestments;
             }
             $totalNetCashBalance += $netCashBalance;
         }
@@ -479,10 +514,10 @@ class RevenueController extends BaseController
             }
 
             if ($asset->sale_status !== 'sold') {
-                $asset->net_cache_balance = $asset->rent - $otherInvestments;
+                $asset->net_cash_balance = $asset->rent - $otherInvestments;
                 $asset->capital_gain = $asset->current_value - ($asset->total_price + $renovationInvestment);
             } else {
-                $asset->net_cache_balance = $asset->sale_price + $asset->rent - $asset->total_investment;
+                $asset->net_cash_balance = ($asset->sale_price - $asset->total_price) + $asset->rent - $renovationInvestment - $otherInvestments;
                 $asset->capital_gain = $asset->sale_price - $asset->total_investment;
             }
             $asset->other_investment = $otherInvestments;
@@ -540,7 +575,7 @@ class RevenueController extends BaseController
             $investors = $asset->investors;
             $investorNames = [];
             foreach ($investors as $investor) {
-                $investorNames[] = $investor->name . ' ' . $investor->surname;
+                $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
             }
             $investorNames = implode(' / ', $investorNames);
 
@@ -662,7 +697,7 @@ class RevenueController extends BaseController
                     //                    dd([$asset->sale_price,$rent,$allInvestments]);
 
                     $this->baseData['item']['total_investment'] = $totalInvestments;
-                    $this->baseData['item']['net_cash_balance'] = $asset->sale_price + $rent - $totalInvestments;
+                    $this->baseData['item']['net_cash_balance'] = ($asset->sale_price - $asset->total_price) + $rent - $renovationInvestment - $otherInvestments;
 
                     $this->baseData['item']['capital_gain'] = $asset->sale_price - $totalInvestments;
 
@@ -673,7 +708,7 @@ class RevenueController extends BaseController
                     $investors = $asset->investors;
                     $investorNames = [];
                     foreach ($investors as $investor) {
-                        $investorNames[] = $investor->name . ' ' . $investor->surname;
+                        $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
                     }
                     $investorNames = implode(' / ', $investorNames);
 
@@ -713,14 +748,12 @@ class RevenueController extends BaseController
         $this->baseData['investors'] = [];
         if (\Auth::guard('admin')->check()) {
             if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                $this->baseData['investors'] = Investor::orderBy('name')
-                    ->orderBy('surname')
+                $this->baseData['investors'] = Investor::orderBy('full_name')
                     ->get();
                 $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
                     $query->where('name', 'like', '%asset%manager%');
                 })
-                    ->orderBy('name')
-                    ->orderBy('surname')
+                    ->orderBy('full_name')
                     ->get();
 
                 $this->baseData['types'] = Asset::select('type', DB::raw('MAX(id) as max_id'))
@@ -791,5 +824,39 @@ class RevenueController extends BaseController
     {
         return Excel::download(new RevenueAssetValueExport(['asset_id' => $assetId]), 'asset_values.xlsx');
 
+    }
+
+    public function investorFilterOptions()
+    {
+        $user = auth()->user();
+
+        $this->baseData['assets'] = Asset::query()
+            ->whereHas('investors', function ($q) use ($user) {
+                $q->where('investor_id', $user->id);
+            })
+            ->select('project_name', 'sale_status', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name', 'sale_status')
+            ->orderBy('project_name')
+            ->get();
+
+        return ServiceResponse::jsonNotification(__('Filter options loaded successfully'), 200, $this->baseData);
+    }
+
+    public function adminFilterOptions()
+    {
+        if (auth()->user()->getRolesNameAttribute() == 'administrator') {
+            $this->baseData['assets'] = Asset::select('project_name', 'sale_status', DB::raw('MAX(id) as max_id'))
+                ->groupBy('project_name', 'sale_status')
+                ->orderBy('project_name')
+                ->get();
+        } else {
+            $this->baseData['assets'] = Asset::where('admin_id', auth()->user()->getAuthIdentifier())
+                ->select('project_name', 'sale_status', DB::raw('MAX(id) as max_id'))
+                ->groupBy('project_name', 'sale_status')
+                ->orderBy('project_name')
+                ->get();
+        }
+
+        return ServiceResponse::jsonNotification(__('Filter options loaded successfully'), 200, $this->baseData);
     }
 }

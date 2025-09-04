@@ -3,6 +3,7 @@
 namespace App\Modules\Asset\Http\Controllers;
 
 use App\Modules\Admin\Exports\AssetExport;
+use App\Modules\Admin\Exports\DeveloperAssetExport;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Models\Country;
 use App\Modules\Admin\Models\User\Admin;
@@ -25,6 +26,7 @@ use App\Modules\Asset\Models\RenovationPaymentsHistory;
 use App\Modules\Asset\Models\Rental;
 use App\Modules\Asset\Models\RentalPaymentsHistory;
 use App\Modules\Asset\Models\Tenant;
+use App\Modules\Asset\Models\DeveloperAsset;
 use App\Modules\Asset\Services\AssetCompareService;
 use App\Utilities\ServiceResponse;
 use Carbon\Carbon;
@@ -33,6 +35,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -106,24 +109,50 @@ class AssetController extends BaseController
 //        $query->where('sale_status', 'active');
 
         $statusFilter = $request->status ?? 'active';
+        
+        // Handle sorting
+        $sortField = $request->sort_by ?? 'id';
+        // Default to descending order, especially for date-based columns to show nearest dates first
+        $sortOrder = $request->sort_order ?? 'desc';
+        
+        // Always use descending order for date-based columns by default if no order specified
+        if (!$request->has('sort_order') && in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
+            $sortOrder = 'desc';
+        }
 
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', '=', $userId);
         }
+        
+        // Handle status filtering based on status parameter
+        if ($statusFilter === 'active') {
+            $query->where('is_archived', false);
+            $query->where('sale_status', 'active');
+        } elseif ($statusFilter === 'archived') {
+            $query->where('is_archived', true);
+        } elseif ($statusFilter === 'sold') {
+            $query->where('sale_status', 'sold');
+        }
+        // 'all' status will not apply any filters
 
         // Apply filters if provided in the request
         if ($request->investor && $request->investor != 'all') {
-            $investorNamesArray = explode(' ', $request->investor);
-
-            // The first part is the name
-            $firstName = array_shift($investorNamesArray);
-
-            // The remaining parts are the surname
-            $surname = implode(' ', $investorNamesArray);
-
-//            $investorNamesArray = explode(' ', $request->investor);
-            $investorUser = Investor::where('name', $firstName)
-                ->where('surname', $surname)->first();
+            // First try to find by full_name
+            $investorUser = Investor::where('full_name', $request->investor)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$investorUser) {
+                $investorNamesArray = explode(' ', $request->investor);
+                
+                // The first part is the name
+                $firstName = array_shift($investorNamesArray);
+                
+                // The remaining parts are the surname
+                $surname = implode(' ', $investorNamesArray);
+                
+                $investorUser = Investor::where('name', $firstName)
+                    ->where('surname', $surname)->first();
+            }
 
             if (isset($investorUser->id)) {
                 $query->whereHas('investors', function ($q) use ($investorUser) {
@@ -133,17 +162,26 @@ class AssetController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
+            
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
+                
+                $managerFirstName = array_shift($managerNamesArray);
+                
+                $managerSurname = implode(' ', $managerNamesArray);
+                
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
+            $investorIds = $managerUser ? $managerUser->investors->pluck('id')->toArray() : [];
 
-            $managerFirstName = array_shift($managerNamesArray);
-
-            $managerSurname = implode(' ', $managerNamesArray);
-
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
-            if (isset($managerUser->id)) {
-                $query->where('admin_id', $managerUser->id);
+            if (!empty($investorIds)) {
+                $query->whereHas('investors', function ($q) use ($investorIds) {
+                    $q->whereIn('investors.id', $investorIds);
+                });
             }
         }
 
@@ -182,16 +220,19 @@ class AssetController extends BaseController
             $query->where(function ($query) use ($start, $end) {
                 $query->where('created_at', '>=', $start)
                     ->orWhereHas('rentals', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     })
                     ->orWhereHas('payments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     })
                     ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+                        $q->where('status', 0)
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     });
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
 //                        $q->where('date', '>=', $start);
@@ -200,12 +241,80 @@ class AssetController extends BaseController
             });
         }
 
-        if ($statusFilter !== 'all') {
-            $query->where('sale_status', $statusFilter);
+        // Apply sorting logic
+        switch ($sortField) {
+            case 'type':
+                // Sort by area (size) for Asset Type/Size column
+                // Handle NULL values by putting them at the end
+                if ($sortOrder === 'asc') {
+                    $query->orderByRaw('ISNULL(area), area ASC');
+                } else {
+                    $query->orderByRaw('ISNULL(area), area DESC');
+                }
+                break;
+            case 'agreement_status':
+                $query->orderBy('agreement_status', $sortOrder);
+                break;
+            case 'next_installment':
+                // For installment sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $query->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
+                break;
+            case 'next_rent':
+                // For rent sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $query->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
+                break;
+            case 'next_renovation':
+                // For renovation sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $query->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
+                break;
+            default:
+                // Default sorting by ID descending
+                $query->orderBy($sortField, $sortOrder);
+                break;
         }
 
-        // Order by descending asset ID
-        $this->baseData['allData'] = $query->orderByDesc('id')->paginate(25);
+        // For simple pagination without complex ordering logic
+        $this->baseData['allData'] = $query->paginate(25);
+        
+        // Add sorting parameters to pagination links
+        $this->baseData['allData']->appends([
+            'sort_by' => $sortField,
+            'sort_order' => $sortOrder,
+        ]);
+        
+        // Add sorting info to view data so we can prevent hiding sorted columns
+        $this->baseData['sortField'] = $sortField;
+        $this->baseData['sortOrder'] = $sortOrder;
 
         // Return view with filtered data
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
@@ -222,11 +331,37 @@ class AssetController extends BaseController
         $userId = $user->getAuthIdentifier();
 
         $statusFilter = $request->status ?? 'active';
-
-        $userAssets = $user->assets()->where('status', 'completed')->orderByDesc('id');
-        if ($statusFilter !== 'all') {
-            $userAssets->where('sale_status', $statusFilter);
+        $isDeveloper = Auth::guard('developer')->check();
+        
+        // Handle sorting
+        $sortField = $request->sort_by ?? 'id';
+        $sortOrder = $request->sort_order ?? 'desc';
+        
+        // Always use descending order for date-based columns by default if no order specified
+        if (!$request->has('sort_order') && in_array($sortField, ['next_installment', 'next_rent', 'next_renovation'])) {
+            $sortOrder = 'desc';
         }
+        
+        // Check if the user is a developer
+        if ($isDeveloper) {
+            $developer = Auth::guard('developer')->user();
+            // For developers, find assets with matching names
+            $userAssets = Asset::whereIn('project_name', $developer->assets()->pluck('asset_name')->toArray())->where('developer_access', 1);
+        } else {
+            // For investors, use the relationship
+            $userAssets = $user->assets()->where('status', 'completed');
+        }
+        
+        // Handle status filtering based on status parameter
+        if ($statusFilter === 'active') {
+            $userAssets->where('is_archived', false);
+            $userAssets->where('sale_status', 'active');
+        } elseif ($statusFilter === 'archived') {
+            $userAssets->where('is_archived', true);
+        } elseif ($statusFilter === 'sold') {
+            $userAssets->where('sale_status', 'sold');
+        }
+        // 'all' status will not apply any filters
 
         if ($request->agreement_date && $request->agreement_date !== 'null') {
             $createdDates = explode(',', $request->agreement_date);
@@ -243,6 +378,10 @@ class AssetController extends BaseController
             $userAssets->where('agreement_status', $request->agreement_status);
         }
 
+        if ($request->city && $request->city != 'all') {
+            $userAssets->where('city', $request->city);
+        }
+
         if ($request->asset && $request->asset != 'all') {
             $userAssets->where('project_name', 'like', '%' . $request->asset . '%');
         }
@@ -255,20 +394,26 @@ class AssetController extends BaseController
             $dates = explode(',', $request->payment_date);
             $start = $dates[0] ?? null;
             $end = $dates[1] ?? null;
-            $userAssets->where(function ($userAssets) use ($start, $end) {
-                $userAssets->where('created_at', '>=', $start)
-                    ->orWhereHas('rentals', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
-                    })
-                    ->orWhereHas('payments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
-                    })
-                    ->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
-                        $q->where('payment_date', '>=', $start);
-                        $q->where('payment_date', '<=', $end);
+            $userAssets->where(function ($userAssets) use ($start, $end, $isDeveloper) {
+                if (!$isDeveloper) {
+                    $userAssets->where('created_at', '>=', $start)
+                        ->orWhereHas('rentals', function ($q) use ($start, $end) {
+                            $q->where('status', 0)
+                                ->where('payment_date', '>=', $start)
+                                ->where('payment_date', '<=', $end);
+                        });
+                    $userAssets->orWhereHas('renovationPayments', function ($q) use ($start, $end) {
+                        $q->where('status', 0)
+                            ->where('payment_date', '>=', $start)
+                            ->where('payment_date', '<=', $end);
                     });
+                }
+                $userAssets->orWhereHas('payments', function ($q) use ($start, $end) {
+                    $q->where('status', 0)
+                        ->where('payment_date', '>=', $start)
+                        ->where('payment_date', '<=', $end);
+                });
+
 //                    ->orWhereHas('investments', function ($q) use ($start, $end) {
 //                        $q->where('date', '>=', $start);
 //                        $q->where('date', '<=', $end);
@@ -276,12 +421,127 @@ class AssetController extends BaseController
             });
         }
 
-        if ($userAssets->count() > 0) {
-            $this->baseData['allData'] = $userAssets->paginate(25);
-        } else {
-            $this->baseData['allData'] = $user->assets()->where('sale_status', 'sold')->orderByDesc('id')->paginate(25);
+        if ($request->investor && $request->investor != 'all') {
+            $investorNamesArray = explode(' ', $request->investor);
+
+            // The first part is the name
+            $firstName = array_shift($investorNamesArray);
+
+            // The remaining parts are the surname
+            $surname = implode(' ', $investorNamesArray);
+
+//            $investorNamesArray = explode(' ', $request->investor);
+            $investorUser = Investor::where('name', $firstName)
+                ->where('surname', $surname)->first();
+
+            if (isset($investorUser->id)) {
+                $userAssets->whereHas('investors', function ($q) use ($investorUser) {
+                    $q->where('id', $investorUser->id);
+                });
+            }
         }
 
+        if ($request->manager && $request->manager != 'all') {
+            $managerNamesArray = explode(' ', $request->manager);
+
+            $managerFirstName = array_shift($managerNamesArray);
+
+            $managerSurname = implode(' ', $managerNamesArray);
+
+            $managerUser = Admin::where('name', $managerFirstName)
+                ->where('surname', $managerSurname)->
+                first();
+            $investorIds = $managerUser->investors->pluck('id')->toArray();
+
+            if (!empty($investorIds)) {
+                $userAssets->whereHas('investors', function ($q) use ($investorIds) {
+                    $q->whereIn('investors.id', $investorIds);
+                });
+            }
+        }
+
+
+        // Apply sorting logic after all filters
+        switch ($sortField) {
+            case 'type':
+                // Sort by area (size) for Asset Type/Size column
+                // Handle NULL values by putting them at the end
+                if ($sortOrder === 'asc') {
+                    $userAssets->orderByRaw('ISNULL(area), area ASC');
+                } else {
+                    $userAssets->orderByRaw('ISNULL(area), area DESC');
+                }
+                break;
+            case 'agreement_status':
+                $userAssets->orderBy('agreement_status', $sortOrder);
+                break;
+            case 'next_installment':
+                // For installment sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $userAssets->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM payments WHERE payments.asset_id = assets.id AND payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
+                break;
+            case 'next_rent':
+                // For rent sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $userAssets->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM rentals WHERE rentals.asset_id = assets.id AND rentals.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
+                break;
+            case 'next_renovation':
+                // For renovation sorting, we order by the payment amount
+                // For overdue payments, sum all overdue amounts; for current, use single amount
+                $userAssets->orderBy(
+                    \DB::raw('(
+                        CASE 
+                            WHEN (SELECT MIN(payment_date) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0) < CURDATE()
+                            THEN (SELECT SUM(left_amount) FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 AND payment_date < CURDATE())
+                            ELSE (SELECT left_amount FROM renovation_payments WHERE renovation_payments.asset_id = assets.id AND renovation_payments.status = 0 ORDER BY payment_date ASC LIMIT 1)
+                        END
+                    )'),
+                    $sortOrder
+                );
+                break;
+            default:
+                // Default sorting by ID
+                $userAssets->orderBy($sortField, $sortOrder);
+                break;
+        }
+
+        // Simple pagination for all sorting cases
+        $this->baseData['allData'] = $userAssets->paginate(25);
+        
+        // Add sorting parameters to pagination links
+        $this->baseData['allData']->appends([
+            'sort_by' => $sortField,
+            'sort_order' => $sortOrder,
+        ]);
+
+        // Calculate the "Paid" amount for each asset
+        $this->calculatePaidAmounts($this->baseData['allData'], $request);
+        
+        // Add sorting info to view data so we can prevent hiding sorted columns
+        $this->baseData['sortField'] = $sortField;
+        $this->baseData['sortOrder'] = $sortOrder;
+
+        if (Auth::guard('developer')->check()) {
+            return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index_developer', $this->baseData);
+        }
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
@@ -313,7 +573,12 @@ class AssetController extends BaseController
 
                 $salesManager = null;
 
-                if ($asset->investors->isNotEmpty()) {
+                // Get the manager from the direct relationship
+                if ($asset->manager) {
+                    $salesManager = $asset->manager;
+                } 
+                // Fallback to old method if no manager is assigned
+                else if ($asset->investors->isNotEmpty()) {
                     $investor = $asset->investors->first();
                     $salesManager = Admin::find($investor->admin_id);
                 }
@@ -322,12 +587,22 @@ class AssetController extends BaseController
                 $investors = $asset->investors;
                 $investorNames = [];
                 foreach ($investors as $investor) {
-                    $investorNames[] = $investor->name . ' ' . $investor->surname;
+                    $investorNames[] = $investor->full_name ?? ($investor->name . ' ' . $investor->surname);
                 }
 
                 $investorNames = implode(' / ', $investorNames);
                 $this->baseData['item']['investor_ids'] = $investors->pluck('id')->toArray();
                 $this->baseData['item']['investorNames'] = $investorNames;
+                
+                // Get manager data
+                if ($asset->manager) {
+                    $this->baseData['item']['manager_id'] = $asset->manager_id;
+                    $this->baseData['item']['managerName'] = $asset->manager->full_name ?? ($asset->manager->name . ' ' . $asset->manager->surname);
+                } else {
+                    $this->baseData['item']['manager_id'] = null;
+                    $this->baseData['item']['managerName'] = '';
+                }
+                
                 $this->baseData['item']['attachments'] = AssetAttachment::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['extraDetails'] = AssetInformation::where('asset_id', $asset->id)->get();
                 $this->baseData['item']['agreements'] = AssetAgreement::where('asset_id', $asset->id)->get();
@@ -364,9 +639,9 @@ class AssetController extends BaseController
             $this->baseData['item']['prefixes'] = Country::groupBy('prefix')->get('prefix');
             if (\Auth::guard('admin')->check()) {
                 if (auth()->user()->getRolesNameAttribute() == 'administrator') {
-                    $this->baseData['investors'] = Investor::get(['name', 'surname', 'id']);
+                    $this->baseData['investors'] = Investor::get(['name', 'surname', 'full_name', 'id']);
                 } else {
-                    $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'id']);
+                    $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())->get(['name', 'surname', 'full_name', 'id']);
                 }
             }
         } catch (\Exception $ex) {
@@ -522,6 +797,7 @@ class AssetController extends BaseController
 
         }
 
+
         $assetData = [
             'address' => $request->address,
             'cadastral_number' => $request->cadastral_number,
@@ -562,6 +838,7 @@ class AssetController extends BaseController
             'renovation_total_price' => $request->renovation_total_price ?? null,
             'renovation_status' => $request->renovation_status ?? 'Completed',
             'status' => 'completed',
+            'developer_access' => $request->developer_access ?? 0,
         ];
 
         if (!$request->id) {
@@ -571,8 +848,17 @@ class AssetController extends BaseController
         $asset = Asset::updateOrCreate(['id' => $request->id], $assetData);
 
         $investorIds = explode(',', $request->investor_ids);
-
+        
         $asset->investors()->sync($investorIds);
+        
+        // Set the asset manager
+        if ($request->filled('manager_id')) {
+            $asset->manager_id = $request->manager_id;
+        } else if (!$request->id) {
+            // If no manager specified for new asset, use the current admin as the manager
+            $asset->manager_id = Auth::user()->getAuthIdentifier();
+        }
+        $asset->save();
 
         if ($request->agreement_status === 'Installments') {
             if ($asset->payments) {
@@ -640,8 +926,7 @@ class AssetController extends BaseController
                     $tenant->update(
                         $tenantDataArray
                     );
-                }
-                else{
+                } else {
                     $tenant = Tenant::create($tenantDataArray);
                 }
 
@@ -978,6 +1263,12 @@ class AssetController extends BaseController
                 $investorNames[] = $investor->name . ' ' . $investor->surname;
             }
             $investorNames = implode(' / ', $investorNames);
+            
+            // Get the manager assigned to this asset
+            $managerName = '';
+            if ($asset->manager) {
+                $managerName = $asset->manager->full_name ?? ($asset->manager->name . ' ' . $asset->manager->surname);
+            }
 
             $this->baseData['extra'] = [
                 'asset_edit_route' => route('asset.edit', [$asset->id]),
@@ -986,6 +1277,7 @@ class AssetController extends BaseController
                 'investments_route' => route('asset.investment.index', [$asset->id]),
                 'renovation_route' => $asset->renovation_status === 'In Progress' ? route('asset.renovation.index', [$asset->id]) : null,
                 'investor_name' => $investorNames,
+                'manager_name' => $managerName,
                 'asset_id' => $asset->id
             ];
 
@@ -1030,6 +1322,68 @@ class AssetController extends BaseController
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
 
+    /**
+     * Archive an asset
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function archive($id)
+    {
+        try {
+            $asset = Asset::findOrFail($id);
+            
+            // Archive the asset
+            $asset->is_archived = true;
+            $asset->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Asset has been archived successfully.',
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Unarchive an asset
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unarchive($id)
+    {
+        try {
+            $asset = Asset::findOrFail($id);
+            
+            // Unarchive the asset
+            $asset->is_archived = false;
+            $asset->save();
+            
+            // Automatically unarchive all associated investors if they are archived
+            foreach ($asset->investors as $investor) {
+                if ($investor->is_archived) {
+                    $investor->is_archived = false;
+                    $investor->save();
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Asset has been unarchived successfully. Associated investors were unarchived if needed.',
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
     public function generatePaymentsList($firstPaymentDate, $period, $totalAmount)
     {
         $payments = [];
@@ -1069,6 +1423,46 @@ class AssetController extends BaseController
         return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
     }
 
+    /**
+     * Get available asset managers for assignment
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAvailableManagers(Request $request)
+    {
+        try {
+            $assetId = $request->input('asset_id');
+            
+            $managers = Admin::whereHas('roles', function ($query) {
+                    $query->where('name', 'like', '%asset%manager%')
+                        ->orWhere('name', 'administrator');
+                })
+                ->orderBy('name')
+                ->orderBy('surname')
+                ->get(['id', 'name', 'surname', 'email']);
+                
+            // If asset_id is provided, also mark the currently assigned manager
+            if ($assetId) {
+                $asset = Asset::find($assetId);
+                if ($asset && $asset->manager_id) {
+                    // Add an 'assigned' property to each manager
+                    $managers->each(function($manager) use ($asset) {
+                        $manager->assigned = ($manager->id == $asset->manager_id);
+                    });
+                }
+            }
+            
+            return response()->json([
+                'success' => true,
+                'managers' => $managers
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
     public function filterOptions()
     {
         $this->baseData['investors'] = [];
@@ -1078,7 +1472,8 @@ class AssetController extends BaseController
                     ->orderBy('surname')
                     ->get();
                 $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
-                    $query->where('name', 'like', '%asset%manager%');
+                    $query->where('name', 'like', '%asset%manager%')
+                        ->orWhere('name', 'administrator');
                 })->orderBy('name')
                     ->orderBy('surname')
                     ->get();
@@ -1155,6 +1550,49 @@ class AssetController extends BaseController
 
     }
 
+    public function developerFilterOptions()
+    {
+        $user = \auth()->user();
+        $developerAssetNames = $user->assets()->pluck('asset_name')->toArray();
+
+        $assets = Asset::whereIn('project_name', $developerAssetNames)->where('developer_access', true);
+
+        $this->baseData['assets'] = (clone $assets)
+            ->select('project_name', DB::raw('MAX(id) as max_id'))
+            ->groupBy('project_name')
+            ->orderBy('project_name')
+            ->get();
+
+        $this->baseData['types'] = (clone $assets)
+            ->select('type', DB::raw('MAX(id) as max_id'))
+            ->groupBy('type')
+            ->orderBy('type')
+            ->get();
+
+        $this->baseData['cities'] = (clone $assets)
+            ->select('city', DB::raw('MAX(id) as max_id'))
+            ->groupBy('city')
+            ->orderBy('city')
+            ->get();
+
+        $assetIds = $assets->pluck('id')->unique();
+
+        $investors = Investor::whereHas('assets', function ($q) use ($assetIds) {
+            $q->whereIn('assets.id', $assetIds);
+        })->get();
+        $this->baseData['investors'] = $investors->toArray();
+
+        $managers = [];
+        foreach ($investors as $investor) {
+            $managers[$investor->admin->id] = $investor->admin->toArray();
+        }
+
+        $this->baseData['managers'] = $managers;
+
+        return ServiceResponse::jsonNotification(__(''), 200, $this->baseData);
+
+    }
+
     public function sell(AssetSaleRequest $request, $assetId)
     {
         $path = null;
@@ -1202,6 +1640,7 @@ class AssetController extends BaseController
     {
         $filters = $request->only([
             'agreement_date',
+            'payment_date',
             'investor',
             'status',
             'asset',
@@ -1210,6 +1649,10 @@ class AssetController extends BaseController
             'asset_type',
             'agreement_status',
         ]);
+        if (Auth::guard('developer')->check()) {
+            return Excel::download(new DeveloperAssetExport($filters), 'assets.xlsx');
+        }
+
         return Excel::download(new AssetExport($filters), 'assets.xlsx');
     }
 
@@ -1274,6 +1717,16 @@ class AssetController extends BaseController
                 $investorIds = explode(',', $request->investor_ids);
                 $asset->investors()->sync($investorIds);
             }
+            
+            // Set the asset manager
+            if ($request->filled('manager_id')) {
+                $asset->manager_id = $request->manager_id;
+                $asset->save();
+            } else if (!$request->id) {
+                // If no manager specified for new asset, use the current admin as the manager
+                $asset->manager_id = Auth::user()->getAuthIdentifier();
+                $asset->save();
+            }
 
             // Handle gallery files
             if ($request->has('gallery')) {
@@ -1309,6 +1762,89 @@ class AssetController extends BaseController
 
         } catch (\Exception $ex) {
             return ServiceResponse::jsonNotification($ex->getMessage(), 500);
+        }
+    }
+
+    public function developerAccess(Request $request, $assetId)
+    {
+        try {
+            $asset = Asset::where('id', $assetId)->first();
+            
+            if (!$asset) {
+                return ServiceResponse::jsonNotification('Asset not found.', 500);
+            }
+            
+            // If trying to enable developer access (current state is false), check if developer is attached
+            if (!$asset->developer_access) {
+                $isDeveloperAttached = DeveloperAsset::where('asset_name', $asset->project_name)->exists();
+                
+                if (!$isDeveloperAttached) {
+                    return ServiceResponse::jsonNotification('There is no developer attached to asset "' . $asset->project_name . '", so developer access cannot be enabled.', 500);
+                }
+            }
+            
+            $asset->update(['developer_access' => !$asset->developer_access]);
+
+            // Prepare success message
+            $message = $asset->developer_access 
+                ? 'Developer access enabled for "' . $asset->project_name . '"' 
+                : 'Developer access disabled for "' . $asset->project_name . '"';
+                
+            return ServiceResponse::jsonNotification($message, 200);
+            
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification($ex->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Calculate the paid amounts for each asset in the collection
+     *
+     * @param \Illuminate\Pagination\LengthAwarePaginator $assets
+     * @param Request $request
+     * @return void
+     */
+    private function calculatePaidAmounts($assets, Request $request)
+    {
+        foreach ($assets as $asset) {
+            $payments = $asset->paymentsHistories ?: collect([]);
+
+            // Check if date filters are active
+            if ($request->has('agreement_date') && !is_null($request->agreement_date) && $request->agreement_date !== 'null') {
+                $dateRange = explode(',', $request->agreement_date);
+                $startDate = isset($dateRange[0]) ? date('Y-m-d', strtotime($dateRange[0])) : null;
+                $endDate = isset($dateRange[1]) ? date('Y-m-d', strtotime($dateRange[1])) : null;
+
+                if ($startDate) {
+                    $payments = $payments->filter(function ($payment) use ($startDate) {
+                        return isset($payment->payment_date) && strtotime($payment->payment_date) >= strtotime($startDate);
+                    });
+                }
+
+                if ($endDate) {
+                    $payments = $payments->filter(function ($payment) use ($endDate) {
+                        return isset($payment->payment_date) && strtotime($payment->payment_date) <= strtotime($endDate);
+                    });
+                }
+            }
+
+            if ($asset->agreement_status === 'Installments') {
+                $paid = $payments->sum('amount');
+            } else {
+                $paid = $asset->total_price;
+            }
+
+            // Calculate percentage
+            $paidPercent = $asset->total_price > 0
+                ? (fmod(($paid / $asset->total_price) * 100, 1) == 0
+                    ? number_format(($paid / $asset->total_price) * 100, 0)
+                    : number_format(($paid / $asset->total_price) * 100, 2))
+                : '0';
+
+            // Store calculated values with the asset
+            $asset->paid_amount = $paid;
+            $asset->paid_percent = $paidPercent;
+            $asset->paid_formatted = number_format($paid, 0, ".", ",") . '$ - ' . $paidPercent . '%';
         }
     }
 }

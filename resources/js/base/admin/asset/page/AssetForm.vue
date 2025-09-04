@@ -164,13 +164,15 @@ export default {
                             }
                         }
                     });
-                } else if (key === 'payments') {
+                }                else if (key === 'payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'rentals') {
                     formData.append(key, JSON.stringify(this.form[key]));
                 } else if (key === 'renovation_payments') {
                     formData.append(key, JSON.stringify(this.form[key]));
-                } else if (key === 'tenant') {
+                } else if (key === 'manager_ids') {
+                    formData.append(key, this.form[key]);
+                }else if (key === 'tenant') {
                     for (let tenantKey in this.form.tenant) {
                         if (tenantKey === 'passport' && this.form.tenant[tenantKey] && this.form.tenant[tenantKey].file) {
                             formData.append('tenant[passport]', this.form.tenant[tenantKey].file);

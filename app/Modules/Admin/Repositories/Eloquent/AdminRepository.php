@@ -88,7 +88,7 @@ class AdminRepository extends BaseRepository implements IAdminRepository
              */
             $this->request = $request;
 
-            $data = $request->only(['name', 'surname', 'email', 'prefix', 'phone', 'pid']);
+            $data = $request->only(['name', 'full_name', 'surname', 'email', 'prefix', 'phone', 'pid']);
 
             if ($this->request->get('password')) {
                 $data['password'] = bcrypt($this->request->get('password'));

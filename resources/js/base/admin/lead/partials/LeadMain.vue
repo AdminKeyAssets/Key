@@ -9,18 +9,10 @@
 
                 <el-row>
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Name: </label>
+                        <label class="col-md-2 control-label">Full Name: </label>
                         <div class="col-md-6">
                             <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                      v-model="form.name" @input="capitalizeFirstLetter('name')"></el-input>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Surname: </label>
-                        <div class="col-md-6">
-                            <el-input class="el-input--is-round" maxlength="150" show-word-limit :disabled="loading"
-                                      v-model="form.surname" @input="capitalizeFirstLetter('surname')"></el-input>
+                                      v-model="form.full_name" @input="capitalizeFullName"></el-input>
                         </div>
                     </div>
 
@@ -59,7 +51,7 @@
                                 <el-option
                                     v-for="manager in this.managers"
                                     :key="manager.id"
-                                    :label="manager.name + ' ' + manager.surname"
+                                    :label="manager.full_name || (manager.name + ' ' + manager.surname)"
                                     :value="manager.id"
                                 ></el-option>
                             </el-select>
@@ -114,9 +106,12 @@ export default {
         }
     },
     methods: {
-        capitalizeFirstLetter(field) {
-            if (this.form[field]) {
-                this.form[field] = this.form[field].charAt(0).toUpperCase() + this.form[field].slice(1);
+        capitalizeFullName() {
+            if (this.form.full_name) {
+                // Split the full name into words and capitalize each word
+                this.form.full_name = this.form.full_name.split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
             }
         },
     }

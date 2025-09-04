@@ -24,6 +24,12 @@ class AssetRequest extends FormRequest
             if ($value === 'null') {
                 $value = null;
             }
+            if ($value === 'false') {
+                $value = false;
+            }
+            if ($value === 'true') {
+                $value = true;
+            }
         });
 
         $this->merge($data);
@@ -43,6 +49,7 @@ class AssetRequest extends FormRequest
             'cadastral_number' => 'required',
 //            'investor_id' => 'required',
             'investor_ids' => 'required',
+            'manager_ids' => 'nullable',
             'city' => 'required',
             'currency' => 'required',
             'area' => ['required', 'numeric'],

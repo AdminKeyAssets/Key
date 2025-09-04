@@ -17,6 +17,7 @@ class Investor  extends Authenticatable
         'phone',
         'name',
         'surname',
+        'full_name',
         'pid',
         'citizenship',
         'address',
@@ -24,6 +25,7 @@ class Investor  extends Authenticatable
         'passport',
         'admin_id',
         'is_demo',
+        'is_archived',
         'service_agreement',
     ];
 
@@ -44,5 +46,59 @@ class Investor  extends Authenticatable
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+    
+    /**
+     * Set the name attribute and update full_name
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
+        $this->updateFullName();
+    }
+
+    /**
+     * Set the surname attribute and update full_name
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setSurnameAttribute($value)
+    {
+        $this->attributes['surname'] = $value;
+        $this->updateFullName();
+    }
+
+    /**
+     * Set the full_name attribute and update name and surname
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setFullNameAttribute($value)
+    {
+        $this->attributes['full_name'] = $value;
+        
+        // Split the full name into name and surname
+        $parts = explode(' ', $value, 2);
+        $this->attributes['name'] = $parts[0];
+        $this->attributes['surname'] = $parts[1] ?? '';
+    }
+
+    /**
+     * Update full_name based on name and surname
+     *
+     * @return void
+     */
+    protected function updateFullName()
+    {
+        if (isset($this->attributes['name']) || isset($this->attributes['surname'])) {
+            $name = $this->attributes['name'] ?? '';
+            $surname = $this->attributes['surname'] ?? '';
+            $this->attributes['full_name'] = trim("$name $surname");
+        }
     }
 }

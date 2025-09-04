@@ -73,6 +73,16 @@ class InvestorController extends BaseController
         if (auth()->user()->getRolesNameAttribute() != 'administrator') {
             $query->where('admin_id', auth()->user()->getAuthIdentifier());
         }
+
+        // Handle the archive filter
+        $statusFilter = $request->status ?? 'active';
+        if ($statusFilter === 'active') {
+            $query->where('is_archived', false);
+        } elseif ($statusFilter === 'archived') {
+            $query->where('is_archived', true);
+        }
+        // 'all' status will show all investors
+
         if ($request->citizenship) {
             $query->where('citizenship', '=', $request->input('citizenship'));
         }
@@ -124,22 +134,31 @@ class InvestorController extends BaseController
         }
 
         if ($request->manager && $request->manager != 'all') {
-            $managerNamesArray = explode(' ', $request->manager);
+            // First try to find by full_name
+            $managerUser = Admin::where('full_name', $request->manager)->first();
 
-            $managerFirstName = array_shift($managerNamesArray);
+            // If not found, try with the old name/surname approach
+            if (!$managerUser) {
+                $managerNamesArray = explode(' ', $request->manager);
 
-            $managerSurname = implode(' ', $managerNamesArray);
+                $managerFirstName = array_shift($managerNamesArray);
 
-            $managerUser = Admin::where('name', $managerFirstName)
-                ->where('surname', $managerSurname)->
-                first();
+                $managerSurname = implode(' ', $managerNamesArray);
+
+                $managerUser = Admin::where('name', $managerFirstName)
+                    ->where('surname', $managerSurname)->first();
+            }
+
             if (isset($managerUser->id)) {
                 $query->where('admin_id', $managerUser->id);
             }
         }
 
         if ($request->search && $request->search != 'all') {
-            $query->whereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            $query->where(function($q) use ($request) {
+                $q->where('full_name', 'LIKE', '%' . $request->search . '%')
+                  ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $request->search . '%']);
+            });
         }
 
         $this->baseData['allData'] = $query->paginate();
@@ -323,6 +342,7 @@ class InvestorController extends BaseController
             $data = [
                 'name' => $request->name,
                 'surname' => $request->surname,
+                'full_name' => $request->full_name,
                 'email' => $request->email,
                 'prefix' => $request->prefix,
                 'phone' => $request->phone,
@@ -401,22 +421,19 @@ class InvestorController extends BaseController
         $this->baseData['managers'] = Admin::whereHas('roles', function ($query) {
             $query->where('name', 'like', '%asset%manager%');
         })
-            ->orderBy('name')
-            ->orderBy('surname')
+            ->orderBy('full_name')
             ->get();
 
 
         if (auth()->user()->getRolesNameAttribute() == 'administrator') {
             $this->baseData['countries'] = Investor::distinct()->orderBy('citizenship')->pluck('citizenship');
-            $this->baseData['investors'] = Investor::orderBy('name')
-                ->orderBy('surname')
+            $this->baseData['investors'] = Investor::orderBy('full_name')
                 ->get();
         } else {
             $this->baseData['countries'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
                 ->distinct()->orderBy('citizenship')->pluck('citizenship');
             $this->baseData['investors'] = Investor::where('admin_id', auth()->user()->getAuthIdentifier())
-                ->orderBy('name')
-                ->orderBy('surname')
+                ->orderBy('full_name')
                 ->get();
         }
 
@@ -444,5 +461,79 @@ class InvestorController extends BaseController
         $this->baseData['manager'] = Admin::where('id', $request->manager_id)->first();
 
         return ServiceResponse::jsonNotification(__('Manager changed successfully'), 200, $this->baseData);
+    }
+
+    /**
+     * Archive an investor and all associated assets
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function archive($id)
+    {
+        try {
+            $investor = Investor::findOrFail($id);
+
+            // Archive the investor
+            $investor->is_archived = true;
+            $investor->save();
+
+            // Archive all assets associated with this investor
+            $assets = Asset::whereHas('investors', function ($query) use ($investor) {
+                $query->where('id', $investor->id);
+            })->get();
+
+            foreach ($assets as $asset) {
+                $asset->is_archived = true;
+                $asset->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Investor and all associated assets have been archived successfully.',
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Unarchive an investor and all associated assets
+     *
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unarchive($id)
+    {
+        try {
+            $investor = Investor::findOrFail($id);
+
+            // Unarchive the investor
+            $investor->is_archived = false;
+            $investor->save();
+
+            // Unarchive all assets associated with this investor
+            $assets = Asset::whereHas('investors', function ($query) use ($investor) {
+                $query->where('id', $investor->id);
+            })->get();
+
+            foreach ($assets as $asset) {
+                $asset->is_archived = false;
+                $asset->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Investor and all associated assets have been unarchived successfully.',
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'success' => false,
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
     }
 }

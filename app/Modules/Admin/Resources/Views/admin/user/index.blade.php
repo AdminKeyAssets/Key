@@ -53,7 +53,7 @@
                         <tbody>
                         @foreach($allData as $item)
                             <tr>
-                                <td>{!! $item->name !!} {!! $item->surname !!}</td>
+                                <td>{!! $item->full_name !!} </td>
                                 <td>
                                     @if($item->profile_picture  && !is_null($item->profile_picture) && $item->profile_picture !== 'null')
                                         <image-modal thumbnail="{!! $item->profile_picture !!}"

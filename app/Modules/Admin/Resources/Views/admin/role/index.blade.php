@@ -26,7 +26,7 @@
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Role Not Found')</h3><br>
             @else
-                <div class="table-responsive">
+                <div class="table-responsive table-roles">
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
