@@ -3637,7 +3637,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var response;
+        var action, confirmMessage, response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -3649,12 +3649,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               return _context.abrupt("return");
 
             case 2:
+              action = _this.developerAccess ? 'disable' : 'enable';
+              confirmMessage = "Are you sure you want to ".concat(action, " developer access?");
+              _context.prev = 4;
+              _context.next = 7;
+              return _this.$confirm(confirmMessage, 'Confirm Action', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+              });
+
+            case 7:
+              // If user confirms, proceed with the action
               _this.isLoading = true;
-              _context.prev = 3;
-              _context.next = 6;
+              _context.next = 10;
               return axios.get(_this.route);
 
-            case 6:
+            case 10:
               response = _context.sent;
 
               if (response.data.code === 200) {
@@ -3676,13 +3687,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
               }
 
-              _context.next = 13;
+              _context.next = 19;
               break;
 
-            case 10:
-              _context.prev = 10;
-              _context.t0 = _context["catch"](3);
+            case 14:
+              _context.prev = 14;
+              _context.t0 = _context["catch"](4);
 
+              if (!(_context.t0 === 'cancel')) {
+                _context.next = 18;
+                break;
+              }
+
+              return _context.abrupt("return");
+
+            case 18:
               if (_context.t0.response && _context.t0.response.data && _context.t0.response.data.message) {
                 Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
                   status: 'error',
@@ -3695,16 +3714,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
               }
 
-            case 13:
-              _context.prev = 13;
+            case 19:
+              _context.prev = 19;
               _this.isLoading = false;
-              return _context.finish(13);
+              return _context.finish(19);
 
-            case 16:
+            case 22:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[3, 10, 13, 16]]);
+        }, _callee, null, [[4, 14, 19, 22]]);
       }))();
     }
   }

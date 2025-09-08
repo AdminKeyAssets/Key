@@ -142,6 +142,7 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                             @if(!$hideInvestorColumn)
                             <th> Investor</th>
                             @endif
+                            <th> Agreement Date</th>
                             @if(!$hideTypeColumn)
                             <th>
                                 <a href="{{ getUrlWithSortParams('type', request()->sort_by, request()->sort_order) }}" class="text-dark">
@@ -223,6 +224,9 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                                     @endforeach
                                 </td>
                                 @endif
+                                <td>
+                                    {!! $item->agreement_date !!}
+                                </td>
                                 @if(!$hideTypeColumn)
                                 <td>
 

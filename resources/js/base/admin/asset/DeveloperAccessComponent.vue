@@ -49,9 +49,19 @@ export default {
         async toggleDeveloperAccess() {
             if (this.isLoading) return;
             
-            this.isLoading = true;
+            const action = this.developerAccess ? 'disable' : 'enable';
+            const confirmMessage = `Are you sure you want to ${action} developer access?`;
             
             try {
+                await this.$confirm(confirmMessage, 'Confirm Action', {
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning'
+                });
+                
+                // If user confirms, proceed with the action
+                this.isLoading = true;
+                
                 const response = await axios.get(this.route);
                 
                 if (response.data.code === 200) {
@@ -74,6 +84,11 @@ export default {
                     });
                 }
             } catch (error) {
+                if (error === 'cancel') {
+                    // User cancelled the action
+                    return;
+                }
+                
                 if (error.response && error.response.data && error.response.data.message) {
                     notifications({
                         status: 'error',

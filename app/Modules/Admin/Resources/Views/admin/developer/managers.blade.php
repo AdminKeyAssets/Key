@@ -21,10 +21,11 @@
                     <table class="table table-vcenter table-striped">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Surname</th>
-                            <th>Phone</th>
-                            <th>Email</th>
+                            <th> Name</th>
+                            <th> Profile Pic</th>
+                            <th> Surname</th>
+                            <th> Phone</th>
+                            <th> Email</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -32,6 +33,11 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{{ $item->name }}</td>
+                                <td>
+                                    @if($item->profile_picture)
+                                        <img src="{{ $item->profile_picture }}" alt="{{ $item->name }}" width="50">
+                                    @endif
+                                </td>
                                 <td>{{ $item->surname }}</td>
                                 <td>{{ $item->prefix . $item->phone }}</td>
                                 <td>{{ $item->email }}</td>
