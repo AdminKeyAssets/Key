@@ -716,6 +716,11 @@ class NewsController extends BaseController
             $news = News::forDeveloper($developerId)
                 ->findOrFail($id);
 
+            // Check if developer can edit this news (only if they created it)
+            if ($news->created_by_type !== 'developer') {
+                abort(403, 'You can only edit news that you created yourself.');
+            }
+
             return view('admin::admin.news.developer_edit', ServiceResponse::success($this->baseData));
 
         } catch (\Exception $ex) {
@@ -747,8 +752,8 @@ class NewsController extends BaseController
                 $this->baseData['item'] = $news;
                 $this->baseData['item']['investor_ids'] = $news->investors->pluck('id')->toArray();
                 
-                // Developers can edit all news assigned to them
-                $this->baseData['can_edit'] = true;
+                // Developers can only edit news they created themselves
+                $this->baseData['can_edit'] = $news->created_by_type === 'developer';
 
                 // Format images for frontend
                 $gallery = $news->images->map(function ($image) {
@@ -814,9 +819,19 @@ class NewsController extends BaseController
         try {
             $news = new News();
             if (!empty($input['id'])) {
-                // Editing existing news - ensure developer owns it
-                $news = News::forDeveloper($developerId)
+                // Editing existing news - ensure developer owns it and created it
+                $existingNews = News::forDeveloper($developerId)
                     ->findOrFail($input['id']);
+                
+                // Check if developer can edit this news (only if they created it)
+                if ($existingNews->created_by_type !== 'developer') {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'You can only edit news that you created yourself.',
+                    ]);
+                }
+                
+                $news = $existingNews;
             }
 
             $news->title = $input['title'];
@@ -880,6 +895,14 @@ class NewsController extends BaseController
         try {
             $news = News::forDeveloper($developerId)
                 ->findOrFail($input['id']);
+
+            // Check if developer can delete this news (only if they created it)
+            if ($news->created_by_type !== 'developer') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You can only delete news that you created yourself.',
+                ]);
+            }
 
             $news->delete();
 

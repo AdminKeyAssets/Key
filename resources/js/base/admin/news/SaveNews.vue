@@ -1,6 +1,12 @@
 <template>
     <div>
         <div class="block">
+            <!-- Read-only notice -->
+            <div v-if="!canEdit && form.id" class="alert alert-info">
+                <i class="fa fa-info-circle"></i>
+                <strong>View Only:</strong> This news was assigned to you by management. You can view it but cannot make changes.
+            </div>
+            
             <div class="form-horizontal form-bordered">
 
                 <div class="form-group dashed">
@@ -8,7 +14,7 @@
                     <div class="col-md-10">
                         <input
                             class="form-control"
-                            :disabled="loading || isSubmitting"
+                            :disabled="loading || isSubmitting || !canEdit"
                             v-model="form.title"
                             placeholder="Enter news title" />
                     </div>
@@ -22,7 +28,7 @@
                                 :key="'ckeditor-' + (form.id || 'new')"
                                 :editor="editor"
                                 v-model="form.content"
-                                :disabled="isSubmitting"
+                                :disabled="isSubmitting || !canEdit"
                                 :config="editorConfig"
                                 @ready="onEditorReady"
                                 @destroy="onEditorDestroy">
@@ -37,7 +43,7 @@
                 <div class="form-group dashed">
                     <label class="col-md-2 control-label">Status:</label>
                     <div class="col-md-10">
-                        <el-select v-model="form.status" :disabled="loading || isSubmitting">
+                        <el-select v-model="form.status" :disabled="loading || isSubmitting || !canEdit">
                             <el-option label="Draft" value="draft"></el-option>
                             <el-option label="Published" value="published"></el-option>
                         </el-select>
@@ -50,7 +56,7 @@
                     <div class="col-md-10">
                         <el-select
                             v-model="form.manager_id"
-                            :disabled="loading || isSubmitting"
+                            :disabled="loading || isSubmitting || !canEdit"
                             placeholder="Select a manager (optional)"
                             clearable>
                             <el-option
@@ -69,7 +75,7 @@
                     <div class="col-md-10">
                         <el-select
                             v-model="form.developer_id"
-                            :disabled="loading || isSubmitting"
+                            :disabled="loading || isSubmitting || !canEdit"
                             placeholder="Select a developer (optional)"
                             clearable>
                             <el-option
@@ -88,7 +94,7 @@
                     <div class="col-md-10">
                         <el-select
                             v-model="form.investor_ids"
-                            :disabled="loading || isSubmitting"
+                            :disabled="loading || isSubmitting || !canEdit"
                             multiple
                             filterable
                             placeholder="Select investors">
@@ -118,7 +124,7 @@
                 <div class="form-group dashed">
                     <label class="col-md-2 control-label">Images:</label>
                     <div class="col-md-10">
-                        <div class="upload-container">
+                        <div class="upload-container" v-if="canEdit">
                             <div class="drop-area"
                                  @dragover.prevent
                                  @dragleave.prevent
@@ -149,6 +155,19 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Read-only image display when canEdit is false -->
+                        <div v-else-if="files.length > 0" class="preview">
+                            <div class="thumbnail" v-for="(file, index) in files" :key="index">
+                                <img v-if="file.preview" :src="file.preview" :alt="file.name" class="img-thumbnail">
+                                <img v-else :src="file.image" :alt="file.name" class="img-thumbnail">
+                                <span v-if="index === 0" class="thumbnail-badge">Thumbnail</span>
+                            </div>
+                        </div>
+                        
+                        <div v-else-if="!canEdit" class="text-muted">
+                            <p>No images attached to this news.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -156,9 +175,9 @@
                 <div class="form-group">
                     <div class="col-md-12 text-right">
                         <button @click="goBack" class="btn btn-secondary" :disabled="isSubmitting">
-                            Cancel
+                            {{ canEdit ? 'Cancel' : 'Back' }}
                         </button>
-                        <button @click="saveNews" class="btn btn-primary" :disabled="loading || isSubmitting" style="margin-left: 10px;">
+                        <button v-if="canEdit" @click="saveNews" class="btn btn-primary" :disabled="loading || isSubmitting" style="margin-left: 10px;">
                             <i v-if="isSubmitting" class="fa fa-spinner fa-spin"></i>
                             {{ isSubmitting ? 'Saving...' : (form.id ? 'Update News' : 'Create News') }}
                         </button>
@@ -182,6 +201,7 @@ export default {
             isDestroying: false,
             domReady: false,
             isAdmin: false,
+            canEdit: true, // Flag to determine if user can edit this news
             editor: ClassicEditor,
             editorInstance: null,
             editorConfig: {
@@ -339,6 +359,8 @@ export default {
 
                     // Load existing item data if editing
                     if (data.item) {
+                        this.canEdit = data.can_edit !== false; // Default to true if not specified
+                        
                         this.form = {
                             id: data.item.id,
                             title: data.item.title || '',
@@ -374,6 +396,14 @@ export default {
         },
 
         async saveNews() {
+            if (!this.canEdit) {
+                this.$notify.error({
+                    title: 'Error',
+                    message: 'You do not have permission to edit this news'
+                });
+                return;
+            }
+
             if (!this.form.title.trim()) {
                 this.$notify.error({
                     title: 'Validation Error',
