@@ -35,8 +35,8 @@
                         <div class="col-md-12">
                             <!-- Single image display -->
                             <div v-if="news.images.length === 1" class="single-image-container">
-                                <img :src="news.images[0].image" 
-                                     :alt="news.title" 
+                                <img :src="news.images[0].image"
+                                     :alt="news.title"
                                      class="single-news-image"
                                      @click="openImageModal(news.images[0].image)">
                             </div>
@@ -99,7 +99,7 @@ export default {
             });
             if (response.data.data.item) {
                 this.news = response.data.data.item;
-                
+
                 // Emit event to refresh notification count if this is an investor viewing news
                 if (this.isInvestor) {
                     // Add a small delay to ensure database update completes
@@ -266,7 +266,7 @@ export default {
 
 .single-image-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     margin: 20px 0;
 }
 
