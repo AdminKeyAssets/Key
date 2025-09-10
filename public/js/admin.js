@@ -15661,6 +15661,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       deep: true
     }
   },
+  computed: {
+    isNewsCreatedByDeveloper: function isNewsCreatedByDeveloper() {
+      // Check if this news item was created by a developer
+      return this.form.id && this.form.created_by_type === 'developer';
+    }
+  },
   beforeDestroy: function beforeDestroy() {
     // Set flags to prevent operations during destruction
     this.isDestroying = true;
@@ -138657,7 +138663,9 @@ var render = function() {
             ])
           : _vm._e(),
         _vm._v(" "),
-        _vm.isAdmin && _vm.developers.length > 0
+        _vm.isAdmin &&
+        _vm.developers.length > 0 &&
+        !_vm.isNewsCreatedByDeveloper
           ? _c("div", { staticClass: "form-group dashed" }, [
               _c("label", { staticClass: "col-md-2 control-label" }, [
                 _vm._v("Assign Developer:")

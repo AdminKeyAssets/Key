@@ -69,8 +69,8 @@
                     </div>
                 </div>
 
-                <!-- Developer Selection (only for administrators) -->
-                <div v-if="isAdmin && developers.length > 0" class="form-group dashed">
+                <!-- Developer Selection (only for administrators and not for news created by developers) -->
+                <div v-if="isAdmin && developers.length > 0 && !isNewsCreatedByDeveloper" class="form-group dashed">
                     <label class="col-md-2 control-label">Assign Developer:</label>
                     <div class="col-md-10">
                         <el-select
@@ -268,6 +268,12 @@ export default {
                 }
             },
             deep: true
+        }
+    },
+    computed: {
+        isNewsCreatedByDeveloper() {
+            // Check if this news item was created by a developer
+            return this.form.id && this.form.created_by_type === 'developer';
         }
     },
     beforeDestroy() {
