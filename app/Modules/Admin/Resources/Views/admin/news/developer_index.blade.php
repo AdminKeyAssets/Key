@@ -39,7 +39,7 @@
                             <th>Thumbnail</th>
                             <th>Title</th>
                             <th>Status</th>
-                            <!-- <th>Created By</th> -->
+                            <th>Created By</th>
                             <th>Investors</th>
                             <th width="15%" class="text-center">Actions</th>
                         </tr>
@@ -70,7 +70,7 @@
                                         <span class="badge badge-warning">Draft</span>
                                     @endif
                                 </td>
-                                <!-- <td>
+                                <td>
                                     @if($item->created_by_type === 'developer')
                                         <span class="badge badge-primary">You</span>
                                         <br><small class="text-muted">Created by Developer</small>
@@ -81,7 +81,7 @@
                                         <span class="badge badge-secondary">Manager</span>
                                         <br><small class="text-muted">{{ $item->created_by_name }}</small>
                                     @endif
-                                </td> -->
+                                </td>
                                 <td>
                                     @if($item->investors && $item->investors->count() > 0)
                                         <span class="badge badge-info">{{ $item->investors->count() }} investor(s)</span>
@@ -141,6 +141,9 @@
         text-align: left !important;
     }
     td:nth-child(4) {
+        text-align: center !important;
+    }
+    td:nth-child(5) {
         text-align: center !important;
     }
 </style>

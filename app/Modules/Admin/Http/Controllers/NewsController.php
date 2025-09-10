@@ -317,7 +317,6 @@ class NewsController extends BaseController
                 'title' => $request->title,
                 'content' => $request->get('content'),
                 'status' => $request->status ?? 'draft',
-                'admin_id' => Auth::id(),
             ];
 
             // Handle manager assignment (only for admins)
@@ -325,16 +324,10 @@ class NewsController extends BaseController
                 $newsData['manager_id'] = $request->manager_id;
             }
 
-            // Handle developer assignment (only for admins)
+            // Handle developer assignment (only for admins and only for new news)
+            // For existing news, developer_id should only be changed if it's an assignment, not overwrite original creator
             if (Auth::user()->hasRole('administrator') && $request->developer_id) {
-                $newsData['developer_id'] = $request->developer_id;
-            }
-
-            // Set created_by_type
-            if (Auth::user()->hasRole('administrator')) {
-                $newsData['created_by_type'] = 'admin';
-            } else {
-                $newsData['created_by_type'] = 'manager';
+                // This will be handled differently for new vs existing news below
             }
 
             // Set published_at if status is published
@@ -350,8 +343,33 @@ class NewsController extends BaseController
                     return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
                 }
 
+                // For existing news, only allow developer assignment if the news wasn't originally created by a developer
+                // If it was created by a developer, we shouldn't change the developer_id
+                if (Auth::user()->hasRole('administrator') && $request->developer_id) {
+                    if ($news->created_by_type !== 'developer') {
+                        $newsData['developer_id'] = $request->developer_id;
+                    }
+                    // If it was created by a developer, we don't touch developer_id
+                }
+
+                // Don't update created_by fields when editing existing news
                 $news->update($newsData);
             } else {
+                // For new news, set creator information
+                $newsData['admin_id'] = Auth::id();
+                
+                // Set created_by_type only for new news
+                if (Auth::user()->hasRole('administrator')) {
+                    $newsData['created_by_type'] = 'admin';
+                } else {
+                    $newsData['created_by_type'] = 'manager';
+                }
+
+                // Handle developer assignment for new news
+                if (Auth::user()->hasRole('administrator') && $request->developer_id) {
+                    $newsData['developer_id'] = $request->developer_id;
+                }
+
                 $news = News::create($newsData);
             }
 
@@ -782,6 +800,9 @@ class NewsController extends BaseController
 
             // Developers don't assign managers
             $this->baseData['managers'] = [];
+            
+            // Developers don't assign to other developers
+            $this->baseData['developers'] = [];
 
         } catch (\Exception $ex) {
             Log::error('Error during developer news create data', ['message' => $ex->getMessage(), 'data' => $request->all()]);
@@ -838,8 +859,12 @@ class NewsController extends BaseController
             $news->content = $input['content'];
             $news->status = $input['status'];
             $news->thumbnail = $input['thumbnail'] ?? null;
-            $news->developer_id = $developerId;
-            $news->created_by_type = 'developer';
+            
+            // Only set creator information for new news
+            if (empty($input['id'])) {
+                $news->developer_id = $developerId;
+                $news->created_by_type = 'developer';
+            }
             
             if ($input['status'] === 'published' && !$news->published_at) {
                 $news->published_at = now();
