@@ -39,6 +39,7 @@
                             <th>Thumbnail</th>
                             <th>Title</th>
                             <th>Status</th>
+                            <!-- <th>Created By</th> -->
                             <th>Investors</th>
                             <th width="15%" class="text-center">Actions</th>
                         </tr>
@@ -69,6 +70,18 @@
                                         <span class="badge badge-warning">Draft</span>
                                     @endif
                                 </td>
+                                <!-- <td>
+                                    @if($item->created_by_type === 'developer')
+                                        <span class="badge badge-primary">You</span>
+                                        <br><small class="text-muted">Created by Developer</small>
+                                    @elseif($item->created_by_type === 'admin')
+                                        <span class="badge badge-info">Admin</span>
+                                        <br><small class="text-muted">{{ $item->created_by_name }}</small>
+                                    @else
+                                        <span class="badge badge-secondary">Manager</span>
+                                        <br><small class="text-muted">{{ $item->created_by_name }}</small>
+                                    @endif
+                                </td> -->
                                 <td>
                                     @if($item->investors && $item->investors->count() > 0)
                                         <span class="badge badge-info">{{ $item->investors->count() }} investor(s)</span>
@@ -85,11 +98,19 @@
                                 </td>
                                 <td class="text-center">
                                     @include('admin::includes.actions.view', ['route' => route('developer.news.view', $item->id)])
-                                    @include('admin::includes.actions.edit', ['route' => route('developer.news.edit', $item->id)])
-                                    <delete-component
-                                        :url="'{{ route('developer.news.delete') }}'"
-                                        :id="{{ $item->id }}"
-                                    ></delete-component>
+                                    
+                                    {{-- Only show edit/delete for news created by developer --}}
+                                    @if($item->created_by_type === 'developer')
+                                        @include('admin::includes.actions.edit', ['route' => route('developer.news.edit', $item->id)])
+                                        <delete-component
+                                            :url="'{{ route('developer.news.delete') }}'"
+                                            :id="{{ $item->id }}"
+                                        ></delete-component>
+                                    @else
+                                        <span class="text-muted" title="This news was assigned to you by management">
+                                            <i class="fa fa-eye-slash"></i> View Only
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -118,5 +139,8 @@
     }
     td:nth-child(2) {
         text-align: left !important;
+    }
+    td:nth-child(4) {
+        text-align: center !important;
     }
 </style>

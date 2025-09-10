@@ -15565,6 +15565,25 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -15576,6 +15595,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       isDestroying: false,
       domReady: false,
       isAdmin: false,
+      canEdit: true,
+      // Flag to determine if user can edit this news
       editor: _ckeditor_ckeditor5_build_classic__WEBPACK_IMPORTED_MODULE_2___default.a,
       editorInstance: null,
       editorConfig: {
@@ -15745,6 +15766,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 _this3.isAdmin = data.managers && data.managers.length > 0; // Load existing item data if editing
 
                 if (data.item) {
+                  _this3.canEdit = data.can_edit !== false; // Default to true if not specified
+
                   _this3.form = {
                     id: data.item.id,
                     title: data.item.title || '',
@@ -15805,8 +15828,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              if (_this4.form.title.trim()) {
+              if (_this4.canEdit) {
                 _context2.next = 3;
+                break;
+              }
+
+              _this4.$notify.error({
+                title: 'Error',
+                message: 'You do not have permission to edit this news'
+              });
+
+              return _context2.abrupt("return");
+
+            case 3:
+              if (_this4.form.title.trim()) {
+                _context2.next = 6;
                 break;
               }
 
@@ -15817,9 +15853,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
               return _context2.abrupt("return");
 
-            case 3:
+            case 6:
               if (_this4.form.content.trim()) {
-                _context2.next = 6;
+                _context2.next = 9;
                 break;
               }
 
@@ -15830,9 +15866,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
               return _context2.abrupt("return");
 
-            case 6:
+            case 9:
               _this4.isSubmitting = true;
-              _context2.prev = 7;
+              _context2.prev = 10;
               formData = new FormData();
 
               if (_this4.form.id) {
@@ -15868,18 +15904,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 });
               }
 
-              _context2.next = 19;
+              _context2.next = 22;
               return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this4.saveRoute, formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data'
                 }
               });
 
-            case 19:
+            case 22:
               response = _context2.sent;
 
               if (!response.data.status) {
-                _context2.next = 25;
+                _context2.next = 28;
                 break;
               }
 
@@ -15891,19 +15927,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
               window.location.href = _this4.backRoute;
-              _context2.next = 26;
-              break;
-
-            case 25:
-              throw new Error(response.data.message || 'Failed to save news');
-
-            case 26:
-              _context2.next = 32;
+              _context2.next = 29;
               break;
 
             case 28:
-              _context2.prev = 28;
-              _context2.t0 = _context2["catch"](7);
+              throw new Error(response.data.message || 'Failed to save news');
+
+            case 29:
+              _context2.next = 35;
+              break;
+
+            case 31:
+              _context2.prev = 31;
+              _context2.t0 = _context2["catch"](10);
               console.error('Error saving news:', _context2.t0);
 
               _this4.$notify.error({
@@ -15911,16 +15947,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                 message: ((_error$response = _context2.t0.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to save news'
               });
 
-            case 32:
-              _context2.prev = 32;
-              _this4.isSubmitting = false;
-              return _context2.finish(32);
-
             case 35:
+              _context2.prev = 35;
+              _this4.isSubmitting = false;
+              return _context2.finish(35);
+
+            case 38:
             case "end":
               return _context2.stop();
           }
-        }, _callee2, null, [[7, 28, 32, 35]]);
+        }, _callee2, null, [[10, 31, 35, 38]]);
       }))();
     },
     // Image handling methods
@@ -138444,6 +138480,17 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "block" }, [
+      !_vm.canEdit && _vm.form.id
+        ? _c("div", { staticClass: "alert alert-info" }, [
+            _c("i", { staticClass: "fa fa-info-circle" }),
+            _vm._v(" "),
+            _c("strong", [_vm._v("View Only:")]),
+            _vm._v(
+              " This news was assigned to you by management. You can view it but cannot make changes.\n        "
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
       _c("div", { staticClass: "form-horizontal form-bordered" }, [
         _c("div", { staticClass: "form-group dashed" }, [
           _c("label", { staticClass: "col-md-2 control-label" }, [
@@ -138462,7 +138509,7 @@ var render = function() {
               ],
               staticClass: "form-control",
               attrs: {
-                disabled: _vm.loading || _vm.isSubmitting,
+                disabled: _vm.loading || _vm.isSubmitting || !_vm.canEdit,
                 placeholder: "Enter news title"
               },
               domProps: { value: _vm.form.title },
@@ -138493,7 +138540,7 @@ var render = function() {
                       key: "ckeditor-" + (_vm.form.id || "new"),
                       attrs: {
                         editor: _vm.editor,
-                        disabled: _vm.isSubmitting,
+                        disabled: _vm.isSubmitting || !_vm.canEdit,
                         config: _vm.editorConfig
                       },
                       on: {
@@ -138537,7 +138584,9 @@ var render = function() {
               _c(
                 "el-select",
                 {
-                  attrs: { disabled: _vm.loading || _vm.isSubmitting },
+                  attrs: {
+                    disabled: _vm.loading || _vm.isSubmitting || !_vm.canEdit
+                  },
                   model: {
                     value: _vm.form.status,
                     callback: function($$v) {
@@ -138576,7 +138625,8 @@ var render = function() {
                     "el-select",
                     {
                       attrs: {
-                        disabled: _vm.loading || _vm.isSubmitting,
+                        disabled:
+                          _vm.loading || _vm.isSubmitting || !_vm.canEdit,
                         placeholder: "Select a manager (optional)",
                         clearable: ""
                       },
@@ -138621,7 +138671,8 @@ var render = function() {
                     "el-select",
                     {
                       attrs: {
-                        disabled: _vm.loading || _vm.isSubmitting,
+                        disabled:
+                          _vm.loading || _vm.isSubmitting || !_vm.canEdit,
                         placeholder: "Select a developer (optional)",
                         clearable: ""
                       },
@@ -138665,7 +138716,7 @@ var render = function() {
                 "el-select",
                 {
                   attrs: {
-                    disabled: _vm.loading || _vm.isSubmitting,
+                    disabled: _vm.loading || _vm.isSubmitting || !_vm.canEdit,
                     multiple: "",
                     filterable: "",
                     placeholder: "Select investors"
@@ -138745,111 +138796,150 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-md-10" }, [
-            _c("div", { staticClass: "upload-container" }, [
-              _c(
-                "div",
-                {
-                  staticClass: "drop-area",
-                  on: {
-                    dragover: function($event) {
-                      $event.preventDefault()
-                    },
-                    dragleave: function($event) {
-                      $event.preventDefault()
-                    },
-                    drop: function($event) {
-                      $event.preventDefault()
-                      return _vm.handleDrop($event)
-                    },
-                    click: _vm.triggerInput
-                  }
-                },
-                [
-                  _c("p", [_vm._v("Drag your images here or click to upload")]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-muted" }, [
-                    _vm._v("The first image will be used as thumbnail")
-                  ]),
-                  _vm._v(" "),
-                  _c("input", {
-                    ref: "fileInput",
-                    staticStyle: { display: "none" },
-                    attrs: { type: "file", multiple: "", accept: "image/*" },
-                    on: { change: _vm.handleFiles }
-                  })
-                ]
-              ),
-              _vm._v(" "),
-              _vm.files.length > 0
-                ? _c(
+            _vm.canEdit
+              ? _c("div", { staticClass: "upload-container" }, [
+                  _c(
                     "div",
-                    { staticClass: "preview" },
-                    _vm._l(_vm.files, function(file, index) {
-                      return _c(
-                        "div",
-                        {
-                          key: index,
-                          staticClass: "thumbnail",
-                          attrs: { draggable: "true" },
-                          on: {
-                            dragstart: function($event) {
-                              return _vm.onDragStart(index)
-                            },
-                            dragover: function($event) {
-                              $event.preventDefault()
-                            },
-                            drop: function($event) {
-                              return _vm.onDrop(index)
-                            }
-                          }
+                    {
+                      staticClass: "drop-area",
+                      on: {
+                        dragover: function($event) {
+                          $event.preventDefault()
                         },
-                        [
-                          file.preview
-                            ? _c("img", {
-                                staticClass: "img-thumbnail",
-                                attrs: { src: file.preview, alt: file.name }
-                              })
-                            : _c("img", {
-                                staticClass: "img-thumbnail",
-                                attrs: { src: file.image, alt: file.name }
-                              }),
-                          _vm._v(" "),
-                          _c(
+                        dragleave: function($event) {
+                          $event.preventDefault()
+                        },
+                        drop: function($event) {
+                          $event.preventDefault()
+                          return _vm.handleDrop($event)
+                        },
+                        click: _vm.triggerInput
+                      }
+                    },
+                    [
+                      _c("p", [
+                        _vm._v("Drag your images here or click to upload")
+                      ]),
+                      _vm._v(" "),
+                      _c("p", { staticClass: "text-muted" }, [
+                        _vm._v("The first image will be used as thumbnail")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        ref: "fileInput",
+                        staticStyle: { display: "none" },
+                        attrs: {
+                          type: "file",
+                          multiple: "",
+                          accept: "image/*"
+                        },
+                        on: { change: _vm.handleFiles }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _vm.files.length > 0
+                    ? _c(
+                        "div",
+                        { staticClass: "preview" },
+                        _vm._l(_vm.files, function(file, index) {
+                          return _c(
                             "div",
                             {
-                              staticClass: "remove",
+                              key: index,
+                              staticClass: "thumbnail",
+                              attrs: { draggable: "true" },
                               on: {
-                                click: function($event) {
-                                  return _vm.removeFile(index)
+                                dragstart: function($event) {
+                                  return _vm.onDragStart(index)
+                                },
+                                dragover: function($event) {
+                                  $event.preventDefault()
+                                },
+                                drop: function($event) {
+                                  return _vm.onDrop(index)
                                 }
                               }
                             },
-                            [_vm._v("×")]
-                          ),
-                          _vm._v(" "),
-                          index === 0
-                            ? _c("span", { staticClass: "thumbnail-badge" }, [
-                                _vm._v("Thumbnail")
-                              ])
-                            : _c(
-                                "span",
+                            [
+                              file.preview
+                                ? _c("img", {
+                                    staticClass: "img-thumbnail",
+                                    attrs: { src: file.preview, alt: file.name }
+                                  })
+                                : _c("img", {
+                                    staticClass: "img-thumbnail",
+                                    attrs: { src: file.image, alt: file.name }
+                                  }),
+                              _vm._v(" "),
+                              _c(
+                                "div",
                                 {
-                                  staticClass: "move-to-front",
+                                  staticClass: "remove",
                                   on: {
                                     click: function($event) {
-                                      return _vm.moveToFront(index)
+                                      return _vm.removeFile(index)
                                     }
                                   }
                                 },
-                                [_c("i", { staticClass: "fa fa-arrow-up" })]
-                              )
-                        ]
+                                [_vm._v("×")]
+                              ),
+                              _vm._v(" "),
+                              index === 0
+                                ? _c(
+                                    "span",
+                                    { staticClass: "thumbnail-badge" },
+                                    [_vm._v("Thumbnail")]
+                                  )
+                                : _c(
+                                    "span",
+                                    {
+                                      staticClass: "move-to-front",
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.moveToFront(index)
+                                        }
+                                      }
+                                    },
+                                    [_c("i", { staticClass: "fa fa-arrow-up" })]
+                                  )
+                            ]
+                          )
+                        }),
+                        0
                       )
-                    }),
-                    0
-                  )
-                : _vm._e()
-            ])
+                    : _vm._e()
+                ])
+              : _vm.files.length > 0
+              ? _c(
+                  "div",
+                  { staticClass: "preview" },
+                  _vm._l(_vm.files, function(file, index) {
+                    return _c("div", { key: index, staticClass: "thumbnail" }, [
+                      file.preview
+                        ? _c("img", {
+                            staticClass: "img-thumbnail",
+                            attrs: { src: file.preview, alt: file.name }
+                          })
+                        : _c("img", {
+                            staticClass: "img-thumbnail",
+                            attrs: { src: file.image, alt: file.name }
+                          }),
+                      _vm._v(" "),
+                      index === 0
+                        ? _c("span", { staticClass: "thumbnail-badge" }, [
+                            _vm._v("Thumbnail")
+                          ])
+                        : _vm._e()
+                    ])
+                  }),
+                  0
+                )
+              : !_vm.canEdit
+              ? _c("div", { staticClass: "text-muted" }, [
+                  _c("p", [_vm._v("No images attached to this news.")])
+                ])
+              : _vm._e()
           ])
         ]),
         _vm._v(" "),
@@ -138862,34 +138952,42 @@ var render = function() {
                 attrs: { disabled: _vm.isSubmitting },
                 on: { click: _vm.goBack }
               },
-              [_vm._v("\n                        Cancel\n                    ")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                staticStyle: { "margin-left": "10px" },
-                attrs: { disabled: _vm.loading || _vm.isSubmitting },
-                on: { click: _vm.saveNews }
-              },
               [
-                _vm.isSubmitting
-                  ? _c("i", { staticClass: "fa fa-spinner fa-spin" })
-                  : _vm._e(),
                 _vm._v(
                   "\n                        " +
-                    _vm._s(
-                      _vm.isSubmitting
-                        ? "Saving..."
-                        : _vm.form.id
-                        ? "Update News"
-                        : "Create News"
-                    ) +
+                    _vm._s(_vm.canEdit ? "Cancel" : "Back") +
                     "\n                    "
                 )
               ]
-            )
+            ),
+            _vm._v(" "),
+            _vm.canEdit
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    staticStyle: { "margin-left": "10px" },
+                    attrs: { disabled: _vm.loading || _vm.isSubmitting },
+                    on: { click: _vm.saveNews }
+                  },
+                  [
+                    _vm.isSubmitting
+                      ? _c("i", { staticClass: "fa fa-spinner fa-spin" })
+                      : _vm._e(),
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(
+                          _vm.isSubmitting
+                            ? "Saving..."
+                            : _vm.form.id
+                            ? "Update News"
+                            : "Create News"
+                        ) +
+                        "\n                    "
+                    )
+                  ]
+                )
+              : _vm._e()
           ])
         ])
       ])
