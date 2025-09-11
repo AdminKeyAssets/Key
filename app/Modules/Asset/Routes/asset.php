@@ -11,6 +11,7 @@ Route::prefix('assets')->name('asset.')->group(function () {
     Route::post('/create-data', $controller . '@createData')->name('create_data');
     Route::get('/edit/{id?}', $controller . '@edit')->name('edit')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/developer_access/{id?}', $controller . '@developerAccess')->name('developer_access')->middleware(['auth:developer,admin']);
+    Route::post('/developer_access_bulk/{id?}', $controller . '@developerAccessBulk')->name('developer_access_bulk')->middleware(['auth:admin']);
     Route::post('/sell/{id?}', $controller . '@sell')->name('sell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::post('/delete/sell/{id?}', $controller . '@deleteSell')->name('deleteSell')->middleware(['permission:' . getPermissionKey($moduleName, 'update', true)]);
     Route::get('/view/{id?}', $controller . '@view')->name('view')->middleware(['permission:' . getPermissionKey($moduleName, 'view', true)]);

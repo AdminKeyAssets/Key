@@ -3637,7 +3637,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var action, confirmMessage, response;
+        var action, result;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -3650,32 +3650,78 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
             case 2:
               action = _this.developerAccess ? 'disable' : 'enable';
-              confirmMessage = "Are you sure you want to ".concat(action, " developer access?");
-              _context.prev = 4;
-              _context.next = 7;
-              return _this.$confirm(confirmMessage, 'Confirm Action', {
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Cancel',
+              _context.prev = 3;
+              _context.next = 6;
+              return _this.$confirm("Choose how you want to ".concat(action, " developer access:"), 'Developer Access Action', {
+                customClass: 'developer-access-modal',
+                distinguishCancelAndClose: true,
+                confirmButtonText: "".concat(action.charAt(0).toUpperCase() + action.slice(1), " This Asset"),
+                cancelButtonText: "".concat(action.charAt(0).toUpperCase() + action.slice(1), " All with Same Name"),
                 type: 'warning'
               });
 
-            case 7:
-              // If user confirms, proceed with the action
-              _this.isLoading = true;
-              _context.next = 10;
-              return axios.get(_this.route);
+            case 6:
+              result = _context.sent;
+
+              // If confirmed (single asset)
+              _this.performSingleToggle();
+
+              _context.next = 18;
+              break;
 
             case 10:
-              response = _context.sent;
+              _context.prev = 10;
+              _context.t0 = _context["catch"](3);
+
+              if (!(_context.t0 === 'cancel')) {
+                _context.next = 16;
+                break;
+              }
+
+              // If cancelled (bulk action)
+              _this.performBulkToggle();
+
+              _context.next = 18;
+              break;
+
+            case 16:
+              if (!(_context.t0 === 'close')) {
+                _context.next = 18;
+                break;
+              }
+
+              return _context.abrupt("return");
+
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, null, [[3, 10]]);
+      }))();
+    },
+    performSingleToggle: function performSingleToggle() {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _this2.isLoading = true;
+              _context2.prev = 1;
+              _context2.next = 4;
+              return axios.get(_this2.route);
+
+            case 4:
+              response = _context2.sent;
 
               if (response.data.code === 200) {
                 Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
                   status: 'success',
                   message: response.data.message
-                }); // Update the local state
+                });
 
-                _this.$emit('access-changed', !_this.developerAccess); // Optionally reload the page to reflect changes
-
+                _this2.$emit('access-changed', !_this2.developerAccess);
 
                 setTimeout(function () {
                   window.location.reload();
@@ -3687,25 +3733,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
               }
 
-              _context.next = 19;
+              _context2.next = 11;
               break;
 
-            case 14:
-              _context.prev = 14;
-              _context.t0 = _context["catch"](4);
+            case 8:
+              _context2.prev = 8;
+              _context2.t0 = _context2["catch"](1);
 
-              if (!(_context.t0 === 'cancel')) {
-                _context.next = 18;
-                break;
-              }
-
-              return _context.abrupt("return");
-
-            case 18:
-              if (_context.t0.response && _context.t0.response.data && _context.t0.response.data.message) {
+              if (_context2.t0.response && _context2.t0.response.data && _context2.t0.response.data.message) {
                 Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
                   status: 'error',
-                  message: _context.t0.response.data.message
+                  message: _context2.t0.response.data.message
                 });
               } else {
                 Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
@@ -3714,16 +3752,82 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
               }
 
-            case 19:
-              _context.prev = 19;
-              _this.isLoading = false;
-              return _context.finish(19);
+            case 11:
+              _context2.prev = 11;
+              _this2.isLoading = false;
+              return _context2.finish(11);
 
-            case 22:
+            case 14:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
-        }, _callee, null, [[4, 14, 19, 22]]);
+        }, _callee2, null, [[1, 8, 11, 14]]);
+      }))();
+    },
+    performBulkToggle: function performBulkToggle() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        var bulkRoute, response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              _this3.isLoading = true;
+              _context3.prev = 1;
+              bulkRoute = _this3.route.replace('/developer_access/', '/developer_access_bulk/');
+              _context3.next = 5;
+              return axios.post(bulkRoute, {
+                asset_id: _this3.assetId,
+                developer_access: !_this3.developerAccess
+              });
+
+            case 5:
+              response = _context3.sent;
+
+              if (response.data.code === 200) {
+                Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
+                  status: 'success',
+                  message: response.data.message
+                });
+                setTimeout(function () {
+                  window.location.reload();
+                }, 1000);
+              } else {
+                Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
+                  status: 'error',
+                  message: response.data.message
+                });
+              }
+
+              _context3.next = 12;
+              break;
+
+            case 9:
+              _context3.prev = 9;
+              _context3.t0 = _context3["catch"](1);
+
+              if (_context3.t0.response && _context3.t0.response.data && _context3.t0.response.data.message) {
+                Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
+                  status: 'error',
+                  message: _context3.t0.response.data.message
+                });
+              } else {
+                Object(_mixins_notifications__WEBPACK_IMPORTED_MODULE_1__["notifications"])({
+                  status: 'error',
+                  message: 'An error occurred while updating developer access for all assets.'
+                });
+              }
+
+            case 12:
+              _context3.prev = 12;
+              _this3.isLoading = false;
+              return _context3.finish(12);
+
+            case 15:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3, null, [[1, 9, 12, 15]]);
       }))();
     }
   }

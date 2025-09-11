@@ -1797,6 +1797,42 @@ class AssetController extends BaseController
         }
     }
 
+    public function developerAccessBulk(Request $request, $assetId)
+    {
+        try {
+            $asset = Asset::where('id', $assetId)->first();
+            
+            if (!$asset) {
+                return ServiceResponse::jsonNotification('Asset not found.', 500);
+            }
+            
+            $projectName = $asset->project_name;
+            $newDeveloperAccess = $request->developer_access;
+            
+            // If trying to enable developer access, check if developer is attached to this project
+            if ($newDeveloperAccess) {
+                $isDeveloperAttached = DeveloperAsset::where('asset_name', $projectName)->exists();
+                
+                if (!$isDeveloperAttached) {
+                    return ServiceResponse::jsonNotification('There is no developer attached to project "' . $projectName . '", so developer access cannot be enabled.', 500);
+                }
+            }
+            
+            // Update all assets with the same project name
+            $affectedCount = Asset::where('project_name', $projectName)
+                ->update(['developer_access' => $newDeveloperAccess]);
+
+            // Prepare success message
+            $action = $newDeveloperAccess ? 'enabled' : 'disabled';
+            $message = "Developer access {$action} for {$affectedCount} asset(s) with project name \"{$projectName}\"";
+                
+            return ServiceResponse::jsonNotification($message, 200);
+            
+        } catch (\Exception $ex) {
+            return ServiceResponse::jsonNotification($ex->getMessage(), 500);
+        }
+    }
+
     /**
      * Calculate the paid amounts for each asset in the collection
      *
