@@ -66,9 +66,9 @@
         </div>
 
         <!-- Image Modal -->
-        <!--<el-dialog :visible.sync="imageModalVisible" class="image-modal">
+        <el-dialog :visible.sync="imageModalVisible" class="image-modal">
             <img :src="selectedImage" alt="News Image" style="width: 100%; height: auto;">
-        </el-dialog>-->
+        </el-dialog>
     </div>
 </template>
 
@@ -84,7 +84,9 @@ export default {
     data() {
         return {
             loading: false,
-            news: null
+            news: null,
+            imageModalVisible: false,
+            selectedImage: ''
         };
     },
     mounted() {
@@ -125,8 +127,8 @@ export default {
     },
 
         openImageModal(imageSrc) {
-            // Simple image modal - you can enhance this with a proper modal component
-            window.open(imageSrc, '_blank');
+            this.selectedImage = imageSrc;
+            this.imageModalVisible = true;
         },
 
         formatDate(dateString) {

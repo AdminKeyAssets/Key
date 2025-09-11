@@ -16188,7 +16188,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       loading: false,
-      news: null
+      news: null,
+      imageModalVisible: false,
+      selectedImage: ''
     };
   },
   mounted: function mounted() {
@@ -16255,8 +16257,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     openImageModal: function openImageModal(imageSrc) {
-      // Simple image modal - you can enhance this with a proper modal component
-      window.open(imageSrc, '_blank');
+      this.selectedImage = imageSrc;
+      this.imageModalVisible = true;
     },
     formatDate: function formatDate(dateString) {
       if (!dateString) return '';
@@ -139024,117 +139026,144 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "block" }, [
-      _c("div", { staticClass: "form-horizontal form-bordered" }, [
-        _vm.loading
-          ? _c("div", { staticClass: "text-center" }, [
-              _c("i", { staticClass: "fa fa-spinner fa-spin fa-2x" }),
-              _vm._v(" "),
-              _c("p", [_vm._v("Loading news...")])
-            ])
-          : _vm.news
-          ? _c("div", { staticClass: "news-content" }, [
-              _c("div", { staticClass: "form-group dashed" }, [
-                _c("div", { staticClass: "col-md-6" }, [
-                  _c("div", { staticClass: "status-section" }, [
-                    _vm.news.status === "published"
-                      ? _c("span", { staticClass: "badge badge-success" }, [
-                          _vm._v("Published")
-                        ])
-                      : _c("span", { staticClass: "badge badge-warning" }, [
-                          _vm._v("Draft")
-                        ])
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
-              !_vm.isInvestor &&
-              _vm.news.investors &&
-              _vm.news.investors.length > 0
-                ? _c("div", { staticClass: "form-group dashed" }, [
-                    _c("div", { staticClass: "col-md-12" }, [
-                      _c(
-                        "div",
-                        { staticClass: "investor-list" },
-                        _vm._l(_vm.news.investors, function(investor) {
-                          return _c(
-                            "span",
-                            { key: investor.id, staticClass: "investor-badge" },
-                            [
-                              _vm._v(
-                                "\n                                " +
-                                  _vm._s(
-                                    investor.full_name ||
-                                      investor.name + " " + investor.surname
-                                  ) +
-                                  "\n                            "
-                              )
-                            ]
-                          )
-                        }),
-                        0
-                      )
+  return _c(
+    "div",
+    [
+      _c("div", { staticClass: "block" }, [
+        _c("div", { staticClass: "form-horizontal form-bordered" }, [
+          _vm.loading
+            ? _c("div", { staticClass: "text-center" }, [
+                _c("i", { staticClass: "fa fa-spinner fa-spin fa-2x" }),
+                _vm._v(" "),
+                _c("p", [_vm._v("Loading news...")])
+              ])
+            : _vm.news
+            ? _c("div", { staticClass: "news-content" }, [
+                _c("div", { staticClass: "form-group dashed" }, [
+                  _c("div", { staticClass: "col-md-6" }, [
+                    _c("div", { staticClass: "status-section" }, [
+                      _vm.news.status === "published"
+                        ? _c("span", { staticClass: "badge badge-success" }, [
+                            _vm._v("Published")
+                          ])
+                        : _c("span", { staticClass: "badge badge-warning" }, [
+                            _vm._v("Draft")
+                          ])
                     ])
                   ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.news.images && _vm.news.images.length > 0
-                ? _c("div", { staticClass: "form-group dashed" }, [
-                    _c(
-                      "div",
-                      { staticClass: "col-md-12" },
-                      [
-                        _vm.news.images.length === 1
-                          ? _c(
-                              "div",
-                              { staticClass: "single-image-container" },
+                ]),
+                _vm._v(" "),
+                !_vm.isInvestor &&
+                _vm.news.investors &&
+                _vm.news.investors.length > 0
+                  ? _c("div", { staticClass: "form-group dashed" }, [
+                      _c("div", { staticClass: "col-md-12" }, [
+                        _c(
+                          "div",
+                          { staticClass: "investor-list" },
+                          _vm._l(_vm.news.investors, function(investor) {
+                            return _c(
+                              "span",
+                              {
+                                key: investor.id,
+                                staticClass: "investor-badge"
+                              },
                               [
-                                _c("img", {
-                                  staticClass: "single-news-image",
-                                  attrs: {
-                                    src: _vm.news.images[0].image,
-                                    alt: _vm.news.title
-                                  },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.openImageModal(
-                                        _vm.news.images[0].image
-                                      )
-                                    }
-                                  }
-                                })
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(
+                                      investor.full_name ||
+                                        investor.name + " " + investor.surname
+                                    ) +
+                                    "\n                            "
+                                )
                               ]
                             )
-                          : _c("ImageBox", {
-                              attrs: {
-                                "slides-count": 3,
-                                "initial-main-image": _vm.news.images[0].image,
-                                images: _vm.news.images,
-                                "align-left": false
-                              }
-                            })
-                      ],
-                      1
-                    )
+                          }),
+                          0
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.news.images && _vm.news.images.length > 0
+                  ? _c("div", { staticClass: "form-group dashed" }, [
+                      _c(
+                        "div",
+                        { staticClass: "col-md-12" },
+                        [
+                          _vm.news.images.length === 1
+                            ? _c(
+                                "div",
+                                { staticClass: "single-image-container" },
+                                [
+                                  _c("img", {
+                                    staticClass: "single-news-image",
+                                    attrs: {
+                                      src: _vm.news.images[0].image,
+                                      alt: _vm.news.title
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.openImageModal(
+                                          _vm.news.images[0].image
+                                        )
+                                      }
+                                    }
+                                  })
+                                ]
+                              )
+                            : _c("ImageBox", {
+                                attrs: {
+                                  "slides-count": 3,
+                                  "initial-main-image":
+                                    _vm.news.images[0].image,
+                                  images: _vm.news.images,
+                                  "align-left": false
+                                }
+                              })
+                        ],
+                        1
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group dashed" }, [
+                  _c("div", { staticClass: "col-md-12" }, [
+                    _c("div", {
+                      staticClass: "content-area",
+                      domProps: { innerHTML: _vm._s(_vm.news.content) }
+                    })
                   ])
-                : _vm._e(),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group dashed" }, [
-                _c("div", { staticClass: "col-md-12" }, [
-                  _c("div", {
-                    staticClass: "content-area",
-                    domProps: { innerHTML: _vm._s(_vm.news.content) }
-                  })
                 ])
               ])
-            ])
-          : _c("div", { staticClass: "text-center" }, [
-              _c("h4", [_vm._v("News not found")])
-            ])
-      ])
-    ])
-  ])
+            : _c("div", { staticClass: "text-center" }, [
+                _c("h4", [_vm._v("News not found")])
+              ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "el-dialog",
+        {
+          staticClass: "image-modal",
+          attrs: { visible: _vm.imageModalVisible },
+          on: {
+            "update:visible": function($event) {
+              _vm.imageModalVisible = $event
+            }
+          }
+        },
+        [
+          _c("img", {
+            staticStyle: { width: "100%", height: "auto" },
+            attrs: { src: _vm.selectedImage, alt: "News Image" }
+          })
+        ]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
