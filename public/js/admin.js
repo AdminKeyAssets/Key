@@ -8744,23 +8744,58 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       editableRow: null,
-      tempRow: null
+      tempRow: null,
+      updatingCurrentValue: false
     };
   },
   watch: {
     'form': function form() {
-      if (this.form) {
+      if (this.form && !this.updatingCurrentValue) {
         if (!this.form.current_value_currency) {
           this.$emit('update-form', _objectSpread(_objectSpread({}, this.form), {}, {
             current_value_currency: 'USD'
           }));
-        }
+        } // Set current value input to latest current value if different from total price
+
+
+        this.setCurrentValueFromLatest();
       }
+    },
+    'form.currentValues': {
+      handler: function handler() {
+        if (!this.updatingCurrentValue) {
+          this.setCurrentValueFromLatest();
+        }
+      },
+      deep: true
     }
   },
+  mounted: function mounted() {
+    this.setCurrentValueFromLatest();
+  },
   methods: {
-    onCurrentValueAttachmentChange: function onCurrentValueAttachmentChange(e) {
+    setCurrentValueFromLatest: function setCurrentValueFromLatest() {
       var _this = this;
+
+      if (this.form && this.form.currentValues && this.form.currentValues.length > 0 && !this.updatingCurrentValue) {
+        // Get the latest current value (first element since array is ordered by id desc)
+        var latestCurrentValue = this.form.currentValues[0];
+        var latestValue = parseFloat(latestCurrentValue.value) || 0;
+        var totalPrice = parseFloat(this.form.total_price) || 0; // If latest current value is different from total price, display it in current value input
+
+        if (latestValue !== totalPrice && latestValue > 0) {
+          this.updatingCurrentValue = true;
+          this.$emit('update-form', _objectSpread(_objectSpread({}, this.form), {}, {
+            current_value: latestValue
+          }));
+          this.$nextTick(function () {
+            _this.updatingCurrentValue = false;
+          });
+        }
+      }
+    },
+    onCurrentValueAttachmentChange: function onCurrentValueAttachmentChange(e) {
+      var _this2 = this;
 
       var file = e.target.files[0];
 
@@ -8768,7 +8803,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         var reader = new FileReader();
 
         reader.onload = function (e) {
-          _this.$emit('update-form', _objectSpread(_objectSpread({}, _this.form), {}, {
+          _this2.$emit('update-form', _objectSpread(_objectSpread({}, _this2.form), {}, {
             current_value_attachment: file,
             currentValueAttachmentPreview: e.target.result
           }));
@@ -8788,7 +8823,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }));
     },
     onAttachmentChange: function onAttachmentChange(index, event) {
-      var _this2 = this;
+      var _this3 = this;
 
       var file = event.target.files[0];
 
@@ -8796,7 +8831,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         var reader = new FileReader();
 
         reader.onload = function (e) {
-          _this2.form.currentValues[index].attachment = file;
+          _this3.form.currentValues[index].attachment = file;
         };
 
         reader.readAsDataURL(file);
@@ -8807,13 +8842,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.tempRow = JSON.parse(JSON.stringify(this.form.currentValues[index]));
     },
     saveRow: function saveRow(index) {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              _this3.$confirm('Are you sure you want to update this row?', 'Warning', {
+              _this4.$confirm('Are you sure you want to update this row?', 'Warning', {
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No',
                 type: 'warning'
@@ -8822,7 +8857,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
                   while (1) switch (_context.prev = _context.next) {
                     case 0:
-                      row = _this3.form.currentValues[index];
+                      row = _this4.form.currentValues[index];
                       formData = new FormData();
                       formData.append('value', row.value);
                       formData.append('date', row.date);
@@ -8840,11 +8875,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                       }).then(function (response) {
                         Object(_mixins_responseParse__WEBPACK_IMPORTED_MODULE_2__["responseParse"])(response);
                         var data = response.data.data;
-                        _this3.editableRow = null;
-                        _this3.tempRow = null;
-                        _this3.form.currentValues[index] = data;
+                        _this4.editableRow = null;
+                        _this4.tempRow = null;
+                        _this4.form.currentValues[index] = data;
 
-                        _this3.$emit('update-form', _objectSpread({}, _this3.form));
+                        _this4.$emit('update-form', _objectSpread({}, _this4.form));
                       });
 
                     case 8:
@@ -8879,7 +8914,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.editableRow = null;
     },
     confirmDelete: function confirmDelete(index) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.$confirm('Are you sure you want to delete this row?', 'Warning', {
         confirmButtonText: 'Yes',
@@ -8890,15 +8925,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              row = _this4.form.currentValues[index];
+              row = _this5.form.currentValues[index];
               _context3.prev = 1;
               _context3.next = 4;
               return axios__WEBPACK_IMPORTED_MODULE_1___default.a["delete"]("/assets/current-value/delete/".concat(row.id));
 
             case 4:
-              _this4.form.currentValues.splice(index, 1);
+              _this5.form.currentValues.splice(index, 1);
 
-              _this4.$emit('update-form', _objectSpread({}, _this4.form));
+              _this5.$emit('update-form', _objectSpread({}, _this5.form));
 
               _context3.next = 11;
               break;
