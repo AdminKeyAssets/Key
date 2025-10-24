@@ -75,19 +75,51 @@ export default {
     data() {
         return {
             editableRow: null,
-            tempRow: null
+            tempRow: null,
+            updatingCurrentValue: false
         };
     },
     watch: {
         'form'() {
-            if (this.form) {
+            if (this.form && !this.updatingCurrentValue) {
                 if (!this.form.current_value_currency) {
                     this.$emit('update-form', {...this.form, current_value_currency: 'USD'});
                 }
+                // Set current value input to latest current value if different from total price
+                this.setCurrentValueFromLatest();
             }
+        },
+        'form.currentValues': {
+            handler() {
+                if (!this.updatingCurrentValue) {
+                    this.setCurrentValueFromLatest();
+                }
+            },
+            deep: true
         }
     },
+    mounted() {
+        this.setCurrentValueFromLatest();
+    },
     methods: {
+        setCurrentValueFromLatest() {
+            if (this.form && this.form.currentValues && this.form.currentValues.length > 0 && !this.updatingCurrentValue) {
+                // Get the latest current value (first element since array is ordered by id desc)
+                const latestCurrentValue = this.form.currentValues[0];
+                
+                const latestValue = parseFloat(latestCurrentValue.value) || 0;
+                const totalPrice = parseFloat(this.form.total_price) || 0;
+                
+                // If latest current value is different from total price, display it in current value input
+                if (latestValue !== totalPrice && latestValue > 0) {
+                    this.updatingCurrentValue = true;
+                    this.$emit('update-form', {...this.form, current_value: latestValue});
+                    this.$nextTick(() => {
+                        this.updatingCurrentValue = false;
+                    });
+                }
+            }
+        },
         onCurrentValueAttachmentChange(e) {
             const file = e.target.files[0];
             if (file) {
