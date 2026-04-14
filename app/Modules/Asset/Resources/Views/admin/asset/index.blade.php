@@ -59,7 +59,9 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
 
             @include('admin::includes.success')
             @include('admin::includes.error')
-
+            @php
+                $currentSortField = 'id';
+            @endphp
             <!-- Responsive Full Content -->
             @if(count($allData) == 0)
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
