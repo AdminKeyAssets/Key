@@ -39,6 +39,7 @@ class AssetCompareService
             'flat_plan' => 'Flat Plan',
             'ownership_certificate' => 'Ownership Certificate',
             'agreement_status' => 'Agreement Status',
+            'ownership_status' => 'Ownership Status',
             'current_value' => 'Current Value',
             'project_name' => 'Project Name',
             'project_description' => 'Project Description',

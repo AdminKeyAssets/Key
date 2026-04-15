@@ -131,6 +131,14 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                         $hideAgreementStatusColumn = false;
                     }
                     
+                    $hideOwnershipStatusColumn = hasEmptyColumn($allData, function($item) {
+                        return $item->ownership_status;
+                    });
+                    // Never hide the column if it's being sorted
+                    if ($currentSortField === 'ownership_status') {
+                        $hideOwnershipStatusColumn = false;
+                    }
+
                     $hideNextInstallmentColumn = hasEmptyColumn($allData, function($item) {
                         return $item->agreement_status == 'Installments' && count($item->payments) > 0;
                     });
@@ -179,6 +187,18 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                                 <a href="{{ getUrlWithSortParams('agreement_status', request()->sort_by, request()->sort_order) }}" class="text-dark">
                                     Agreement Status
                                     @if(request()->sort_by == 'agreement_status')
+                                        <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
+                                    @else
+                                        <i class="fa fa-sort"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            @endif
+                            @if(!$hideOwnershipStatusColumn)
+                            <th>
+                                <a href="{{ getUrlWithSortParams('ownership_status', request()->sort_by, request()->sort_order) }}" class="text-dark">
+                                    Ownership Status
+                                    @if(request()->sort_by == 'ownership_status')
                                         <i class="fa fa-sort-{{ request()->sort_order == 'asc' ? 'up' : 'down' }}"></i>
                                     @else
                                         <i class="fa fa-sort"></i>
@@ -288,6 +308,9 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                                 @endif
                                 @if(!$hideAgreementStatusColumn)
                                 <td>{!! $item->agreement_status !!}</td>
+                                @endif
+                                @if(!$hideOwnershipStatusColumn)
+                                <td>{!! $item->ownership_status !!}</td>
                                 @endif
                                 @if(!$hideNextInstallmentColumn)
                                 <td>

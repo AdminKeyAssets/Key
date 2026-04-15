@@ -76,6 +76,7 @@ class AssetRequest extends FormRequest
 
             'agreement_date' => 'required',
             'agreement_status' => 'required',
+            'ownership_status' => 'required|in:Unregistered,Future Ownership,Ownership',
             'first_payment_date' => 'required_if:agreement_status,Installments',
             'period' => 'required_if:agreement_status,Installments',
 
@@ -122,6 +123,8 @@ class AssetRequest extends FormRequest
             'tenant.currency.required_if' => 'The tenant Currency is required when asset status is rented.',
             'agreement_date.required' => 'Please select Agreement Date',
             'agreement_status.required' => 'Please select Agreement Status',
+            'ownership_status.required' => 'Please select Ownership Status',
+            'ownership_status.in' => 'Invalid Ownership Status.',
             'first_payment_date.required_if' => 'The First Payment Date is required when agreement status is Installments.',
 
             'period.required_if' => 'The Period is required when agreement status is Installments.',

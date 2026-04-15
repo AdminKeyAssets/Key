@@ -31,6 +31,7 @@ class Asset extends Model
         'price',
         'condition',
         'agreement_status',
+        'ownership_status',
         'asset_status',
         'agreement_date',
         'first_payment_date',

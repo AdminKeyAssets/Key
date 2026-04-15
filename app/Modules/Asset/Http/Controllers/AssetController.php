@@ -255,6 +255,9 @@ class AssetController extends BaseController
             case 'agreement_status':
                 $query->orderBy('agreement_status', $sortOrder);
                 break;
+            case 'ownership_status':
+                $query->orderBy('ownership_status', $sortOrder);
+                break;
             case 'next_installment':
                 // For installment sorting, we order by the payment amount
                 // For overdue payments, sum all overdue amounts; for current, use single amount
@@ -474,6 +477,9 @@ class AssetController extends BaseController
                 break;
             case 'agreement_status':
                 $userAssets->orderBy('agreement_status', $sortOrder);
+                break;
+            case 'ownership_status':
+                $userAssets->orderBy('ownership_status', $sortOrder);
                 break;
             case 'next_installment':
                 // For installment sorting, we order by the payment amount
@@ -824,6 +830,7 @@ class AssetController extends BaseController
             'price' => $request->price,
             'condition' => $request->condition,
             'agreement_status' => $request->agreement_status,
+            'ownership_status' => $request->ownership_status,
             'agreement_date' => $request->agreement_date,
             'asset_status' => $request->asset_status,
             'first_payment_date' => $request->first_payment_date ?? null,
