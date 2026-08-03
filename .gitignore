@@ -30,3 +30,5 @@ storage/framework/laravel-excel
 .DS_Store
 *.DS_Store
 .phpunit.cache
+
+/.phpstan.cache

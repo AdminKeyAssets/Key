@@ -1,0 +1,2239 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^PHPDoc type array of property App\\Exceptions\\Handler\:\:\$dontFlash is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Exceptions\\Handler\:\:\$dontFlash\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Exceptions\\Handler\:\:\$dontReport is not covariant with PHPDoc type array\<int, class\-string\<Throwable\>\> of overridden property Illuminate\\Foundation\\Exceptions\\Handler\:\:\$dontReport\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$middleware is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$middleware\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$middlewareAliases is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$middlewareAliases\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$middlewareGroups is not covariant with PHPDoc type array\<string, array\<int, string\>\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$middlewareGroups\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$middlewarePriority is not covariant with PHPDoc type array\<string\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$middlewarePriority\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\Authenticate\:\:redirectTo\(\) should return string\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Middleware/Authenticate.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\EncryptCookies\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Cookie\\Middleware\\EncryptCookies\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/EncryptCookies.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\PreventRequestForgery\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Middleware\\PreventRequestForgery\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/PreventRequestForgery.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\PreventRequestsDuringMaintenance\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/PreventRequestsDuringMaintenance.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\TrimStrings\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Middleware\\TrimStrings\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/TrimStrings.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:newModelQuery\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:newQuery\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:query\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:whereCreatedAt\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:whereGuardName\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:whereId\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:whereLabel\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:whereName\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @method for method App\\Models\\Permission\:\:whereUpdatedAt\(\) return type contains unknown class App\\Models\\User\\Permission\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\Permission\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(mixed permissions\)\: Unexpected token "permissions", expected variable at offset 45 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\Role\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/AdminsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$pid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/AdminsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$prefix\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/AdminsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/AdminsExport.php
+
+		-
+			message: '#^Constant undefined not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/AgreementDetailsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$left_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeptStatementExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeptStatementExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeptStatementExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$agreement_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$area\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$city\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$current_value\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$flat_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$payments\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$paymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Relation ''investments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Relation ''payments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Relation ''paymentsHistories'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Relation ''renovationPayments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Relation ''rentals'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Exports/DeveloperAssetExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/InvestorsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$citizenship\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/InvestorsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/InvestorsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$pid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/InvestorsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$prefix\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/InvestorsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/InvestorsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$admin_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$marketing_channel\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$prefix\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Lead\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\LeadComment\:\:\$comment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\LeadComment\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/LeadsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/PaymentHistoryExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\:\:\$date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/PaymentHistoryExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/PaymentScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/PaymentScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/PaymentScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RenovationPaymentScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RenovationPaymentScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RentsPaymentsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\:\:\$date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RentsPaymentsExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RentsScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RentsScheduleExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\:\:\$date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueAssetValueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueAssetValueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$agreement_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$agreement_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$current_value\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investments\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$paymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$rentalPaymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$sale_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$sale_price\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$sale_status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Relation ''investments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Relation ''paymentsHistories'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Relation ''rentalPaymentsHistories'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueInvestmentExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\:\:\$date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueInvestmentExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueInvestmentExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueInvestmentExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$agreement_date\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Exports/RevenueRentalExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$agreement_term\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueRentalExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueRentalExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$rent_end_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueRentalExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueRentalExport.php
+
+		-
+			message: '#^Binary operation "\-" between ''1''\|''10''\|''11''\|''12''\|''2''\|''3''\|''4''\|''5''\|''6''\|''7''\|''8''\|''9'' and ''1''\|''10''\|''11''\|''12''\|''2''\|''3''\|''4''\|''5''\|''6''\|''7''\|''8''\|''9'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: app/Modules/Admin/Exports/RevenueRentalExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$agreement_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$agreement_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$commission\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$down_payment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$investor\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$marketing_channel\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$period\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$project\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$size\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Exports/SalesExport.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Http\\Controllers\\Admin\\DashboardController\:\:index\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Admin/DashboardController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$is_archived\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/InvestorLoginController.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Http\\Controllers\\Auth\\InvestorLoginController\:\:attemptInvestorLogin\(\) should return bool but returns Illuminate\\Http\\JsonResponse\|Illuminate\\Http\\RedirectResponse\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/InvestorLoginController.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Http\\Controllers\\Auth\\InvestorLoginController\:\:attemptInvestorLogin\(\) should return bool but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/Auth/InvestorLoginController.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Http\\Controllers\\Auth\\InvestorLoginController\:\:login\(\) should return Illuminate\\Http\\JsonResponse\|Illuminate\\Http\\RedirectResponse\|Illuminate\\Http\\Response but returns bool\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/InvestorLoginController.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Http\\Controllers\\Auth\\InvestorLoginController\:\:showLoginForm\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/InvestorLoginController.php
+
+		-
+			message: '#^Return type \(Illuminate\\Http\\Response\) of method App\\Modules\\Admin\\Http\\Controllers\\Auth\\InvestorLoginController\:\:showLoginForm\(\) should be compatible with return type \(Illuminate\\View\\View\) of method App\\Http\\Controllers\\Auth\\LoginController\:\:showLoginForm\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/InvestorLoginController.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Http\\Controllers\\Auth\\LoginController\:\:showLoginForm\(\) should return Illuminate\\Http\\Response but returns Illuminate\\View\\View\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/LoginController.php
+
+		-
+			message: '#^Return type \(Illuminate\\Http\\Response\) of method App\\Modules\\Admin\\Http\\Controllers\\Auth\\LoginController\:\:showLoginForm\(\) should be compatible with return type \(Illuminate\\View\\View\) of method App\\Http\\Controllers\\Auth\\LoginController\:\:showLoginForm\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/Auth/LoginController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Http\\Controllers\\BaseController\:\:\$setHeader\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/BaseController.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$repository IBaseRepository\)\: Unexpected token "\$repository", expected type at offset 16 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/BaseController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\News\:\:\$images\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\News\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Admin\\Models\\News\>\:\:\$images\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\News\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Admin\\Models\\News\>\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''admin'' is not found in App\\Modules\\Admin\\Models\\News model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''assets'' is not found in App\\Modules\\Admin\\Models\\User\\Investor model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''developer'' is not found in App\\Modules\\Admin\\Models\\News model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''images'' is not found in App\\Modules\\Admin\\Models\\News model\.$#'
+			identifier: larastan.relationExistence
+			count: 5
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Admin\\Models\\News model\.$#'
+			identifier: larastan.relationExistence
+			count: 7
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Relation ''manager'' is not found in App\\Modules\\Admin\\Models\\News model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Modules/Admin/Http/Controllers/NewsController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Developer\:\:\$logo\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/User/DeveloperController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Developer\:\:\$service_agreement\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/DeveloperController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Developer\:\:\$signature\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/User/DeveloperController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Developer\:\:\$stamp\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Admin/Http/Controllers/User/DeveloperController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/DeveloperController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$admin_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$passport\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$profile_picture\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$service_agreement\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Admin\\Models\\User\\Investor\>\:\:\$is_archived\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$is_archived\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Relation ''admin'' is not found in App\\Modules\\Admin\\Models\\User\\Investor model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Relation ''assets'' is not found in App\\Modules\\Admin\\Models\\User\\Investor model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 5
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Variable \$oldAdminId might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/InvestorController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorProfileController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$admin_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorProfileController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$profile_picture\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/InvestorProfileController.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 15 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/InvestorProfileController.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 15 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/ProfileController.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Contracts\\IPermissionRepository\:\:all\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Contracts\\IRoleRepository\:\:find\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Contracts\\IRoleRepository\:\:paginate\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(IAdminRepository adminRepository\)\: Unexpected token "adminRepository", expected variable at offset 134 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(IPermissionRepository permissionRepository\)\: Unexpected token "permissionRepository", expected variable at offset 83 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(IRoleRepository roleRepository\)\: Unexpected token "roleRepository", expected variable at offset 33 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 15 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/RoleController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Admin\\Models\\User\\Admin\>\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/UserController.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Contracts\\IAdminRepository\:\:find\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Modules/Admin/Http/Controllers/User/UserController.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Contracts\\IRoleRepository\:\:all\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Http/Controllers/User/UserController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\News\:\:\$admin\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Models/News.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\News\:\:\$developer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Models/News.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\News\:\:\$manager\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Admin/Models/News.php
+
+		-
+			message: '#^Relation ''readByInvestors'' is not found in App\\Modules\\Admin\\Models\\News model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Admin/Models/News.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(mixed src\)\: Unexpected token "src", expected variable at offset 67 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Models/Statics/File.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Modules\\Admin\\Models\\Statics\\File\:\:\$casts is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$casts\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Modules/Admin/Models/Statics/File.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Modules\\Admin\\Models\\Statics\\File\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Modules/Admin/Models/Statics/File.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Modules/Admin/Models/User/Admin.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Modules/Admin/Models/User/Admin.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Modules/Admin/Models/User/Admin.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$permissions\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Admin/Repositories/Eloquent/AdminRepository.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Eloquent\\AdminRepository\:\:create\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/AdminRepository.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Eloquent\\AdminRepository\:\:find\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/AdminRepository.php
+
+		-
+			message: '#^Call to an undefined static method App\\Modules\\Admin\\Models\\User\\Admin\:\:filter\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/AdminRepository.php
+
+		-
+			message: '#^Call to an undefined static method App\\Modules\\Admin\\Models\\User\\Admin\:\:sort\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/AdminRepository.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Repositories\\Eloquent\\AdminRepository\:\:sortData\(\) has invalid return type App\\Modules\\Admin\\Repositories\\Eloquent\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/AdminRepository.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Eloquent\\FileRepository\:\:create\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/FileRepository.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(UploadedFile uploadedFile\)\: Unexpected token "uploadedFile", expected variable at offset 30 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/FileRepository.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$img \\Intervention\\Image\\Image\)\: Unexpected token "\$img", expected type at offset 9 on line 1$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/FileRepository.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$type string\)\: Unexpected token "\$type", expected type at offset 9 on line 1$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/FileRepository.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 15 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 2
+			path: app/Modules/Admin/Repositories/Eloquent/FileRepository.php
+
+		-
+			message: '#^Property App\\Modules\\Admin\\Repositories\\Eloquent\\FileRepository\:\:\$src \(string\) does not accept bool\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/FileRepository.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Eloquent\\RoleRepository\:\:create\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/RoleRepository.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Repositories\\Eloquent\\RoleRepository\:\:find\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/RoleRepository.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Role\:\:Filter\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/RoleRepository.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Role\:\:sort\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/RoleRepository.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Repositories\\Eloquent\\RoleRepository\:\:sortData\(\) has invalid return type App\\Modules\\Admin\\Repositories\\Eloquent\\Builder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Modules/Admin/Repositories/Eloquent/RoleRepository.php
+
+		-
+			message: '#^Access to constant STATUS_CHANGED on an unknown class App\\Modules\\Admin\\Models\\Statics\\Text\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Access to constant STATUS_SAVED on an unknown class App\\Modules\\Admin\\Models\\Statics\\Text\.$#'
+			identifier: class.notFound
+			count: 3
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Call to an undefined method App\\Modules\\Admin\\Services\\Admin\\TextService\:\:exportAllTranslations\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Call to static method firstOrCreate\(\) on an unknown class App\\Modules\\Admin\\Models\\Statics\\Text\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Call to static method firstOrNew\(\) on an unknown class App\\Modules\\Admin\\Models\\Statics\\Text\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Call to static method ofTranslatedGroup\(\) on an unknown class App\\Modules\\Admin\\Models\\Statics\\Text\.$#'
+			identifier: class.notFound
+			count: 4
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class App\\Modules\\Admin\\Models\\Statics\\Text\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(Filesystem files\)\: Unexpected token "files", expected variable at offset 54 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(array config\)\: Unexpected token "config", expected variable at offset 23 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 15 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Modules/Admin/Services/Admin/TextService.php
+
+		-
+			message: '#^Method App\\Modules\\Admin\\Utilities\\LangFiles\:\:setArrayValue\(\) should return array but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Admin/Utilities/LangFiles.php
+
+		-
+			message: '#^Parameter &\$data by\-ref type of method App\\Modules\\Admin\\Utilities\\LangFiles\:\:setArrayValue\(\) expects array, string given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: app/Modules/Admin/Utilities/LangFiles.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$agreement_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Helpers/UpdatePaymentsHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Helpers/UpdateRenovationPaymentsHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$left_amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Helpers/UpdateRenovationPaymentsHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Helpers/UpdateRenovationPaymentsHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Helpers/UpdateRentalPaymentsHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\:\:\$applied_to_months\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Modules/Asset/Helpers/UpdateRentalPaymentsHelper.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AgreementDetailsExportController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AgreementDetailsExportController.php
+
+		-
+			message: '#^Method App\\Modules\\Asset\\Http\\Controllers\\AgreementDetailsExportController\:\:exportAgreementDetails\(\) should return Symfony\\Component\\HttpFoundation\\BinaryFileResponse but returns Illuminate\\Http\\Response\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AgreementDetailsExportController.php
+
+		-
+			message: '#^Variable \$investorEmails might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AgreementDetailsExportController.php
+
+		-
+			message: '#^Variable \$investorPids might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AgreementDetailsExportController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$assigned\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$admin\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$agreement_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$asset_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$attachments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$developer_access\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$flat_plan\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$floor_plan\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$gallery\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$icon\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$manager\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$manager_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$ownership_certificate\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$payments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$paymentsHistories\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$renovationPayments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$renovationPaymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$renovation_agreement\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$renovation_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$rentalPaymentsHistories\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$rentals\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$asset_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$attachments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$icon\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$is_archived\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$manager\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$manager_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\:\:\$current_value_attachment\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$passport\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Tenant\:\:\$rent_agreement\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Method App\\Modules\\Asset\\Http\\Controllers\\AssetController\:\:export\(\) has invalid return type App\\Modules\\Asset\\Http\\Controllers\\BinaryFileResponse\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Method App\\Modules\\Asset\\Http\\Controllers\\AssetController\:\:export\(\) should return App\\Modules\\Asset\\Http\\Controllers\\BinaryFileResponse but returns Symfony\\Component\\HttpFoundation\\BinaryFileResponse\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Relation ''assets'' is not found in App\\Modules\\Admin\\Models\\User\\Investor model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 5
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Relation ''payments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Relation ''renovationPayments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Relation ''rentals'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$adminId might not be defined\.$#'
+			identifier: variable.undefined
+			count: 7
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalAgreements might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalAttachments might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalData might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalGallery might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalInformations might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalPayments might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$originalRentals might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Variable \$tenantData might not be defined\.$#'
+			identifier: variable.undefined
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/AssetController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\|App\\Modules\\Admin\\Models\\User\\Developer\|App\\Modules\\Admin\\Models\\User\\Investor\|App\\User\:\:\$representative\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/CommentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\|App\\Modules\\Admin\\Models\\User\\Developer\|App\\Modules\\Admin\\Models\\User\\Investor\|App\\User\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/CommentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Comment\:\:\$asset_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/CommentController.php
+
+		-
+			message: '#^Relation ''admin'' is not found in App\\Modules\\Asset\\Models\\Comment model\.$#'
+			identifier: larastan.relationExistence
+			count: 6
+			path: app/Modules/Asset/Http/Controllers/CommentController.php
+
+		-
+			message: '#^Relation ''investor'' is not found in App\\Modules\\Asset\\Models\\Comment model\.$#'
+			identifier: larastan.relationExistence
+			count: 6
+			path: app/Modules/Asset/Http/Controllers/CommentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\CurrentValue\>\:\:\$attachment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/CurrentValueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\:\:\$attachment\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Investment\>\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Investment\>\:\:\$asset_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Investment\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Investment\>\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/InvestmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Relation ''asset'' is not found in App\\Modules\\Asset\\Models\\Payment model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Relation ''asset'' is not found in App\\Modules\\Asset\\Models\\Rental model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$flat_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$manager\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\DeveloperAsset\:\:\$developer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$left_amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Payment\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\:\:\$attachment\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\PaymentsHistory\>\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\PaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\PaymentsHistory\>\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Relation ''admin'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Relation ''manager'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/PaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\CurrentValue\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$left_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPayment\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\:\:\$attachment\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\>\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\RenovationPaymentsHistory\>\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RenovationPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$asset_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$left_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$number\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Rental\:\:\$payment_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\RentalPaymentsHistory\>\:\:\$amount\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\RentalPaymentsHistory\>\:\:\$asset\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\RentalPaymentsHistory\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\RentalPaymentsHistory\>\:\:\$attachment\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Modules/Asset/Http/Controllers/RentalPaymentsHistoryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$agreement_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$attachments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$currentValues\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$investments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$investors\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$paymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$renovationPaymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$rentalPaymentsHistories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$sale_price\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$sale_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$tenant\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Relation ''Investments'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Relation ''investors'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 7
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Relation ''paymentsHistories'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Relation ''rentalPaymentsHistories'' is not found in App\\Modules\\Asset\\Models\\Asset model\.$#'
+			identifier: larastan.relationExistence
+			count: 4
+			path: app/Modules/Asset/Http/Controllers/RevenueController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Modules\\Asset\\Models\\Asset\>\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Asset/Http/Middleware/DeveloperAccess.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$investorId$#'
+			identifier: parameter.notFound
+			count: 1
+			path: app/Modules/Asset/Services/CommentService.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Admin\|App\\Modules\\Admin\\Models\\User\\Developer\|App\\Modules\\Admin\\Models\\User\\Investor\|App\\User\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Lead/Http/Controllers/LeadCommentController.php
+
+		-
+			message: '#^Relation ''admin'' is not found in App\\Modules\\Lead\\Models\\LeadComment model\.$#'
+			identifier: larastan.relationExistence
+			count: 3
+			path: app/Modules/Lead/Http/Controllers/LeadCommentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Admin\\Models\\User\\Investor\:\:\$surname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Lead/Http/Controllers/SaleController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Asset\\Models\\Asset\:\:\$project_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Modules/Lead/Http/Controllers/SaleController.php
+
+		-
+			message: '#^Access to an undefined property App\\Modules\\Lead\\Models\\Sale\:\:\$attachment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Modules/Lead/Http/Controllers/SaleController.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Providers\\AuthServiceProvider\:\:\$policies is not covariant with PHPDoc type array\<class\-string, class\-string\> of overridden property Illuminate\\Foundation\\Support\\Providers\\AuthServiceProvider\:\:\$policies\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Providers/AuthServiceProvider.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Providers\\EventServiceProvider\:\:\$listen is not covariant with PHPDoc type array\<string, array\<int, string\>\> of overridden property Illuminate\\Foundation\\Support\\Providers\\EventServiceProvider\:\:\$listen\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Providers/EventServiceProvider.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:AdminFilters\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Repositories/Eloquent/BaseRepository.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(user\)\: Unexpected token "\\n ", expected variable at offset 22 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Repositories/Eloquent/BaseRepository.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 15 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Repositories/Eloquent/BaseRepository.php
+
+		-
+			message: '#^PHPDoc type array of property App\\User\:\:\$casts is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$casts\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/User.php
+
+		-
+			message: '#^PHPDoc type array of property App\\User\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/User.php
+
+		-
+			message: '#^PHPDoc type array of property App\\User\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/User.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$allModules Collection\)\: Unexpected token "\$allModules", expected type at offset 24 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Utilities/ModuleHelper.php

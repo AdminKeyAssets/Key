@@ -1,0 +1,8 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "app/Modules/Admin/Database/Migrations",
+        "app/Modules/Asset/Database/Migrations",
+        "app/Modules/Lead/Database/Migrations"
+    ]
+}

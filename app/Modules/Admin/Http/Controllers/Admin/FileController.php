@@ -6,7 +6,6 @@ use App\Modules\Admin\Helper\FileHelper;
 use App\Modules\Admin\Helper\TextHelper;
 use App\Modules\Admin\Http\Controllers\BaseController;
 use App\Modules\Admin\Repositories\Contracts\IFileRepository;
-use App\Modules\Admin\Repositories\Contracts\ITextRepository;
 use App\Utilities\ServiceResponse;
 use Illuminate\Http\Request;
 
