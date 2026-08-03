@@ -4,12 +4,6 @@ namespace Tests\Feature\Smoke;
 
 use Tests\TestCase;
 
-/**
- * Characterization tests for unauthenticated access.
- *
- * Login screens and guest redirects are the first thing an upgrade breaks and the
- * last thing anyone thinks to check, because every other test authenticates first.
- */
 class GuestAccessSmokeTest extends TestCase
 {
     public function test_root_redirects_to_the_investor_login_form(): void
@@ -17,9 +11,7 @@ class GuestAccessSmokeTest extends TestCase
         $this->get('/')->assertRedirect(route('admin.investor_login_form'));
     }
 
-    /**
-     * @dataProvider guestPageProvider
-     */
+    /** @dataProvider guestPageProvider */
     public function test_guest_page_renders(string $url): void
     {
         $response = $this->get($url);
@@ -40,9 +32,7 @@ class GuestAccessSmokeTest extends TestCase
         return array_combine($urls, array_map(fn ($url) => [$url], $urls));
     }
 
-    /**
-     * @dataProvider protectedPageProvider
-     */
+    /** @dataProvider protectedPageProvider */
     public function test_protected_page_rejects_guests(string $url): void
     {
         $response = $this->get($url);

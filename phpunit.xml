@@ -17,18 +17,9 @@
     <server name="APP_ENV" value="testing"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="array"/>
-    <!--
-          The application relies on MySQL-specific SQL (e.g. ISNULL(), MAX() with
-          GROUP BY semantics), so the test suite runs against a real MySQL database
-          rather than SQLite in-memory. Credentials are inherited from .env; only
-          the database name is overridden here so secrets stay out of version control.
-
-          Create it once with:
-            mysqldump <dev_db> | mysql key_assets_test
-        -->
     <server name="DB_CONNECTION" value="mysql"/>
     <server name="DB_DATABASE" value="key_assets_test"/>
-    <server name="MAIL_DRIVER" value="array"/>
+    <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
   </php>

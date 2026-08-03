@@ -330,10 +330,6 @@ class LeadController extends BaseController
             ->get();
 
         if (\Auth::user()->getRolesNameAttribute() == 'administrator') {
-            // Every non-aggregated column must appear in GROUP BY, otherwise MySQL
-            // rejects the query under ONLY_FULL_GROUP_BY (the default since 5.7).
-            // The filter dropdown displays "full_name, falling back to name surname",
-            // so grouping on all three yields exactly one row per distinct label.
             $this->baseData['leads'] = Lead::select('name', 'surname', 'full_name', DB::raw('COUNT(*) as total'))
                 ->groupBy('name', 'surname', 'full_name')
                 ->orderBy('full_name')

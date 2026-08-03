@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class RenovationPayment extends Model
 {
     protected $fillable = [
-        'number',
         'payment_date',
         'status',
         'amount',

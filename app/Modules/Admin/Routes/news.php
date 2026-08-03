@@ -55,13 +55,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
             ->name('delete')
             ->middleware(['permission:' . getPermissionKey($moduleName, 'delete', true)]);
 
-        /**
-         * Export news.
-         */
-        Route::get('export', $newsController . '@export')
-            ->name('export')
-            ->middleware(['permission:' . getPermissionKey($moduleName, 'export', false)]);
-
         Route::get('filter-options', $newsController . '@filterOptions')
             ->name('filters');
     });

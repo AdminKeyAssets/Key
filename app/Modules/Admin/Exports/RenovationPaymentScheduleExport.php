@@ -28,11 +28,13 @@ class RenovationPaymentScheduleExport implements FromCollection, WithHeadings, W
 
         $query->where('asset_id', '=', $this->filters['asset_id']);
 
-        $payments = $query->select('number', 'payment_date', 'amount')->get();
+        $payments = $query->select('id', 'payment_date', 'amount')
+            ->orderBy('id')
+            ->get();
 
-        $payments->transform(function ($payment) {
+        $payments = $payments->values()->map(function ($payment, $index) {
             return [
-                'number' => '"' . $payment->number . '"',
+                'number' => '"' . ($index + 1) . '"',
                 'payment_date' => '"' . $payment->payment_date . '"',
                 'amount' => $payment->amount,
             ];

@@ -6,16 +6,6 @@ use App\Modules\Admin\Models\User\Admin;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
-/**
- * Characterization tests for admin detail/edit pages.
- *
- * These exercise the heaviest code paths in the application — the asset view and
- * edit screens, the payment/rental/renovation sub-resources and the revenue
- * views — which is where an upgrade regression is most likely to surface.
- *
- * Record IDs are resolved from the test database at runtime rather than
- * hardcoded, so the suite keeps working when the fixture data is refreshed.
- */
 class AdminDetailPagesSmokeTest extends TestCase
 {
     private Admin $administrator;
@@ -84,9 +74,6 @@ class AdminDetailPagesSmokeTest extends TestCase
         if ($assetId === null) {
             $this->markTestSkipped('No assets in the test database.');
         }
-
-        // assets/revenues/details/{id} is deliberately absent here: it is guarded
-        // by auth:investor and is covered by InvestorPagesSmokeTest.
         $this->assertRenders("assets/revenues/view/{$assetId}");
     }
 

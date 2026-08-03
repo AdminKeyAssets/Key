@@ -7,13 +7,6 @@ use App\Modules\Admin\Models\User\Investor;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
-/**
- * Characterization tests for the investor and developer portals.
- *
- * The application runs four session guards (web, admin, investor, developer).
- * Multi-guard setups are historically the most fragile part of a Laravel major
- * upgrade, so each non-admin guard gets its own coverage here.
- */
 class InvestorPagesSmokeTest extends TestCase
 {
     private function assertRendersAs($user, string $guard, string $url): void

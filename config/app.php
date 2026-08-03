@@ -200,11 +200,6 @@ return [
 
         /*
          * Module Service Providers...
-         *
-         * Previously auto-discovered by caffeinated/modules via module.json
-         * manifests. That package is abandoned with no Laravel 9+ support, so the
-         * modules are registered explicitly here instead. Admin comes first
-         * because the other modules resolve its repository bindings.
          */
         App\Modules\Admin\Providers\ModuleServiceProvider::class,
         App\Modules\Asset\Providers\ModuleServiceProvider::class,

@@ -4,21 +4,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 if (! function_exists('module_path')) {
-    /**
-     * Return the path to a file inside one of the application's modules.
-     *
-     * Drop-in replacement for the helper that used to be provided by
-     * caffeinated/modules, which is abandoned and has no release supporting
-     * Laravel 9 or later. Modules are plain namespaced directories under
-     * app/Modules, so resolving the path needs no package and no registry:
-     * the slug is simply the StudlyCase directory name.
-     *
-     * @param  string  $slug      module slug, e.g. 'admin'
-     * @param  string  $file      path within the module, e.g. 'Routes/web.php'
-     * @param  string|null  $location  unused; retained so existing call sites,
-     *                                 which all pass 'app', keep working
-     * @return string
-     */
     function module_path($slug = null, $file = '', $location = null)
     {
         $basePath = app_path('Modules');
@@ -47,19 +32,6 @@ function getPermissionKey($module, $type ,$default = true){
     return str_replace('{module_name}', $module, config('permission_list.' .$module. '.custom.'.$type.'.key'));
 }
 
-/**
- * Build a sortable column URL that preserves the current query string.
- *
- * Previously declared inline in two Blade templates (asset index and developer
- * asset index). A function declared in a Blade view is redeclared every time the
- * compiled view is included, which fatals with "Cannot redeclare" as soon as more
- * than one of those views is rendered in the same PHP process.
- *
- * @param  string  $sortBy            column the link sorts by
- * @param  string  $currentSortBy     column currently being sorted
- * @param  string  $currentSortOrder  current direction, 'asc' or 'desc'
- * @return string
- */
 function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder)
 {
     $params = request()->except(['sort_by', 'sort_order']);
@@ -70,16 +42,6 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder)
     return request()->url() . '?' . http_build_query($params);
 }
 
-/**
- * Determine whether a column is empty for every row, so the table can hide it.
- *
- * Previously declared inline in the same two Blade templates as
- * getUrlWithSortParams(), with the same redeclaration fatal.
- *
- * @param  \Illuminate\Support\Collection  $collection
- * @param  callable  $checkFunction  extracts the column value from a row
- * @return bool
- */
 function hasEmptyColumn($collection, callable $checkFunction)
 {
     return $collection->every(function ($item) use ($checkFunction) {
