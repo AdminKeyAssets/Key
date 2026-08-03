@@ -14,10 +14,10 @@ class InvestorNewsRead extends Model
         'read_at'
     ];
 
-    protected $dates = [
-        'read_at',
-        'created_at',
-        'updated_at'
+    protected $casts = [
+        'read_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
