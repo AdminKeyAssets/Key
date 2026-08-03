@@ -3,6 +3,7 @@
 namespace Tests\Feature\Smoke;
 
 use App\Modules\Admin\Models\User\Admin;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class AdminPagesSmokeTest extends TestCase
@@ -24,7 +25,7 @@ class AdminPagesSmokeTest extends TestCase
         $this->administrator = $administrator;
     }
 
-    /** @dataProvider adminPageProvider */
+    #[DataProvider('adminPageProvider')]
     public function test_admin_page_renders(string $url): void
     {
         $response = $this->actingAs($this->administrator, 'admin')->get($url);

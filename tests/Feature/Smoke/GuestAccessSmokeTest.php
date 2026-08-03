@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Smoke;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class GuestAccessSmokeTest extends TestCase
@@ -11,7 +12,7 @@ class GuestAccessSmokeTest extends TestCase
         $this->get('/')->assertRedirect(route('admin.investor_login_form'));
     }
 
-    /** @dataProvider guestPageProvider */
+    #[DataProvider('guestPageProvider')]
     public function test_guest_page_renders(string $url): void
     {
         $response = $this->get($url);
@@ -32,7 +33,7 @@ class GuestAccessSmokeTest extends TestCase
         return array_combine($urls, array_map(fn ($url) => [$url], $urls));
     }
 
-    /** @dataProvider protectedPageProvider */
+    #[DataProvider('protectedPageProvider')]
     public function test_protected_page_rejects_guests(string $url): void
     {
         $response = $this->get($url);

@@ -4,6 +4,7 @@ namespace Tests\Feature\Smoke;
 
 use App\Modules\Admin\Models\User\Admin;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ExportsSmokeTest extends TestCase
@@ -35,7 +36,7 @@ class ExportsSmokeTest extends TestCase
         );
     }
 
-    /** @dataProvider listExportProvider */
+    #[DataProvider('listExportProvider')]
     public function test_list_export_succeeds(string $url): void
     {
         $this->assertDownloads($url);
