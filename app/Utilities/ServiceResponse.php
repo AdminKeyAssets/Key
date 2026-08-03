@@ -67,14 +67,33 @@ class ServiceResponse
      */
     public static function jsonNotification($message, $code = 200, $data = [])
     {
+        $status = self::toHttpStatus($code);
+
         return response()->json(
             [
                 'message'   => $message,
-                'code'      => $code,
+                'code'      => $status,
                 'data'      => $data,
-                'status'    => $code
+                'status'    => $status
             ]
-        )->setStatusCode($code && is_numeric($code) ? (int)$code : Response::HTTP_INTERNAL_SERVER_ERROR);
+        )->setStatusCode($status);
+    }
+
+    /**
+     * @param mixed $code
+     * @return int
+     */
+    private static function toHttpStatus($code)
+    {
+        if (! is_numeric($code)) {
+            return Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        $status = (int) $code;
+
+        return $status >= 100 && $status <= 599
+            ? $status
+            : Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
 }

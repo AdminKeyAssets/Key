@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Mockery\Exception;
+use Exception;
 
 class InvestmentController extends BaseController
 {
@@ -111,7 +111,7 @@ class InvestmentController extends BaseController
                 $this->baseData['item'] = $rental;
             }
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
@@ -304,7 +304,7 @@ class InvestmentController extends BaseController
             $investment->delete();
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);

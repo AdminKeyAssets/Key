@@ -24,7 +24,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Mockery\Exception;
+use Exception;
 
 class RentalPaymentsHistoryController extends BaseController
 {
@@ -136,7 +136,7 @@ class RentalPaymentsHistoryController extends BaseController
                 $this->baseData['item'] = $rental;
             }
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
@@ -383,7 +383,7 @@ class RentalPaymentsHistoryController extends BaseController
 
             $this->paymentsHelper->recalculateRentalPaymentsAfterDeletion($asset, $paymentHistory);
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);

@@ -24,7 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Mockery\Exception;
+use Exception;
 use PDF;
 
 class PaymentsHistoryController extends BaseController
@@ -151,7 +151,7 @@ class PaymentsHistoryController extends BaseController
 
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
@@ -362,7 +362,7 @@ class PaymentsHistoryController extends BaseController
                 $asset->save();
             }
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
     }
@@ -477,7 +477,7 @@ class PaymentsHistoryController extends BaseController
             return $pdf->download($filename);
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
     }
 }

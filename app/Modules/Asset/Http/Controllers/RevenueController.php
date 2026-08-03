@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Mockery\Exception;
+use Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RevenueController extends BaseController
@@ -737,7 +737,7 @@ class RevenueController extends BaseController
             }
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('', 200, $this->baseData);

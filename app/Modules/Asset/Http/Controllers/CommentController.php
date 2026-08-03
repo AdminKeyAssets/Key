@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Mockery\Exception;
+use Exception;
 
 class CommentController extends BaseController
 {
@@ -180,7 +180,7 @@ class CommentController extends BaseController
 
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
         $comments = Comment::query()
             ->with(['admin' => function ($query) {

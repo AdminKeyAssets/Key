@@ -93,7 +93,7 @@ class RoleRepository extends BaseRepository implements IRoleRepository
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
-            throw new \Exception($ex->getMessage(), $ex->getCode());
+            throw new \Exception($ex->getMessage(), 0, $ex);
         }
 
     }

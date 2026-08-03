@@ -18,7 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Mockery\Exception;
+use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends BaseController
@@ -150,7 +150,7 @@ class SaleController extends BaseController
             })->get();
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
@@ -281,7 +281,7 @@ class SaleController extends BaseController
             Sale::findOrFail($request->get('id'))->delete();
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);

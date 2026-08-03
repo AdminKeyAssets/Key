@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Mockery\Exception;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class AssetController extends BaseController
@@ -651,7 +651,7 @@ class AssetController extends BaseController
                 }
             }
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('', 200, $this->baseData);
@@ -1327,7 +1327,7 @@ class AssetController extends BaseController
             Asset::findOrFail($request->get('id'))->delete();
 
         } catch (\Exception $ex) {
-            throw new Exception($ex->getMessage(), $ex->getCode());
+            throw new Exception($ex->getMessage(), 0, $ex);
         }
 
         return ServiceResponse::jsonNotification('Deleted successfully', 200, $this->baseData);
