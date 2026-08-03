@@ -122,6 +122,17 @@
                                             </el-col>
                                         </el-row>
 
+                                        <el-row class="row-item" v-if="form.block">
+                                            <el-col :span="12">
+                                                <div class="form-group">
+                                                    <label class="col-md-4 control-label">Block:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{ form.block }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
                                         <el-row class="row-item" v-if="form.flat_number || form.area">
                                             <el-col :span="12">
                                                 <div v-if="form.flat_number" class="form-group">
@@ -415,12 +426,23 @@
                                         </el-row>
 
                                         <el-row class="row-item"
-                                                v-if="form.tenant.representative">
+                                                v-if="form.tenant.representative || form.tenant.representative_phone">
                                             <el-col :span="12">
-                                                <div class="form-group">
+                                                <div v-if="form.tenant.representative" class="form-group">
                                                     <label class="col-md-4 control-label">Representative:</label>
                                                     <div class="col-md-6 uppercase-medium">
                                                         {{ form.tenant.representative }}
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div v-if="form.tenant.representative_phone" class="form-group">
+                                                    <label class="col-md-4 control-label">Representative
+                                                        Phone:</label>
+                                                    <div class="col-md-6 uppercase-medium">
+                                                        {{
+                                                            (form.tenant.representative_prefix || '') + form.tenant.representative_phone
+                                                        }}
                                                     </div>
                                                 </div>
                                             </el-col>

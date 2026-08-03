@@ -122,6 +122,26 @@
             </div>
         </div>
 
+        <!-- Ownership Status -->
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Ownership Status:</label>
+            <div class="col-md-3 uppercase-medium">
+                <el-select
+                    v-model="form.ownership_status"
+                    filterable
+                    placeholder="Ownership Status"
+                    v-remove-readonly
+                >
+                    <el-option
+                        v-for="status in ownershipStatuses"
+                        :key="status"
+                        :label="status"
+                        :value="status"
+                    />
+                </el-select>
+            </div>
+        </div>
+
         <!-- Ownership Certificate (Complete) -->
         <template v-if="form.agreement_status === 'Complete'">
             <div class="form-group dashed">
@@ -231,7 +251,7 @@ import {Notification} from 'element-ui';
 
 export default {
     name: 'AgreementFormComponent',
-    props: ['form', 'loading', 'currencies', 'agreementStatuses', 'numbers'],
+    props: ['form', 'loading', 'currencies', 'agreementStatuses', 'ownershipStatuses', 'numbers'],
 
     data() {
         return {

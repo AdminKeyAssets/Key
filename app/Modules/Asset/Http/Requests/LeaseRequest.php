@@ -27,6 +27,7 @@ class LeaseRequest extends FormRequest
             'date' => 'required',
             'currency' => 'required',
             'amount' => ['required', 'numeric'],
+            'note' => 'nullable',
         ];
     }
 

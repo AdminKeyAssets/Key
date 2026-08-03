@@ -19,7 +19,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="Agreement Details" name="4">
                             <AgreementDetails
-                                :form="form" :loading="loading" :currencies="currencies" :agreement-statuses="agreementStatuses" :numbers="numbers" @update-form="updateForm"/>
+                                :form="form" :loading="loading" :currencies="currencies" :agreement-statuses="agreementStatuses" :ownership-statuses="ownershipStatuses" :numbers="numbers" @update-form="updateForm"/>
                         </el-tab-pane>
                         <el-tab-pane label="Renovation Agreement Details" name="5">
                             <RenovationAgreementDetails
@@ -90,6 +90,11 @@ export default {
             agreementStatuses: {
                 "Complete": "Complete",
                 "Installments": "Installments"
+            },
+            ownershipStatuses: {
+                "Unregistered": "Unregistered",
+                "Future Ownership": "Future Ownership",
+                "Ownership": "Ownership"
             },
             activeNames: '1',
             numbers: this.getNumbersInRange(2, 120),

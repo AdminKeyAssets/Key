@@ -255,6 +255,9 @@ class AssetController extends BaseController
             case 'agreement_status':
                 $query->orderBy('agreement_status', $sortOrder);
                 break;
+            case 'ownership_status':
+                $query->orderBy('ownership_status', $sortOrder);
+                break;
             case 'next_installment':
                 // For installment sorting, we order by the payment amount
                 // For overdue payments, sum all overdue amounts; for current, use single amount
@@ -474,6 +477,9 @@ class AssetController extends BaseController
                 break;
             case 'agreement_status':
                 $userAssets->orderBy('agreement_status', $sortOrder);
+                break;
+            case 'ownership_status':
+                $userAssets->orderBy('ownership_status', $sortOrder);
                 break;
             case 'next_installment':
                 // For installment sorting, we order by the payment amount
@@ -819,11 +825,13 @@ class AssetController extends BaseController
             'project_link' => $request->project_link,
             'location' => $request->location,
             'type' => $request->type,
+            'block' => $request->block && $request->block !== 'null' ? $request->block : null,
             'floor' => $request->floor,
             'flat_number' => $request->flat_number,
             'price' => $request->price,
             'condition' => $request->condition,
             'agreement_status' => $request->agreement_status,
+            'ownership_status' => $request->ownership_status,
             'agreement_date' => $request->agreement_date,
             'asset_status' => $request->asset_status,
             'first_payment_date' => $request->first_payment_date ?? null,
@@ -915,10 +923,13 @@ class AssetController extends BaseController
                     'agreement_date' => $tenantData['agreement_date'],
                     'agreement_term' => $tenantData['agreement_term'],
                     'monthly_rent' => $tenantData['monthly_rent'],
+                    'notes' => $this->normalizeTenantValue($tenantData['notes'] ?? null),
                     'currency' => $tenantData['currency'],
                     'prefix' => $tenantData['prefix'],
                     'asset_id' => $asset->id,
                     'representative' => $tenantData['representative'],
+                    'representative_prefix' => $this->normalizeTenantValue($tenantData['representative_prefix'] ?? null),
+                    'representative_phone' => $this->normalizeTenantValue($tenantData['representative_phone'] ?? null),
                     'status' => 1
                 ];
                 if (isset($tenantData['id'])) {
@@ -1402,21 +1413,53 @@ class AssetController extends BaseController
         return $payments;
     }
 
+    /**
+     * The asset form is submitted as multipart/form-data, so empty values arrive
+     * as the literal strings 'null'/'undefined'. Store them as real nulls.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private function normalizeTenantValue($value)
+    {
+        if ($value === null || $value === 'null' || $value === 'undefined' || $value === '') {
+            return null;
+        }
+
+        return $value;
+    }
+
     public function getAssetsToClone()
     {
         $assets = DB::table('assets')
             ->select('project_name', DB::raw('MAX(id) as id'))
-            ->groupBy('project_name')
-            ->get();
+            ->groupBy('project_name');
 
-        $this->baseData['assets'] = $assets;
+        // Asset managers may only copy from the projects in their own portfolio.
+        if (\Auth::guard('admin')->check() && auth()->user()->getRolesNameAttribute() !== 'administrator') {
+            $assets->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        $this->baseData['assets'] = $assets->get();
 
         return ServiceResponse::jsonNotification('Assets grouped list', 200, $this->baseData);
     }
 
     public function clone($name)
     {
-        $asset = Asset::where('project_name', $name)->first();
+        $query = Asset::where('project_name', $name);
+
+        // Keep the copy source within the manager's own portfolio.
+        if (\Auth::guard('admin')->check() && auth()->user()->getRolesNameAttribute() !== 'administrator') {
+            $query->where('admin_id', auth()->user()->getAuthIdentifier());
+        }
+
+        $asset = $query->first();
+
+        if (!$asset) {
+            return ServiceResponse::jsonNotification('Asset not found', 404, $this->baseData);
+        }
+
         $this->baseData['asset'] = $asset;
         $this->baseData['gallery'] = AssetGallery::where('asset_id', $asset->id)->get();
 
