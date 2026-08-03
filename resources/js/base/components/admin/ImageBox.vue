@@ -39,7 +39,7 @@
 <script>
 // Importing the Swiper Web Component
 import 'swiper/swiper-bundle.css';
-import 'swiper/swiper-element-bundle.min.js';
+import 'swiper/element/bundle';
 
 import CustomImagePreview from './CustomImagePreview.vue';
 
