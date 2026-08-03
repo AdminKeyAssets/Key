@@ -390,6 +390,16 @@
                                                                 </div>
                                                             </el-col>
                                                         </el-row>
+                                                        <el-row class="row-item" v-if="tenant.representative_phone">
+                                                            <el-col :span="12">
+                                                                <div class="form-group">
+                                                                    <label class="col-md-4 control-label">Representative Phone:</label>
+                                                                    <div class="col-md-6 uppercase-medium">
+                                                                        {{ (tenant.representative_prefix || '') + tenant.representative_phone }}
+                                                                    </div>
+                                                                </div>
+                                                            </el-col>
+                                                        </el-row>
                                                     </el-row>
                                                     <el-row v-if="tenant.showDetails" style="margin-top: 20px;" class="payments-wrapper row-item">
                                                         <el-col :span="24" :md="11">

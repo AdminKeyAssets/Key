@@ -18,12 +18,15 @@ class Tenant extends Model
         'agreement_date',
         'agreement_term',
         'monthly_rent',
+        'notes',
         'currency',
         'status',
         'passport',
         'rent_agreement',
         'rent_end_date',
         'representative',
+        'representative_prefix',
+        'representative_phone',
     ];
 
     public function asset()

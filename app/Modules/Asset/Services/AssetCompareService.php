@@ -48,6 +48,7 @@ class AssetCompareService
             'project_link' => 'Project Link',
             'location' => 'Location',
             'type' => 'Asset Type',
+            'block' => 'Block',
             'floor' => 'Floor',
             'flat_number' => 'Unit Number',
             'condition' => 'Delivery Condition',

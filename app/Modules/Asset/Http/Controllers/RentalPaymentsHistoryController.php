@@ -233,6 +233,7 @@ class RentalPaymentsHistoryController extends BaseController
                 'asset_id' => $assetId,
                 'date' => $request->date,
                 'amount' => $request->amount,
+                'note' => $this->normalizeNote($request->note),
                 'currency' => $request->currency,
                 'attachment' => $path,
                 'month' => $request->month ?? null
@@ -265,6 +266,7 @@ class RentalPaymentsHistoryController extends BaseController
                 'asset_id' => $assetId,
                 'date' => $request->date,
                 'amount' => $request->amount,
+                'note' => $this->normalizeNote($request->note),
                 'currency' => $request->currency,
                 'attachment' => $path,
                 'tenant_id' => $tenant->id,
@@ -285,6 +287,22 @@ class RentalPaymentsHistoryController extends BaseController
         $this->baseData['item'] = $paymentHistory;
 
         return ServiceResponse::jsonNotification($message, 200, $this->baseData);
+    }
+
+    /**
+     * The rental form is posted as multipart/form-data, so an empty note arrives
+     * as the literal string 'null'/'undefined'. Store it as a real null.
+     *
+     * @param mixed $note
+     * @return string|null
+     */
+    private function normalizeNote($note)
+    {
+        if ($note === null || $note === 'null' || $note === 'undefined' || $note === '') {
+            return null;
+        }
+
+        return $note;
     }
 
     /**

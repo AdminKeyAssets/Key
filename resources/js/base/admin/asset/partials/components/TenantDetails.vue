@@ -11,8 +11,24 @@
         </div>
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Representative:</label>
-            <div class="col-md-10 uppercase-medium">
+            <div class="col-md-5 uppercase-medium">
                 <el-input v-model="tenant.representative" placeholder="Representative"></el-input>
+            </div>
+            <div class="col-md-5 uppercase-medium">
+                <el-input placeholder="Representative Phone" v-model="tenant.representative_phone"
+                          class="input-with-select">
+                    <el-select v-model="tenant.representative_prefix" slot="prepend" filterable
+                               v-remove-readonly
+                               placeholder="Prefix"
+                               style="width: 100px;">
+                        <el-option
+                            v-for="prefix in this.prefixes"
+                            :key="prefix.prefix"
+                            :label="prefix.prefix"
+                            :value="prefix.prefix"
+                        ></el-option>
+                    </el-select>
+                </el-input>
             </div>
         </div>
         <div class="form-group dashed">
@@ -105,6 +121,17 @@
             <label class="col-md-1 control-label">Monthly Rent:</label>
             <div class="col-md-7 uppercase-medium">
                 <el-input type="number" v-model="tenant.monthly_rent" placeholder="Monthly Rent"></el-input>
+            </div>
+        </div>
+
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Notes:</label>
+            <div class="col-md-10 uppercase-medium">
+                <el-input
+                    type="textarea"
+                    autosize
+                    v-model="tenant.notes"
+                    placeholder="Notes"></el-input>
             </div>
         </div>
 
