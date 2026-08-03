@@ -31,6 +31,7 @@
                         <thead>
                         <tr>
                             <th> Payment Date</th>
+                            <th> Note</th>
                             <th> Amount</th>
                             <th width="10%" class="text-center">@lang('Action')</th>
                         </tr>
@@ -39,6 +40,7 @@
                         @foreach($allData as $item)
                             <tr>
                                 <td>{!! $item->date !!}</td>
+                                <td>{{ $item->note }}</td>
                                 <td>{!! number_format($item->amount,2,".",",") !!}$</td>
 
                                 <td class="text-center">

@@ -26,6 +26,7 @@ class Asset extends Model
         'project_link',
         'location',
         'type',
+        'block',
         'floor',
         'flat_number',
         'price',

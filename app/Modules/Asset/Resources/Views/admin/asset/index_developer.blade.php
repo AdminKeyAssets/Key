@@ -223,7 +223,9 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                                 @endif
                                 @if(!$hideTypeColumn)
                                 <td>
-
+                                    @if($item->block && $item->block !== 'null')
+                                        Block {!! $item->block !!} -
+                                    @endif
                                     {!! $item->type !!}
                                     @if($item->flat_number)
                                         N{!! $item->flat_number !!} -

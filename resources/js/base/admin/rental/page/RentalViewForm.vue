@@ -19,6 +19,13 @@
                                     </div>
                                 </div>
 
+                                <div v-if="form.note" class="form-group dashed">
+                                    <label class="col-md-1 control-label">Note:</label>
+                                    <div class="col-md-10 uppercase-medium">
+                                        {{form.note}}
+                                    </div>
+                                </div>
+
                                 <div class="form-group dashed">
                                     <label class="col-md-1 control-label">Amount:</label>
                                     <div class="col-md-10 uppercase-medium">

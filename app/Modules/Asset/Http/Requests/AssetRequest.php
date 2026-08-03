@@ -56,6 +56,7 @@ class AssetRequest extends FormRequest
             'total_price' => ['required', 'numeric'],
 
             'type' => 'required',
+            'block' => 'nullable',
 //            'floor' => 'integer',
 //            'flat_number' => 'integer',
             'price' => 'required|numeric',
@@ -72,6 +73,9 @@ class AssetRequest extends FormRequest
             'tenant.agreement_date' => 'required_if:asset_status,Rented',
             'tenant.agreement_term' => 'required_if:asset_status,Rented|numeric',
             'tenant.monthly_rent' => 'required_if:asset_status,Rented|numeric',
+            'tenant.notes' => 'nullable',
+            'tenant.representative_prefix' => 'nullable',
+            'tenant.representative_phone' => 'nullable',
             'tenant.currency' => 'required_if:asset_status,Rented',
 
             'agreement_date' => 'required',

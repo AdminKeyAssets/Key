@@ -44,6 +44,18 @@
                     </div>
 
                     <div class="form-group dashed">
+                        <label class="col-md-1 control-label">Note:</label>
+                        <div class="col-md-10 uppercase-medium">
+                            <el-input
+                                type="textarea"
+                                autosize
+                                :disabled="loading"
+                                v-model="form.note"
+                                placeholder="Note"></el-input>
+                        </div>
+                    </div>
+
+                    <div class="form-group dashed">
                         <label class="col-md-1 control-label">Attachment:</label>
                         <div class="col-md-10 uppercase-medium">
                             <p v-if="form.attachment">

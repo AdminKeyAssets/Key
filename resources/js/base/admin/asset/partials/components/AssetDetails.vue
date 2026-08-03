@@ -19,6 +19,19 @@
             </div>
         </div>
 
+        <!-- Block -->
+        <div class="form-group dashed">
+            <label class="col-md-1 control-label">Block:</label>
+            <div class="col-md-10 uppercase-medium">
+                <input
+                    class="form-control"
+                    :disabled="loading"
+                    placeholder="Block"
+                    v-model="form.block"
+                />
+            </div>
+        </div>
+
         <!-- Floor -->
         <div class="form-group dashed">
             <label class="col-md-1 control-label">Floor:</label>
@@ -383,8 +396,11 @@ export default {
                 agreement_date: "",
                 agreement_term: "",
                 monthly_rent: 0,
+                notes: "",
                 currency: "USD",
                 representative: "",
+                representative_prefix: "",
+                representative_phone: "",
             },
             rentals: [],
             updatingTotalPrice: false,
