@@ -1,5 +1,5 @@
 window._ = require('lodash');
-window.Vue = require('vue');
+window.Vue = require('vue').default || require('vue');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -23,7 +23,6 @@ try {
 window.axios = require('axios');
 
 
-window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

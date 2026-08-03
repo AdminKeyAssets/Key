@@ -24,7 +24,6 @@ Vue.use(VueGoogleMaps, {
     }
 })
 
-window.Vue = require('vue');
 
 Vue.directive('remove-readonly', {
     inserted(el) {
