@@ -39,7 +39,9 @@
 <script>
 // Importing the Swiper Web Component
 import 'swiper/swiper-bundle.css';
-import 'swiper/element/bundle';
+import { register as registerSwiperElements } from 'swiper/element/bundle';
+
+registerSwiperElements();
 
 import CustomImagePreview from './CustomImagePreview.vue';
 
