@@ -307,7 +307,9 @@ class AssetController extends BaseController
         }
 
         // For simple pagination without complex ordering logic
-        $this->baseData['allData'] = $query->paginate(25);
+        $this->baseData['allData'] = $query
+            ->with(['investors.admin', 'payments', 'rentals', 'renovationPayments'])
+            ->paginate(25);
         
         // Add sorting parameters to pagination links
         $this->baseData['allData']->appends([
@@ -530,7 +532,9 @@ class AssetController extends BaseController
         }
 
         // Simple pagination for all sorting cases
-        $this->baseData['allData'] = $userAssets->paginate(25);
+        $this->baseData['allData'] = $userAssets
+            ->with(['investors.admin', 'payments', 'rentals', 'renovationPayments'])
+            ->paginate(25);
         
         // Add sorting parameters to pagination links
         $this->baseData['allData']->appends([

@@ -8,12 +8,10 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
-        "ext-json": "*",
-        "ext-simplexml": "*",
-        "barryvdh/laravel-debugbar": "^4.0",
         "barryvdh/laravel-dompdf": "^3.0",
         "barryvdh/laravel-translation-manager": "^0.6",
+        "ext-json": "*",
+        "ext-simplexml": "*",
         "google/recaptcha": "^1.2",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.5",
@@ -22,11 +20,13 @@
         "laravel/tinker": "^3.0",
         "maatwebsite/excel": "^3.1",
         "owen-it/laravel-auditing": "^14.0",
+        "php": "^8.3",
         "psr/simple-cache": "^3.0",
         "rap2hpoutre/laravel-log-viewer": "^3.0",
         "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^4.0",
         "barryvdh/laravel-ide-helper": "^3.0",
         "fakerphp/faker": "^1.23",
         "laravel/ui": "^4.5",
@@ -65,7 +65,7 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [

@@ -71,7 +71,7 @@ class LangFiles
         $postArray = $this->prepareContent($postArray);
         $return = (int) file_put_contents(
             $this->getFilePath(),
-            print_r("<?php \n\n return ".$this->var_export54($postArray).';', true)
+            "<?php \n\n return ".$this->var_export54($postArray).';'
         );
 
         return $return;

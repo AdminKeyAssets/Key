@@ -11,8 +11,3 @@
 |
 */
 
-Route::group(['prefix' => 'lead'], function () {
-    Route::get('/', function () {
-        dd('This is the Lead module index page. Build something great!');
-    });
-});

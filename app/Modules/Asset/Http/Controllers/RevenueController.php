@@ -222,8 +222,8 @@ class RevenueController extends BaseController
             }
         }
 
-        $paginatedAssets = $paginatedAssets->paginate(25);
-        $allAssets = $allAssets->get();
+        $paginatedAssets = $paginatedAssets->with(['investors.admin', 'rentalPaymentsHistories', 'paymentsHistories', 'investments', 'renovationPaymentsHistories'])->paginate(25);
+        $allAssets = $allAssets->with(['investors.admin', 'rentalPaymentsHistories', 'paymentsHistories', 'investments', 'renovationPaymentsHistories'])->get();
 
         $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[1]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
@@ -354,8 +354,8 @@ class RevenueController extends BaseController
             }
         }
 
-        $paginatedAssets = $paginatedAssets->paginate(25);
-        $allAssets = $allAssets->get();
+        $paginatedAssets = $paginatedAssets->with(['investors.admin', 'rentalPaymentsHistories', 'paymentsHistories', 'investments', 'renovationPaymentsHistories'])->paginate(25);
+        $allAssets = $allAssets->with(['investors.admin', 'rentalPaymentsHistories', 'paymentsHistories', 'investments', 'renovationPaymentsHistories'])->get();
 
         $this->calculateRevenue($paginatedAssets, $allAssets, isset($createdDates[0]) ? date('Y/m/d', strtotime($createdDates[0])) : null, isset($createdDates[1]) ? date('Y/m/d', strtotime($createdDates[1])) : null);
 
@@ -391,7 +391,7 @@ class RevenueController extends BaseController
             $paid = $asset->paymentsHistories;
             $allInvestments = $asset->investments;
             $renovationInvestment = $asset->investments->where('status', 'Renovation');
-            $renovationPayments = $asset->renovationPaymentsHistories();
+            $renovationPayments = $asset->renovationPaymentsHistories;
             if ($startDate) {
                 $rent = $rent->where('date', '>=', $startDate);
                 $paid = $paid->where('date', '>=', $startDate);
@@ -471,7 +471,7 @@ class RevenueController extends BaseController
             $paid = $asset->paymentsHistories;
             $allInvestments = $asset->investments;
             $renovationInvestment = $asset->investments->where('status', 'Renovation');
-            $renovationPayments = $asset->renovationPaymentsHistories();
+            $renovationPayments = $asset->renovationPaymentsHistories;
             if ($startDate) {
                 $rent = $rent->where('date', '>=', $startDate);
                 $paid = $paid->where('date', '>=', $startDate);
@@ -670,7 +670,7 @@ class RevenueController extends BaseController
                     $rent = $asset->rentalPaymentsHistories;
                     $allInvestments = $asset->investments;
                     $renovationInvestment = $asset->investments->where('status', 'Renovation');
-                    $renovationPayments = $asset->renovationPaymentsHistories();
+                    $renovationPayments = $asset->renovationPaymentsHistories;
 
 
                     $rent = $rent->sum('amount');

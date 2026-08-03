@@ -161,7 +161,7 @@ class InvestorController extends BaseController
             });
         }
 
-        $this->baseData['allData'] = $query->paginate();
+        $this->baseData['allData'] = $query->with(['admin', 'assets'])->paginate();
 
         return view($this->baseModuleName . $this->baseAdminViewName . $this->viewFolderName . '.index', $this->baseData);
     }
