@@ -26,3 +26,6 @@ Homestead.json
 
 /resources/lang
 storage/framework/laravel-excel
+
+.DS_Store
+*.DS_Store

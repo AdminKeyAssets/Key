@@ -19,6 +19,46 @@ function getPermissionKey($module, $type ,$default = true){
 }
 
 /**
+ * Build a sortable column URL that preserves the current query string.
+ *
+ * Previously declared inline in two Blade templates (asset index and developer
+ * asset index). A function declared in a Blade view is redeclared every time the
+ * compiled view is included, which fatals with "Cannot redeclare" as soon as more
+ * than one of those views is rendered in the same PHP process.
+ *
+ * @param  string  $sortBy            column the link sorts by
+ * @param  string  $currentSortBy     column currently being sorted
+ * @param  string  $currentSortOrder  current direction, 'asc' or 'desc'
+ * @return string
+ */
+function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder)
+{
+    $params = request()->except(['sort_by', 'sort_order']);
+
+    $params['sort_by'] = $sortBy;
+    $params['sort_order'] = ($currentSortBy == $sortBy && $currentSortOrder == 'asc') ? 'desc' : 'asc';
+
+    return request()->url() . '?' . http_build_query($params);
+}
+
+/**
+ * Determine whether a column is empty for every row, so the table can hide it.
+ *
+ * Previously declared inline in the same two Blade templates as
+ * getUrlWithSortParams(), with the same redeclaration fatal.
+ *
+ * @param  \Illuminate\Support\Collection  $collection
+ * @param  callable  $checkFunction  extracts the column value from a row
+ * @return bool
+ */
+function hasEmptyColumn($collection, callable $checkFunction)
+{
+    return $collection->every(function ($item) use ($checkFunction) {
+        return empty($checkFunction($item));
+    });
+}
+
+/**
  * @param $model
  *
  * @return string

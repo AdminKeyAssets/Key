@@ -1,15 +1,5 @@
 @extends('admin::layouts.admin')
 
-@php
-// Helper function to preserve existing query parameters when sorting
-function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
-    $params = request()->except(['sort_by', 'sort_order']);
-    $params['sort_by'] = $sortBy;
-    $params['sort_order'] = ($currentSortBy == $sortBy && $currentSortOrder == 'asc') ? 'desc' : 'asc';
-    return request()->url() . '?' . http_build_query($params);
-}
-@endphp
-
 @section('main')
     <!-- Page content -->
     <div id="page-content">
@@ -67,13 +57,6 @@ function getUrlWithSortParams($sortBy, $currentSortBy, $currentSortOrder) {
                 <br><h3 class="text-center">@lang('Asset Not Found')</h3><br>
             @else
                 @php
-                    // Helper function to check if a column should be hidden (all rows empty)
-                    function hasEmptyColumn($collection, $checkFunction) {
-                        return $collection->every(function($item) use ($checkFunction) {
-                            return empty($checkFunction($item));
-                        });
-                    }
-
                     // Get the current sort field from the view data if available
                     $currentSortField = $sortField ?? request()->sort_by ?? 'id';
 
