@@ -19,7 +19,8 @@
                           class="input-with-select">
                     <el-select v-model="tenant.representative_prefix" slot="prepend" filterable
                                v-remove-readonly
-                               placeholder="Prefix">
+                               placeholder="Prefix"
+                               style="width: 100px;">
                         <el-option
                             v-for="prefix in this.prefixes"
                             :key="prefix.prefix"
