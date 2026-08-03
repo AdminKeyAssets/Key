@@ -14,7 +14,6 @@
         "barryvdh/laravel-debugbar": "^3.3",
         "barryvdh/laravel-dompdf": "^0.8.6",
         "barryvdh/laravel-translation-manager": "^0.5.8",
-        "caffeinated/modules": "^6.2",
         "doctrine/dbal": "^2.10",
         "fideloper/proxy": "^4.0",
         "google/recaptcha": "^1.2",

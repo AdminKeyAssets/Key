@@ -2,7 +2,7 @@
 
 namespace App\Modules\Asset\Providers;
 
-use Caffeinated\Modules\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -13,13 +13,9 @@ class ModuleServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadTranslationsFrom(module_path('asset', 'Resources/Lang', 'app'), 'asset');
-        $this->loadViewsFrom(module_path('asset', 'Resources/Views', 'app'), 'asset');
-        $this->loadMigrationsFrom(module_path('asset', 'Database/Migrations', 'app'));
-        if(!$this->app->configurationIsCached()) {
-            $this->loadConfigsFrom(module_path('asset', 'Config', 'app'));
-        }
-        $this->loadFactoriesFrom(module_path('asset', 'Database/Factories', 'app'));
+        $this->loadTranslationsFrom(module_path('asset', 'Resources/Lang'), 'asset');
+        $this->loadViewsFrom(module_path('asset', 'Resources/Views'), 'asset');
+        $this->loadMigrationsFrom(module_path('asset', 'Database/Migrations'));
     }
 
     /**

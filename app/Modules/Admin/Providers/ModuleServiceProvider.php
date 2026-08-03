@@ -12,7 +12,7 @@ use App\Modules\Admin\Repositories\Eloquent\FileRepository;
 use App\Modules\Admin\Repositories\Eloquent\PermissionRepository;
 use App\Modules\Admin\Repositories\Eloquent\RoleRepository;
 use App\Modules\Admin\Repositories\Eloquent\TextRepository;
-use Caffeinated\Modules\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -21,17 +21,12 @@ class ModuleServiceProvider extends ServiceProvider
      * Bootstrap the module services.
      *
      * @return void
-     * @throws \Caffeinated\Modules\Exceptions\ModuleNotFoundException
      */
     public function boot()
     {
-        $this->loadTranslationsFrom(module_path('admin', 'Resources/Lang', 'app'), 'admin');
-        $this->loadViewsFrom(module_path('admin', 'Resources/Views', 'app'), 'admin');
-        $this->loadMigrationsFrom(module_path('admin', 'Database/Migrations', 'app'));
-        if(!$this->app->configurationIsCached()) {
-            $this->loadConfigsFrom(module_path('admin', 'Config', 'app'));
-        }
-        $this->loadFactoriesFrom(module_path('admin', 'Database/Factories', 'app'));
+        $this->loadTranslationsFrom(module_path('admin', 'Resources/Lang'), 'admin');
+        $this->loadViewsFrom(module_path('admin', 'Resources/Views'), 'admin');
+        $this->loadMigrationsFrom(module_path('admin', 'Database/Migrations'));
     }
 
     /**

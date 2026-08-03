@@ -1,6 +1,35 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+
+if (! function_exists('module_path')) {
+    /**
+     * Return the path to a file inside one of the application's modules.
+     *
+     * Drop-in replacement for the helper that used to be provided by
+     * caffeinated/modules, which is abandoned and has no release supporting
+     * Laravel 9 or later. Modules are plain namespaced directories under
+     * app/Modules, so resolving the path needs no package and no registry:
+     * the slug is simply the StudlyCase directory name.
+     *
+     * @param  string  $slug      module slug, e.g. 'admin'
+     * @param  string  $file      path within the module, e.g. 'Routes/web.php'
+     * @param  string|null  $location  unused; retained so existing call sites,
+     *                                 which all pass 'app', keep working
+     * @return string
+     */
+    function module_path($slug = null, $file = '', $location = null)
+    {
+        $basePath = app_path('Modules');
+
+        if (! is_null($slug)) {
+            $basePath .= '/' . Str::studly($slug);
+        }
+
+        return $file === '' ? $basePath : $basePath . '/' . ltrim($file, '/');
+    }
+}
 
 
 /**

@@ -2,7 +2,7 @@
 
 namespace App\Modules\Lead\Providers;
 
-use Caffeinated\Modules\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -13,13 +13,9 @@ class ModuleServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadTranslationsFrom(module_path('lead', 'Resources/Lang', 'app'), 'lead');
-        $this->loadViewsFrom(module_path('lead', 'Resources/Views', 'app'), 'lead');
-        $this->loadMigrationsFrom(module_path('lead', 'Database/Migrations', 'app'));
-        if(!$this->app->configurationIsCached()) {
-            $this->loadConfigsFrom(module_path('lead', 'Config', 'app'));
-        }
-        $this->loadFactoriesFrom(module_path('lead', 'Database/Factories', 'app'));
+        $this->loadTranslationsFrom(module_path('lead', 'Resources/Lang'), 'lead');
+        $this->loadViewsFrom(module_path('lead', 'Resources/Views'), 'lead');
+        $this->loadMigrationsFrom(module_path('lead', 'Database/Migrations'));
     }
 
     /**
