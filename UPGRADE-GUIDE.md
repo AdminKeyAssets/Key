@@ -501,20 +501,29 @@ PHP 8.3 minimum.
 
 **composer.json:** `"laravel/framework": "^13.0"`, `"laravel/tinker": "^3.0"`, `"phpunit/phpunit": "^12.0"`, `"php": "^8.3"`.
 
-**🔴 The one change that can break your Vue frontend — CSRF:**
+**CSRF middleware rename — verified safe for your frontend:**
 
-> Laravel's CSRF middleware has been renamed from `VerifyCsrfToken` to `PreventRequestForgery`, **and now includes request-origin verification using the `Sec-Fetch-Site` header.**
+> Laravel's CSRF middleware has been renamed from `VerifyCsrfToken` to `PreventRequestForgery`, and now includes request-origin verification using the `Sec-Fetch-Site` header.
 
-Two consequences:
+I originally flagged the `Sec-Fetch-Site` check as the main risk to your Vue/axios calls. Reading the shipped implementation, that is **wrong** — worth correcting, because it changes what you need to watch for. `Illuminate\Foundation\Http\Middleware\PreventRequestForgery::handle()` is:
 
-1. **You have a custom `app/Http/Middleware/VerifyCsrfToken.php`** registered in `app/Http/Kernel.php`. `VerifyCsrfToken` remains as a deprecated alias, so it won't hard-fail — but update the reference to `Illuminate\Foundation\Http\Middleware\PreventRequestForgery` while you're there, and carry over any `$except` entries.
+```php
+if (
+    $this->isReading($request) ||
+    $this->runningUnitTests() ||
+    $this->inExceptArray($request) ||
+    $this->hasValidOrigin($request) ||   // <- new, OR'd in
+    $this->tokensMatch($request)         // <- the classic check, unchanged
+) { ... }
+```
 
-2. **The `Sec-Fetch-Site` origin check is the real risk.** Every axios call from your Vue components (`resources/js/bootstrap.js` sets the `X-CSRF-TOKEN` header globally) is now additionally origin-checked. This is fine for same-origin requests — which yours are — but it *will* reject requests if:
-   * the admin panel is ever loaded through a different host/port than the one it posts to (a reverse-proxy or CDN misconfiguration),
-   * anything is embedded in an iframe from another origin,
-   * you have webhook or third-party callback endpoints hitting POST routes in the `web` middleware group (check `app/Modules/*/Routes/*.php` for any non-browser POST endpoint and add it to the exclusion list).
+`hasValidOrigin()` is an **additional way to pass**, not an additional requirement. A request with `Sec-Fetch-Site: same-origin` short-circuits to success; anything else simply falls through to the same token comparison as before. The strict mode that *would* reject on origin alone is `PreventRequestForgery::useOriginOnly()`, and `$originOnly` defaults to `false` — nothing in this codebase enables it.
 
-   **Test explicitly after this step:** submit the asset form, run an Excel export, trigger the lead import, and save project details — the four heaviest POST flows in the app.
+**So the change is strictly more permissive for you.** Your axios setup in `resources/js/bootstrap.js` keeps working unchanged, and there is no new failure mode behind a reverse proxy or in an iframe.
+
+What was actually required: `app/Http/Middleware/VerifyCsrfToken.php` renamed to `PreventRequestForgery.php` extending the new base class, with `$addHttpCookie` and `$except` carried over, and the alias in `app/Http/Kernel.php` updated. (`VerifyCsrfToken` survives as a deprecated alias, so leaving it would have worked too — but it is scheduled for removal.)
+
+Note that CSRF cannot be covered by the PHPUnit suite: `runningUnitTests()` short-circuits the middleware in the test environment. Verify the heaviest POST flows manually after deploying — asset form submit, lead import, save project details.
 
 **Other L13 changes worth checking here:**
 * `Js::from` now emits unescaped Unicode by default — relevant if you pass data to Vue via `@json`/`Js::from` in Blade. Your Blade views do embed data into Vue props; spot-check a page with non-ASCII content (you have a translation manager, so this is a live concern).
