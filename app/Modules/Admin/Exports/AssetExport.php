@@ -175,7 +175,8 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
             //
             // Next Installment (only first payment within range, or fallback to existing logic)
             //
-            $nextInstallment = '';
+            $nextInstallmentDate   = '';
+            $nextInstallmentAmount = '';
             if ($paymentFilter && $start && $end && $asset->agreement_status === 'Installments') {
                 // Filter payments within [start, end], then pick earliest by payment_date
                 $firstPayment = $asset->payments
@@ -192,7 +193,8 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                         ? number_format($firstPayment->left_amount, 0, ".", ",") . '$'
                         : number_format($firstPayment->amount, 0, ".", ",") . '$';
 
-                    $nextInstallment = $firstPayment->payment_date . ' - ' . $amt;
+                    $nextInstallmentDate   = $firstPayment->payment_date;
+                    $nextInstallmentAmount = $amt;
                 }
             } else {
                 // Fallback: original “first unpaid installment” logic
@@ -210,12 +212,12 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                             ->filter(fn($p) => strtotime($p->payment_date) < $now)
                             ->sum('left_amount');
 
-                        $nextInstallment = Carbon::parse($first->payment_date)
-                                ->format('Y/m/d')
-                            . ' - ' . number_format($overdueSum, 0, ".", ",") . '$';
+                        $nextInstallmentDate   = Carbon::parse($first->payment_date)
+                            ->format('Y/m/d');
+                        $nextInstallmentAmount = number_format($overdueSum, 0, ".", ",") . '$';
                     } else {
-                        $nextInstallment = $first->payment_date
-                            . ' - ' . number_format($first->left_amount, 0, ".", ",") . '$';
+                        $nextInstallmentDate   = $first->payment_date;
+                        $nextInstallmentAmount = number_format($first->left_amount, 0, ".", ",") . '$';
                     }
                 }
             }
@@ -223,7 +225,8 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
             //
             // Next Rent (only first rental within range, or fallback to existing logic)
             //
-            $nextRent = '';
+            $nextRentDate   = '';
+            $nextRentAmount = '';
             if ($paymentFilter && $start && $end && $asset->asset_status === 'Rented') {
                 $firstRental = $asset->rentals
                     ->filter(fn($r) =>
@@ -238,7 +241,8 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                         ? number_format($firstRental->left_amount, 0, ".", ",") . '$'
                         : number_format($firstRental->amount, 0, ".", ",") . '$';
 
-                    $nextRent = $firstRental->payment_date . ' - ' . $amt;
+                    $nextRentDate   = $firstRental->payment_date;
+                    $nextRentAmount = $amt;
                 }
             } else {
                 // Fallback: original “first unpaid rent” logic
@@ -256,12 +260,12 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                             ->filter(fn($r) => strtotime($r->payment_date) < $now)
                             ->sum('left_amount');
 
-                        $nextRent = Carbon::parse($first->payment_date)
-                                ->format('Y/m/d')
-                            . ' - ' . number_format($overdueSum, 0, ".", ",") . '$';
+                        $nextRentDate   = Carbon::parse($first->payment_date)
+                            ->format('Y/m/d');
+                        $nextRentAmount = number_format($overdueSum, 0, ".", ",") . '$';
                     } else {
-                        $nextRent = $first->payment_date
-                            . ' - ' . number_format($first->left_amount, 0, ".", ",") . '$';
+                        $nextRentDate   = $first->payment_date;
+                        $nextRentAmount = number_format($first->left_amount, 0, ".", ",") . '$';
                     }
                 }
             }
@@ -312,8 +316,10 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                     ? $blockPrefix . $asset->type . ' N' . $asset->flat_number . ' - ' . $asset->area . ' sq.m'
                     : '',
                 'Agreement Status'  => $asset->agreement_status,
-                'Next Installment'  => $nextInstallment,
-                'Next Rent'         => $nextRent,
+                'Next Installment (date)'   => $nextInstallmentDate,
+                'Next Installment (amount)' => $nextInstallmentAmount,
+                'Next Rent (date)'          => $nextRentDate,
+                'Next Rent (amount)'        => $nextRentAmount,
                 'Next Renovation'   => $nextRenovation,
             ];
         });
@@ -329,8 +335,10 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
             'Investor',
             'Asset Type / Size',
             'Agreement Status',
-            'Next Installment',
-            'Next Rent',
+            'Next Installment (date)',
+            'Next Installment (amount)',
+            'Next Rent (date)',
+            'Next Rent (amount)',
             'Next Renovation',
         ];
     }

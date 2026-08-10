@@ -196,7 +196,8 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
             //
             // Next Installment (only first payment within range, or fallback to existing logic)
             //
-            $nextInstallment = '';
+            $nextInstallmentDate   = '';
+            $nextInstallmentAmount = '';
             if ($paymentFilter && $start && $end && $asset->agreement_status === 'Installments') {
                 // Filter payments within [start, end], then pick earliest by payment_date
                 $firstPayment = $asset->payments
@@ -212,7 +213,8 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                         ? number_format($firstPayment->left_amount, 0, ".", ",") . '$'
                         : number_format($firstPayment->amount, 0, ".", ",") . '$';
 
-                    $nextInstallment = $firstPayment->payment_date . ' - ' . $amt;
+                    $nextInstallmentDate   = $firstPayment->payment_date;
+                    $nextInstallmentAmount = $amt;
                 }
             } else {
                 // Fallback: original “first unpaid installment” logic
@@ -230,12 +232,12 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                             ->filter(fn($p) => strtotime($p->payment_date) < $now)
                             ->sum('left_amount');
 
-                        $nextInstallment = Carbon::parse($first->payment_date)
-                                ->format('Y/m/d')
-                            . ' - ' . number_format($overdueSum, 0, ".", ",") . '$';
+                        $nextInstallmentDate   = Carbon::parse($first->payment_date)
+                            ->format('Y/m/d');
+                        $nextInstallmentAmount = number_format($overdueSum, 0, ".", ",") . '$';
                     } else {
-                        $nextInstallment = $first->payment_date
-                            . ' - ' . number_format($first->left_amount, 0, ".", ",") . '$';
+                        $nextInstallmentDate   = $first->payment_date;
+                        $nextInstallmentAmount = number_format($first->left_amount, 0, ".", ",") . '$';
                     }
                 }
             }
@@ -251,7 +253,8 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                 'Purchase Price' => number_format($asset->total_price) . '$',
                 'Paid' => $paid_formatted,
                 'Agreement Status' => $asset->agreement_status,
-                'Next Installment' => $nextInstallment,
+                'Next Installment (date)' => $nextInstallmentDate,
+                'Next Installment (amount)' => $nextInstallmentAmount,
                 'Current Value' => number_format($asset->current_value) . '$',
                 'Capital Gain' => number_format($asset->current_value - $asset->total_price) . '$',
                 'Manager' => $asset->investors->first()->admin->name . ' ' . $asset->investors->first()->admin->surname,
@@ -271,7 +274,8 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
             'Purchase Price',
             'Paid',
             'Agreement Status',
-            'Next Installment',
+            'Next Installment (date)',
+            'Next Installment (amount)',
             'Current Value',
             'Capital Gain',
             'Manager',
