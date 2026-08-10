@@ -247,9 +247,9 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
                 'Name' => $asset->project_name,
                 'City' => $asset->city,
                 'Investor' => $investors,
-                'Asset Type / Size' => $asset->type . ' ' .
-                    ($asset->flat_number ? ' N' . $asset->flat_number . ' - ' : '') .
-                    ($asset->area ? $asset->area . ' sq.m' : ''),
+                'Asset Type' => $asset->type . ' ' .
+                    ($asset->flat_number ? ' N' . $asset->flat_number : ''),
+                'Asset Size' => $asset->area ? $asset->area . ' sq.m' : '',
                 'Purchase Price' => number_format($asset->total_price) . '$',
                 'Paid' => $paid_formatted,
                 'Agreement Status' => $asset->agreement_status,
@@ -270,7 +270,8 @@ class DeveloperAssetExport implements FromCollection, WithHeadings, WithEvents
             'Name',
             'City',
             'Investor',
-            'Asset Type / Size',
+            'Asset Type',
+            'Asset Size',
             'Purchase Price',
             'Paid',
             'Agreement Status',

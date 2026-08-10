@@ -274,7 +274,8 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
             // Next Renovation (only first renovation payment within range, or fallback to
             // the first unpaid one) — mirrors the Next Renovation column on the assets list.
             //
-            $nextRenovation = '';
+            $nextRenovationDate   = '';
+            $nextRenovationAmount = '';
             if (! $isDeveloper && $asset->renovation_status === 'In Progress') {
                 $unpaidRenovations = $asset->renovationPayments->where('status', 0);
 
@@ -294,12 +295,12 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                             ->filter(fn($r) => strtotime($r->payment_date) < $now)
                             ->sum('left_amount');
 
-                        $nextRenovation = Carbon::parse($first->payment_date)
-                                ->format('Y/m/d')
-                            . ' - ' . number_format($overdueSum, 2, ".", ",") . '$';
+                        $nextRenovationDate   = Carbon::parse($first->payment_date)
+                            ->format('Y/m/d');
+                        $nextRenovationAmount = number_format($overdueSum, 2, ".", ",") . '$';
                     } else {
-                        $nextRenovation = $first->payment_date
-                            . ' - ' . number_format($first->left_amount, 2, ".", ",") . '$';
+                        $nextRenovationDate   = $first->payment_date;
+                        $nextRenovationAmount = number_format($first->left_amount, 2, ".", ",") . '$';
                     }
                 }
             }
@@ -312,15 +313,19 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
                 'Name'              => $asset->project_name,
                 'City'              => $asset->city,
                 'Investor'          => $investors,
-                'Asset Type / Size' => $asset->flat_number
-                    ? $blockPrefix . $asset->type . ' N' . $asset->flat_number . ' - ' . $asset->area . ' sq.m'
+                'Asset Type'        => $asset->flat_number
+                    ? $blockPrefix . $asset->type . ' N' . $asset->flat_number
+                    : '',
+                'Asset Size'        => $asset->flat_number
+                    ? $asset->area . ' sq.m'
                     : '',
                 'Agreement Status'  => $asset->agreement_status,
                 'Next Installment (date)'   => $nextInstallmentDate,
                 'Next Installment (amount)' => $nextInstallmentAmount,
                 'Next Rent (date)'          => $nextRentDate,
                 'Next Rent (amount)'        => $nextRentAmount,
-                'Next Renovation'   => $nextRenovation,
+                'Next Renovation (date)'    => $nextRenovationDate,
+                'Next Renovation (amount)'  => $nextRenovationAmount,
             ];
         });
 
@@ -333,13 +338,15 @@ class AssetExport implements FromCollection, WithHeadings, WithEvents
             'Name',
             'City',
             'Investor',
-            'Asset Type / Size',
+            'Asset Type',
+            'Asset Size',
             'Agreement Status',
             'Next Installment (date)',
             'Next Installment (amount)',
             'Next Rent (date)',
             'Next Rent (amount)',
-            'Next Renovation',
+            'Next Renovation (date)',
+            'Next Renovation (amount)',
         ];
     }
 
